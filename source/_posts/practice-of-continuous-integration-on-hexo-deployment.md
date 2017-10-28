@@ -40,6 +40,7 @@ tags: [Hexo,Travis,CI]
 &emsp;&emsp;关于Hexo这类静态博客生成器搭建博客的原理，我这里不想在赘述，因为我愿意相信，懂得搭建博客的人，一定是了解Git、Github Pages和Markdown等等的概念的，关于配置相关的细节大家可以参考官网。这里想着重介绍下TravisCI，TravisCI是一个在线的、分布式的持续集成服务，可以用来构建和测试托管在Github上的代码，并且其本身就是开源的。TravisCI提供了主流编程语言如C#、Java、JavaScript、Ruby、PHP、Node.js等的支持，相比Jenkins而言，它是一个轻量级的持续集成平台，它会在每次提交代码后，根据配置文件来创建一个虚拟机，并执行用户定义的Build任务，这个虚拟机提供版本控制(**Git**)、项目构建(**Node.js**)等，在此前提下，我们下面着手Hexo的自动化部署。
 
 ## 方案设计
+&emsp;&emsp;Hexo博客实际上可以分成两部分，即博客源代码和静态页面。其中博客源代码主要是指Hexo及其相关模块、博客内容(**source**)、博客主题(**theme**)，而静态页面由Hexo动态生成，通常放置在**public**目录中。对Hexo来讲，我们最终部署需要的是这些静态页面，所以我们设计得一个方案是，将静态页面存放在master分支，将博客源代码存放在blog分支。当用户提交代码到blog分支后，会触发TravisCI中定义的一系列操作，它会首先从blog分支拉取博客源代码，然后在TravisCI中完成静态页面的生成，最后将其提交到master分支以完成博客的更新，整个过程非常优雅，终于让我彻底摆脱了手动更新博客的过去，而更重要的是，从此写博客不再受地点的制约，因为写博客就是提交代码，生成静态页面以及部署到Github Pages，现在全部交给了TravisCI.
 
 ## 配置TravisCI
 &emsp;&emsp;TravisCI是一个轻量级的持续集成方案，其轻量级主要体现在它的配置文件，即使用TravisCI并不需要我们安装任何软件，我们仅仅需要提供一个.travis.yml文件即可，该文件通常被放置在项目根目录里。和Jenkins这样的持续集成工具不同，我们在这个文件中即可定制Build任务，下面给出一个基本的配置文件：
@@ -50,13 +51,10 @@ node_js: stable
 # S: Build Lifecycle
 install:
   - npm install
-  
-#before_script:
- # - npm install -g gulp
 
 script:
   - hexo clean
-  - hexo g
+  - hexo generate
 
 after_script:
   - cd ./public
@@ -71,10 +69,12 @@ after_script:
 branches:
   only:
     - blog
+    
 env:
  global:
    - GH_REF: github.com/qinyuanpei/qinyuanpei.github.io
 ```
+&emsp;&emsp;如果大家熟悉Jenkins的使用，就会发现这里定义的Build任务似曾相识。在这里我们首先指定了项目构建语言，即这是一个node.js的项目，然后我们会通过npm安装所有依赖，我们注意到在根目录里有一个package.json文件，该文件定义了整个项目依赖的项目。如果你使用过Nuget，你会发现这一切都是如此的合理。那么当整个环境准备就绪以后，我们就可以着手博客的构建啦，和平时一样，我们会执行hexo clean和hexo generate命令，这样Hexo会帮助我们生成所有的静态页面，现在我们通过Git将其推送到master分支，通常基于Github Pages托管的页面都是存放在gh-pages分支的，可是对Hexo而言，我们放在master分支是没有问题的，这就是TravisCI构建整个博客的具体过程。
 
 ## 关联TravisCI
 &emsp;&emsp;到目前为止，我们定义好了TravisCI将会在虚拟机中执行的Build任务。我们知道，这里TravisCI是需要访问我们托管在Github上的代码仓库的，所以我们必须将这个代码仓库和Travis关联起来，这样它就具备了从代码仓库拉取代码(**Pull**)和向代码仓库推送(**Push**)代码的能力。印象中公司是给每一个Jenkins服务器关联了一个Github账户，这样需要持续集成的项目只需要添加这个账号，并为其赋予基本的读写权限即可。在这里是类似的，我们有两种方案来关联TravisCI，即为TravisCI虚拟机添加SSH-Key和使用Github提供的Personal Access Token。
@@ -83,15 +83,17 @@ env:
 
 &emsp;&emsp;我们在Github中的Setting->Developer Settings找到Personal Access Token，然后选择所有repo相关的权限，生成这个token后将其复制下来备用，因为它只有在这个地方是可见的。接下来我们打开[TravisCI](https://www.travis-ci.org)，在使用Github登录后我们就可以在这里看到所有的项目，如图是我个人的TravisCI界面：
 
-![TravisCI主界面]()
+![TravisCI主界面](http://img.blog.csdn.net/20171028234101618)
 
 大家可以注意到，这里我开启了qinyuanpei.github.io这个仓库的持续集成服务，如果大家没有在这里看到项目列表，可以点击"Sync account"按钮进行同步。好了，现在我们继续配置：
 
-![配置TravisCI]()
+![配置TravisCI](http://img.blog.csdn.net/20171028234224795)
 
-在这里我们配置了名为CI_TOKEN的环境变量，该值对应.travis.yml文件中的${CI_TOKEN}。
+在这里我们配置了名为CI_TOKEN的环境变量，该值对应.travis.yml文件中的${CI_TOKEN}。现在我们在本地提交代码到blog分支，就会触发TravisCI执行Build任务，在这里Build任务是从blog分支拉取博客内容及主题，通过npm安装依赖的nodejs模块，最终Hexo生成的静态页面会被推送到master分支，这样就完成了整个自动化构建的流程。下面是TravisCI执行Build过程中的日志界面：
 
+![TravisCI日志](http://img.blog.csdn.net/20171029001105352)
 
+&emsp;&emsp;从计划写这样一篇文章，到我一边写博客一篇将它发布在网络上，前后花了大概我3天左右的时间。这段时间发生了太多太多的事情，所以写东西受难免受到情绪影响，你现在看到这篇由TravisCI自动生成的博客，大概无法想象屏幕前的我有着怎样复杂的心绪，有时候我告诉自己要沉下心来学点什么，有时候我会觉得此时的我和过去没有什么区别。转眼间忙忙碌碌一年到头，可会想起来顿时觉得时间像虚度一般，有人说，当你对未来不再有什么期许的时候，就是你开始衰老的迹象，可我真的老了吗？我不是只有25岁吗？好啦，夜深人静，该去睡觉了，这篇文章就是这样子啦。
 
 
 
