@@ -1,0 +1,80 @@
+title: 扫描二维码在移动设备上浏览响应式页面
+date: 2016-05-01 10:58:18
+categories: [编程语言]
+tags: [二维码,响应式,Web]
+---
+&emsp;&emsp;最近想尝试对一个Ghost博客主题进行移植，因为对一个后端程序员来说，进行前端方面的工作实在是个不小的挑战，而我对CSS更是有种与生俱来的恐惧感，所以我是非常喜欢[Bootstrap](http://www.bootcss.com/)和[Materilize](http://materializecss.com/)这种对后端程序员友好的前端框架。现在前端技术如火如荼，而前端技术作为最有可能实现跨平台技术的技术形态，相对原生技术有着更为灵活的适应性和扩展性，因此以响应式设计为代表的Web技术，能够让Web页面在不同尺寸屏幕上都有着相近的体验，因为目前软件开发基本都是在计算机设备上来完成的，这样我们在制作Web页面的时候就需要在不同的设备上进行调试，如果每次都将Web页面部署到远程服务器上，这样将浪费大量的时间而且容易将测试阶段的问题暴露给用户，因此本文将采用一种扫描二维码的方式来实现在移动设备上浏览响应式页面。
+
+<!--more-->
+
+#工作原理
+&emsp;&emsp;因为我们这里是在测试阶段在不同的移动设备上浏览响应式页面，所以这些Web页面实际上是部署在本地服务器上的，因此这个问题的实质就是如何让移动设备访问本地服务器，这个问题无论从原理上还是实现上来讲都不复杂，只要保证运行本地服务器的计算机和移动设备在同一个局域网内就可以了，考虑到移动设备的便携性，采用无线局域网的方式对移动设备更为友好。我们知道Windows系统，从Windows7版本以后就可以支持虚拟热点的创建，因此可以说是近水楼台啦！在这种情况下，理论上我们可以直接使用运行本地服务器的计算机的IP来访问本地服务器，可是因为不同的服务器软件配置不同以及不同的计算机设置不同等等外部性的因素，在实际操作的过程中依然存在各种问题，下面我们就来针对实际操作中需要注意和解决的问题，来说说具体的实现过程。
+
+#实现过程
+&emsp;&emsp;考虑到实际操作中的配置项目主要由计算机设置和服务器设置两部分组成，因此我们这里对这两部分各自进行详细说明。
+##计算机设置
+* 热点的创建
+
+1、创建一个名称为QRPager-WIFI的无线网络，其密码为88888888
+```
+netsh wlan set hostednetwork ssid=QRPager-WIFI key=88888888
+```
+2、开启网络热点确保其它设备可以访问这个热点
+```
+netsh wlan start hostednetwork
+```
+3、关闭网络热点
+```
+netsh wlan stop hostednetwork
+```
+
+* 防火墙设置
+
+&emsp;&emsp;防火墙设置非常简单，因为关闭防火墙就好啦，这样可以保证其它设备能够正常访问本地服务器，在测试完页面后应该立即开启防火墙，这个世界可谓是充满了诱惑，有诱惑的地方就有危险，所以当我们通过互联网获取知识的同时，更为重要的一点是学会如何去甄别信息的真伪，魏则西事件让我们每一个人都感到痛心，可我们必须认识到，即使百度在你我的口诛笔伐中宣告破产，对这个世界的影响永远都是杯水车薪，所以无论是杀毒软件还是防火墙，任何形式的东西都不能代替你保护自我的意识，就像在地震、火灾这类破坏性灾难中，学会自救互救比等待公共救援更为有效。
+
+##服务器设置
+* IIS设置
+
+&emsp;&emsp;IIS设置起来非常简单，只要在网站“绑定”设置中设置本地服务器所在计算机的IP地址即可，这样做的目的是保证服务器可以使用除了127.0.0.1和localhost以外地址来访问，因为我们在手机上访问本地服务器的时候，需要指定本地服务器所在计算机的IP。
+
+* Apache设置
+
+&emsp;&emsp;Apache设置相对Geek，因为我们都知道它需要去编辑httpd.conf这个文件来开启或者关闭特定功能。但在这里它并不会显得复杂，因为和IIS一样，我们要进行的修改是让Apache可以通过除localhost以外的地址进行访问。在该文件中找到下列片段：
+```
+<Directory "D:/Program Files/WAMP/www/">
+    #
+    # Possible values for the Options directive are "None", "All",
+    # or any combination of:
+    #   Indexes Includes FollowSymLinks SymLinksifOwnerMatch ExecCGI MultiViews
+    #
+    # Note that "MultiViews" must be named *explicitly* --- "Options All"
+    # doesn't give it to you.
+    #
+    # The Options directive is both complicated and important.  Please see
+    # http://httpd.apache.org/docs/2.2/mod/core.html#options
+    # for more information.
+    #
+    Options Indexes FollowSymLinks
+
+    #
+    # AllowOverride controls what directives may be placed in .htaccess files.
+    # It can be "All", "None", or any combination of the keywords:
+    #   Options FileInfo AuthConfig Limit
+    #
+    AllowOverride all
+
+    #
+    # Controls who can get stuff from this server.
+    #
+
+#   onlineoffline tag - don't remove
+    Order Deny,Allow
+    Allow from all #将这里由"Deny from all"修改为"Allow from all"
+    Allow from 127.0.0.1
+
+</Directory>
+```
+将第29行代码由"Deny from all"修改为"Allow from all"即可，这样就可以给其它设备访问本地服务器的权限，至此，这个问题得以成功解决。
+
+#总结
+&emsp;&emsp;这篇文章无论从需求还是实现上来讲都是非常简单的，我之所以想写这篇文章，更多的是希望帮助大家克服这些“非技术性”的问题，因为有时候阻碍我们的可能并非问题本身，而是因为一个微不足道的部分，就像我们无法使用Google并非是因为Google使用起来有多么的困难，而是因为一道技术含量非常低的防火墙，在开发中除了我们使用的编程语言，任何开发工具、部署工具都可能出现这种问题，所以除了技术本身以外，关注这些“非技术性”因素同样是非常重要的一件事情。在这个设计中，有一个问题，即用户连接到无线网络是一个手动去完成的行为，换言之在扫描二维码前用户必须首先连接到无线网络。这样让我感觉显得不够优雅，我一直在思考有没有一种方法可以通过扫描二维码，直接建立移动设备到本地服务器的连接，可是二维码保存的是普通的文本信息，除非我能够通过二维码去调用Android系统中的Intent，否则这个过程是没有办法实现自动化的，一个更好的想法是在PC端生成二维码图片，在手机端通过编写二维码应用来实现两者间的Socket通信，而通信的细节如IP地址、端口号等则可以通过二维码来进行加密和解密。
