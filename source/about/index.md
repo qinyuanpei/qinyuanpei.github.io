@@ -4,7 +4,7 @@ title: About
 
 ###关于博客
 
-![Build-Status](https://www.travis-ci.org/qinyuanpei/qinyuanpei.github.io.svg?branch=master)
+[![Build Status](https://www.travis-ci.org/qinyuanpei/qinyuanpei.github.io.svg?branch=blog)](https://www.travis-ci.org/qinyuanpei/qinyuanpei.github.io)
 &emsp;&emsp;这是我的[独立博客](http://qinyuanpei.com)，目前和[CSDN](http://blog.csdn.net/qinyuanpei)都在同时维护。它是我想要努力去打造个人品牌的一个途径。虽然通过写流行技术这种方式能让我在短期内拥有大量读者，可是我明白：只有真正优质的原创内容方能让我在技术和写作上有所提升，所以我正在努力摆脱写简单而直白的内容，我希望写些充满深度和思考的文章，进而逐步形成我的写作风格。这个博客采用[Hexo](https://hexo.io)搭建，由[Github Pages](https://pages.github.com/)提供免费托管服务，图片托管在[七牛云存储](www.qiniu.com)上，感谢[TravisCI](https://www.travis-ci.org)提供持续集成服务，感谢[Yusen](https://github.com/yscoder)提供[indigo](https://github.com/yscoder/hexo-theme-indigo)主题，本站在此基础上进行了大量修改。再次声明：<blockquote><p>本站内容全部都是由本人经过原始创作而来，采用国际知识共享“<b>署名</b>-<b>非商业使用</b>-<b>禁止演绎</b>”协议4.0进行授权许可。谢绝任何性质的转载，商用盈利性质组织如论坛、公众号请在取得我授权后转载，强烈谴责各种不保留署名权和原始链接的转发。未经本人同意禁止转载本站内容，转载请注明作者姓名和文章出处。</p></blockquote>
 
 
