@@ -1,12 +1,20 @@
 language: node_js
 node_js: stable
 
+cache:
+  directories:
+  - node_modules
+
+notifications:
+  email:
+    recipients:
+      - qinyuanpei@163.com
+    on_success: change 
+    on_failure: always
+
 # S: Build Lifecycle
 install:
   - npm install
-  
-#before_script:
- # - npm install -g gulp
 
 script:
   - hexo clean
