@@ -84,9 +84,9 @@ deploy:
 douban:
   user: 60029335
   book:
-    title: 'Books'
-    quote: ''
+    title: '读书'
+    quote: '上士闻道，勤而行之；中士闻道，若存若亡；下士闻道，大笑之。不笑不足以为道——《道德经》'
   movie:
-    title: 'Movies'
-    quote: ''
+    title: '电影'
+    quote: '要么好好活着，要么赶紧去死——《独自等待》'
 
