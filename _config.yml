@@ -82,11 +82,11 @@ deploy:
 
 # Douban Music&Movie
 douban:
-  user: qinyuanpei
+  user: 60029335
   book:
-    title: 'This is my book title'
-    quote: 'This is my book quote'
+    title: 'Books'
+    quote: ''
   movie:
-    title: 'This is my movie title'
-    quote: 'This is my movie quote'
+    title: 'Movies'
+    quote: ''
 
