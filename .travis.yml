@@ -6,6 +6,8 @@ notifications:
     recipients
       - 875974254@qq.com
       - qinyuanpei@163.com
+    on_success: change # default: change
+    on_failure: always # default: always
 
 # S: Build Lifecycle
 install:
