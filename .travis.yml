@@ -1,6 +1,11 @@
 language: node_js
 node_js: stable
 
+notifications:
+  email:
+    - 875974254@qq.com
+    - qinyuanpei@163.com
+
 # S: Build Lifecycle
 install:
   - npm install
