@@ -9,22 +9,18 @@
 #    target: _blank    是否跳出，省略则在当前页面打开
 menu:
   home:
-    text: Home
+    text: 首页
     url: /
   archives:
-    text: Archives
+    text: 归档
     url: /archives
   tags:
-    text: Tags
+    text: 标签
     url: /tags
-  github:
-    text: Github
-    url: https://github.com/qinyuanpei
-    target: _blank
-  weibo:
-    text: Weibo
-    url: http://weibo.com/u/1278609231
-    target: _blank
+  user:
+    text: 关于
+    url: /about
+  
 
 rss: /atom.xml
 
@@ -82,6 +78,14 @@ less:
 
 #是否开启多说评论，填写你在多说申请的项目名称 duoshuo: duoshuo-key
 #若使用disqus，请在博客config文件中填写disqus_shortname，并关闭多说评论
-duoshuo: qinyuanpei
+#duoshuo: qinyuanpei
+#disqus_shortname:
+gitment:
+  owner: qinyuanpei
+  repo: qinyuanpei.github.io
+  client_id: bfad13d75d668e9ea9b6
+  client_secret: febcfa5a17d192d12717e591c043e80bb4971a2
+
+
 
 license: by-nc-nd
