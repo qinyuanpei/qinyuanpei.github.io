@@ -67,10 +67,10 @@ hideMenu: true
 toc:
   list_number: true  # 是否显示数字排序
 
-# Miscellaneous
+#Miscellaneous
 favicon: /favicon.ico
 
-# less
+#less
 less:
   compress: true
   paths:
@@ -86,6 +86,9 @@ gitment:
   client_id: bfad13d75d668e9ea9b6
   client_secret: febcfa5a17d192d12717e591c043e80bb4971a2
 
-
-
+#知识共享协议
 license: by-nc-nd
+
+#PWA特性
+pwa:
+  manifest: /manifest.json
