@@ -79,7 +79,7 @@ self.addEventListener('fetch', function(event) {
 
 &emsp;&emsp;好了，以上就是ServiceWorker在离线缓存方面的基本用法，希望进行深入了解的朋友，可以参考文末链接做进一步研究。
 
-## Web.App Manifest
+## Web App Manifest
 &emsp;&emsp;接下来介绍Web App Manifest，它其实是Web开发领域的一个"叛徒"，因为它所做的事情为大家所不齿，基本可以概括为，怎么样假装自己是一个Native App，我们直接看它的定义：
 ```
 {
@@ -109,20 +109,20 @@ self.addEventListener('fetch', function(event) {
 ```
 https://tools.ietf.org/html/draft-ietf-webpush-protocol-12
 
-    +-------+           +--------------+       +-------------+
-    |  UA   |           | Push Service |       | Application |
-    +-------+           +--------------+       |   Server    |
-        |                      |               +-------------+
-        |      Subscribe       |                      |
+    +-------+          +--------------+      +-------------+
+    |  UA  |          | Push Service |      | Application |
+    +-------+          +--------------+      |  Server    |
+        |                      |              +-------------+
+        |      Subscribe      |                      |
         |--------------------->|                      |
-        |       Monitor        |                      |
+        |      Monitor        |                      |
         |<====================>|                      |
         |                      |                      |
-        |          Distribute Push Resource           |
+        |          Distribute Push Resource          |
         |-------------------------------------------->|
         |                      |                      |
         :                      :                      :
-        |                      |     Push Message     |
+        |                      |    Push Message    |
         |    Push Message      |<---------------------|
         |<---------------------|                      |
         |                      |                      |
@@ -130,10 +130,14 @@ https://tools.ietf.org/html/draft-ietf-webpush-protocol-12
 注：代码片段来自 [http://harttle.com/2017/01/28/pwa-explore.html](http://harttle.com/2017/01/28/pwa-explore.html)
 
 # 移植Hexo博客到PWA应用
+&emsp;&emsp;现在，我们基本了解了PWA的概念以及实现PWA的关键技术，我们现在考虑将Hexo博客改造成一个PWA应用，我们这里不打算考虑消息推送的相关问题，所以对Hexo这样一个静态博客生成器而言，我们可以做的实际上只有两件事情，即通过Web App Manifest让它更像一个Native应用，通过ServiceWorker为它提供离线缓存的特性。我们从最简单的开始，我们需要在Hexo的根目录中增加一个manifest.json文件，该文件我们可以通过这个网站[http://www.manifoldjs.com/generator](http://www.manifoldjs.com/generator)来生成：
+```
+```
+
+
 
 # 本文小结
 
-#### 参考文章
 ---
 * [PWA 初探：基本特性与标准现状](http://harttle.com/2017/01/28/pwa-explore.html)
 * [Service Worker API](https://developer.mozilla.org/zh-CN/docs/Web/API/Service_Worker_API)
@@ -142,6 +146,7 @@ https://tools.ietf.org/html/draft-ietf-webpush-protocol-12
 * [PWA 入门: 理解和创建 Service Worker 脚本](https://zhuanlan.zhihu.com/p/25524382)
 * [PWA 入门: 写个非常简单的 PWA 页面](https://zhuanlan.zhihu.com/p/25459319)
 * [下一代 Web 应用模型 —— Progressive Web App](http://huangxuan.me/2017/02/09/nextgen-web-pwa/)
+
 
 
 
