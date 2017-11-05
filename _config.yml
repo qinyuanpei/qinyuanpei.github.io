@@ -90,3 +90,12 @@ douban:
     title: '电影'
     quote: '要么好好活着，要么赶紧去死——《独自等待》'
 
+# Offline Support
+offline:
+  maximumFileSizeToCacheInBytes: 5242880
+  staticFileGlobs:
+  - public/**/*.{js,html,css,png,jpg,gif,svg,eot,ttf,woff,woff2}
+  stripPrefix: public
+  verbose: true
+
+
