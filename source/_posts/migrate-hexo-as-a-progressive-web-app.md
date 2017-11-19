@@ -200,6 +200,7 @@ self.addEventListener('notificationclose', event => {
 
 >我们信仰 Web，不仅仅在于软件、软件平台与单纯的技术，还在于『任何人，在任何时间任何地点，都可以在万维网上发布任何信息，并被世界上的任何一个人所访问到。』而这才是 web 的最为革命之处，堪称我们人类，作为一个物种的一次进化。」
 
+
 ---
 * [PWA 初探：基本特性与标准现状](http://harttle.com/2017/01/28/pwa-explore.html)
 * [Service Worker API](https://developer.mozilla.org/zh-CN/docs/Web/API/Service_Worker_API)
