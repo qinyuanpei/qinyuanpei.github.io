@@ -99,44 +99,109 @@ self.addEventListener('fetch', function(event) {
 }
 ```
 
-&emsp;&emsp;这个我确认没有什么好说的，详细的参数可以参考[这里](http://link.zhihu.com/?target=https%3A//developer.mozilla.org/en-US/docs/Web/Manifest)，通常我们需要将以上文件命名为manifest.json，并通过以下方式引入到HTML结构中，我们所期望的图标、启动页、主题色等Native App的特性都是在这里定义的：
+&emsp;&emsp;这个我确认没有什么好说的，详细的参数可以参考[这里](http://link.zhihu.com/?target=https%3A//developer.mozilla.org/en-US/docs/Web/Manifest)，通常我们需要将以上文件命名为manifest.json，并通过以下方式引入到HTML结构中，通常是添加在<head>标签下，我们所期望的图标、启动页、主题色等Native App的特性都是在这里定义的，这里想吐槽的是，随着越来越多的平台开始向<head>标签中注入"新血液"，譬如<meta>标签和<link>标签：现在HTML结构变得越来越复杂，更不要说主流的AngularJS和Vue这类MVVM框架，基本上都是通过扩展HTML属性来完成数据绑定的。对PWA应用来讲，我们只需要在<head>标签下引入以下内容：
 ```
 <link rel="manifest" href="manifest.json" />
 ```
+这里简单介绍下Web App Manifest中常见的参数含义及其作用：
+* name/short_name：表示应用被添加到屏幕上以后显示的名称，当屏幕空间不足以显示完整的name时，将显示short_name。
+* start_url：表示用户从屏幕启动应用时所加载网页的URL，通常我们将其指向网站的首页。
+* theme_color：表示应用程序的主题颜色，PWA事实上是建议使用Material Design设计风格的，因此该属性可以控制应用的主题颜色，并在页面加载完成前展示一个过渡动画。
+* scope：表示PWA应用的作用域，即哪些页面可以以PWA应用的形式呈现。
+* display：表示PWA应用呈现的方式，可以是fullscreen、standalone、minimal-ui和browser中的任意取值。
+* orientation：表示PWA应用的屏幕方向，如果你有移动开发的经验，对此应该不会感到陌生。
+* icons：表示PWA应用在屏幕上的图标，为了适配不同尺寸的屏幕，这里可以设置不同尺寸下的图标。同样地，如果你有移动开发的经验，对此应该不会感到陌生。
+
 
 ## Push/Notification API
-&emsp;&emsp;关于这两个东西，我们简单说一下啊，PWA中的Push机制主要有[Notification](https://www.w3.org/TR/notifications/)和[Push API](https://www.w3.org/TR/push-api/)两部分组成，前者用于向用户展示通知，而后者用于订阅推送消息。网络上对这块介绍的并不多，关于推送这个问题，一直是国内Android用户和开发者的一块心病，因为Google的推送服务在国内水土不服，因此国内厂商或者是SDK提供商基本上都有自己的一套方案，这就导致在用户的设备上同时开启着若干个消息推送服务，用户手机里的电就是这样一点点被耗尽的，所以这个问题大家看看就好。下面是Web Push架构下的整个通信流程：
+&emsp;&emsp;关于这两个东西，我们简单说一下啊，PWA中的Push机制主要有[Notification](https://www.w3.org/TR/notifications/)和[Push API](https://www.w3.org/TR/push-api/)两部分组成，前者用于向用户展示通知，而后者用于订阅推送消息。网络上对这块介绍的并不多，关于推送这个问题，一直是国内Android用户和开发者的一块心病，因为Google的推送服务在国内水土不服，因此国内厂商或者是SDK提供商基本上都有自己的一套方案，这就导致在用户的设备上同时开启着若干个消息推送服务，用户手机里的电就是这样一点点被耗尽的，所以这个问题大家看看就好。在PWA中，我们可以通过ServiceWorker 的后台计算能力结合 Push API 对推送事件进行响应，并通过 Notification API 实现通知的发出与处理：
 ```
-https://tools.ietf.org/html/draft-ietf-webpush-protocol-12
+// sw.js
+self.addEventListener('push', event => {
+  event.waitUntil(
+    // Process the event and display a notification.
+    self.registration.showNotification("Hey!")
+  );
+});
 
-    +-------+          +--------------+      +-------------+
-    |  UA  |          | Push Service |      | Application |
-    +-------+          +--------------+      |  Server    |
-        |                      |              +-------------+
-        |      Subscribe      |                      |
-        |--------------------->|                      |
-        |      Monitor        |                      |
-        |<====================>|                      |
-        |                      |                      |
-        |          Distribute Push Resource          |
-        |-------------------------------------------->|
-        |                      |                      |
-        :                      :                      :
-        |                      |    Push Message    |
-        |    Push Message      |<---------------------|
-        |<---------------------|                      |
-        |                      |                      |
+self.addEventListener('notificationclick', event => {  
+  // Do something with the event  
+  event.notification.close();  
+});
+
+self.addEventListener('notificationclose', event => {  
+  // Do something with the event  
+});
 ```
-注：代码片段来自 [http://harttle.com/2017/01/28/pwa-explore.html](http://harttle.com/2017/01/28/pwa-explore.html)
+
 
 # 移植Hexo博客到PWA应用
-&emsp;&emsp;现在，我们基本了解了PWA的概念以及实现PWA的关键技术，我们现在考虑将Hexo博客改造成一个PWA应用，我们这里不打算考虑消息推送的相关问题，所以对Hexo这样一个静态博客生成器而言，我们可以做的实际上只有两件事情，即通过Web App Manifest让它更像一个Native应用，通过ServiceWorker为它提供离线缓存的特性。我们从最简单的开始，我们需要在Hexo的根目录中增加一个manifest.json文件，该文件我们可以通过这个网站[http://www.manifoldjs.com/generator](http://www.manifoldjs.com/generator)来生成：
+&emsp;&emsp;现在，我们基本了解了PWA的概念以及实现PWA的关键技术，我们现在考虑将Hexo博客改造成一个PWA应用，我们这里不打算考虑消息推送的相关问题，所以对Hexo这样一个静态博客生成器而言，我们可以做的实际上只有两件事情，即通过Web App Manifest让它更像一个Native应用，通过ServiceWorker为它提供离线缓存的特性。我们从最简单的开始，我们需要在Hexo的根目录中增加一个manifest.json文件，该文件我们可以通过这个网站 [manifoldjs.com](http://www.manifoldjs.com/generator) 来生成。下面给出博主博客中使用的配置：
 ```
+{
+  "name":"飞鸿踏雪的部落格",
+  "short_name":"Payne's Blog",
+  "description":"人生到处知何似，应似飞鸿踏雪泥",
+  "icons":[
+  {
+    "src":"assets/images/icons/bird36.png",
+    "sizes":"36x36",
+    "type":"image/png"
+  },
+  {
+    "src":"assets/images/icons/bird48.png",
+    "sizes":"48x48",
+    "type":"image/png"
+  },
+  {
+    "src":"assets/images/icons/bird72.png",
+    "sizes":"72x72",
+    "type":"image/png"
+  },
+  {
+    "src":"assets/images/icons/bird96.png",
+    "sizes":"96x96",
+    "type":"image/png"
+  },
+  {
+    "src":"assets/images/icons/bird144.png",
+    "sizes":"144x144",
+    "type":"image/png"
+  },
+  {
+    "src":"assets/images/icons/bird192.png",
+    "sizes":"192x192",
+    "type":"image/png"
+  }],
+  "background_color":"#fff",
+  "theme_color":"#000",
+  "start_url":"/",
+  "display":"standalone",
+  "orientation":"portrait"
+}
 ```
+&emsp;&emsp;好了，现在我们来考虑如何去实现一个ServiceWorker，Google官方提供了一个ServiceWorker的[示例项目](https://github.com/GoogleChrome/samples/tree/gh-pages/service-worker/basic)，以及网友提供的[Minimal-PWA](https://github.com/minimal-xyz/minimal-pwa)，这两个项目都可以帮助我们去了解，如何去实现一个ServiceWorker，甚至于我们有[sw-toolbox](http://link.zhihu.com/?target=https%3A//github.com/GoogleChrome/sw-precache)和[sw-precache](http://link.zhihu.com/?target=https%3A//github.com/GoogleChrome/sw-precache)这样的工具，配合gulp和webpack我们定制缓存策略并生成ServiceWorker。可是你要知道，懒惰对程序员而言是一种美德，在这里我选择了Hexo的插件[hexo-offline](https://github.com/JLHwung/hexo-offline)，该插件可以帮助我们生成ServiceWoker，关于它的使用及配置，大家可以自行去了解，我重点想说说支持ServiceWorker以后，我的博客所呈现出来的变化以及PWA实际运行的效果。
 
+![ServiceWorker和Cache Storage](http://img.blog.csdn.net/20171119125504778)
+
+&emsp;&emsp;通过这张图，我们可以清楚地看到，ServiceWorker确实在后台工作着，而Cache Storage确实对博客内的静态资源做了缓存处理。事实上对Hexo这样的静态博客而言，整个博客都是静态资源，所以在实际运行中它会对所有内容进行缓存，我们可以在终端中验证这个想法：
+
+![在Hexo中监听到的缓存请求](http://img.blog.csdn.net/20171119130811446)
+
+&emsp;&emsp;可我想说这一切并没有什么用，因为我并不能如愿地在离线状态下访问我的博客，甚至因为有了缓存机制，当我在撰写这篇博客时，虽然我改变了markdown文档的内容，但当我刷新博客的时候，因为缓存机制的存在，我不能像从前那样直接看到博客的变化，更重要的一点是，整个缓存大概有8M左右的体积，因此每次请求页面时，我能够明显地感觉到页面加载的延迟，看起来我们费了大量周折最终却一无所获，这听起来实在是讽刺不是吗？
+
+&emsp;&emsp;说完了ServiceWorker，我们再来说说Web App Manifest，我尝试从豌豆荚下载了移动版Chrome，可我自始至终无法将应用添加到主屏幕，貌似这需要Android系统底层的支持，我测试了两部手机，一部OPPO手机和一部小米手机，发现都没有明显的PWA支持，当我访问页面的时候，浏览器更加不会主动提示我"将应用添加到主屏"，像UC浏览器是将网站以应用的形式添加到浏览器首页，这的确没有什么值得令人惊喜的地方，因为在PC端的时候，我们就可以做到类似地实现，这篇文章耗费时间蛮长的啦，大概是因为我不知道，该如何描述这个失败的尝试。最近接触到一位前辈的项目，这是一个需要跨PC端和移动端的项目。目前面临的一个挑战就是，移动端有太多依赖原生接口的功能设计，所以一套代码在全平台适配，真的仅仅是一个美好的理想，离实现永远有一段不可逾越的距离。
 
 
 # 本文小结
+&emsp;&emsp;本文主要以Google提出的渐进式Web应用(Progressive Web Apps)为主线，简单探讨了Google的渐进式Web应用及其关键技术。渐进式Web应用试图解决传统Web应用的两个关键问题，即**需要从网络实时加载内容而带来的网络延迟**和**依赖浏览器入口而带来的用户体验**。首先，渐进式应用可以显著加快应用加载速度，其提供的离线缓存机制可以让应用在离线环境下继续使用，关键技术为Service Worker和Cache Storage；其次，渐进式应用可以被添加到主屏，有独立的图标、启动页、全屏支持，整体上更像Native App，关键技术为Web.App Manifest；最后，渐进式应用同操作系统集成能力得到提高，具备在不唤醒状态下推送消息的能力，关键技术为Push API和Notification API。在此背景下，我们对静态博客Hexo进行了改造，尝试将其迁移到一个PWA应用上，虽然最终以失败告终，可是在整个过程中我们依然有所收获，我觉得一件事情能让我们有所思考或者有所感悟的话，这就已然是一种幸运、一种成功啦。
+
+&emsp;&emsp;其实Web应用与原生应用并非彼此水火不容，除了纯粹的Web技术和Native技术以外，在这两者之间我们看到的更多是混合技术的应用，所以我认为开发人员在未来一定要具备两种能力，即跨语言和跨平台开发的能力。比如小程序是在微信原生生态下建立的定制化Web应用，它有着类似HTML/CSS/JavaScript的技术方案，同时提供了统一的应用程序外观和使用体验；而跨平台游戏引擎cocos2d-x，通过JavaScript Bridge等类似技术，则可以实现将Web技术转化为Native技术.....总而言之，在技术选型这个问题上，我们可以选择的方案越来越多，如何让想法可以伴随技术产生优秀的产品，这是我们在这个时代真正该去思考的问题。目前来讲，国内普遍重视iOS，可惜遗憾的是iOS不支持PWA；国内的Android系统经过阉割以后，国内用户无法使用Chrome，以及各个厂商定制的浏览器存在兼容性问题；国内因为政策及现实原因，第三方推送相对GCM推送要活跃很多，厂商并不会太关注对PWA应用推送的支持。虽然现实如此，可Web技术发展到今天为止，我们能做的就是希望它越来越好，在此引用[黄玄](https://huangxuan.me)的一句话：
+
+>我们信仰 Web，不仅仅在于软件、软件平台与单纯的技术，还在于『任何人，在任何时间任何地点，都可以在万维网上发布任何信息，并被世界上的任何一个人所访问到。』而这才是 web 的最为革命之处，堪称我们人类，作为一个物种的一次进化。」
+
+
+
 
 ---
 * [PWA 初探：基本特性与标准现状](http://harttle.com/2017/01/28/pwa-explore.html)
