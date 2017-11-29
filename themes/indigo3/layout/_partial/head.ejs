@@ -40,9 +40,6 @@
   <% if (theme.rss){ %>
     <link rel="alternative" href="<%- theme.rss %>" title="<%= config.title %>" type="application/atom+xml">
   <% } %>
-  <% if (theme.pwa){ %>
-    <link rel="manifest" href="<%- theme.pwa.manifest %>">
-  <% } %>
   <meta name="summary" content="<%=(page.excerpt || config.description)%>">
   <%- favicon_tag(theme.favicon) %>
   <%- css('assets/styles/style') %>
