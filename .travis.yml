@@ -25,6 +25,8 @@ after_script:
   - git add .
   - git commit -m "Update Blog By TravisCI"
   - git push --force --quiet "https://${CI_TOKEN}@${GH_REF}" master:master
+  - git tag v0.0.$TRAVIS_BUILD_NUMBER
+  - git push --quiet "https://${CI_TOKEN}@${GH_REF}" master:master --tags
 # E: Build LifeCycle
 
 branches:
