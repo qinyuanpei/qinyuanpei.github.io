@@ -83,8 +83,8 @@ less:
 gitment:
   owner: qinyuanpei
   repo: qinyuanpei.github.io
-  client_id: bfad13d75d668e9ea9b6
-  client_secret: febcfa5a17d192d12717e591c043e80bb4971a2
+  client_id: 9be9a26c23ce0c428407
+  client_secret: 5cf05f428d26e4e4438f15ac0237dd2575582c79
 
 #知识共享协议
 license: by-nc-nd
