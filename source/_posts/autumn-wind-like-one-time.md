@@ -1,6 +1,6 @@
 title: 秋风劲似去年时
 date: 2017-09-25 00:56:50
-categories: [人生感悟]
+categories: [生活感悟]
 tags: [回忆,感悟,年华]
 
 ---

@@ -1,6 +1,6 @@
 title: 从React专利事件看开源软件许可
 date: 2017-09-20 23:06:45
-categories: [人生感悟]
+categories: [生活感悟]
 tags: [前端,React,开源]
 
 ---

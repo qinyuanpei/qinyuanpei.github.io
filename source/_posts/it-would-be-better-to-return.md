@@ -1,6 +1,6 @@
 title: 不如归去
 date: 2017-10-21 22:31:48
-categories: [人生感悟]
+categories: [生活感悟]
 tags: [回家,成长,亲情]
 ---
 
