@@ -1,0 +1,33 @@
+title: About
+---
+&emsp;&emsp;秦元培，90后程序员、游戏开发者，关注Unity3D游戏开发及AR/VR开发相关技术。本科时期主修环境科学专业，因为对编程技术的热爱而沉醉其中并坚持至今。2015年本毕业后，毅然放弃本专业背景，选择从事软件开发工作，即使整个过程充满艰辛。我是一个典型的双子座男生，具有理性和感性的双重性格，喜欢徘徊在科技与人文的十字路口。从看到第一行代码起就觉得编程是件单纯而伟大的事情，至今仍然努力在0和1的世界里探索。对不同技术领域尤其是游戏引擎、脚本语言、数据库、网络通信等后端方向充满兴趣。喜欢读书、电影和游戏，崇尚简单、低调和务实的生活态度。希望做一个温暖、快乐和执着的人，从明天起，面朝大海，春暖花开
+
+###关于博客
+
+[![Build Status](https://www.travis-ci.org/qinyuanpei/qinyuanpei.github.io.svg?branch=blog)](https://www.travis-ci.org/qinyuanpei/qinyuanpei.github.io)
+&emsp;&emsp;这是我的[独立博客](http://qinyuanpei.com)，目前和[CSDN](http://blog.csdn.net/qinyuanpei)都在同时维护。它是我想要努力去打造个人品牌的一个途径。虽然通过写流行技术这种方式能让我在短期内拥有大量读者，可是我明白：只有真正优质的原创内容方能让我在技术和写作上有所提升，所以我正在努力摆脱写简单而直白的内容，我希望写些充满深度和思考的文章，进而逐步形成我的写作风格。这个博客采用[Hexo](https://hexo.io)搭建，由[Github Pages](https://pages.github.com/)提供免费托管服务，图片托管在[七牛云存储](www.qiniu.com)上，感谢[TravisCI](https://www.travis-ci.org)提供持续集成服务，感谢[Yusen](https://github.com/yscoder)提供[indigo](https://github.com/yscoder/hexo-theme-indigo)主题，本站在此基础上进行了大量修改。再次声明：<blockquote><p>本站内容全部都是由本人经过原始创作而来，采用国际知识共享“<b>署名</b>-<b>非商业使用</b>-<b>禁止演绎</b>”协议4.0进行授权许可。谢绝任何性质的转载，商用盈利性质组织如论坛、公众号请在取得我授权后转载，强烈谴责各种不保留署名权和原始链接的转发。未经本人同意禁止转载本站内容，转载请注明作者姓名和文章出处。</p></blockquote>
+
+
+###联系方式
+&emsp;&emsp;如果您对本站中的内容感兴趣或者存在疑问，欢迎通过以下方式和我取得联系，促进相互间交流和学习是我撰写博客的目的和意义。所以如果您是希望我能够替您免费代劳，以满足您作为Reached Party的尊严的虚荣心的话，我希望我们永远不要认识，因为我没有义务提供除了想法、经验和知识以外的东西，而这些我都是免费地向互联网输出的。
+
+| 社交媒体  | 访问入口                                        | 
+| ----------|:-----------------------------------------------:|
+| QQ        | 875974254                                       | 
+| E-mail    | [发邮件给我](mailto:qinyuanpei@163.com)         |   
+| Github    | [Fllow Me](https://github.com/qinyuanpei)       |
+| 新浪微博  | [+关注](http://weibo.com/u/1278609231)          |
+| 知乎主页  | [+关注](http://www.zhihu.com/people/qinyuanpei) |
+| CSDN      | [访问CSDN](http://blog.csdn.net/qinyuanpei)     |
+
+###捐助支持
+&emsp;&emsp;如果您觉得我的文章对您有帮助的话，这将使我对自己创作的内容更加充满信心；如果您愿意为我的写作提供物质上的支持，这将使我获得创作优质内容的长期动力！欢迎使用微信或支付宝扫描这里或者文章里的二维码为我的文章打赏，您的支持将鼓励我继续创作！
+
+![扫描二维码打赏](https://qinyuanpei.github.io/assets/images/reward.png)
+
+      
+
+
+
+
+
