@@ -3,6 +3,10 @@
     <%- partial('plugins/tajs') %>
     <%- partial('plugins/baidu') %>
     <meta charset="utf-8">
+    <!-- HTTP 1.1 -->  
+    <meta http-equiv="pragma" content="no-cache">  
+    <!-- HTTP 1.0 -->  
+    <meta http-equiv="cache-control" content="no-cache">
     <% if(theme.google_site_verification){ %>
     <meta name="google-site-verification" content="<%- theme.google_site_verification%>">
     <% }%>
