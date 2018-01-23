@@ -90,4 +90,24 @@ douban:
     title: '电影'
     quote: '要么好好活着，要么赶紧去死——《独自等待》'
 
+# JSON-Content
+jsonContent:
+  meta: false
+  pages: false
+  posts:
+    title: true
+    date: true
+    path: true
+    text: true
+    raw: false
+    content: false
+    slug: false
+    updated: false
+    comments: false
+    link: false
+    permalink: false
+    excerpt: false
+    categories: false
+    tags: true
+
 
