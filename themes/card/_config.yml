@@ -28,7 +28,7 @@ avatar_link: /
 # 头像背景图
 brand: assets/images/brand.jpg
 # favicon
-favicon: /favicon.ico
+favicon: assets/images/favicon.ico
 
 # email
 email: qinyuanpei@163.com
