@@ -12,10 +12,13 @@ notifications:
 # S: Build Lifecycle
 install:
   - npm install
+  - python -m pip install datetime
 
 script:
   - hexo clean
   - hexo generate
+  - python readme.py
+  - cp README.md ./public/README.md
 
 after_script:
   - cd ./public
