@@ -1,4 +1,5 @@
-language: node_js
+
+-language: node_js
 node_js: stable
 
 notifications:
@@ -16,6 +17,7 @@ install:
 script:
   - hexo clean
   - hexo generate
+  - cp README.md ./public/README.md
 
 after_script:
   - cd ./public
