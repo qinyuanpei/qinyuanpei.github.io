@@ -264,9 +264,9 @@ coffee = new MilkDecorator(new Milk()).Mix(coffee)
 
 &emsp;&emsp;关于C#中的Attribute和AOP如何去集成，在Unity和Aspect Core这两个框架中都有涉及，主流的AOP都在努力向这个方向去靠拢，Java中的注解同样不会跳出这个设定，因为编程技术到了今天，语言间的差别微乎其微，我至今依然可以听到，换一种语言就能让问题得到解决的声音，我想说，软件工程是没有银弹的，人类社会的复杂性会永远持续地存在下去，你看微信这样一个社交软件，其对朋友圈权限的粒度之细足以令人叹服。有朋友尝试在C#中借鉴Python的装饰器，并在一组文章中记录了其中的心得，这里分享给大家，希望对这个问题有兴趣的朋友，可以继续努力研究下去，AOP采用哪种方式实现重要吗？有人用它做权限控制，有人用它做日志记录......允许差异的存在，或许才是我们真正需要从这个世界里汲取的力。
 
-[轻量级AOP框架-移植python的装饰器(Decorator)到C#(思考篇) ](https://www.cnblogs.com/leven/archive/2009/12/28/decorator-csharp-1.html)
+![轻量级AOP框架-移植python的装饰器(Decorator)到C#(思考篇) ](https://www.cnblogs.com/leven/archive/2009/12/28/decorator-csharp-1.html)
 
-[轻量级AOP框架-移植python的装饰器(Decorator)到C#(编码篇) ](http://www.cnblogs.com/leven/archive/2009/12/28/decorator-csharp-2.html)
+![轻量级AOP框架-移植python的装饰器(Decorator)到C#(编码篇) ](http://www.cnblogs.com/leven/archive/2009/12/28/decorator-csharp-2.html)
 
 
 # 本文小结
