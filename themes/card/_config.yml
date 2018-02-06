@@ -100,11 +100,22 @@ disqus_shortname: false
 uyan_uid: false
 
 # 是否使用 gitment，https://github.com/imsun/gitment
-gitment:
+gitment: 
+  enable: false
   owner: qinyuanpei
   repo: qinyuanpei.github.io
   client_id: 3b6c49ff50fcaac5021c
   client_secret: 31ed8fc621160dc634a20b15a0f2ebd543d21c40
+
+# 是否使用 gitalk，https://github.com/gitalk/gitalk
+gitalk:
+  enable: true
+  repo: qinyuanpei.github.io
+  owner: qinyuanpei
+  admin: qinyuanpei
+  clientID: 3b6c49ff50fcaac5021c
+  clientSecret: 31ed8fc621160dc634a20b15a0f2ebd543d21c40
+  distractionFreeMode: false, 
 
 # Valine Comment system. https://valine.js.org
 valine:
