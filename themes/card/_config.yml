@@ -115,7 +115,7 @@ gitalk:
   admin: qinyuanpei
   clientID: 3b6c49ff50fcaac5021c
   clientSecret: 31ed8fc621160dc634a20b15a0f2ebd543d21c40
-  distractionFreeMode: false, 
+  distractionFreeMode: false
 
 # Valine Comment system. https://valine.js.org
 valine:
