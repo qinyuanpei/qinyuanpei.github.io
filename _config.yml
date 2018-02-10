@@ -78,16 +78,19 @@ feed:
 # Deployment
 ## Docs: http://hexo.io/docs/deployment.html
 deploy:
-  type:
+- type: git
+  repo: git@git.coding.net:qinyuanpei/qinyuanpei.coding.me.git
+  branch: master
+  message: Updated at {{ now('YYYY-MM-DD HH:mm:ss') }}
 
 # Douban Music&Movie
 douban:
   user: 60029335
   book:
-    title: '读书'
+    title: '书单'
     quote: '上士闻道，勤而行之；中士闻道，若存若亡；下士闻道，大笑之。不笑不足以为道——《道德经》'
   movie:
-    title: '电影'
+    title: '影单'
     quote: '要么好好活着，要么赶紧去死——《独自等待》'
 
 # JSON-Content
