@@ -87,11 +87,11 @@ deploy:
 douban:
   user: 60029335
   book:
-    title: '书单'
-    quote: '上士闻道，勤而行之；中士闻道，若存若亡；下士闻道，大笑之。不笑不足以为道——《道德经》'
+    title: '读书'
+    quote: '志当存高远，思当在深微。'
   movie:
-    title: '影单'
-    quote: '要么好好活着，要么赶紧去死——《独自等待》'
+    title: '电影'
+    quote: '爱情这东西，时间很关键，认识得太早或太晚，都不行。'
 
 # JSON-Content
 jsonContent:
