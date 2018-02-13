@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "hexo": {
-    "version": "3.5.0"
+    "version": "3.4.4"
   },
   "dependencies": {
     "hexo": "^3.4.4",
@@ -21,6 +21,7 @@
     "hexo-renderer-less": "^0.1.3",
     "hexo-renderer-marked": "^0.2.4",
     "hexo-renderer-stylus": "^0.2.0",
-    "hexo-server": "^0.1.2"
+    "hexo-server": "^0.1.2",
+    "hexo-tag-cloudmusic": "^1.2.2"
   }
 }
