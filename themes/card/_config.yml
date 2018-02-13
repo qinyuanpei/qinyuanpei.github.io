@@ -20,6 +20,12 @@ menu:
   th-list:
     text: 分类
     url: /categories
+  bookmark:
+    text: 读书
+    url: /books
+  film:
+    text: 电影
+    url: /movies
 
 # 你的头像url
 avatar: assets/images/avatar.jpg

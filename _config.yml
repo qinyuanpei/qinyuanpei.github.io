@@ -2,7 +2,7 @@
 ## Docs: http://hexo.io/docs/configuration.html
 ## Source: https://github.com/hexojs/hexo/
 
-# Site
+# 标题设置
 title: 飞鸿踏雪的部落格
 eamil: qinyuanpei@163.com
 subtitle: 人生到处知何似，应似飞鸿踏雪泥
@@ -11,7 +11,7 @@ author: Payne
 language: zh-CN
 timezone:
 
-# URL
+# URL设置
 ## If your site is put in a subdirectory, set url as 'http://yoursite.com/child' and root as '/child/'
 url: http://qinyuanpei.github.io
 root: /
@@ -19,7 +19,7 @@ permalink: :year/:month/:day/:title.html
 permalink_defaults:
 
 
-# Directory
+# 目录设置
 source_dir: source
 public_dir: public
 tag_dir: tags
@@ -29,7 +29,7 @@ code_dir: downloads/code
 i18n_dir: :lang
 skip_render:
 
-# Writing
+# 写作设置
 new_post_name: :title.md # File name of new posts
 default_layout: post
 titlecase: false # Transform title into titlecase
@@ -45,37 +45,35 @@ highlight:
   auto_detect: true
   tab_replace:
 
-# Category & Tag
+# 分类与标签
 default_category: uncategorized
 category_map:
 tag_map:
 
-# Date / Time format
+# 日期设置
 ## Hexo uses Moment.js to parse and display date
 ## You can customize the date format as defined in
 ## http://momentjs.com/docs/#/displaying/format/
 date_format: YYYY-MM-DD
 time_format: HH:mm:ss
 
-# Pagination
+# 分页设置
 ## Set per_page to 0 to disable pagination
 per_page: 10
 pagination_dir: pages
 
-# Extensions
+# 主题设置
 ## Plugins: http://hexo.io/plugins/
 ## Themes: http://hexo.io/themes/
 theme: card
 
-# RSS feed
+# RSS订阅
 feed:
   type: atom
   path: atom.xml
   limit: 20 
 
-# CloudMusic
-
-# Deployment
+# 部署设置
 ## Docs: http://hexo.io/docs/deployment.html
 deploy:
 - type: git
@@ -83,17 +81,17 @@ deploy:
   branch: master
   message: Updated at {{ now('YYYY-MM-DD HH:mm:ss') }}
 
-# Douban Music&Movie
+# 豆瓣插件
 douban:
   user: 60029335
   book:
     title: '读书'
-    quote: '志当存高远，思当在深微。'
+    quote: ''
   movie:
     title: '电影'
-    quote: '爱情这东西，时间很关键，认识得太早或太晚，都不行。'
+    quote: ''
 
-# JSON-Content
+# JSON内容
 jsonContent:
   meta: false
   pages: false
@@ -112,11 +110,6 @@ jsonContent:
     excerpt: false
     categories: false
     tags: true
-
-cloudmusic:
-  widgetType:  iframe ## It can be embed or iframe
-  widgetSize:  small ## It can be small or large
-  autoPlay:  0 ## It can be 0 to set autoPlay disable or 1 to set autoPlay enable
 
 
 
