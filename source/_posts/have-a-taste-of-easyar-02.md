@@ -1,8 +1,13 @@
+---
 title: EasyAR尝鲜系列教程之自定义Marker的实现
+categories:
+  - Unity3D
+tags:
+  - 增强现实
+  - AR
+  - Unity3D
+abbrlink: 1156673678
 date: 2015-11-03 10:23:14
-categories: [Unity3D]
-tags: [增强现实,AR,Unity3D]
-
 ---
 &emsp;&emsp;各位朋友大家好，欢迎大家关注我的博客，我是**秦元培**，我的博客地址是[http://qinyuanpei.com](http://qinyuanpei.com "秦元培")。通过本系列第一篇文章，我们初步了解了EasyAR这个增强现实引擎，这次我们来尝试自己定义一个Marker，这样我们就可以用自己喜欢的图片来作为Marker。因为目前EasyAR文档并不完善，所以下面的这些内容可能更多的是我个人的尝试和探索。如果大家对此感兴趣的话继续往下看否则就不要往下看了，因为我担心在官方正式文档出来以后大家可能会骂我啊。好了，对这个话题感兴趣的朋友就请继续往下看吧！
 

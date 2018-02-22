@@ -1,7 +1,14 @@
+---
 title: Unity3D游戏开发之使用disunity提取Unity3D游戏资源
+categories:
+  - 单机游戏
+tags:
+  - 穹之扉
+  - Unity3D
+  - disunity
+  - 反编译
+abbrlink: 1082185388
 date: 2015-04-03 13:29:18
-categories: [单机游戏]
-tags: [穹之扉,Unity3D,disunity,反编译]
 ---
 &emsp;&emsp;各位朋友，大家好，我是秦元培。今天博主想和分享的是使用disunity提取Unity3D游戏素材。这个工具呢，博主在[Unity3D游戏开发之反编译AssetBundle提取游戏资源](http://www.qinyuanpei.com/2015/04/02/unity3d-development-with-assetbundle/)这篇文章中其实已经提到过了，不过因为有些朋友对如何使用这个工具依然存在问题，所以博主决定特地写一篇文章来讲解如何使用disunity来提取Unity3D游戏中的素材。
 

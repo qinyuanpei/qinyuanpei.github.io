@@ -1,7 +1,12 @@
+---
 title: 函数式编程常用术语
-date: 2017-02-02 19:21:12
 categories: 读书笔记
-tags: [函数式编程,读书,编程]
+tags:
+  - 函数式编程
+  - 读书
+  - 编程
+abbrlink: 2171683728
+date: 2017-02-02 19:21:12
 ---
 &emsp;&emsp;近年来函数式编程这种概念渐渐流行起来，尤其是在React/Vuejs这两个前端框架的推动下，函数式编程就像股新思潮一般瞬间席卷整个技术圈。虽然博主接触到的前端技术并不算深入，可这并不妨碍我们通过类似概念的延伸来理解这种概念。首先，函数式编程是一种编程范式，而我们所熟悉的常见编程范式则有**命令式编程(Imperative Programmming)**、**函数式编程(Functional Programming)**、**逻辑式编程(Logic Programming)**、**声明式编程(Declarative Programming)**和**响应式编程(Reactive Programming)**等。现代编程语言  在发展过程中实际上都在借鉴不同的编程范式，比如Lisp和Haskell  是最经典的函数式编程语言，而SmartTalk、C++和Java则是最经典的命令式编程语言。微软的C#语言最早主要借鉴Java语言，在其引入lambda和LINQ特性以后，使得C#开始具备实施函数式编程的基础，而最新的Java8同样开始强化lambda这一特性，为什么lambda会如此重要呢？这或许要从函数式编程的基本术语开始说起。
 

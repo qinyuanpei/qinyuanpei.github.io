@@ -1,7 +1,13 @@
+---
 title: EasyAR尝鲜系列教程之Hello EasyAR
+categories:
+  - Unity3D
+tags:
+  - 增强现实
+  - AR
+  - Unity3D
+abbrlink: 3120185261
 date: 2015-10-30 09:44:18
-categories: [Unity3D]
-tags: [增强现实,AR,Unity3D]
 ---
 &emsp;&emsp;各位朋友，大家好，我是秦元培，欢迎大家关注我的博客，我的博客地址是[http://qinyuanpei.com](http://qinyuanpei.com)。从今天起博主将为大家带来EasyAR尝鲜系列教程，本教程适用的对象是增强现实应用开发者和Unity3D游戏开发者，在阅读本教程前请确保具备增强现实应用开发及Unity3D游戏开发的相关基础知识。在本节及后续内容中，博主将以国产增强现实引擎EasyAR为主要开发平台来带领大家一起走进增强现实应用开发的世界，希望大家能够喜欢！
 

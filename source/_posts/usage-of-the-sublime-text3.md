@@ -1,9 +1,15 @@
+---
 title: 在Sublime Text3下安装Package Control
 toc: true
 comment: true
+categories:
+  - 开发工具
+tags:
+  - Sublime
+  - 编辑器
+  - IDE
+abbrlink: 570137885
 date: 2015-04-17 12:54:41
-categories: [开发工具]
-tags: [Sublime,编辑器,IDE]
 ---
 &emsp;&emsp;Sublime Text,是这个地球上最好的代码编辑器，没有之一。因为在过去的一段时间里，我使用的版本是SublimeText2，所以听说Sublime Text3版本稳定后，决定开始尝鲜。哈哈，我就是这么一个"喜新厌旧"的人！Sublime的强大不仅仅在它优雅的外表，更为重要的是她无可匹敌的扩展性，就是说我们可以通过插件来扩展它的功能，这对于一个喜欢DIY的人来说简直是无法抗拒的诱惑。不过在接收这些诱惑前，我们需要一个工具Package Control，它是Sublime里最为基础、最为重要的插件，好了，现在问题来了，Sublime怎么安装Package Control！
 

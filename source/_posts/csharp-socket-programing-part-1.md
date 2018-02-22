@@ -1,7 +1,14 @@
-title: "C#中Socket通信编程的同步实现"
+---
+title: 'C#中Socket通信编程的同步实现'
+categories:
+  - 编程语言
+tags:
+  - Socket
+  - 通信
+  - 同步
+  - 多线程
+abbrlink: 3959327595
 date: 2015-03-15 15:05:56
-categories: [编程语言]
-tags: [Socket,通信,同步,多线程]
 ---
 &emsp;&emsp;本文通过分析和总结C#中Socket通信编程的关键技术，按照同步实现的方式实现了一个简单的Socket聊天程序，目的是通过这个程序来掌握Socket编程，为进一步开发Unity3D网络游戏打下一个坚实的基础。
 

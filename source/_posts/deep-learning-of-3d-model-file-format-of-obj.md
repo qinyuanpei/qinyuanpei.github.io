@@ -1,8 +1,13 @@
+---
 title: 解析OBJ模型并将其加载到Unity3D场景中
+categories:
+  - 游戏开发
+tags:
+  - OBJ
+  - Unity3D
+  - 格式
+abbrlink: 1124152964
 date: 2015-11-15 13:07:57
-categories: [游戏开发]
-tags: [OBJ,Unity3D,格式]
-
 ---
 &emsp;&emsp;各位朋友，大家好，欢迎大家关注我的博客，我是**秦元培**，我的博客地址是[http://qinyuanpei.com](http://qinyuanpei.com)。今天想和大家交流的是解析obj模型并将其加载到Unity3D场景中，虽然我们知道Unity3D是可以直接导入OBJ模型的，可是有时候我们并不能保证我们目标客户知道如何使用Unity3D的这套制作流程，可能对方最终提供给我们的就是一个模型文件而已，所以这个在这里做这个尝试想想还是蛮有趣的呢，既然如此，我们就选择在所有3D模型格式中最为简单的OBJ模型来一起探讨这个问题吧！<!--more-->
 

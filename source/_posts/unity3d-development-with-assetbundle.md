@@ -1,7 +1,14 @@
+---
 title: Unity3D游戏开发之反编译AssetBundle提取游戏资源
+categories:
+  - 游戏开发
+tags:
+  - Unity3D
+  - 游戏开发
+  - AssetBundle
+  - 资源提取
+abbrlink: 2799263488
 date: 2015-04-02 20:37:52
-categories: [游戏开发]
-tags: [Unity3D,游戏开发,AssetBundle,资源提取]
 ---
 &emsp;&emsp;各位朋友，大家好，欢迎大家关注我的博客，我是秦元培，我的博客地址是[http://www.qinyuanpei.com](http://www.qinyuanpei.com)。今天我们来说说通过反编译Unity3D的AssetBundle来提取游戏资源，博主写这篇文章的目的并非是要教大家如何去破解一款基于Unity3D引擎开发的游戏，而是想通过今天这篇文章来告诉大家如何在开发Unity3D游戏的过程中保护自己的游戏资源。
 

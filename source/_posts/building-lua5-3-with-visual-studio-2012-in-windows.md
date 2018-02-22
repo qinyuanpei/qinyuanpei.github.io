@@ -1,7 +1,13 @@
+---
 title: 在Windows下使用Visual Studio编译Lua5.3
+categories:
+  - 编程语言
+tags:
+  - Lua
+  - 编译
+  - Visual Studio
+abbrlink: 3642630198
 date: 2015-04-16 14:50:35
-categories: [编程语言]
-tags: [Lua,编译,Visual Studio]
 ---
 &emsp;&emsp;Lua5.3已经发布好长时间了，可是因为[LuaForWindows](http://files.luaforge.net/releases/luaforwindows/luaforwindows)的Lua版本无法和官方保持一致，所以想尝试下编译Lua5.3的源代码，因为作为一名合格的程序员，是应该要懂得编译原理的相关内容的啊(可是我真的没有学过编译原理啊!.....)。好了，那么今天博主将在文章中和大家分享自己编译Lua5.3的过程，希望能够对大家学习和使用Lua有些帮助吧！
 

@@ -1,7 +1,14 @@
-title:  SDL游戏开发系列第一话：Hello SDL
+---
+title: SDL游戏开发系列第一话：Hello SDL
+categories:
+  - 游戏开发
+tags:
+  - SDL
+  - 游戏
+  - 图形
+  - 引擎
+abbrlink: 183718218
 date: 2015-07-25 15:19:01
-categories: [游戏开发]
-tags: [SDL,游戏,图形,引擎]
 ---
 &emsp;&emsp;各位读者朋友大家好，我是秦元培，欢迎大家关注我的博客，我的博客地址是[http://qinyuanpei.com](http://qinyuanpei.com)。从今天起博主将带领大家一起走进SDL游戏开发的世界，如果说此前的Unity3D游戏开发系列文章让大家感受到的是游戏引擎工具化开发的方便与快捷，那么这一次就让我们以SDL库为基础，通过了解游戏开发中的底层图形渲染、输入事件响应等内容来全面认识游戏引擎，博主为SDL游戏开发系列文章建立了专栏，大家可以通过[这里](http://blog.csdn.net/column/details/sdlgame.html)获取所有的系列文章，希望大家能够喜欢！好了，作为[SDL游戏开发系列](http://blog.csdn.net/column/details/sdlgame.html)的第一篇文章，按照技术性文章写作的国际惯例这将是一篇介绍SDL入门内容的文章，因此这篇文章叫做：Hello SDL。
 

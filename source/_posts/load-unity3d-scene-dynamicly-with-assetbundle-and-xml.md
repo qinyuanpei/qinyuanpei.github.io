@@ -1,7 +1,13 @@
+---
 title: Unity3D游戏开发之使用AssetBundle和Xml实现场景的动态加载
+categories:
+  - 游戏开发
+tags:
+  - Unity3D
+  - 动态加载
+  - AssetBundle
+abbrlink: 1467630055
 date: 2015-06-15 07:24:17
-categories: [游戏开发]
-tags: [Unity3D,动态加载,AssetBundle]
 ---
 &emsp;&emsp;各位朋友，大家好，我是秦元培，欢迎大家关注我的博客，我的博客地址是[http://qinyuanpei.com](http://qinyuanpei.com)。 今天我想和大家聊聊在Unity3D中关于场景的动态加载的问题。众所周知在Unity3D游戏开发过程中，因为受到游戏容量、平台性能和热更新等诸多因素的限制，我们可能无法将所有的游戏场景打包到项目中然后相对"静态"地加载，那么这个时候就需要我们使用动态加载的方式来将游戏场景加载到场景中。博主在研究了Unity3D动态加载的相关资料后发现，目前Unity3D中实现动态加载场景的方式主要有以下两种方式：<!--more-->
 

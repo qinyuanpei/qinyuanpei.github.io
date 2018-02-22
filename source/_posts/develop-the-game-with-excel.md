@@ -1,7 +1,13 @@
+---
 title: 当Unity3D游戏开发遇上Excel
+categories:
+  - 游戏开发
+tags:
+  - Unity3D
+  - 游戏
+  - Excel
+abbrlink: 906436376
 date: 2015-01-25 19:41:57
-categories: [游戏开发]
-tags: [Unity3D,游戏,Excel]
 ---
 &emsp;&emsp;各位朋友，大家好，我是秦元培，欢迎大家关注我的博客，我的博客地址是[http://blog.csdn.net/qinyuanpei](http://blog.csdn.net/qinyuanpei)。今天我们来聊聊常用办公软件Excel和游戏开发那不为人知的秘密。今天的内容将涉及到Excel在游戏开发中的应用以及如何利用程序解析Excel中的数据。
 

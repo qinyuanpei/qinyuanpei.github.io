@@ -1,7 +1,13 @@
+---
 title: Unity3D塔防游戏开发项目讲解(下)
+categories:
+  - 游戏开发
+tags:
+  - 游戏开发
+  - Unity3D
+  - 塔防
+abbrlink: 1176959868
 date: 2015-01-21 13:50:48
-categories:  [游戏开发]
-tags: [游戏开发,Unity3D,塔防]
 ---
 各位朋友，大家好，我是秦元培，欢迎大家关注我的博客，我的博客地址是[http://blog.csdn.net/qinyuanpei](http://blog.csdn.net/qinyuanpei)。我们知道一个完整的塔防游戏由地图、敌人、防守单位三个部分组成，在上一篇文章中我们已经对地图这块儿进行了全面的讲解，今天我们来说说敌人和防守单位。
 

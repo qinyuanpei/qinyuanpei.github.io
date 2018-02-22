@@ -1,10 +1,13 @@
-title: 《C#多线程编程实战》读书笔记
+---
+title: '《C#多线程编程实战》读书笔记'
+categories:
+  - 读书笔记
+tags:
+  - 读书
+  - 多线程
+  - 笔记
+abbrlink: 345410188
 date: 2018-01-07 21:34:36
-categories: [读书笔记]
-tags: [读书,多线程,笔记]
-
-
-
 ---
 本文是一篇读书笔记，由[《C#多线程编程实战》](https://book.douban.com/subject/26574917/)一书中的内容整理而来，主要梳理了.NET中多线程编程相关的知识脉络，从Thread、ThreadPool、Task、async/await、并发集合、Parallel、PLINQ到Rx及异步I/O等内容，均有所覆盖。为了帮助大家理解本文内容，首先给出博主在阅读该书过程中绘制的思维导图，大家可以根据个人需要针对性的查漏补缺。
 

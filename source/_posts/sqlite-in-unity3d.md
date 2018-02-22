@@ -1,7 +1,13 @@
+---
 title: Unity3D游戏开发之SQLite让数据库开发更简单
+categories:
+  - 游戏开发
+tags:
+  - Unity3D
+  - SQLite
+  - 数据库
+abbrlink: 582264328
 date: 2015-07-09 09:47:06
-categories: [游戏开发]
-tags: [Unity3D,SQLite,数据库]
 ---
 &emsp;&emsp;各位朋友大家好，欢迎大家关注我的博客，我是秦元培，我是博客地址是[http://blog.csdn.net/qinyuanpei](http://blog.csdn.net/qinyuanpei)。在经历了一段时间的忙碌后，博主终于有时间来研究新的东西啦，今天博客向和大家一起交流的内容是在Unity3D游戏开发中使用SQLite进行数据库开发，坦白来讲，在我的技术体系中Web和数据库是相对薄弱的两个部分，因此正好这段时间项目需要和服务器、数据库进行交互，因此在接下来的文章中博主可能会更加倾向于讲解这方面的内容，希望大家能够喜欢啊！
 

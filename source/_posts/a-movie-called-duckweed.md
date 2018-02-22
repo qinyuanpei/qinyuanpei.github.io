@@ -1,7 +1,13 @@
+---
 title: 愿浮萍乘风破浪
+categories:
+  - 生活感悟
+tags:
+  - 韩寒
+  - 电影
+  - 青春
+abbrlink: 2314414875
 date: 2017-02-04 22:31:33
-categories: [生活感悟]
-tags: [韩寒,电影,青春]
 ---
 <embed src="//music.163.com/style/swf/widget.swf?sid=456185374&type=2&auto=1&width=320&height=66" width="340" height="86"  allowNetworking="all"></embed>
 

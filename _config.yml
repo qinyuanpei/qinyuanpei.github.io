@@ -3,7 +3,7 @@
 ## Source: https://github.com/hexojs/hexo/
 
 # 标题设置
-title: 飞鸿踏雪的部落格
+title: Payne's Blog
 eamil: qinyuanpei@163.com
 subtitle: 人生到处知何似，应似飞鸿踏雪泥
 description: 
@@ -15,7 +15,7 @@ timezone:
 ## If your site is put in a subdirectory, set url as 'http://yoursite.com/child' and root as '/child/'
 url: http://qinyuanpei.github.io
 root: /
-permalink: :year/:month/:day/:title.html
+permalink: posts/:abbrlink/
 permalink_defaults:
 
 
@@ -110,6 +110,12 @@ jsonContent:
     excerpt: false
     categories: false
     tags: true
+
+# 永久链接
+abbrlink:
+  alg: crc32  #support crc16(default) and crc32
+  rep: dec    #support dec(default) and hex
+
 
 
 

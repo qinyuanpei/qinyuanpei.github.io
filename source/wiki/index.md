@@ -1,6 +1,7 @@
+---
 title: Wiki
 layout: post
-
+abbrlink: 2197779256
 ---
 
 # 算法

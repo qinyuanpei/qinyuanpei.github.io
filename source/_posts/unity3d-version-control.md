@@ -1,7 +1,14 @@
+---
 title: Unity3D游戏开发之从Unity3D项目版本控制说起
+categories:
+  - Unity3D
+tags:
+  - 版本控制
+  - Unity3D
+  - SVN
+  - Github
+abbrlink: 1320325685
 date: 2015-07-02 09:35:42
-categories: [Unity3D]
-tags: [版本控制,Unity3D,SVN,Github]
 ---
 
 &emsp;&emsp;各位朋友，大家好，欢迎大家关注我的博客，我是秦元培，我的独立博客地址是[http://qinyuanpei.com](http://qinyuanpei.com)、CSDN博客地址是[http://blog.csdn.net/qinyuanpei](http://blog.csdn.net/qinyuanpei)。今天我想和大家聊聊Unity3D游戏项目的版本控制。

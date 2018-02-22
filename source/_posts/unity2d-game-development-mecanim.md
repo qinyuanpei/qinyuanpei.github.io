@@ -1,7 +1,13 @@
+---
 title: 使用Mecanim动画系统来控制2D动画
+categories:
+  - 游戏开发
+tags:
+  - Mecanim
+  - 动画
+  - Unity3D
+abbrlink: 2583252123
 date: 2015-02-11 13:35:58
-categories: [游戏开发]
-tags: [Mecanim,动画,Unity3D]
 ---
 各位朋友，大家好，我是秦元培，欢迎大家关注我的博客，我的博客地址是[http://blog.csdn.net/qinyuanpei](http://blog.csdn.net/qinyuanpei)。今天我想和大家分享的话题是在Unity3D中使用Mecanim动画系统来控制2D动画。
 

@@ -1,7 +1,13 @@
+---
 title: 使用Coding.NET和Hexo实现网页游戏的发布
+categories:
+  - 独立博客
+tags:
+  - Hexo
+  - 游戏
+  - 部署
+abbrlink: 1150071886
 date: 2015-03-24 08:54:48
-categories: [独立博客]
-tags: [Hexo,游戏,部署]
 ---
 &emsp;&emsp;本文将尝试借助Coding.NET的项目演示功能，通过对Hexo中支持的发布类型进行扩充，实现可以在Hexo中发布网页游戏，从而方便博主展示游戏作品和帮助读者了解游戏效果。
 

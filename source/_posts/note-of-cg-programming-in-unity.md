@@ -1,7 +1,13 @@
+---
 title: 《Cg Programming in Unity》读书笔记
+categories:
+  - 读书笔记
+tags:
+  - Shader
+  - CG
+  - Unity
+abbrlink: 1670305415
 date: 2015-12-25 12:29:20
-categories: [读书笔记]
-tags: [Shader,CG,Unity]
 ---
 &emsp;&emsp;最近开始着手Shader语言的学习，因为Unity3D没有提供类似虚幻四引擎的材质编辑器功能，所以当在Unity3D中碰到需要提供引擎默认材质以外的效果的时候，就需要我们来编写Shader以实现各种特效，本文主要是结合《Cg Programming in Unity》这本书和[浅墨](http://blog.csdn.net/poem_qianmo/article/details/49405909)博客中关于Shader的这部分内容来学习和整理，目的是帮助博主快速掌握Shader语言。
 

@@ -1,7 +1,13 @@
-title: C#中Socket通信编程的异步实现
+---
+title: 'C#中Socket通信编程的异步实现'
+categories:
+  - 编程语言
+tags:
+  - Socket
+  - 异步
+  - 通信
+abbrlink: 2041685704
 date: 2015-03-22 09:37:04
-categories: [编程语言]
-tags: [Socket,异步,通信]
 ---
 &emsp;&emsp;本文将在C#中Socket同步通信的基础上，分析和研究Socket异步编程的实现方法，目的是深入了解Socket编程的基本原理，增强对网络游戏开发相关内容的认识。
 

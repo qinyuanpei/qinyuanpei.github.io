@@ -1,7 +1,13 @@
+---
 title: 使用Mono打造轻量级的.NET程序运行时
+categories:
+  - 编程语言
+tags:
+  - .NET
+  - Mono
+  - 跨平台
+abbrlink: 907824546
 date: 2016-03-25 12:47:58
-categories: [编程语言]
-tags: [.NET,Mono,跨平台]
 ---
 &emsp;&emsp;在[使用Mono让.NET程序跨平台运行]()这篇文章中，我们已经对Mono以及.NET程序的运行机制有了初步的理解。今天我想来谈谈"使用Mono打造轻量级的.NET运行时"这样一个话题。为什么我会有这样一种想法呢？因为Mono和.NET都可以执行IL代码，所以我用Mono来作为.NET程序的运行时是一个顺理成章的想法。由于.NET程序需要.NET Framework提供运行支持，所以当目标设备没有安装.NET Framework或者.NET Framework版本不对的时候，我们的程序都无法顺利运行。强迫用户安装.NET框架无疑会影响用户体验，在Windows XP尚未停止服务前，国内软件厂商为了兼容这些用户，通常会选择C++这类语言来编写原生应用，这就造成了国内.NET技术长期不被重视的现状。
 

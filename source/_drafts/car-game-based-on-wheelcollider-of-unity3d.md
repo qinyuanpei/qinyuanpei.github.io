@@ -1,8 +1,13 @@
+---
 title: 基于Unity3D的WheelCollider开发赛车游戏
+categories:
+  - 游戏引擎
+tags:
+  - 赛车
+  - WheelCollider
+  - 物理引擎
+abbrlink: 243334857
 date: 2015-12-14 15:56:22
-categories: [游戏引擎]
-tags: [赛车,WheelCollider,物理引擎]
-
 ---
 &emsp;&emsp;最近有朋友问到怎么用WheelCollider来模拟坦克履带的问题，因为对Unity引擎中物理相关内容研究相对匮乏，所以打算对引擎中的力、关节、碰撞等内容进行系统学习。Unity引擎中提供了一个称为车轮碰撞器，即WheelCollider的组件，这个碰撞器专门用来模拟汽车的车轮，所以从解决实际问题出发，我决定在今天的文章中针对WheelCollider组件来讲解下开发一个赛车游戏的基本过程。在解决了这个问题以后，我们就可以考虑解决使用WheelCollider来模拟坦克履带的问题，因为学习是一个循序渐进的过程，这些我们以后有机会再说，今天的核心内容就是使用WheelCollider组件来开发一个赛车游戏。
 

@@ -1,7 +1,13 @@
+---
 title: 基于Mono和VSCode打造轻量级跨平台IDE
+categories:
+  - 编程语言
+tags:
+  - Mono
+  - VSCode
+  - 跨平台
+abbrlink: 3568552646
 date: 2016-11-18 20:23:44
-categories: [编程语言]
-tags: [Mono,VSCode,跨平台]
 ---
 &emsp;&emsp;最近Visual Studio推出Mac版本的消息迅速在技术圈里刷屏，当工程师们最喜欢的笔记本电脑Mac，邂逅地球上最强大的集成开发环境Visual Studio的时候，会碰撞出怎样精彩的火花呢？在微软新任CEO纳德拉的“移动为先、云为先”战略下，微软的转变渐渐开始让人欣喜，从.NET Core、VSCode、TypeScript再到近期的Visual Studio For Mac，这一系列动作让我们感觉到，微软的技术栈越来越多地向着开源和跨平台两个方向努力。我们曾经固执地认为，微软的技术栈注定永远无法摆脱Windows的束缚，而事实上这个世界每天都在发生着变化。或许这次Visual Studio推出Mac版这件事情，本质上是微软收购的Xamarin公司旗下产品Xamarin Studio的一次改头换面。可是这件事情说明，微软正在努力让.NET技术栈融入更多的应用场景。对我而言，我是没有钱去买一台Mac的，所以在这篇文章中，我们将在Linux下通过Mono和VSCode来打造一个轻量级的IDE。而据说Mono会和Xamarin一样，将来会成为.NET基金会的一部分。
 

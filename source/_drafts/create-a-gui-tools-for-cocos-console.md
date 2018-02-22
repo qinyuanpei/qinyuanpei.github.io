@@ -1,7 +1,13 @@
+---
 title: 为Cocos Console创建一个图形化工具
+categories:
+  - 游戏引擎
+tags:
+  - Cocos2D-X
+  - 工具
+  - 游戏引擎
+abbrlink: 3491085179
 date: 2016-05-01 10:56:17
-categories: [游戏引擎]
-tags: [Cocos2D-X,工具,游戏引擎]
 ---
 &emsp;&emsp;最近在考虑给Cocos Console写一个图形化的工具，众所周知Cocos Console是Cocos2D-X引擎中提供的一个命令行工具，通过该工具我们可以完成诸如创建项目、运行项目和导出项目等常见的功能。可是说实话Cocos2D-X这个引擎除了对程序员相对友好以外，基本上是找不到任何可以和Unity3D这样完整的解决方案相媲美的优点的，因为Cocos2D-X整体上偏极客些，从最初的Cocos Studio到如今的Cocos Creator，这个引擎的工具链完善可谓是历尽艰辛，现在Cocos Creator整体上向Unity3D靠拢，说明Cocos2D-X终于意识到工具链对游戏引擎的重要性，所以现在这个方向是正确的，今天这里博主主要想和大家分享我为Cocos Console写的一个图形化的工具——Cocos 控制台。
 
