@@ -1,5 +1,5 @@
 ---
-title: '《C#多线程编程实战》读书笔记'
+title: 《C#多线程编程实战》读书笔记
 categories:
   - 读书笔记
 tags:
@@ -67,7 +67,7 @@ finally
 # 使用C# 6.0
 * Tips34：异步函数是C# 5.0引入的语言特性，它是基于TPL之上的更高级别抽象，真正简化了异步编程。要创建一个异步函数，首先需要使用async关键字标注一个方法，其次异步函数必须返回Task或Task类型，可以使用async void的方法，但是更推荐async Task的方法，使用async void的方法的唯一合理的地方就是在程序中使用顶层UI控制器事件处理器的时候，在使用async关键字标注的方法内部，可以使用await操作符，该操作符可与TPL任务一起工作，并获取该任务中异步操作的结果，在async方法外部不能使用await关键字，否则会有编译错误，异步函数代码中至少要拥有一个await关键字。
 * Tips35：在Windows GUI或ASP.NET等环境中不推荐使用Task.Wait和Task.Result，因为非常有可能会造成死锁。
-async可以和lambda表达式联用，在表达式体中应该至少含有一个await关键字标示，因为lambda表达式的类型无法通过自身推断，所以必须显式地向C#编译器指定类型。
+  async可以和lambda表达式联用，在表达式体中应该至少含有一个await关键字标示，因为lambda表达式的类型无法通过自身推断，所以必须显式地向C#编译器指定类型。
 * Tips36：异步并不总是意味着并行执行
 * Tips37：单个异步操作可以使用try…catch来捕获异常，而对于一个以上的异步操作，使用try…catch仅仅可以从底层的AggregateException对象中获得第一个异常，为了获得所有的异常，可以使用AggregateException的Flatten()方法将层级异常放入一个列表，并从中提取出所有的底层异常。
 * Tips38：通过Task实例的ConfigureAwait()方法，可以设置使用await时同步上下文的行为，默认情况下，await操作符会尝试捕捉同步上下文，并在其中执行代码，即调度器会向UI线程投入成千上百个后续操作任务，这会使用它的消息循环来异步地执行这些任务，当我们不需要在UI线程中运行这些代码时，向ConfigureAwait方法传入false将会是一个更高效的方案。
@@ -81,9 +81,9 @@ async可以和lambda表达式联用，在表达式体中应该至少含有一个
 * Tips45：对BlockingCollection进行迭代时，需要注意的是，使用GetConsumingEnumerable()进行迭代，因为虽然BlockingCollection实现了IEnumerable接口，但是它默认的行为是表示集合的“快照”，这不是我们期望的行为。
 # 使用PLINQ
 * Tips46：将程序分割成一组任务并使用不同的线程来运行不同的任务，这种方式被称为任务并行
-将数据分割成较小的数据块，对这些数据进行并行计算，然后聚合这些计算结果，这种编程模型称为数据并行
+  将数据分割成较小的数据块，对这些数据进行并行计算，然后聚合这些计算结果，这种编程模型称为数据并行
 * Tips47：结构并行确实更易维护，应该尽可能地使用，但它并不是万能的。通常有很多情况我们是不能简单地使用结构并行，那么以非结构化的方式使用TPL任务并行也是完全可以的。
-Parallel类中的Invoke方法是最简单的实现多任务并行的方法，Invoke方法会阻塞其它线程直到所有线程都完成。
+  Parallel类中的Invoke方法是最简单的实现多任务并行的方法，Invoke方法会阻塞其它线程直到所有线程都完成。
 * Tips48：Parallel类中的For和ForEach方法可以定义并行循环，通过传入一个委托来定义每个循环项的行为，并得到一个结果来说明循环是否成功完成，ParallelOptions类可以为并行循环定义最大并行数，使用CollectionToken取消任务，使用TaskScheduler类调度任务。
 * Tips49：ParallelLoopState可以用于从循环中跳出或者检查循环状态，它有两种方式：Break和Stop，Stop是指循环停止处理任何工作，而Break是指停止其之后的迭代，继续保持其之前的迭代工作。
 * Tips50：同Task类似，当使用AsParallel()方法并行查询时，我们将得到AggregateException，它将包含运行PLINQ期间发生的所有异常，我们可以使用Flatten()方法和Handle()方法来处理这些异常。
@@ -91,7 +91,7 @@ Parallel类中的Invoke方法是最简单的实现多任务并行的方法，Inv
 * Tips52：PLINQ中提供了丰富用以PLINQ查询的选项，例如WithCancellation()方法用以取消查询，这将导致引发OperationCanceledException异常，并取消剩余的工作；例如WithDegreeOfParallelism()方法用以指定执行查询时实际并行分割数，可以决定并行执行会占用多少资源及其性能如何；例如WithExecutionMode()可以重载查询执行的模式，即我们可以决定选择以顺序执行还是并行执行的方式去执行查询；例如WithMergeOptions()方法可以用以调整对查询结果的处理，默认PLINQ会将结果合并到单个线程中，因此在查询结果返回前，会缓存一定数量的结果，当发现查询花费大量时间时，更合理的方式是关闭结果缓存从而尽可能快地得到结果；例如AsOrdered()方法，用以告诉PLINQ我们希望按照集合中的顺序进行处理(并行条件下，集合中的项有可能不是按顺序被处理的)
 # 使用异步I/O
 * Tips53：异步I/O，对服务器而言，可伸缩性是最高优先级，这意味着单个用户消耗的资源越少越好，如果为每个用户创建多个线程，则可伸缩性并不好，在I/O密集型的场景中需要使用异步，因为不需要CPU工作，其瓶颈在磁盘上，这种执行I/O任务的方式成为I/O线程。
-在异步文件读写中，FileOptions.Asynchronous是一个非常重要的选项，无论有无此参数都可以，以异步的方式使用该文件，区别是前者仅仅是在线程池中异步委托调用，而后者可以对FileStream垒使用异步I/O。
+  在异步文件读写中，FileOptions.Asynchronous是一个非常重要的选项，无论有无此参数都可以，以异步的方式使用该文件，区别是前者仅仅是在线程池中异步委托调用，而后者可以对FileStream垒使用异步I/O。
 * Tips54：对HttpListener类，我们可以通过GetContextasync()方法来异步地获取上下文。
 * Tips55：对数据库而言，我们可以通过OpenAsync()、ExecuteNonQueryAsync()等方法异步地执行SQL语句。
 

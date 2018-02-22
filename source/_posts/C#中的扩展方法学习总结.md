@@ -1,5 +1,5 @@
 ---
-title: 'C#中的扩展方法学习总结'
+title: C#中的扩展方法学习总结
 categories:
   - 编程语言
 tags:

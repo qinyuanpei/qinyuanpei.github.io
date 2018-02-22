@@ -1,5 +1,5 @@
 ---
-title: '基于C#中的Trace实现一个简单的日志系统'
+title: 基于C#中的Trace实现一个简单的日志系统
 categories:
   - 编程语言
 tags:
