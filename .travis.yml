@@ -13,12 +13,10 @@ notifications:
 # S: Build Lifecycle
 install:
   - npm install
-  - pip3 install -r requirements.txt
 
 script:
   - hexo clean
   - hexo generate
-  - python3 HexoBlog.py
   - cp README.md ./public/README.md
 
 after_script:
