@@ -13,10 +13,6 @@ notifications:
 # S: Build Lifecycle
 install:
   - npm install
-  - wget https://www.python.org/ftp/python/3.6.4/Python-3.6.4.tar.xz
-  - tar xvf  Python-3.6.4.tar.xz
-  - cd ./configure 
-  - make && make install
   - pip3 install -r requirements.txt
 
 script:
