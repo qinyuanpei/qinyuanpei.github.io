@@ -116,7 +116,7 @@ gitment:
 # 是否使用 gitalk，https://github.com/gitalk/gitalk
 gitalk:
   enable: true
-  repo: qinyuanpei.github.io
+  repo: BlogComments
   owner: qinyuanpei
   admin: qinyuanpei
   clientID: 3b6c49ff50fcaac5021c
