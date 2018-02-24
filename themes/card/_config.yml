@@ -62,8 +62,8 @@ share: true
 
 # 是否开启打赏，关闭 reward: false
 reward:
-  title: 来而不往非礼也
-  wechat: /assets/images/wechat.png     #微信，关闭设为 false
+  title: 赠人玫瑰，手有余香
+  wechat: /assets/images/geizan.jpg     #微信，关闭设为 false
   alipay: /assets/images/alipay.jpg     #支付宝，关闭设为 false
 
 # 是否开启搜索
