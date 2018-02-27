@@ -87,7 +87,7 @@ cnzz: false
 baidu_tongji: false
 
 # 腾讯分析，如要开启，输入站点id
-tajs: false
+tajs: 65355341
 
 # google
 google_analytics: false
