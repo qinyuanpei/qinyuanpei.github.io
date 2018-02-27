@@ -9,7 +9,6 @@ notifications:
     on_success: change # default: change
     on_failure: always # default: always
 
-# S: Build Lifecycle
 install:
   - npm install
 
@@ -25,11 +24,15 @@ after_script:
   - git config user.email "qinyuanpei@163.com"
   - git add .
   - git commit -m "Update Blog By TravisCI With Build $TRAVIS_BUILD_NUMBER"
-  - git push --force --quiet "https://${CI_TOKEN}@${GH_REF}" master:master
+  # Github Pages
+  - git push --force --quiet "https://${CI_TOKEN}@${GH_REF}" master:master 
+  # Coding Pages
   - git push --force --quiet "https://qinyuanpei:${CO_TOKEN}@${CO_REF}" master:master
   - git tag v0.0.$TRAVIS_BUILD_NUMBER -a -m "Auto Taged By TravisCI With Build $TRAVIS_BUILD_NUMBER"
+  # Github Pages
   - git push --quiet "https://${CI_TOKEN}@${GH_REF}" master:master --tags
-# E: Build LifeCycle
+  # Coding Pages
+  - git push --quiet "https://qinyuanpei:${CO_TOKEN}@${CO_REF}" master:master --tags
 
 branches:
   only:
@@ -37,5 +40,7 @@ branches:
 
 env:
  global:
+   # Github Pages
    - GH_REF: github.com/qinyuanpei/qinyuanpei.github.io
+   # Coding Pages
    - CO_REF: git.coding.net/qinyuanpei/qinyuanpei.coding.me.git
