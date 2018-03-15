@@ -116,6 +116,12 @@ abbrlink:
   alg: crc32  #support crc16(default) and crc32
   rep: dec    #support dec(default) and hex
 
+# 评论初始化
+initIssues:
+  owner: qinyuanpei
+  repo: BlogComments
+  token: b76cfcbfbf87505eda071f17c909982a0eb8d815
+
 
 
 
