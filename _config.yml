@@ -86,10 +86,10 @@ douban:
   user: 60029335
   book:
     title: '读书'
-    quote: '哪里会有人喜欢孤独，不过是不喜欢失望 —— 村上春树'
+    quote: '哪里会有人喜欢孤独，不过是不喜欢失望'
   movie:
     title: '电影'
-    quote: '如果提前了解了你所要面对的人生，你是否还有勇气前来？ —— 《吴雯熙东》'
+    quote: '如果提前了解了你所要面对的人生，你是否还有勇气前来？'
 
 # JSON内容
 jsonContent:
@@ -121,7 +121,6 @@ issues:
   owner: qinyuanpei
   repo: BlogComments
   token: 52318dae4ef574e063fae602ae957d38b8627b8a 
-
 
 
 
