@@ -16,19 +16,19 @@ date: 2018-03-21 19:35:40
 ```CSharp
 public short LoginTerminal(string uid,string pwd)
 {
-	try
-	{
-		Log.BeginLog()
-		return SDK.Login(uid,pwd)
-	}
+    try
+    {
+	    Log.BeginLog()
+	    return SDK.Login(uid,pwd)
+    }
 	catch(Exception ex)
 	{
-		log.LogError(ErrorCode.E2301,ex)
-		throw new TerminalException(ex.Message);
+	    log.LogError(ErrorCode.E2301,ex)
+	    throw new TerminalException(ex.Message);
 	}
-	finally
+    finally
 	{
-		Log.EndLog()
+	    Log.EndLog()
 	}
 }
 
@@ -76,7 +76,7 @@ var bussiness = container.Resolve<IBussiness>();
 * Microsoft.Practices.Unity.dll
 * Microsoft.Practices.Unity.Interception.Configuration.dll
 * Microsoft.Practices.Unity.Interception.dll
-考虑到我们这里需要实现两种功能，针对异常的异常处理流程，以及正常的日志记录流程，为此我们将实现ExceptionHandler和LogHandler两个组件。下面我们来一起了解这两个组件的实现过程，这里博主选择了最简单的ICallHandler接口，而非更一般的IInterceptionBehavior接口，主要希望让这个过程更简单些，同时实现在方法粒度上的可控，即我们可以选择性的去拦截某一个方法，而非全部的方法，因为在实际业务中并非所有的方法都需要拦截。
+  考虑到我们这里需要实现两种功能，针对异常的异常处理流程，以及正常的日志记录流程，为此我们将实现ExceptionHandler和LogHandler两个组件。下面我们来一起了解这两个组件的实现过程，这里博主选择了最简单的ICallHandler接口，而非更一般的IInterceptionBehavior接口，主要希望让这个过程更简单些，同时实现在方法粒度上的可控，即我们可以选择性的去拦截某一个方法，而非全部的方法，因为在实际业务中并非所有的方法都需要拦截。
 
 ## LogHandler的实现
 &emsp;&emsp;LogHandler主要用于记录日志，所以我们需要记录方法的名字，方法的参数以及方法执行的结果，甚至是是否引发异常，这些功能在AOP中是相对基础的功能，Unity框架为我们提供了这些基础设施，我们只要就可以获取到这些信息，然后将其记录到日志中即可。这里的代码如下：
