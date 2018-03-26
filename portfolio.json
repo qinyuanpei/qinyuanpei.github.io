@@ -1,0 +1,37 @@
+{
+   "items":
+   [
+       {
+        "title":"萤火虫之诗",
+        "date":"2016.4",
+        "cover":"http://o7bkkhiex.bkt.clouddn.com/copy_item-firefly.jpg",
+        "subTitle":"A Poetry Single Site",
+        "description":"一个简单的单页面古诗展示网站,难点是用 JavaScript 实现粒子的随机布朗运动, 打开时建议关掉其它声音,页面有我个人剪辑好的音效。页面快捷键: 「C」切换主题,「M」页面静音(音频和主题切换的状态是用 cookie 实现的)",
+        "link":"http://baidu.com"
+       },
+       {
+        "title":"萤火虫之诗",
+        "date":"2016.4",
+        "cover":"http://o7bkkhiex.bkt.clouddn.com/copy_item-firefly.jpg",
+        "subTitle":"A Poetry Single Site",
+        "description":"一个简单的单页面古诗展示网站,难点是用 JavaScript 实现粒子的随机布朗运动, 打开时建议关掉其它声音,页面有我个人剪辑好的音效。页面快捷键: 「C」切换主题,「M」页面静音(音频和主题切换的状态是用 cookie 实现的)",
+        "link":"http://baidu.com"
+       },
+       {
+        "title":"萤火虫之诗",
+        "date":"2016.4",
+        "cover":"http://o7bkkhiex.bkt.clouddn.com/copy_item-firefly.jpg",
+        "subTitle":"A Poetry Single Site",
+        "description":"一个简单的单页面古诗展示网站,难点是用 JavaScript 实现粒子的随机布朗运动, 打开时建议关掉其它声音,页面有我个人剪辑好的音效。页面快捷键: 「C」切换主题,「M」页面静音(音频和主题切换的状态是用 cookie 实现的)",
+        "link":"http://baidu.com"
+       },
+       {
+        "title":"萤火虫之诗",
+        "date":"2016.4",
+        "cover":"http://o7bkkhiex.bkt.clouddn.com/copy_item-firefly.jpg",
+        "subTitle":"A Poetry Single Site",
+        "description":"一个简单的单页面古诗展示网站,难点是用 JavaScript 实现粒子的随机布朗运动, 打开时建议关掉其它声音,页面有我个人剪辑好的音效。页面快捷键: 「C」切换主题,「M」页面静音(音频和主题切换的状态是用 cookie 实现的)",
+        "link":"http://baidu.com"
+       }
+   ]
+}
