@@ -124,6 +124,8 @@ issues:
 
 # 个人作品
 portfolio:
+  file: portfolio.json
   title: 作品
+
 
 

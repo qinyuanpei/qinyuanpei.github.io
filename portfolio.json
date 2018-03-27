@@ -7,7 +7,8 @@
         "cover":"http://o7bkkhiex.bkt.clouddn.com/copy_item-firefly.jpg",
         "subTitle":"A Poetry Single Site",
         "description":"一个简单的单页面古诗展示网站,难点是用 JavaScript 实现粒子的随机布朗运动, 打开时建议关掉其它声音,页面有我个人剪辑好的音效。页面快捷键: 「C」切换主题,「M」页面静音(音频和主题切换的状态是用 cookie 实现的)",
-        "link":"http://baidu.com"
+        "link": "http://baidu.com",
+        "tags": ["JQuery","Vue","Angualr"]
        },
        {
         "title":"萤火虫之诗",
@@ -15,7 +16,8 @@
         "cover":"http://o7bkkhiex.bkt.clouddn.com/copy_item-firefly.jpg",
         "subTitle":"A Poetry Single Site",
         "description":"一个简单的单页面古诗展示网站,难点是用 JavaScript 实现粒子的随机布朗运动, 打开时建议关掉其它声音,页面有我个人剪辑好的音效。页面快捷键: 「C」切换主题,「M」页面静音(音频和主题切换的状态是用 cookie 实现的)",
-        "link":"http://baidu.com"
+        "link":"http://baidu.com",
+        "tags": ["JQuery","Vue","Angualr"]
        },
        {
         "title":"萤火虫之诗",
@@ -23,15 +25,17 @@
         "cover":"http://o7bkkhiex.bkt.clouddn.com/copy_item-firefly.jpg",
         "subTitle":"A Poetry Single Site",
         "description":"一个简单的单页面古诗展示网站,难点是用 JavaScript 实现粒子的随机布朗运动, 打开时建议关掉其它声音,页面有我个人剪辑好的音效。页面快捷键: 「C」切换主题,「M」页面静音(音频和主题切换的状态是用 cookie 实现的)",
-        "link":"http://baidu.com"
+        "link":"http://baidu.com",
+        "tags": ["JQuery","Vue","Angualr"]
        },
        {
-        "title":"萤火虫之诗",
+        "title":"MetroPlayer",
         "date":"2016.4",
-        "cover":"http://o7bkkhiex.bkt.clouddn.com/copy_item-firefly.jpg",
+        "cover":"http://7wy477.com1.z0.glb.clouddn.com/20180327134748_MetroPlayer.jpg",
         "subTitle":"A Poetry Single Site",
-        "description":"一个简单的单页面古诗展示网站,难点是用 JavaScript 实现粒子的随机布朗运动, 打开时建议关掉其它声音,页面有我个人剪辑好的音效。页面快捷键: 「C」切换主题,「M」页面静音(音频和主题切换的状态是用 cookie 实现的)",
-        "link":"http://baidu.com"
+        "description":"一个使用C#开发的音乐播放器，具备一个音乐播放器的基本功能，可以按照用户的收听习惯智能地调整播放列表。",
+        "link":"http://baidu.com",
+        "tags": ["WinForm","C#",".NET"]
        }
    ]
 }
