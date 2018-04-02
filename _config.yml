@@ -127,5 +127,9 @@ portfolio:
   file: portfolio.json
   title: 作品
 
+# APlayer
+aplayer:
+  meting: true
+
 
 

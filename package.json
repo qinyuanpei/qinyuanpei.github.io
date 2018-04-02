@@ -7,15 +7,16 @@
   },
   "dependencies": {
     "hexo": "^3.4.4",
-    "hexo-douban": "^0.2.9",
     "hexo-abbrlink": "^2.0.5",
     "hexo-deployer-git": "^0.3.1",
+    "hexo-douban": "^0.2.9",
     "hexo-generator-archive": "^0.1.2",
     "hexo-generator-baidu-sitemap": "^0.1.2",
     "hexo-generator-category": "^0.1.2",
     "hexo-generator-feed": "^1.0.3",
     "hexo-generator-index": "^0.1.2",
     "hexo-generator-json-content": "^3.0.1",
+    "hexo-generator-portfolio": "^1.0.0",
     "hexo-generator-sitemap": "^1.2.0",
     "hexo-generator-tag": "^0.1.1",
     "hexo-reading-time": "^1.0.3",
@@ -24,6 +25,7 @@
     "hexo-renderer-marked": "^0.2.4",
     "hexo-renderer-stylus": "^0.2.0",
     "hexo-server": "^0.1.2",
+    "hexo-tag-aplayer": "^3.0.3",
     "hexo-tag-cloudmusic": "^1.2.2"
   }
 }
