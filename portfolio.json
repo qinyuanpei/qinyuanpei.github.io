@@ -30,11 +30,11 @@
        },
        {
         "title":"MetroPlayer",
-        "date":"2016.4",
-        "cover":"http://7wy477.com1.z0.glb.clouddn.com/20180327134748_MetroPlayer.jpg",
-        "subTitle":"A Poetry Single Site",
+        "date":"2011.9",
+        "cover":"http://7wy477.com1.z0.glb.clouddn.com/Works_MetrpPlayer.png",
+        "subTitle":"",
         "description":"一个使用C#开发的音乐播放器，具备一个音乐播放器的基本功能，可以按照用户的收听习惯智能地调整播放列表。",
-        "link":"http://baidu.com",
+        "link":"",
         "tags": ["WinForm","C#",".NET"]
        }
    ]
