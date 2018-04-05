@@ -11,22 +11,22 @@
         "tags": ["JQuery","Vue","Angualr"]
        },
        {
-        "title":"萤火虫之诗",
-        "date":"2016.4",
-        "cover":"http://o7bkkhiex.bkt.clouddn.com/copy_item-firefly.jpg",
-        "subTitle":"A Poetry Single Site",
-        "description":"一个简单的单页面古诗展示网站,难点是用 JavaScript 实现粒子的随机布朗运动, 打开时建议关掉其它声音,页面有我个人剪辑好的音效。页面快捷键: 「C」切换主题,「M」页面静音(音频和主题切换的状态是用 cookie 实现的)",
-        "link":"http://baidu.com",
-        "tags": ["JQuery","Vue","Angualr"]
+        "title":"奔跑吧！妹子",
+        "date":"2015.9",
+        "cover":"http://7wy477.com1.z0.glb.clouddn.com/Works_RunningGirl.png",
+        "subTitle":"",
+        "description":"该游戏是使用开源项目Lufylegend中的游戏素材，利用Unity3D游戏引擎重新制作的跑酷游戏，在这个游戏中玩家将变成一个奔跑的妹子，向着终点不断奔跑，在奔跑的过程中可以收集金币和勋章，基本上实现了一个完整的跑酷游戏。",
+        "link":"https://github.com/qinyuanpei/LightGames/tree/master/Unity3D_RunningGirl",
+        "tags": ["Unity3D","跑酷","小游戏"]
        },
        {
-        "title":"萤火虫之诗",
-        "date":"2016.4",
-        "cover":"http://o7bkkhiex.bkt.clouddn.com/copy_item-firefly.jpg",
-        "subTitle":"A Poetry Single Site",
-        "description":"一个简单的单页面古诗展示网站,难点是用 JavaScript 实现粒子的随机布朗运动, 打开时建议关掉其它声音,页面有我个人剪辑好的音效。页面快捷键: 「C」切换主题,「M」页面静音(音频和主题切换的状态是用 cookie 实现的)",
-        "link":"http://baidu.com",
-        "tags": ["JQuery","Vue","Angualr"]
+        "title":"贪吃蛇游戏",
+        "date":"2014.6",
+        "cover":"http://7wy477.com1.z0.glb.clouddn.com/Works_Snake.png",
+        "subTitle":"",
+        "description":"一个使用Love2D/Lua游戏引擎制作的贪吃蛇小游戏，其核心内容是将蛇的运动和数据结构联系起来，即将集合中的最后一个元素移动到首位",
+        "link":"https://github.com/qinyuanpei/LightGames/tree/master/Love2D_Snake",
+        "tags": ["Lua","Love2D","贪吃蛇"]
        },
        {
         "title":"MetroPlayer",

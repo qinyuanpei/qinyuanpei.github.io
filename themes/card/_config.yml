@@ -26,6 +26,9 @@ menu:
   film:
     text: 电影
     url: /movies
+  bookmark:
+    text: 作品
+    url: /works
 
 # 你的头像url
 avatar: assets/images/avatar.jpg
