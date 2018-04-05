@@ -26,7 +26,7 @@ menu:
   film:
     text: 电影
     url: /movies
-  bookmark:
+  code:
     text: 作品
     url: /works
 

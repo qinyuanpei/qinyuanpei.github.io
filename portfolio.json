@@ -24,7 +24,7 @@
         "date":"2014.6",
         "cover":"http://7wy477.com1.z0.glb.clouddn.com/Works_Snake.png",
         "subTitle":"",
-        "description":"一个使用Love2D/Lua游戏引擎制作的贪吃蛇小游戏，其核心内容是将蛇的运动和数据结构联系起来，即将集合中的最后一个元素移动到首位",
+        "description":"一个使用Love2D/Lua游戏引擎制作的贪吃蛇小游戏，其核心内容是将蛇的运动和数据结构联系起来，即将集合中的最后一个元素移动到首位。",
         "link":"https://github.com/qinyuanpei/LightGames/tree/master/Love2D_Snake",
         "tags": ["Lua","Love2D","贪吃蛇"]
        },
