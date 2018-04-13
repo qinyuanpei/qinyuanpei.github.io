@@ -1,6 +1,15 @@
 {
    "items":
    [
+        {
+        "title":"微信好友数据分析",
+        "date":"2017.12",
+        "cover":"http://7wy477.com1.z0.glb.clouddn.com/Works_WeChat_Analyse.png",
+        "subTitle":"",
+        "description":"一个使用itchat获取微信好友信息，然后通过Python进行数据分析及可视化的项目，该项目从性别、头像、签名、地区四个维度对好友信息进行分析，使用matplotlib及BDP个人版绘制相关图表",
+        "link": "https://github.com/qinyuanpei/wechat-analyse",
+        "tags": ["Python","数据分析","微信"]
+       },
        {
         "title":"仙剑同人游戏Demo",
         "date":"2016.3",
