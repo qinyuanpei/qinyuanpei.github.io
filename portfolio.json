@@ -6,7 +6,7 @@
         "date":"2017.12",
         "cover":"http://7wy477.com1.z0.glb.clouddn.com/Works_WeChat_Analyse.png",
         "subTitle":"",
-        "description":"一个使用itchat获取微信好友信息，然后通过Python进行数据分析及可视化的项目，该项目从性别、头像、签名、地区四个维度对好友信息进行分析，使用matplotlib及BDP个人版绘制相关图表",
+        "description":"一个使用itchat获取微信好友信息，然后通过Python进行数据分析及可视化的项目，该项目从性别、头像、签名、地区四个维度对好友信息进行分析，使用matplotlib及BDP个人版绘制相关图表。",
         "link": "https://github.com/qinyuanpei/wechat-analyse",
         "tags": ["Python","数据分析","微信"]
        },
@@ -42,7 +42,7 @@
         "date":"2014.6",
         "cover":"http://7wy477.com1.z0.glb.clouddn.com/Works_Snake.png",
         "subTitle":"",
-        "description":"一个使用Love2D/Lua游戏引擎制作的贪吃蛇小游戏，其核心内容是将蛇的运动和数据结构联系起来，即将集合中的最后一个元素移动到首位，开发这个小游戏主要是为了学习Love2D引擎。",
+        "description":"一个使用Love2D/Lua游戏引擎制作的贪吃蛇小游戏，其核心内容是将蛇的运动和数据结构联系起来，即将集合中的最后一个元素移动到首位，开发这个小游戏主要是为了学习Love2D引擎。事实证明，这是一个非常出色的2D游戏引擎。",
         "link":"https://github.com/qinyuanpei/LightGames/tree/master/Love2D_Snake",
         "tags": ["Lua","Love2D","贪吃蛇"]
        },
@@ -51,7 +51,7 @@
         "date":"2011.9",
         "cover":"http://7wy477.com1.z0.glb.clouddn.com/Works_MetrpPlayer.png",
         "subTitle":"",
-        "description":"一个使用C#开发的音乐播放器，具备一个音乐播放器的基本功能，可以按照用户的收听习惯智能地调整播放列表。",
+        "description":"一个使用C#开发的音乐播放器，具备一个音乐播放器的基本功能，可以按照用户的收听习惯智能地调整播放列表。通过该项目验证了两个想法:Xml4DB和JSON4DB，掌握了音频播放、歌词显示、ID3v1/ID3v2等技术。",
         "link":"",
         "tags": ["WinForm","C#",".NET"]
        }
