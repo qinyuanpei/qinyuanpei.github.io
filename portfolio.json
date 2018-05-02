@@ -1,6 +1,15 @@
 {
    "items":
    [
+   		{
+        "title":"基于新浪微博的男女性择偶观数据分析",
+        "date":"2018.03",
+        "cover":"http://7wy477.com1.z0.glb.clouddn.com/weibo_analyse.pngg",
+        "subTitle":"",
+        "description":"一个使用Python + SQLite抓取并分析新浪微博数据的项目，通过抓取@西安月老牵线的微博来分析男女性的择偶观，使用朴素贝叶斯进行特征提取和文本分类，使用matplotlib对数据进行了可视化。",
+        "link": "https://github.com/qinyuanpei/weibo-analyse",
+        "tags": ["Python","数据分析","微博"]
+       },
         {
         "title":"微信好友数据分析",
         "date":"2017.12",
