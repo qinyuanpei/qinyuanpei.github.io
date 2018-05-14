@@ -15,6 +15,11 @@ install:
   - npm install
   - pip install --user -r requirements.txt
 
+script:
+  - hexo clean
+  - hexo generate
+  - cp README.md ./public/README.md
+
 after_script:
   - cd ./public
   - git init
@@ -30,11 +35,6 @@ after_script:
   # Github Pages
   - git push --quiet "https://${CI_TOKEN}@${GH_REF}" master:master --tags
 
-script:
-  - hexo clean
-  - hexo generate
-  - python HexoBlog.py
-  - cp README.md ./public/README.md
 
 addons:
   apt:
