@@ -105,6 +105,6 @@ cache:
 ![NUnit运行结果](http://7wy477.com1.z0.glb.clouddn.com/Wechat_20180512003928.png)
 
 # 本文小结
-&emsp;&emsp;本文介绍了一个“云”服务：SonarCloud。SonarCloud是一个基于SonarCloud的静态分析工具，通过SonarCloud我们无需搭建Sonar环境就可以对项目进行静态分析。为了验证和实现这个诉求，我们首先提供了通过SonarScanner来扫描代码的示例，其原理是在命令行参数中携带相关信息，通过token来验证和登录SonarCloud，在完成对代码的扫描以后，就可以在SonarCloud中查看整个项目的分析结果。
+&emsp;&emsp;本文介绍了一个“云”服务：SonarCloud。SonarCloud是一个基于SonarCube的静态分析工具，通过SonarCloud我们无需搭建Sonar环境就可以对项目进行静态分析。为了验证和实现这个诉求，我们首先提供了通过SonarScanner来扫描代码的示例，其原理是在命令行参数中携带相关信息，通过token来验证和登录SonarCloud，在完成对代码的扫描以后，就可以在SonarCloud中查看整个项目的分析结果。
 &emsp;&emsp;接下来，为了验证SonarCloud和TravisCI进行集成的可行性，我们尝试通过travisCI脚本的方式来调用SonarCloud，其原理是通过配置文件获得相关信息由TravisCI完成所有的分析工作，这里需要注意的是要对token进行加密。在编写TravisCI脚本的过程中，我们一同验证了MSBuild、Nuget、NUnit等.NET常规工具或者类库在Linux平台下使用的可能性，最终在TravisCI的帮助下完成了从项目构建、单元测试再到代码的分析的整个流程。
 &emsp;&emsp;虽然静态分析并不能完全保证代码没有问题，可人类总是不情愿承认自己仅仅是一种高等动物而已，这个世界上有好多东西人们不一定会喜欢，因为它们要么是正确的要么是有益的。本文这个方案需要把代码暴露在Github，对于一般的服务集成，我们更推荐Jenkins + Sonar这样的组合，前者可以替换TravisCI提供持续集成服务，同Github、Gitlib等代码托管服务进行集成、同Stylecop、Sonar等静态检查工具进行集成，这方面的资料非常丰富，我们这里就不再多说啦，总而言之，让一切更好就是我们的目的，晚安！
