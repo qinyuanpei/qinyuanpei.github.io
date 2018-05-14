@@ -1,4 +1,5 @@
 language: node_js
+python: "3.4"
 node_js: stable
 
 notifications:
@@ -11,10 +12,12 @@ notifications:
 
 install:
   - npm install
+  - pip install -r requirements.txt
 
 script:
   - hexo clean
   - hexo generate
+  - python HexoBlog.py
   - cp README.md ./public/README.md
 
 after_script:
