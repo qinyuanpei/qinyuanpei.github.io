@@ -1,5 +1,6 @@
 language: node_js
-python: "3.4"
+python: 
+  - "3.6"
 node_js: stable
 
 notifications:
@@ -13,12 +14,6 @@ notifications:
 install:
   - npm install
   - pip install --user -r requirements.txt
-
-script:
-  - hexo clean
-  - hexo generate
-  - python HexoBlog.py
-  - cp README.md ./public/README.md
 
 after_script:
   - cd ./public
@@ -34,6 +29,16 @@ after_script:
   - git tag v0.0.$TRAVIS_BUILD_NUMBER -a -m "Auto Taged By TravisCI With Build $TRAVIS_BUILD_NUMBER"
   # Github Pages
   - git push --quiet "https://${CI_TOKEN}@${GH_REF}" master:master --tags
+
+script:
+  - hexo clean
+  - hexo generate
+  - python HexoBlog.py
+  - cp README.md ./public/README.md
+
+addons:
+  apt:
+    update: true
 
 branches:
   only:
