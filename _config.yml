@@ -65,7 +65,7 @@ pagination_dir: pages
 # 主题设置
 ## Plugins: http://hexo.io/plugins/
 ## Themes: http://hexo.io/themes/
-theme: hux
+theme: card
 
 # RSS订阅
 feed:
