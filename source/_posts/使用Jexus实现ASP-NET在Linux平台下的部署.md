@@ -1,5 +1,5 @@
 ---
-title: 使用Jexus实现ASP.NET在Linux平台下的部部署
+title: 使用Jexus实现ASP.NET在Linux平台下的部署
 categories:
   - 开发工具
 tags:
