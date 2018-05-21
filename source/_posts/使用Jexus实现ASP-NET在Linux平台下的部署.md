@@ -34,7 +34,7 @@ curl https://jexus.org/release/install|sudo sh
 ## 配置Jexus
 &emsp;&emsp;Jexus部署到网站，需要两个东西，一个是网站内容(废话)，一个是网站配置。假定我们这里将这两个东西打包在一起，压缩包的名字为app.tar。为什么这里选择了.tar格式的压缩文件呢？因为在Linux平台下这个格式更好用些，我们熟悉的.zip格式，可能会需要我们安装相应的扩展。此时，我们可以使用如下脚本来部署网站：
 ```
-tar -xf website.tar
+tar -xf app.tar
 sudo mv  -f .aspnetconf usr/jexus/siteconf/aspnetconf
 sudo mv ./aspnet /var/www
 ```
