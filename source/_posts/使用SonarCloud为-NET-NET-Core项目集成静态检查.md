@@ -34,7 +34,7 @@ date: 2018-05-12 01:16:52
 &emsp;&emsp;好了，现在我们在SonarCloud中就可以看到扫描结果啦，开心！如果执行命令出现问题，请确保正确安装了相关工具，并检查这些工具是否被添加到系统变量中，特别是Java需要设置JAVA_HOME。
 ![扫描结果](http://7wy477.com1.z0.glb.clouddn.com/Wechat_20180511183203.png)
 # TravisCI与SonarCloud的集成
-&emsp;&emsp;现在我们来回顾下整个过程，我们需要在本地安装SonarScanner，这是一个Java编写的应用程序，因此我们需要一个Java运行环境。每次都需要通过SonarCloud来创建项目，获得项目相关的信息以后，在命令中携带这些参数并执行命令，就可以在SonarCloud中获得本地的扫描结果。在整个过程中，我们依然需要一个本地的环境，这一点都不灵活。现实世界的复杂性，就在于我们无法为还原出完全一致的处境，
+&emsp;&emsp;现在我们来回顾下整个过程，我们需要在本地安装SonarScanner，这是一个Java编写的应用程序，因此我们需要一个Java运行环境。每次都需要通过SonarCloud来创建项目，获得项目相关的信息以后，在命令中携带这些参数并执行命令，就可以在SonarCloud中获得本地的扫描结果。在整个过程中，我们依然需要一个本地的环境，这一点都不灵活。现实世界的复杂性，就在于我们无法为还原出完全一致的处境。
 &emsp;&emsp;所以，托尔斯泰开宗明义地说道：“幸福的家庭都是相似的，不幸的家庭各有各的不幸”，况且作为一个执着于让重复的事情自动化的人，如果让我做这件事情，我保证第一次会意外地觉得好奇，而等到第二次、第三次的时候我就会感到厌烦，这就是人们所说的三分钟热度。诚然，我的确是一个花心的双子座。我们提到，SonarCloud支持TravisCI，所以，接下来我们来考虑如何让TravisCI帮助我们运行Sonar。
 &emsp;&emsp;常规的思路是，下载SonarScanner并执行脚本。这种思路的问题在于TravisCI运行在Linux下，我们确定SonnarScanner是否可以支持Linux平台，尽管SonarScanner使用Java开发。通过阅读TravisCI的[文档](https://docs.travis-ci.com/user/sonarcloud/)，我们发现TravisCI本身是支持SonarCloud的插件的，由此我们就可以着手将这一切交给TravisCI来做啦！
 &emsp;&emsp;关于如何使用TravisCI，这里不再赘述啦！大家可以参考我的这两篇博客，这两篇博客分别是：[持续集成在Hexo自动化部署上的实践](https://qinyuanpei.github.io/posts/3521618732/)、[基于Travis CI实现 Hexo 在 Github 和 Coding 的同步部署](https://qinyuanpei.github.io/posts/1113828794/)。当然第一手的资料必然是官方文档，我是不好意思随便对别人说RTFM的。按照文档说明，我们首先需要一个名为sonar-project.properties的配置文件，在该配置文件中配置了诸如项目名称、组织名称等关键信息，Sonar会自动读取这个配置文件里的信息并携带到命令中去，这个配置文件是在是太熟悉啦，假如你认真地读了这篇文章，并注意到了SonarCloud生成的三条命令。这个配置文件内容如下：
