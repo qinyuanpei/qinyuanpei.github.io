@@ -13,7 +13,8 @@ notifications:
 
 install:
   - npm install
-  - pip3 install --user -r requirements.txt
+  - sudo apt-get install python3 -y
+  - python3 -m pip install --user -r requirements.txt
 
 script:
   - hexo clean
