@@ -37,6 +37,9 @@ def loadData():
 def mkMarkdown(items):
     mdfile = open('README.md',mode='wt',encoding='utf-8')
     itemTpl = '* {0} - [{1}]({2})\n'
+    mdfile.write('本文档由脚本自动生成，最后更新时间：{0}\n'.format(
+        datetime.datetime.strftime(datetime.datetime.now(),'%Y-%m-%d %H:%M:%S')
+    ))
     for item in items:
         mdfile.write(itemTpl.format(
             datetime.datetime.strftime(item.getDate(),'%Y-%m-%d'),
