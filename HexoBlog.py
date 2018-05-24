@@ -28,7 +28,7 @@ class Post:
 
 # 从JSON中加载文档数据
 def loadData():
-    json_file = open('./public/content.json','rb')
+    json_file = open('./public/content.json','rt')
     json_data = json.load(json_file)
     for item in json_data:
         yield Post(item['date'],item['path'],item['title'])
