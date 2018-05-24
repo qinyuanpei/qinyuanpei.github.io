@@ -13,11 +13,12 @@ notifications:
 
 install:
   - npm install
-  - pip install --user -r requirements.txt
+  - pip3 install --user -r requirements.txt
 
 script:
   - hexo clean
   - hexo generate
+  - python3 HexoBlog.py
   - cp README.md ./public/README.md
 
 after_script:
