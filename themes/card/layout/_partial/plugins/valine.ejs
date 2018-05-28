@@ -1,0 +1,15 @@
+<div id="comment"></div>
+<script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+<script src='//unpkg.com/valine/dist/Valine.min.js'></script>
+<script type="text/javascript">
+new Valine({
+    el: '#comment' ,
+    notify:false, 
+    verify:false, 
+    appId: '<%- theme.valine.appId %>',
+    appKey: '<%- theme.valine.appKey %>',
+    placeholder: '',
+    path:'<%- post.abbrlink %>', 
+    avatar:'mm' 
+});
+</script>

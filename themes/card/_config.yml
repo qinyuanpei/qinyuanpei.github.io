@@ -117,9 +117,9 @@ gitment:
   client_id: 3b6c49ff50fcaac5021c
   client_secret: 31ed8fc621160dc634a20b15a0f2ebd543d21c40
 
-# 是否使用 gitalk，https://github.com/gitalk/gitalk
+# 是否使用 Gitalk #https://github.com/gitalk/gitalk
 gitalk:
-  enable: true
+  enable: false
   repo: qinyuanpei.github.io
   owner: qinyuanpei
   admin: qinyuanpei
@@ -127,15 +127,15 @@ gitalk:
   clientSecret: 31ed8fc621160dc634a20b15a0f2ebd543d21c40
   distractionFreeMode: true
 
-# Valine Comment system. https://valine.js.org
+# Valine Comment System #https://valine.js.org
 valine:
-  enable: false # 如果你想使用valine，请将值设置为 true
-  appId:  # your leancloud appId
-  appKey:  # your leancloud appKey
-  notify: false # Mail notify
-  verify: false # Verify code
+  enable: true # 如果你想使用valine，请将值设置为 true
+  appId:  JbHqRp2eMrTgIwYpfERH0g79-gzGzoHsz
+  appKey: VsiKvLuiBGvJL1XrAfv7siY2
+  notify: true # Mail notify
+  verify: true # Verify code
   avatar: mm # Gravatar style : mm/identicon/monsterid/wavatar/retro/hide
-  placeholder: Just go go # Comment Box placeholder
+  placeholder: 欢迎在这里留下你的评论... # Comment Box placeholder
   guest_info: nick,mail,link # Comment header info
   pageSize: 10 # comment list page size
 
