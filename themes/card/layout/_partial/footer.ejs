@@ -6,8 +6,8 @@
                 <span><a href="<%- url_for(config.feed.path) %>" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
             <% } %>
             <span>
-                <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="license">
-                    BY-NC-SA
+                <a href="https://creativecommons.org/licenses/<%= config.license %>/4.0/deed.zh" rel="license">
+                    <%= config.license %>
                 </a>
             </span>
             <span>
