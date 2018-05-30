@@ -5,6 +5,7 @@ import re
 import sys
 import json
 import datetime
+from itertools import groupby
 
 # 文档实体结构定义
 class Post:
@@ -40,12 +41,18 @@ def mkMarkdown(items):
     mdfile.write('本文档由脚本自动生成，最后更新时间：{0}\n'.format(
         datetime.datetime.strftime(datetime.datetime.now(),'%Y-%m-%d %H:%M:%S')
     ))
-    for item in items:
-        mdfile.write(itemTpl.format(
-            datetime.datetime.strftime(item.getDate(),'%Y-%m-%d'),
-            item.getTitle(),
-            item.getLink()
-        ))
+
+    groups = groupby(items,key=lambda x:x.getDate().year)
+    for key,group in groups:
+        items = list(group)
+        mdfile.write('# {0}({1})\n'.format(key,len(items)))
+        for item in items:
+            mdfile.write(itemTpl.format(
+                datetime.datetime.strftime(item.getDate(),'%Y-%m-%d'),
+                item.getTitle(),
+                item.getLink()
+            ))
+    
 
 
 
