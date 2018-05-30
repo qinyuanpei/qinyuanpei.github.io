@@ -38,8 +38,12 @@ def loadData():
 def mkMarkdown(items):
     mdfile = open('README.md',mode='wt',encoding='utf-8')
     itemTpl = '* {0} - [{1}]({2})\n'
-    mdfile.write('本文档由脚本自动生成，最后更新时间：{0}\n'.format(
+    mdfile.write('本文档由脚本自动生成，最后更新时间：{0}\n\n'.format(
         datetime.datetime.strftime(datetime.datetime.now(),'%Y-%m-%d %H:%M:%S')
+    ))
+    mdfile.write('Hi, Payne. 从{0}至今，你撰写博客共计{1}篇，请继续努力！\n\n'.format(
+        datetime.datetime.strftime(items[-1].getDate(),'%Y-%m-%d'),
+        len(list(items))
     ))
 
     groups = groupby(items,key=lambda x:x.getDate().year)
