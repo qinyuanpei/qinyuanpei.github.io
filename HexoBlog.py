@@ -45,7 +45,7 @@ def mkMarkdown(items):
     groups = groupby(items,key=lambda x:x.getDate().year)
     for key,group in groups:
         items = list(group)
-        mdfile.write('# {0}({1})\n'.format(key,len(items)))
+        mdfile.write('# {0}(共{1}篇)\n'.format(key,len(items)))
         for item in items:
             mdfile.write(itemTpl.format(
                 datetime.datetime.strftime(item.getDate(),'%Y-%m-%d'),
