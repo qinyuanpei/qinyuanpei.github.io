@@ -12,9 +12,12 @@ abbrlink: 994796909
 
 # 关注点 ＆ 技术栈
 从2012年至今，先后接触C#/.NET、Java、Lua、Python等语言，涉及Window平台C/S架构和B/S架构相关的开发、移动平台(Android)相关的开发、Unity3D平台及AR/VR相关项目的开发、网络爬虫及数据分析相关的开发、游戏相关的开发等等。目前，持续关注微服务架构设计、数据挖掘和持续集成相关领域，希望以纵深地了解后端为主，横向地了解前端为辅，对跨平台和自动化有着执着的追求。
-* 后端：.NET/.NET Core、EF/Dapper、Autofac、Aspect Core、NLog、NUnit/Moq、OAuth2、JWT、Nancyfx。
-* 数据挖掘：NumPy、结巴分词、SnowNLP、词云、NLTK、Matplotlib、Scikit-Learn、Requests、BeautifulSoup4。
-* 持续集成：Jenkins、TravisCI、MSBuild、Docker、Github/Gitlab。
+## 后端
+.NET/.NET Core、EF/Dapper、Autofac、Aspect Core、NLog、NUnit/Moq、OAuth2、JWT、Nancyfx。
+## 数据挖掘
+NumPy、结巴分词、SnowNLP、词云、NLTK、Matplotlib、Scikit-Learn、Requests、BeautifulSoup4。
+## 持续集成
+Jenkins、TravisCI、MSBuild、Docker、Github/Gitlab。
 
 # 关于博客
 我是典型的双子座，理性与感性交织，悲观里夹杂着乐观，天生就是矛盾的混合体。最初，我写博客是为了和别人交流想法，因为我在学习编程的道路上，无数次从别人的博客中获益。而现在，我更希望通过写作去解构自我，通过不断地输入和输出知识，来纠正自己在生活中的行为。我希望在探索技术的同时，重新认识这个世界，所以，技术与人文是我写作的永恒主题。在这里，你可以同我一起，探讨技术心得，交流生活感悟，这些感悟或来自生活、或来自电影、或来自书籍。我希望可以聆听不同人的想法，希望在生命老去直至终结以前，打破那些我们习以为常的固有认知。
