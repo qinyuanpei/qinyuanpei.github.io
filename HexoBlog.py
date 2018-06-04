@@ -4,8 +4,12 @@ import os
 import re
 import sys
 import json
+import pytz
 import datetime
 from itertools import groupby
+
+# 时区定义
+tz = pytz.timezone('Asia/Shanghai')
 
 # 文档实体结构定义
 class Post:
@@ -39,7 +43,7 @@ def mkMarkdown(items):
     mdfile = open('README.md',mode='wt',encoding='utf-8')
     itemTpl = '* {0} - [{1}]({2})\n'
     mdfile.write('本文档由脚本自动生成，最后更新时间：{0}\n\n'.format(
-        datetime.datetime.strftime(datetime.datetime.now(),'%Y-%m-%d %H:%M:%S')
+        datetime.datetime.strftime(datetime.datetime.now(tz),'%Y-%m-%d %H:%M:%S')
     ))
     mdfile.write('Hi, Payne. 从{0}至今，你撰写博客共计{1}篇，请继续努力！\n\n'.format(
         datetime.datetime.strftime(items[-1].getDate(),'%Y-%m-%d'),
