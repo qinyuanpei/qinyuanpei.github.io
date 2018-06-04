@@ -14,9 +14,8 @@ notifications:
 install:
   - npm install
   - sudo apt-get install python3 -y
-  - locate pip3
-  - sudo pip3 install --upgrade pip
-  - sudo pip3 install --user -r requirements.txt
+  - sudo pip3.6 install --upgrade pip
+  - sudo pip3.6 install --user -r requirements.txt
 
 script:
   - hexo clean
