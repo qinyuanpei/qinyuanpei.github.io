@@ -6,8 +6,8 @@ tags:
   - .NET
   - Docker
   - MSBuild
+abbrlink: 3995512051
 date: 2018-06-12 17:53:59
-abbrlink:
 ---
 &emsp;&emsp;最近在考虑将整个项目组的产品，努力向着持续集成(CI)/持续部署(CD)的方向靠拢，因为目前我们仅仅实现了基于Docker的自动化部署，而部署包的构建依然依赖于人工打包，而每个版本的测试和部署，基本上都要给所有相关人员发一遍邮件，而写邮件无非是填写版本号和变更历史。身处在这样一个社会化分工逐渐加剧的『摩登时代』，我们唯一的希望就追求技能的多元化，你越是担心有一天会被AI所替代，就越是应该去追求灵动与美。这个世界何尝不是一个运行中的大型机器，可恰恰就是这种掺杂了情感的冰冷法则，让我们意识到需要更多的理解和宽容。管理者常常迷信敏捷开发的人月神话，希望人可以像零件一样按部就班，在这场噩梦到来以前，为何不去做一点更有用的事情，让云计算帮我们解放双手。
 
@@ -45,7 +45,7 @@ sudo apt-get install aptitude -y
 sudo apt-get install -f
 sudo apt-get install -y git
 sudo aptitude install -y mono-complete
-```    
+```
 &emsp;&emsp;这里顺带安装了git和wget，因为下面我们会用到这两个软件。aptitude实在是修复Linux依赖问题的神器，我准备找时间用它修复下我的Linux环境。apt-transport-https这个是为了支持https协议，这个不用说太多，我们选择了最全的一个Mono版本mono-complete，它包含了我们在Linux下可以使用的所有程序集，换句话说，这些程序集以外的程序集，或者是和Windows联系紧密的COM组件、OCX等等，想都不要想啦，只有一件事情是对的，对平台的依赖越少，跨平台的可能性越高。
 
 ## Nuget 
@@ -74,7 +74,7 @@ alias nunit="mono ./TestRunner/NUnit.ConsoleRunner.3.8.0/tools/nunit3-console.ex
 nunit <Your-UnitTest-Project>
 ```
 # 牛刀小试
-＆emsp;&emsp;下面我们来试试在Docker里完成镜像的构建，其实这里更推荐在Linux下安装Docker，博主在Window平台下安装了Docker for Windows，需要系统支持虚拟化技术。因为博主在构建镜像的时候，一直提示磁盘空间不足，所以，这里我们把Dockerfile放到DaoCloud上去跑，关于Docker的安装以后有机会在同大家分享。这里，DaoCloud你可以理解为一个帮我们装好了Docker的云主机，事实上用DaoCloud以后，感觉测试Dockerfile可以更省时间啦，效率上相差十倍啊！Dockerfile其实就是本文中这些脚本的集合，这里我们给出完整的Dockerfile，这个文件可以从[这里](https://github.com/qinyuanpei/HttpServer/blob/master/Dockerfile)获取：
+&emsp;&emsp;下面我们来试试在Docker里完成镜像的构建，其实这里更推荐在Linux下安装Docker，博主在Window平台下安装了Docker for Windows，需要系统支持虚拟化技术。因为博主在构建镜像的时候，一直提示磁盘空间不足，所以，这里我们把Dockerfile放到DaoCloud上去跑，关于Docker的安装以后有机会在同大家分享。这里，DaoCloud你可以理解为一个帮我们装好了Docker的云主机，事实上用DaoCloud以后，感觉测试Dockerfile可以更省时间啦，效率上相差十倍啊！Dockerfile其实就是本文中这些脚本的集合，这里我们给出完整的Dockerfile，这个文件可以从[这里](https://github.com/qinyuanpei/HttpServer/blob/master/Dockerfile)获取：
 ```Shell 
 FROM ubuntu:14.04
 LABEL vendor="qinyuanpei@163.com"
@@ -127,6 +127,6 @@ docker build -t httpserver:v1 .
 &emsp;&emsp;这里我们主要针对的是.NET Framework，那么针对传统的ASP.NET以及最新的.NET Core又该如何做持续集成呢？这里简单说一下思路，具体的Dockerfile大家可以去DockerHub去找(抄)，这里我就不帮大家写了。对于传统的ASP.NET，在本文的基础上增加Jexus就可以做Linux下的部署，当然，前提是要避免和Window太过紧密的耦合，否则即便是大罗神仙亲临，这持续集成永远都是个梦。对于.NET Core，只要安装了它的SDK，编译、依赖管理、发布、部署都不再是问题，只要完善下单元测试和静态检查就可以，因为它是可以自部署的，并且天生就是为了跨平台而生，如果有可能，还是考虑用.NET Core吧，Windows最适合的还是吃鸡打游戏(逃……
 
 # 本文小结
-&emsp;&emsp;读过我之前博客的朋友，一定会发现，我今天这篇博客里所做的事情，同我曾经在.NET项目上使用TravisCI是完全一样的，所不同的是，TravisCI里的构建环境是别人提供好的，而这里的构建环境是我们自己搭建的。这并不是在做无用功，如果你需要搭建私有的Linux下的构建环境，我相信这篇文章会带给你一点启示。项目组最后还是放弃了这个方案，因为产品里集成了太多和Window关联的东西。而负责部署的同事最终如释重托，因为他们不必去踩这些无聊的坑，可对我来说，这像一道屈辱的烙印刻在我的心上，我甚至试过在Docker环境里搭建Window的环境，哪怕最终我发现我不能把Docker当一个虚拟机来用，我越来越害怕自己对那些变化一无所知，还庆幸自己可以在时光的影子里偷懒。
+&emsp;&emsp;读过我之前[博客](http://localhost:4000/posts/4891372/)的朋友，一定会发现，我今天这篇博客里所做的事情，同我曾经在.NET项目上使用TravisCI是完全一样的，所不同的是，TravisCI里的构建环境是别人提供好的，而这里的构建环境是我们自己搭建的。这并不是在做无用功，如果你需要搭建私有的Linux下的构建环境，我相信这篇文章会带给你一点启示。项目组最后还是放弃了这个方案，因为产品里集成了太多和Window关联的东西。而负责部署的同事最终如释重托，因为他们不必去踩这些无聊的坑，可对我来说，这像一道屈辱的烙印刻在我的心上，我甚至试过在Docker环境里搭建Window的环境，哪怕最终我发现我不能把Docker当一个虚拟机来用，我越来越害怕自己对那些变化一无所知，还庆幸自己可以在时光的影子里偷懒。
 
 &emsp;&emsp;有时候，人们假装配合持续集成的流程，因为它听上去非常美好，可对环境的依赖不愿意削弱，对单元测试不是那么重视，对代码质量不是那么在意，这一切又永远都只是听上去美好而已。我听到有面试官在面试的时候，批评面试者所做的运维工作不是那么的高大上，毕竟我们只是写了点脚本而已，离面试官心中的DevOps相去甚远。可MSBuild是XML写成的脚本，make不过是个纯文本的脚本，到底哪一种更高大上？我在这篇文章里使用了Docker，能否让我的工作显得高大上？我们的工作到底有多少能适应DevOps？我觉得想清楚这个再谈高大上，不是不可以啊？对吧？好了，这就是这篇文章的全部内容啦，谢谢大家！
