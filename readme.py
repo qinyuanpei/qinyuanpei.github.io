@@ -1,12 +1,12 @@
 #! python3
 # -*- coding: utf-8 -*-
-
 import os
 import re
 import sys
 import json
 import pytz
 import datetime
+from PIL import Image
 from itertools import groupby
 
 # 时区定义
@@ -61,9 +61,6 @@ def mkMarkdown(items):
                 item.getTitle(),
                 item.getLink()
             ))
-    
-
-
 
 if(__name__ == "__main__"):
     items = sorted(loadData(),key=lambda x:x.getDate(),reverse=True)

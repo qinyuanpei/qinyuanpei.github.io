@@ -27,6 +27,7 @@
     "hexo-server": "^0.1.2",
     "hexo-tag-aplayer": "^3.0.3",
     "hexo-tag-cloudmusic": "^1.2.2",
-    "lunr": "^2.2.0"
+    "lunr": "^2.2.0",
+    "hexo-generator-albums":"^1.0.0"
   }
 }

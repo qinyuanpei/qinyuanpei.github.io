@@ -127,6 +127,10 @@ portfolio:
   file: portfolio.json
   title: 作品
 
+albums:
+  file: albums.json
+  title: 相册
+
 # APlayer
 aplayer:
   meting: true
