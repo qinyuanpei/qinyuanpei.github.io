@@ -12,7 +12,7 @@ from itertools import groupby
 class ImageProcessor:
 
     def __init__(self):
-        self.workspace = os.path.abspath('.').replace("\\","/")
+        self.workspace = os.path.abspath('.')
         self.origin_folder = os.path.join(self.workspace,'albums/origin/')
         self.thumb_folder = os.path.join(self.workspace,'albums/thumb/')
         self.assets_perfix = 'https://github.com/qinyuanpei/qinyuanpei.github.io/blob/blog/'
@@ -43,11 +43,16 @@ class ImageProcessor:
         item['month'] = os.path.basename(folder)
         item['year'] = os.path.basename(os.path.dirname(folder))
         item['origin'] = '{0}/albums/origin/{1}/{2}/{3}'.format(
-            self.assets_perfix,item['year'],item['month'],fileName)
+            self.assets_perfix,item['year'],item['month'],fileName
+        )
         item['thumb'] = '{0}/albums/thumb/{1}/{2}/{3}'.format(
-            self.assets_perfix,item['year'],item['month'],fileName)
+            self.assets_perfix,item['year'],item['month'],fileName
+        )
         item['comment'] = ''
-        IMG.save(os.path.join(self.workspace, 'albums/thumb/{0}/{1}/{2}'.format(item['year'],item['month'],fileName)))
+        thumbFile = item['thumb'].replace(self.assets_perfix,self.workspace)
+        if(not os.path.exists(os.path.dirname(thumbFile))):
+            os.mkdir(os.path.dirname(thumbFile))
+        IMG.save(thumbFile)
         return item
         
 
@@ -64,8 +69,7 @@ class ImageProcessor:
             })
         
         with open("albums.json", "w", encoding="UTF-8") as f_dump:
-            s_dump = json.dump(albums, f_dump, ensure_ascii=False)
-            print(s_dump)
+            json.dump(albums, f_dump, ensure_ascii=False)
 
 
     def cropImage(self,srcImage):

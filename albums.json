@@ -10,8 +10,8 @@
                 },
                 "month": "05",
                 "year": "2018",
-                "origin": "albums/origin/2018/05/002.png",
-                "thumb": "albums\\thumb\\2018\\05\\002.png",
+                "origin": "https://github.com/qinyuanpei/qinyuanpei.github.io/blob/blog//albums/origin/2018/05/002.png",
+                "thumb": "https://github.com/qinyuanpei/qinyuanpei.github.io/blob/blog//albums/thumb/2018/05/002.png",
                 "comment": ""
             },
             {
@@ -21,8 +21,8 @@
                 },
                 "month": "05",
                 "year": "2018",
-                "origin": "albums/origin/2018/05/009.png",
-                "thumb": "albums\\thumb\\2018\\05\\009.png",
+                "origin": "https://github.com/qinyuanpei/qinyuanpei.github.io/blob/blog//albums/origin/2018/05/009.png",
+                "thumb": "https://github.com/qinyuanpei/qinyuanpei.github.io/blob/blog//albums/thumb/2018/05/009.png",
                 "comment": ""
             },
             {
@@ -32,8 +32,8 @@
                 },
                 "month": "05",
                 "year": "2018",
-                "origin": "albums/origin/2018/05/011.png",
-                "thumb": "albums\\thumb\\2018\\05\\011.png",
+                "origin": "https://github.com/qinyuanpei/qinyuanpei.github.io/blob/blog//albums/origin/2018/05/011.png",
+                "thumb": "https://github.com/qinyuanpei/qinyuanpei.github.io/blob/blog//albums/thumb/2018/05/011.png",
                 "comment": ""
             }
         ]
@@ -49,19 +49,8 @@
                 },
                 "month": "06",
                 "year": "2018",
-                "origin": "albums/origin/2018/06/05549344-BF85-4e8c-BCBC-1F63DFE80E43.png",
-                "thumb": "albums\\thumb\\2018\\06\\05549344-BF85-4e8c-BCBC-1F63DFE80E43.png",
-                "comment": ""
-            },
-            {
-                "size": {
-                    "width": 255,
-                    "height": 255
-                },
-                "month": "06",
-                "year": "2018",
-                "origin": "albums/origin/2018/06/20162.gif",
-                "thumb": "albums\\thumb\\2018\\06\\20162.gif",
+                "origin": "https://github.com/qinyuanpei/qinyuanpei.github.io/blob/blog//albums/origin/2018/06/05549344-BF85-4e8c-BCBC-1F63DFE80E43.png",
+                "thumb": "https://github.com/qinyuanpei/qinyuanpei.github.io/blob/blog//albums/thumb/2018/06/05549344-BF85-4e8c-BCBC-1F63DFE80E43.png",
                 "comment": ""
             },
             {
@@ -71,8 +60,8 @@
                 },
                 "month": "06",
                 "year": "2018",
-                "origin": "albums/origin/2018/06/58118E57-C229-4e62-992D-515F91F1D485.png",
-                "thumb": "albums\\thumb\\2018\\06\\58118E57-C229-4e62-992D-515F91F1D485.png",
+                "origin": "https://github.com/qinyuanpei/qinyuanpei.github.io/blob/blog//albums/origin/2018/06/58118E57-C229-4e62-992D-515F91F1D485.png",
+                "thumb": "https://github.com/qinyuanpei/qinyuanpei.github.io/blob/blog//albums/thumb/2018/06/58118E57-C229-4e62-992D-515F91F1D485.png",
                 "comment": ""
             }
         ]
