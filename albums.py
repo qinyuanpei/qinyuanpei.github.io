@@ -15,7 +15,8 @@ class ImageProcessor:
         self.workspace = os.path.abspath('.')
         self.origin_folder = os.path.join(self.workspace,'albums/origin/')
         self.thumb_folder = os.path.join(self.workspace,'albums/thumb/')
-        self.assets_perfix = 'https://github.com/qinyuanpei/qinyuanpei.github.io/blob/blog/'
+        # self.assets_perfix = 'https://github.com/qinyuanpei/qinyuanpei.github.io/blob/blog/'
+        self.assets_perfix ='/assets/'
     
     def loadImages(self,filePath):
         images = []
