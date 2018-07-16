@@ -47,7 +47,7 @@ public interface IValuesApiCaller : IHttpApiClient
 }
 ```
 
-&emsp;&emsp;在这个示例中，我们展示了WebApiClient是如何处理带参数以及不带参数的Get请求的。通过HttpGet特性，我们分别为GetValues()和GetValue()两个方法指定了请求的URL。虽然在这里我们指定一个完整的URL，可是考虑到我们Web API通常都是分布在不同的域名下，所以我们可以通过HttpHost特性来配置一个BaseURL。接口的返回值为ITask<T>，我们可以通过我们的需要指定相应的类型，在这里我们以ITask<string>为例，特别说明的是，如果服务器返回的是标准的JSON格式，那么我们可以将其映射为相应的实体结构，这就需要使用JsonReturn标特性对方法进行修饰。我们知道Get请求可以通过QueryString形式来进行传参，那么这一点在WebApiClient中如何实现呢？这就用到所谓的**"平铺参数"**，即我们在方法中声明的参数会被WebApiClient自动地追加到URL上面去，再不需要去手动地拼接这些参数；同理，这些参数可以用一个包装类封装起来，具体大家参考[官方文档]()。
+&emsp;&emsp;在这个示例中，我们展示了WebApiClient是如何处理带参数以及不带参数的Get请求的。通过HttpGet特性，我们分别为GetValues()和GetValue()两个方法指定了请求的URL。虽然在这里我们指定一个完整的URL，可是考虑到我们Web API通常都是分布在不同的域名下，所以我们可以通过HttpHost特性来配置一个BaseURL。接口的返回值为ITask<T>，我们可以通过我们的需要指定相应的类型，在这里我们以ITask<string>为例，特别说明的是，如果服务器返回的是标准的JSON格式，那么我们可以将其映射为相应的实体结构，这就需要使用JsonReturn标特性对方法进行修饰。我们知道Get请求可以通过QueryString形式来进行传参，那么这一点在WebApiClient中如何实现呢？这就用到所谓的**"平铺参数"**，即我们在方法中声明的参数会被WebApiClient自动地追加到URL上面去，再不需要去手动地拼接这些参数；同理，这些参数可以用一个包装类封装起来，具体大家参考[官方文档](https://github.com/dotnetcore/WebApiClient/wiki/WebApiClient%E5%9F%BA%E7%A1%80)。
 
 &emsp;&emsp;OK，现在来看看如何调用IValuesApiCaller这个接口。我们在前面说过，WebApiClient会帮助我们生成一个IValuesApiCaller的实例，所以我们调用一个Web API的时候，关注点已然从之前的过程实现转变为接口实现，这正是我们渴望看到的局面。一个非常简洁的调用示例：
 
