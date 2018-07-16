@@ -158,7 +158,7 @@ using (var client = HttpApiClient.Create<IFilesApiCaller>())
     }
     .Select(f=>new MulitpartFile(f))
     .ToList();
-    var result = client.Upload(files).InvokeAsync().Result;
+    var result = await client.Upload(files).InvokeAsync();
     Console.WriteLine(result);
 
     var json = JArray.Parse(result);
@@ -168,7 +168,7 @@ using (var client = HttpApiClient.Create<IFilesApiCaller>())
     if (!Directory.Exists(filePath)) Directory.CreateDirectory(filePath);
     using (var fileStram = new FileStream(fileName, FileMode.Create))
     {
-        var stream = client.Download(fileId).InvokeAsync().Result;
+        var stream = await client.Download(fileId).InvokeAsync();
         stream.Content.ReadAsStreamAsync().Result.CopyToAsync(fileStram);
     }
 }
