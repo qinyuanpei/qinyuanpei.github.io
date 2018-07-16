@@ -144,7 +144,7 @@ public interface IFilesApiCaller : IHttpApiClient
     ITask<HttpResponseMessage> Download(string fileId);
 }
 ```
-&emsp;&emsp;在这里，上传我使用了ASP.NET Core中的IFormFile接口，并且在Postman测试通过，可是在网页上用type为file的input标签进行测试时，发现页面一直无法正常响应，不知道具体是什么原因，我一直不太理解ajax上传和表单上传的区别，曾经项目上用HttpWebRequest去做文件的上传，里面需要大量的字符串拼接动作去构造MulitpartFormData，只要后端上传的API发生变更，这段代码几乎就会变成不可维护的代码，幸运的是，在经过几次迭代以后，他们终于意识到了这个问题，在我的建议下，他们使用HttpClient重构了代码。在这里你会看到Download()方法的返回值类型为ITask<HttpResponseMessage>，这是HttpClient中使用的数据结构。为什么我推荐大家使用这套API，因为它和ASP.NET中的数据结构是一致的，而事实是上，WebApiClient正是在HttpClient的基础上完成的，所以这里你能够想到，我将通过HttpResponseMessage来获取返回的数据流，进而完成文件的下载。一起来看下面的示例：
+&emsp;&emsp;在这里，上传我使用了ASP.NET Core中的IFormFile接口，并且在Postman测试通过，可是在网页上用type为file的input标签进行测试时，发现页面一直无法正常响应，不知道具体是什么原因(**后来发现它完全和Postman中的请求体一样，好吧😬**)，我一直不太理解ajax上传和表单上传的区别，曾经项目上用HttpWebRequest去做文件的上传，里面需要大量的字符串拼接动作去构造MulitpartFormData，只要后端上传的API发生变更，这段代码几乎就会变成不可维护的代码，幸运的是，在经过几次迭代以后，他们终于意识到了这个问题，在我的建议下，他们使用HttpClient重构了代码。在这里你会看到Download()方法的返回值类型为ITask<HttpResponseMessage>，这是HttpClient中使用的数据结构。为什么我推荐大家使用这套API，因为它和ASP.NET中的数据结构是一致的，而事实是上，WebApiClient正是在HttpClient的基础上完成的，所以这里你能够想到，我将通过HttpResponseMessage来获取返回的数据流，进而完成文件的下载。一起来看下面的示例：
 
 ```CSharp
 //调用Files Service
