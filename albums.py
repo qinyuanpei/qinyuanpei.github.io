@@ -53,6 +53,7 @@ class ImageProcessor:
         item['month'] = os.path.basename(folder)
         item['year'] = os.path.basename(os.path.dirname(folder))
         if(self.isUploaded(filePath)):
+            print('uploaded, skip to upload...')
             item['origin'] = '{0}/{1}'.format(self.qiniu_URLPerfix, fileName)
         else:
             item['origin'] = self.uploadImage(filePath)

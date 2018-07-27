@@ -129,6 +129,7 @@ portfolio:
   title: 作品
 
 albums:
+  url: https://qinyuanpei.github.io/albums.json
   file: albums.json
   title: 相册
 
