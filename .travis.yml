@@ -23,6 +23,9 @@ script:
   - hexo generate
   - python3 readme.py
   - cp README.md ./public/README.md
+  - git init
+  - git config user.name "qinyuanpei"
+  - git config user.email "qinyuanpei@163.com"
   - git add ./albums.json
   - git add ./README.md
   - git commit -m "Auto Generate Albums Build $TRAVIS_BUILD_NUMBER"
@@ -30,9 +33,6 @@ script:
 
 after_script:
   - cd ./public
-  - git init
-  - git config user.name "qinyuanpei"
-  - git config user.email "qinyuanpei@163.com"
   - git add .
   - git commit -m "Update Blog By TravisCI With Build $TRAVIS_BUILD_NUMBER"
   # Github Pages
