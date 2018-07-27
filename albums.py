@@ -8,6 +8,7 @@ import json
 import pytz
 import shutil
 import datetime
+import requests
 from PIL import Image
 from itertools import groupby
 from qiniu import Auth, put_file, etag
@@ -51,7 +52,10 @@ class ImageProcessor:
         folder = os.path.dirname(filePath)
         item['month'] = os.path.basename(folder)
         item['year'] = os.path.basename(os.path.dirname(folder))
-        item['origin'] = self.uploadImage(filePath)
+        if(self.isUploaded(filePath)):
+            item['origin'] = '{0}/{1}'.format(self.qiniu_URLPerfix, fileName)
+        else:
+            item['origin'] = self.uploadImage(filePath)
 
         # create thumb image and upload
         array = os.path.splitext(fileName)
@@ -120,8 +124,22 @@ class ImageProcessor:
         ret, resp = put_file(token, fileName, srcImage)
         if(resp.status_code == 200):
             os.remove(srcImage)
-            return '{0}\{1}'.format(self.qiniu_URLPerfix, fileName)
+            return '{0}/{1}'.format(self.qiniu_URLPerfix, fileName)
         return None
+    
+    def isUploaded(self, srcImage):
+        fileName = os.path.basename(srcImage)
+        url = '{0}/{1}'.format(self.qiniu_URLPerfix, fileName)
+        header = {
+            'Host': self.qiniu_URLPerfix.replace("http://",""),
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.99 Safari/537.36'
+        }
+        resp = requests.get(url,headers = header)
+        if(resp.status_code == 404):
+            return False
+        elif(resp.status_code == 200):
+            return True
+        return False
 
     def cleanAlbums(self):
         files = os.listdir(self.albums_folder)
