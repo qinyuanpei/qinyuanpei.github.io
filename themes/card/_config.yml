@@ -29,6 +29,9 @@ menu:
   code:
     text: 作品
     url: /works
+  images:
+    text: 相册
+    url: /albums
 
 
 # 你的头像url

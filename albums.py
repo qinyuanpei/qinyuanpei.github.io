@@ -3,25 +3,30 @@
 import os
 import re
 import sys
+import uuid
 import json
 import pytz
 import datetime
 from PIL import Image
 from itertools import groupby
+from qiniu import Auth, put_file, etag
+import qiniu.config
+
 
 class ImageProcessor:
 
     def __init__(self):
         self.workspace = os.path.abspath('.')
-        self.origin_folder = os.path.join(self.workspace,'albums/origin/')
-        self.thumb_folder = os.path.join(self.workspace,'albums/thumb/')
-        # self.assets_perfix = 'https://github.com/qinyuanpei/qinyuanpei.github.io/blob/blog/'
-        self.assets_perfix ='/assets/'
-    
-    def loadImages(self,filePath):
+        self.albums_folder = os.path.join(self.workspace, 'albums')
+        self.qiniu_URLPerfix = 'http://7wy477.com1.z0.glb.clouddn.com'
+        self.qiniu_accessKey = 'n_Xh-4hMbR-kc2ad424fN0v3YCsqoD_zApWpg4Bo'
+        self.qiniu_secretKey = 'GZqa-JzynnnbCe_-q-AIDir1c8d_Jrk1lbVOKEU2'
+        self.qiniu_bucketName = 'blogspace'
+
+    def loadImages(self, filePath):
         images = []
         assetFiles = os.listdir(filePath)
-        assetFiles = list(map(lambda x:os.path.join(filePath,x),assetFiles))
+        assetFiles = list(map(lambda x: os.path.join(filePath, x), assetFiles))
         for assetFile in assetFiles:
             assetFile = assetFile
             if(os.path.isfile(assetFile)):
@@ -30,65 +35,89 @@ class ImageProcessor:
                 images.extend(self.loadImages(assetFile))
         return images
 
-    def handleImage(self,filePath):
+    def handleImage(self, filePath):
         IMG = Image.open(filePath)
         IMG = self.cropImage(IMG)
         IMG = self.compressImage(IMG)
         IMG = IMG.convert('RGB')
-       
+
+        # upload origin image
         item = {}
-        (w,h) = IMG.size
-        item['size'] = {'width':w,'height':h}
+        (w, h) = IMG.size
+        item['size'] = {'width': w, 'height': h}
         fileName = os.path.basename(filePath)
         folder = os.path.dirname(filePath)
         item['month'] = os.path.basename(folder)
         item['year'] = os.path.basename(os.path.dirname(folder))
-        item['origin'] = '{0}/albums/origin/{1}/{2}/{3}'.format(
-            self.assets_perfix,item['year'],item['month'],fileName
-        )
-        item['thumb'] = '{0}/albums/thumb/{1}/{2}/{3}'.format(
-            self.assets_perfix,item['year'],item['month'],fileName
-        )
-        item['comment'] = ''
-        thumbFile = item['thumb'].replace(self.assets_perfix,self.workspace)
+        item['origin'] = self.uploadImage(filePath)
+
+        # create thumb image and upload
+        array = os.path.splitext(fileName)
+        newFile = '{0}-thumb{1}'.format(array[0], array[1])
+        thumbFile = os.path.join(self.albums_folder, newFile)
         if(not os.path.exists(os.path.dirname(thumbFile))):
             os.mkdir(os.path.dirname(thumbFile))
         IMG.save(thumbFile)
+        item['thumb'] = self.uploadImage(thumbFile)
+
+        # comment is optional
+        item['comment'] = ''
         return item
-        
 
     def handleImages(self):
         albums = []
-        files = self.loadImages(self.origin_folder)
-        items = list(map(lambda x:self.handleImage(x),files))
-        groups = groupby(items,key=lambda x:'{0},{1}'.format(x['year'],x['month']))
-        for (key,group) in groups:
-            albums.append({
-                    'year':key.split(',')[0],
-                    'month':key.split(',')[1],
-                    'images':list(group)
-            })
+        if(os.path.exists('./albums.json')):
+            with open("albums.json", "rt", encoding="UTF-8") as f_dump:
+                ambums = json.load(f_dump)
         
-        with open("albums.json", "w", encoding="UTF-8") as f_dump:
+        files = self.loadImages(self.albums_folder)
+        if(len(files) <= 0):
+            return
+
+        items = list(map(lambda x: self.handleImage(x), files))
+        groups = groupby(
+            items, key=lambda x: '{0},{1}'.format(x['year'], x['month']))
+        for (key, group) in groups:
+            if(key in ambums):
+                for(image in list(group)):
+                    ambums[key].images.append(Image)
+            else:
+                albums.append({
+                    'year': key.split(',')[0],
+                    'month': key.split(',')[1],
+                    'images': list(group)
+                })
+
+        with open("albums.json", "wt", encoding="UTF-8") as f_dump:
             json.dump(albums, f_dump, ensure_ascii=False)
 
-
-    def cropImage(self,srcImage):
-        (x, y) = srcImage.size  
-        if x > y:  
-            region = (int(x/2-y/2), 0, int(x/2+y/2), y)  
-        elif x < y:  
-            region = (0, int(y/2-x/2), x, int(y/2+x/2))  
-        else:  
-            region = (0, 0, x, y)  
+    def cropImage(self, srcImage):
+        (x, y) = srcImage.size
+        if x > y:
+            region = (int(x/2-y/2), 0, int(x/2+y/2), y)
+        elif x < y:
+            region = (0, int(y/2-x/2), x, int(y/2+x/2))
+        else:
+            region = (0, 0, x, y)
 
         destImage = srcImage.crop(region)
         return destImage
 
-    def compressImage(self,srcImage,scale = 2):
-        (w,h) = srcImage.size
+    def compressImage(self, srcImage, scale=2):
+        (w, h) = srcImage.size
         srcImage.thumbnail((int(w/scale), int(h/scale)))
         return srcImage
+
+    def uploadImage(self, srcImage):
+        q = Auth(self.qiniu_accessKey, self.qiniu_secretKey)
+        fileName = os.path.basename(srcImage)
+        token = q.upload_token(self.qiniu_bucketName, fileName, 3600)
+        ret, resp = put_file(token, fileName, srcImage)
+        if(resp.status_code == 200):
+            os.remove(srcImage)
+            return '{0}\{1}'.format(self.qiniu_URLPerfix, fileName)
+        return None
+
 
 if(__name__ == '__main__'):
     handler = ImageProcessor()
