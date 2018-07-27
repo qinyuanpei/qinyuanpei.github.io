@@ -25,7 +25,7 @@ script:
   - cp README.md ./public/README.md
   - git add ./
   - git commit -m "Auto Generate Albums Build $TRAVIS_BUILD_NUMBER"
-  - git push origin blog "https://${CI_TOKEN}@${GH_REF}"
+  - git push  "https://${CI_TOKEN}@${GH_REF}" blog:blog
 
 after_script:
   - cd ./public
