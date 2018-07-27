@@ -6,6 +6,7 @@ import sys
 import uuid
 import json
 import pytz
+import shutil
 import datetime
 from PIL import Image
 from itertools import groupby
@@ -17,6 +18,7 @@ class ImageProcessor:
 
     def __init__(self):
         self.workspace = os.path.abspath('.')
+        self.albums_json = os.path.join(self.workspace, 'albums.json')
         self.albums_folder = os.path.join(self.workspace, 'albums')
         self.qiniu_URLPerfix = 'http://7wy477.com1.z0.glb.clouddn.com'
         self.qiniu_accessKey = 'n_Xh-4hMbR-kc2ad424fN0v3YCsqoD_zApWpg4Bo'
@@ -66,21 +68,21 @@ class ImageProcessor:
 
     def handleImages(self):
         albums = []
-        if(os.path.exists('./albums.json')):
-            with open("albums.json", "rt", encoding="UTF-8") as f_dump:
+        if(os.path.exists(self.albums_json)):
+            with open(self.albums_json, "rt", encoding="UTF-8") as f_dump:
                 ambums = json.load(f_dump)
-        
+
         files = self.loadImages(self.albums_folder)
         if(len(files) <= 0):
             return
 
+        # Generate JSON
         items = list(map(lambda x: self.handleImage(x), files))
         groups = groupby(
             items, key=lambda x: '{0},{1}'.format(x['year'], x['month']))
         for (key, group) in groups:
-            if(key in ambums):
-                for image in list(group):
-                    ambums[key].images.append(Image)
+            if(self.hasAlbum(key, albums)):
+                self.updateAlbum(key, albums, list(group))
             else:
                 albums.append({
                     'year': key.split(',')[0],
@@ -88,8 +90,11 @@ class ImageProcessor:
                     'images': list(group)
                 })
 
-        with open("albums.json", "wt", encoding="UTF-8") as f_dump:
+        with open(self.albums_json, "wt", encoding="UTF-8") as f_dump:
             json.dump(albums, f_dump, ensure_ascii=False)
+
+        # Clean Albums
+        self.cleanAlbums()
 
     def cropImage(self, srcImage):
         (x, y) = srcImage.size
@@ -117,6 +122,29 @@ class ImageProcessor:
             os.remove(srcImage)
             return '{0}\{1}'.format(self.qiniu_URLPerfix, fileName)
         return None
+
+    def cleanAlbums(self):
+        files = os.listdir(self.albums_folder)
+        for file in files:
+            filePath = os.path.join(self.albums_folder, file)
+            if(os.path.isdir(filePath)):
+                if(len(self.loadImages(filePath)) <= 0):
+                    shutil.rmtree(filePath)
+            else:
+                os.remove(filePath)
+
+    def hasAlbum(self, key, albums):
+        year = key.split(',')[0]
+        month = key.split(',')[1]
+        return len(list(filter(lambda x: x['year'] == year and x['month'] == month, albums))) > 0
+
+    def updateAlbum(self, key, albums, images):
+        year = key.split(',')[0]
+        month = key.split(',')[1]
+        for album in albums:
+            if(album['month'] == month and album['year'] == year):
+                album.images.extend(images)
+                break
 
 
 if(__name__ == '__main__'):

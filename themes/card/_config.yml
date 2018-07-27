@@ -29,7 +29,7 @@ menu:
   code:
     text: 作品
     url: /works
-  images:
+  link:
     text: 相册
     url: /albums
 

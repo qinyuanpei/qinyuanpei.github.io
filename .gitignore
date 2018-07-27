@@ -10,3 +10,4 @@ node_modules
 package-lock.json
 package-lock.json
 hux
+/.qiniu_pythonsdk_hostscache.json
