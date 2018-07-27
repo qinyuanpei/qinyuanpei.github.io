@@ -79,7 +79,7 @@ class ImageProcessor:
             items, key=lambda x: '{0},{1}'.format(x['year'], x['month']))
         for (key, group) in groups:
             if(key in ambums):
-                for(image in list(group)):
+                for image in list(group):
                     ambums[key].images.append(Image)
             else:
                 albums.append({
