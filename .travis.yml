@@ -23,7 +23,7 @@ script:
   - hexo generate
   - python3 readme.py
   - cp README.md ./public/README.md
-  - git add ./
+  - git add ./albums.json
   - git commit -m "Auto Generate Albums Build $TRAVIS_BUILD_NUMBER"
   - git push  "https://${CI_TOKEN}@${GH_REF}" blog:blog
 
