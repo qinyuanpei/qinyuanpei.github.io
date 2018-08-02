@@ -26,10 +26,11 @@ script:
   - cp albums.json ./public/albums.json
 
 after_script:
-  - git init
   - git config user.name "qinyuanpei"
   - git config user.email "qinyuanpei@163.com"
   - cd ./public
+  - git init
+  - git remote add origin master https://github.com/qinyuanpei/qinyuanpe.github.io 
   - git add .
   - git commit -m "Update Blog By TravisCI With Build $TRAVIS_BUILD_NUMBER"
   # Github Pages
