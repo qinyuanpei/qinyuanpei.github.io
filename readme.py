@@ -7,10 +7,16 @@ import json
 import pytz
 import datetime
 from PIL import Image
+from lxml import etree
 from itertools import groupby
+from html.parser import HTMLParser
 
 # 时区定义
 tz = pytz.timezone('Asia/Shanghai')
+
+# URL定义
+GH_URL = 'http://qinyuanpei.github.io'
+CO_URL = 'http://qinyuanpei.coding.me'
 
 # 文档实体结构定义
 class Post:
@@ -62,6 +68,29 @@ def mkMarkdown(items):
                 item.getLink()
             ))
 
+# 更新百度站点地图
+def baiduSitemap():
+    doc = etree.parse('./public/baidusitemap.xml')
+    root = doc.getroot()
+    for item in root:
+        item[0].text = item[0].text.replace(GH_URL,CO_URL)
+        if(len(item[2][0])<6):
+            continue
+        else:
+            breadCrumb = item[2][0][5].attrib
+            if(not breadCrumb.has_key('url')):
+                continue
+            else:
+                breadCrumb['url'] = breadCrumb['url'].replace(GH_URL,CO_URL)
+
+    with open('./public/baidusitemap.xml', 'wt',encoding='utf-8') as fi:
+        html_parser = HTMLParser()
+        xmlText = etree.tostring(root).decode('utf-8')
+        xmlText = html_parser.unescape(xmlText)
+        fi.write(xmlText)
+
+
 if(__name__ == "__main__"):
     items = sorted(loadData(),key=lambda x:x.getDate(),reverse=True)
     mkMarkdown(items)
+    baiduSitemap()
