@@ -140,5 +140,8 @@ aplayer:
 # 版权设置
 license: by-nc-sa
 
+plugins:
+- hexo-summarizer
+
 
 
