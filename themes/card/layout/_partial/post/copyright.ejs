@@ -1,0 +1,17 @@
+<blockquote class="post-copyright">
+    <div class="content">
+        <p><b>版权声明：</b>
+        <a href="<%- page.permalink%>" rel="external"><%- post.title %></a>
+        ，由&nbsp;<a href="/about" target="_blank" rel="external"><%- config.author %></a>&nbsp;
+        首次发表于&nbsp;<a href="/" target="_blank" rel="external"><%- config.title %></a>&nbsp;
+        ，本文地址为：<a href="<%- page.permalink%>" target="_blank" rel="external"><%- page.permalink %></a><b>(国外)</b>
+        , <a href="<%- page.permalink.replace('github.io','coding.me') %>" target="_blank" rel="external"><%- page.permalink.replace('github.io','coding.me') %></a><b>(国内)</b>
+        ，转载请注明<b>作者</b>和<b>出处</b>。</p>
+    </div>
+    <footer>
+        <a href="<%- config.url %>">
+            <img src="<%- url_for(theme.avatar) %>" alt="<%- config.author %>">
+            <%- config.author %>
+        </a>
+    </footer>
+</blockquote>

@@ -1,0 +1,6 @@
+<% if (theme.reading_time) { %>
+    <span>
+        <i class="icon icon-clock-o"></i>
+        <%- readingTime(page.content,theme.reading_time.display,theme.reading_time.wpm) %>
+    </span>
+    <% } %>

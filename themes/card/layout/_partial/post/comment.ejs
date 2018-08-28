@@ -1,0 +1,6 @@
+<% if(post.comments && theme.gitalk.enable){ %>
+    <%- partial('../plugins/gitalk') %>
+<% } else if(post.comments && theme.valine.enable){ %>
+    <%- partial('../plugins/valine') %>
+<% } %>
+

@@ -1,0 +1,14 @@
+<script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+<%- js('assets/scripts/main') %>
+
+
+<% if (theme.search){ %>
+<%- partial('search') %>
+<%- js('assets/scripts/search') %>
+<% } %>
+
+<% if (theme.mathjax){ %>
+<%- partial('mathjax') %>
+<% } %>
