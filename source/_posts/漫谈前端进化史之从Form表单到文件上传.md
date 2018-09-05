@@ -6,7 +6,7 @@ tags:
   - HTTP
   - Form
   - RFC
-abbrlink: 345410188
+abbrlink:
 date: 2018-09-05 12:57:36
 ---
 &emsp;&emsp;Hi，大家好，欢迎大家关注我的博客，我是Payne，我的博客地址是[https://qinyuanpei.github.io](https://qinyuanpei.github.io)。今天这篇博客，我们来说说文件上传相关的内容。看到这里，大家一定觉得博主在技术上越来越没追求了吧，文件上传这种再简单不过的东西，真的值得博主你专门写篇博客吗？在介绍声明式RESTful客户端WebApiClient的这篇[文章]()中，博主曾经提到，HTTP协议中对文件上传的支持，主要是通过multipart/form-data来实现。因为这种方式是将文件视为一种特殊的键值对，所以对这种方式我本人不太喜欢。可作为标准的意义就是要忽略个人的情感因素，所以，在今天这篇文章中，博主更多的是想从HTTP协议(**RFC2388**)的角度来看待这个问题，即为什么它选择了multipart/form-data来实现上传，以及伴随着前端技术的发展它经历了哪些变化。
