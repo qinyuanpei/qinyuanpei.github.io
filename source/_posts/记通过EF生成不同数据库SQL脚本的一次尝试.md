@@ -130,8 +130,8 @@ public class DataContext : DbContext
 
   protected override void OnModelCreating(ModelBuilder modelBuilder)
   {
-        modelBuilder.ApplyConfiguration(new UserTypeMap());
-        modelBuilder.Entity<User>().ToTable("Users");
+  		modelBuilder.ApplyConfiguration(new UserTypeMap());
+  		modelBuilder.Entity<User>().ToTable("Users");
   }
 }
 ```
