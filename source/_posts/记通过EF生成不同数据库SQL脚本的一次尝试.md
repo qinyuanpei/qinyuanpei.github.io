@@ -6,7 +6,7 @@ tags:
   - EF
   - .NET Core
   - Logger
-abbrlink: 
+abbrlink: 795474045
 date: 2018-09-17 09:42:23
 ---
 &emsp;&emsp;接触新项目有段时间了，如果让我用一句话来形容此刻的感受，大概就是**“痛并快乐着”**。痛苦之一是面对TFS，因为它的分支管理实在是一言难尽，无时无刻不在体验着人肉合代码的“趣味”。而痛苦之二是同时维护三套数据库的脚本，这让我想到一个梗，在讲到设计模式的时候，一个常常被提到的场景是，怎么样从设计上支持不同数据库的切换。我想，这个问题是非常容易回答的，真正的问题是我们真的需要切换数据库吗？原谅我的年少无知，我们的产品因为要同时支持公有云和私有化部署，所以在数据库的选择上，覆盖到了主流MySQL、Oracle和SQL Server，这直接导致我们要维护三套数据库的脚本，你说这样子能不痛苦吗？而快乐的地方在于，终于有机会在一个有一定用户体量的产品上参与研发，以及从下周开始我们将从TFS切换到Git。好了，今天这篇文章的主题是，**通过EF来生成不同数据库的SQL脚本**，这是痛苦中的一次尝试，所谓**“痛并快乐着”**。
@@ -20,9 +20,9 @@ date: 2018-09-17 09:42:23
 &emsp;&emsp;好了，顺着这个思路，我们就会想到在ORM中添加拦截器或者是日志的方式，来获得由ORM生成的SQL语句，这里我们以Entity Framework(以下简称EF)为例，这是.NET中最常见的ORM，因为目前官方的Web开发框架有ASP.NET和ASP.NET Core两个版本，所以这里我们分别以ASP.NET和ASP.NET Core为例来说明具体的实现过程，相应地，我们分别使用了EF6和EF Core 作为各自的ORM。 
 
 ## EF6 
-&emsp;&emsp;对于EF6，我们可以通过继承DbCommandInterecptor类来编写一个拦截器。而在拦截器中重写相应的方法，就可以对数据库中的常见操作(CURD)进行拦截。所以，根据这个思路，我们会联想到，通常数据库迁移都是针对“写”这个操作，因此，我们的想法是记录INSERT和UPDATE两种SQL语句。这里我们通过下面的示例来验证这个想法，需要说明的是，本文中所有数据库相关的示例，均采用Code First的方式来创建。
+&emsp;&emsp;对于EF6，我们可以通过继承**DbCommandInterecptor**类来编写一个拦截器。而在拦截器中重写相应的方法，就可以对数据库中的常见操作(CURD)进行拦截。所以，根据这个思路，我们会联想到，通常数据库迁移都是针对“写”这个操作，因此，我们的想法是记录INSERT和UPDATE两种SQL语句。这里我们通过下面的示例来验证这个想法，需要说明的是，本文中所有数据库相关的示例，均采用Code First的方式来创建。
 ```CSharp
-public class SQLGenInterecptor : DbCommandInterceptor
+public class SQLGenInterceptor : DbCommandInterceptor
 {
     public override void NonQueryExecuting(DbCommand command, DbCommandInterceptionContext<int> interceptionContext)
     {
@@ -59,7 +59,7 @@ public class SQLGenInterecptor : DbCommandInterceptor
 
 ```CSharp
 //注入SQLGen拦截器
-DbInterception.Add(new SQLGenInterecptor());
+DbInterception.Add(new SQLGenInterceptor());
 using (var context = new DataContext())
 {
     context.Users.Add(new User()
@@ -130,7 +130,7 @@ public class DataContext : DbContext
 
   protected override void OnModelCreating(ModelBuilder modelBuilder)
   {
-          modelBuilder.ApplyConfiguration(new UserTypeMap());
+        modelBuilder.ApplyConfiguration(new UserTypeMap());
         modelBuilder.Entity<User>().ToTable("Users");
   }
 }
@@ -142,5 +142,7 @@ public class DataContext : DbContext
 
 
 # 本文小结
-&emsp;&emsp;我一直相信，懒惰是工程师的一种美德，因为为了让自己有机会懒惰，你就必须要先让自己勤奋起来。我一直怕自己在舒适区里温水煮青蛙，明明一直在重复做一件事情，还要安慰自己说：“做好这一件事情一样是成功“，有时候，一味地重复自己并不见得会有太多收获，所以，就像这篇文章一样，我本来像偷懒少写一点SQL，结果意外地发现了给数据库记录日志的方法。当有了意外收获以后，曾经的初衷到底是什么可能就没那么重要了，如“雨血”中左殇所说，当你赢了的时候，你说曾经有十成把握亦不为过。这篇文章主要介绍如何利用EF来生成不同数据库的SQL脚本，对EF6来说，需要继承DbCommandInterecptor类编写拦截器；对于EF Core来说，需要注入ILogger来记录日志。本文的延伸之一是记录SQL执行日志，这一点在本文已经有所体现。本文更深层次的延伸是，在这个基础上实现数据库的主从复制、读写分离，这一点我会在下一篇博客中讲解，欢迎大家继续关注我的博客，好啦，以上就是这篇文章的全部内容啦，晚安！
+&emsp;&emsp;我一直相信，懒惰是工程师的一种美德，因为为了让自己有机会懒惰，你就必须要先让自己勤奋起来。我一直怕自己在舒适区里温水煮青蛙，明明一直在重复做一件事情，还要安慰自己说：“做好这一件事情一样是成功“，有时候，一味地重复自己并不见得会有太多收获，所以，就像这篇文章一样，我本来像偷懒少写一点SQL，结果意外地发现了给数据库记录日志的方法。当有了意外收获以后，曾经的初衷到底是什么可能就没那么重要了，如“雨血”中左殇所说，当你赢了的时候，你说曾经有十成把握亦不为过。
+
+&emsp;&emsp;这篇文章主要介绍如何利用EF来生成不同数据库的SQL脚本，对EF6来说，需要继承DbCommandInterecptor类编写拦截器；对于EF Core来说，需要注入ILogger来记录日志。本文的延伸之一是记录SQL执行日志，这一点在本文已经有所体现。本文更深层次的延伸是，在这个基础上实现数据库的主从复制、读写分离，这一点我会在下一篇博客中讲解，欢迎大家继续关注我的博客，好啦，以上就是这篇文章的全部内容啦，晚安！
 
