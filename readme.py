@@ -93,4 +93,4 @@ def baiduSitemap():
 if(__name__ == "__main__"):
     items = sorted(loadData(),key=lambda x:x.getDate(),reverse=True)
     mkMarkdown(items)
-    baiduSitemap()
+    #baiduSitemap()
