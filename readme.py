@@ -16,21 +16,22 @@ tz = pytz.timezone('Asia/Shanghai')
 
 # URL定义
 GH_URL = 'http://qinyuanpei.github.io'
-CO_URL = 'http://qinyuanpei.coding.me'
+CO_URL = 'https://blog.yuanpei.me'
 
 # 文档实体结构定义
 class Post:
 
-    def __init__(self,date,link,title):
+    def __init__(self,date,link,title,prefix):
         self.date  = date
         self.link  = link
         self.title = title
+        self.prefix = prefix
 
     def getTitle(self):
         return self.title
 
     def getLink(self):
-        return 'https://qinyuanpei.github.io/' + self.link
+        return self.prefix + self.link
 
     def getDate(self):
         d = re.findall(r'\d{4}-\d{1,2}-\d{1,2}',self.date)[0]
@@ -39,11 +40,11 @@ class Post:
         return datetime.datetime.strptime(dt,'%Y-%m-%d %H:%M:%S')
 
 # 从JSON中加载文档数据
-def loadData():
+def loadData(prefix):
     json_file = open('./public/content.json',mode='rt',encoding='utf-8')
     json_data = json.load(json_file)
     for item in json_data:
-        yield Post(item['date'],item['path'],item['title'])
+        yield Post(item['date'],item['path'],item['title'],prefix)
 
 # 从列表生成Markdown文件
 def mkMarkdown(items):
@@ -91,6 +92,6 @@ def baiduSitemap():
 
 
 if(__name__ == "__main__"):
-    items = sorted(loadData(),key=lambda x:x.getDate(),reverse=True)
+    items = sorted(loadData(sys.argv[1]),key=lambda x:x.getDate(),reverse=True)
     mkMarkdown(items)
     #baiduSitemap()

@@ -16,14 +16,11 @@
                 </a>
             </span>
             <span>
-                <a href="https://github.com/qinyuanpei/qinyuanpei.github.io" rel="license">
-                    Github
-                </a>
-            </span>
-            <span>
-                <a href="https://coding.net/u/qinyuanpei/p/qinyuanpei.coding.me" rel="license">
-                    Coding
-                </a>
+            <% if (config.image_version == 'master') { %>
+                <p>Hosted by <a href="https://pages.coding.me" style="font-weight: bold">Coding Pages</a></p>
+            <% } else { %>
+                <p>Hosted by <a href="https://pages.github.com" style="font-weight: bold">Github Pages</a></p>
+            <% } %>
             </span>
         </p>
     </div>
