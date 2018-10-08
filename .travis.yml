@@ -18,9 +18,11 @@ install:
   - sudo pip3 install -r requirements.txt
 
 script:
-  # Build Master Repository(Coding Pages)
   - hexo clean
   - python3 albums.py
+
+after_script:
+  # Build Master Repository(Coding Pages) 
   - rm _config.yml
   - mv config-master.yml _config.yml
   - hexo generate
@@ -33,28 +35,8 @@ script:
   - git init
   - git remote add origin master https://github.com/qinyuanpei/qinyuanpe.github.io 
   - git add .
-  - git commit -m "Update Blog By TravisCI With Build $TRAVIS_BUILD_NUMBER"
+  - git commit -m "Update Blog By Travis-CI With Build $TRAVIS_BUILD_NUMBER For Coding Pages"
   - git push --force --quiet "https://qinyuanpei:${CO_TOKEN}@${CO_REF}" master:master
-
-after_script:
-  # Build Master Repository(Github Pages) 
-  - cd ..
-  - hexo clean
-  - python3 albums.py
-  - rm _config.yml
-  - mv config-salver.yml _config.yml
-  - hexo generate
-  - python3 readme.py https://qinyuanpei.github.io
-  - cp README.md ./public/README.md
-  - cp albums.json ./public/albums.json
-  - git config user.name "qinyuanpei"
-  - git config user.email "qinyuanpei@163.com"
-  - cd ./public
-  - git add .
-  - git commit -m "Update Blog By TravisCI With Build $TRAVIS_BUILD_NUMBER"
-  - git push --force --quiet "https://${CI_TOKEN}@${GH_REF}" master:master 
-  - git tag v0.1.$TRAVIS_BUILD_NUMBER -a -m "Auto Taged By TravisCI With Build $TRAVIS_BUILD_NUMBER"
-  - git push --quiet "https://${CI_TOKEN}@${GH_REF}" master:master --tags
 
 
 addons:
