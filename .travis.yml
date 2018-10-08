@@ -37,6 +37,18 @@ after_script:
   - git add .
   - git commit -m "Update Blog By Travis-CI With Build $TRAVIS_BUILD_NUMBER For Coding Pages"
   - git push --force --quiet "https://qinyuanpei:${CO_TOKEN}@${CO_REF}" master:master
+  # Build Salver Repository(Github Pages)
+  - cd ..
+  - hexo clean
+  - rm _config.yml
+  - mv config-salver.yml _config.yml
+  - hexo generate
+  - python3 readme.py https://qinyuanpei.github.io
+  - cp README.md ./public/README.md
+  - cp albums.json ./public/albums.json
+  - git add .
+  - git commit -m "Update Blog By Travis-CI With Build $TRAVIS_BUILD_NUMBER For Github Pages"
+  - git push --force --quiet "https://${CI_TOKEN}@${GH_REF}" master:master
 
 
 addons:

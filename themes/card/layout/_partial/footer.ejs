@@ -1,5 +1,12 @@
 <footer class="footer">
     <div class="top">
+        <span>
+            <% if (config.image_version == 'master') { %>
+                <p>Hosted by <a href="https://pages.coding.me" style="font-weight: bold">Coding Pages</a></p>
+            <% } else { %>
+                <p>Hosted by <a href="https://pages.github.com" style="font-weight: bold">Github Pages</a></p>
+            <% } %>
+        </span>
         <%- partial('plugins/site-visit') %>
         <p>
             <% if ((config.feed) && (config.feed.path.length)) { %>
@@ -16,12 +23,16 @@
                 </a>
             </span>
             <span>
-            <% if (config.image_version == 'master') { %>
-                <p>Hosted by <a href="https://pages.coding.me" style="font-weight: bold">Coding Pages</a></p>
-            <% } else { %>
-                <p>Hosted by <a href="https://pages.github.com" style="font-weight: bold">Github Pages</a></p>
-            <% } %>
+                <a href="https://github.com/qinyuanpei/qinyuanpei.github.io" rel="license">
+                    Github
+                </a>
             </span>
+            <span>
+                <a href="https://coding.net/u/qinyuanpei/p/qinyuanpei.coding.me" rel="license">
+                    Coding
+                </a>
+            </span>
+            
         </p>
     </div>
     <div class="bottom">
