@@ -26,7 +26,7 @@ after_script:
   - rm _config.yml
   - mv config-master.yml _config.yml
   - hexo generate
-  - python3 readme.py https://blog.yuanpei.me
+  - python3 readme.py https://blog.yuanpei.me/
   - cp README.md ./public/README.md
   - cp albums.json ./public/albums.json
   - git config user.name "qinyuanpei"
@@ -45,7 +45,7 @@ after_script:
   - rm _config.yml
   - mv config-salver.yml _config.yml
   - hexo generate
-  - python3 readme.py https://qinyuanpei.github.io
+  - python3 readme.py https://qinyuanpei.github.io/
   - cp README.md ./public/README.md
   - cp albums.json ./public/albums.json
   - git config user.name "qinyuanpei"
