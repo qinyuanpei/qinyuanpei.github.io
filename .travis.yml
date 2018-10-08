@@ -37,16 +37,22 @@ after_script:
   - git add .
   - git commit -m "Update Blog By Travis-CI With Build $TRAVIS_BUILD_NUMBER For Coding Pages"
   - git push --force --quiet "https://qinyuanpei:${CO_TOKEN}@${CO_REF}" master:master
-  # Build Salver Repository(Github Pages)
+  # Prepare Rebuild
   - cd ..
+  - rm -rf ./public
   - hexo clean
+  # Build Salver Repository(Github Pages)
   - rm _config.yml
   - mv config-salver.yml _config.yml
   - hexo generate
   - python3 readme.py https://qinyuanpei.github.io
   - cp README.md ./public/README.md
   - cp albums.json ./public/albums.json
+  - git config user.name "qinyuanpei"
+  - git config user.email "qinyuanpei@163.com"
   - cd ./public
+  - git init 
+  - git remote add origin master https://github.com/qinyuanpei/qinyuanpe.github.io
   - git add .
   - git commit -m "Update Blog By Travis-CI With Build $TRAVIS_BUILD_NUMBER For Github Pages"
   - git push --force --quiet "https://${CI_TOKEN}@${GH_REF}" master:master
