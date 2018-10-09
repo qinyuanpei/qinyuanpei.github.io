@@ -13,7 +13,7 @@ timezone:
 
 # URL设置
 ## If your site is put in a subdirectory, set url as 'http://yoursite.com/child' and root as '/child/'
-url: https://blog.yuanpei.me
+url: https://qinyuanpei.github.io
 root: /
 permalink: posts/:abbrlink/
 permalink_defaults:
