@@ -6,6 +6,9 @@
             <% } else { %>
                 <p>Hosted by <a href="https://pages.github.com" style="font-weight: bold">Github Pages</a></p>
             <% } %>
+            <% if(theme.ICP_license) {%>
+                | <a href="http://www.miitbeian.gov.cn/" target="_blank"><%- theme.ICP_license %></a><br>
+            <% } %>
         </span>
         <%- partial('plugins/site-visit') %>
         <p>
@@ -38,9 +41,6 @@
     <div class="bottom">
         <p><span><%-config.author %> &copy; <%if (theme.since_year && theme.since_year < date(new Date(), 'YYYY')) {%><%- theme.since_year %> - <%}%><%- date(new Date(), 'YYYY') %></span>
             <span>
-                <% if(theme.ICP_license) {%>
-                <a href="http://www.miitbeian.gov.cn/" target="_blank"><%- theme.ICP_license %></a><br>
-                <% } %>
                 Powered by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a>
             </span>
         </p>
