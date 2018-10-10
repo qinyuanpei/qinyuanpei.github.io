@@ -1,5 +1,6 @@
 <footer class="footer">
     <div class="top">
+        <%- partial('plugins/site-visit') %>
         <p>
             <% if ((config.feed) && (config.feed.path.length)) { %>
                 <span><a href="<%- url_for(config.feed.path) %>" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
@@ -34,11 +35,10 @@
                 <% } %>
                 Powered by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a><br>
                 <% if (config.image_version == 'master') { %>
-                    <p>Hosted by <a href="https://pages.coding.me" style="font-weight: bold">Coding Pages</a></p><br>
+                    <p>Hosted by <a href="https://pages.coding.me" style="font-weight: bold">Coding Pages</a></p>
                 <% } else { %>
-                    <p>Hosted by <a href="https://pages.github.com" style="font-weight: bold">Github Pages</a></p><br>
+                    <p>Hosted by <a href="https://pages.github.com" style="font-weight: bold">Github Pages</a></p>
                 <% } %>
-                <%- partial('plugins/site-visit') %>
             </span>
         </p>
     </div>
