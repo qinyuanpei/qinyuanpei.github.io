@@ -34,18 +34,20 @@
     </title>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <% if(theme.color){ %>
-    <meta name="theme-color" content="<%=theme.color%>">
+        <meta name="theme-color" content="<%=theme.color%>">
     <% } %>
     <%
         var keyWords = config.keywords;
         if(page.tags){
-        keyWords = [];
-
-        _.isArray(page.tags) ? ( keyWords = page.tags )
-            : page.tags.each(function(k){
-                keyWords.push(k.name);
-            });
-    }
+            if(Array.isArray(page.tags)){
+                keyWords = [];
+                page.tags.each(function(tag)){
+                    keywords.push(tag.name);
+                });
+            }else{
+                keywords = page.tags;
+            }
+        }
     %>
     <meta name="keywords" content="<%= keyWords %>">
     <%- open_graph({twitter_id: theme.twitter, google_plus: theme.google_plus, fb_admins: theme.fb_admins, fb_app_id: theme.fb_app_id}) %>
