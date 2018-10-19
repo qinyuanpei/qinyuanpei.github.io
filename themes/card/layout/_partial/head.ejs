@@ -42,11 +42,14 @@
             if(Array.isArray(page.tags)){
                 keyWords = [];
                 page.tags.each(function(tag)){
-                    keywords.push(tag.name);
+                    keyWords.push(tag.name);
                 });
             }else{
-                keywords = page.tags;
+                keyWords = page.tags;
             }
+        }
+        if(Array.isArray(keyWords)){
+            keyWords = keyWords.join(',');
         }
     %>
     <meta name="keywords" content="<%= keyWords %>">
