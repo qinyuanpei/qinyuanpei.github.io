@@ -36,23 +36,15 @@
     <% if(theme.color){ %>
         <meta name="theme-color" content="<%=theme.color%>">
     <% } %>
-    <%
-        var keyWords = config.keywords;
-        if(page.tags){
-            if(Array.isArray(page.tags)){
-                keyWords = [];
-                page.tags.each(function(tag)){
-                    keyWords.push(tag.name);
-                });
-            }else{
-                keyWords = page.tags;
-            }
+    <% if (page.tags){ %>
+        var keyWords = []
+        for(var tag in page.tags){
+            keyWords.push(tag);
         }
-        if(Array.isArray(keyWords)){
-            keyWords = keyWords.join(',');
-        }
-    %>
-    <meta name="keywords" content="<%= keyWords %>">
+        <meta name="keywords" content="<%= config.keywords %>,<%= keyWords.join() %>">
+    <% } else if (config.keywords){ %>
+        <meta name="keywords" content="<%= config.keywords %>">
+    <%} %>
     <%- open_graph({twitter_id: theme.twitter, google_plus: theme.google_plus, fb_admins: theme.fb_admins, fb_app_id: theme.fb_app_id}) %>
     <% if ((config.feed) && (config.feed.path.length)) { %>
         <link rel="alternate" type="application/atom+xml" title="<%= config.title %>" href="<%- url_for(config.feed.path) %>">
