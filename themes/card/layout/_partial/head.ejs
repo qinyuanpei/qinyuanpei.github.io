@@ -41,7 +41,7 @@
         for(var tag in page.tags){
             keyWords.push(tag);
         }
-        <meta name="keywords" content="<%= config.keywords %>,<%= keyWords.join() %>">
+        <meta name="keywords" content="<%= keyWords.join() %>">
     <% } else { %>
         <meta name="keywords" content="<%= config.keywords %>">
     <%} %>
