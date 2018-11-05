@@ -20,6 +20,7 @@
     "hexo-generator-portfolio": "^1.0.2",
     "hexo-generator-sitemap": "^1.2.0",
     "hexo-generator-tag": "^0.1.1",
+    "hexo-offline": "^1.0.0",
     "hexo-reading-time": "^1.0.3",
     "hexo-renderer-ejs": "^0.1.0",
     "hexo-renderer-less": "^0.1.3",
