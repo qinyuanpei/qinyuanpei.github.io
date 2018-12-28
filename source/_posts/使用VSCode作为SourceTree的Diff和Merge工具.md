@@ -17,7 +17,7 @@ date: 2018-09-30 08:43:44
 
 &emsp;首先，确保你安装了VSCode，这显然是一句废话，可对于博主来说，这是唯一可以替代Sublime Text的代码编辑器，想想可以写Markdown、写Python、写JS、写.NET Core，简直不能更美好了好嘛？然后，我们在SourceTree里做如下配置，这里我们直接让VSCode作为我们的Diff和Merge工具，具体参数如图所示：
 
-![SourceTree配置图示](https://img-blog.csdn.net/20180930170910221)
+![SourceTree配置图示](http://ww1.sinaimg.cn/large/4c36074fly1fymku875hdj20ix0got97.jpg)
 
 &emsp;好了，现在我们就可以在SourceTree里愉快地使用VSCode啦，感受一下这如德芙一般的纵想丝毫，从现在开始，彻底忘掉小乌龟那丑陋的合并工具吧！
 
