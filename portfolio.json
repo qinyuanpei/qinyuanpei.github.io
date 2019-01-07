@@ -4,7 +4,7 @@
    		{
         "title":"男女性择偶观数据分析",
         "date":"2018.03",
-        "cover":"http://7wy477.com1.z0.glb.clouddn.com/weibo_analyse.png",
+        "cover":"https://ws1.sinaimg.cn/large/4c36074fly1fyy4r87z0sj21k40zgdif.jpg",
         "subTitle":"",
         "description":"一个使用Python + SQLite抓取并分析新浪微博数据的项目，通过抓取@西安月老牵线的微博来分析男女性的择偶观，使用朴素贝叶斯进行特征提取和文本分类，使用matplotlib对数据进行了可视化。",
         "link": "https://github.com/qinyuanpei/weibo-analyse",
@@ -13,7 +13,7 @@
         {
         "title":"微信好友数据分析",
         "date":"2017.12",
-        "cover":"http://7wy477.com1.z0.glb.clouddn.com/Works_WeChat_Analyse.png",
+        "cover":"https://ws1.sinaimg.cn/large/4c36074fly1fyy4s7y1bmj21k40zgmzg.jpg",
         "subTitle":"",
         "description":"一个使用itchat获取微信好友信息，然后通过Python进行数据分析及可视化的项目，该项目从性别、头像、签名、地区四个维度对好友信息进行分析，使用matplotlib及BDP个人版绘制相关图表。",
         "link": "https://github.com/qinyuanpei/wechat-analyse",
