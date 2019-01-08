@@ -95,11 +95,11 @@ disunity extract C:\Users\Robin\Desktop\s049.unity3d
 
 &emsp;&emsp;因为博主不会在Blender中给模型贴图，所以我们到Unity3D中完成贴图，首先需要将模型导出为FBX格式。好了，将模型导入Unity3D后，将贴图赋给模型，童年的林月如就闪亮登场了，哈哈！
 
-![林月如贴图效果](http://7wy477.com1.z0.glb.clouddn.com/imgs_林月如贴图效果.png)
+![林月如贴图效果](https://ws1.sinaimg.cn/large/4c36074fly1fyzcuaxphej20k10h70vr.jpg)
 
 &emsp;&emsp;好了，再来一张，不过这张没有贴图，需要大家自己来辨别这是谁啊，哈哈！
 
-![柳梦璃灰模](http://7wy477.com1.z0.glb.clouddn.com/imgs_柳梦璃灰模.png)
+![柳梦璃灰模](https://ws1.sinaimg.cn/large/4c36074fly1fyzcu53oytj20hj0fdmyd.jpg)
 
 &emsp;&emsp;通过disunity这个工具我们还能获取更多的资源，剩下的内容就由大家自己去探索吧。通过这部分的研究，我们可以总结出以下观点，希望大家在使用AsssetBundle这项技术时注意：
 * 尽量在一个AssetBundle中打包多个资源，这样做的好处是别人没法通过加载AssetBundle拿到你做好的Prefab。

@@ -47,7 +47,7 @@ date: 2015-04-19 23:31:30
 
 &emsp;&emsp;好了，现在我们就来看看这个MMD的效果吧！
 
-![MMD5](http://7wy477.com1.z0.glb.clouddn.com/imgs_MMD5.gif)
+![MMD5](https://ws1.sinaimg.cn/large/4c36074fly1fyzctxp079g208506hh78.gif)
 
 &emsp;&emsp;哈哈，感觉效果还不错吧！
 

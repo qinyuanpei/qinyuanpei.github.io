@@ -98,7 +98,7 @@ disunity extract C:\Users\Robin\Desktop\resources.assets
 
 ![蜃楼中游戏连招视频1](http://7wy477.com1.z0.glb.clouddn.com/imgs_s23_shang_devoursword_2015441598.JPG)
 
-![蜃楼中游戏连招视频2](http://7wy477.com1.z0.glb.clouddn.com/imgs_18_hun_omnislash_20154415955.JPG)
+![蜃楼中游戏连招视频2](https://ws1.sinaimg.cn/large/4c36074fly1fyzcu600c0j208w0500sp.jpg)
 
 
 #总结

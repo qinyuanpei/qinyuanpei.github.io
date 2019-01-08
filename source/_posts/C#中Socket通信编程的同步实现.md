@@ -498,7 +498,7 @@ namespace TCPLib.Test
 
 ![聊天窗口效果演示](http://7wy477.com1.z0.glb.clouddn.com/qinyuanpei_imgs_聊天窗口演示.png)
 
-![客户端下线效果演示](http://7wy477.com1.z0.glb.clouddn.com/qinyuanpei_imgs_客户端下线后聊天窗口演示.png)
+![客户端下线效果演示](https://ws1.sinaimg.cn/large/4c36074fly1fyzctms5wsj211y0lc7ez.jpg)
 
 # 总结
 &emsp;&emsp;今天我们基本上写出了一个可以使用的用例，不过这个例子目前还存在以下问题：
