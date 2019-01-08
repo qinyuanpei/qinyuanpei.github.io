@@ -22,7 +22,7 @@
        {
         "title":"仙剑同人游戏Demo",
         "date":"2016.3",
-        "cover":"http://7wy477.com1.z0.glb.clouddn.com/Works_Pal4.png",
+        "cover":"https://ws1.sinaimg.cn/large/4c36074fly1fyy4tuf1vzj21k40zgb2a.jpg",
         "subTitle":"",
         "description":"一个由一群仙剑爱好者发起的同人游戏，剧情设定在《仙剑奇侠传四》结局前100年时间内，该Demo实现了一个RPG游戏中所具备的基本元素，譬如关卡系统、装备系统、背包系统、剧情系统等等。因为个人精力有限，该项目于2017年被迫中止。",
         "link": "https://github.com/qinyuanpei/LightGames/tree/master/Unity3D_TDSample",
