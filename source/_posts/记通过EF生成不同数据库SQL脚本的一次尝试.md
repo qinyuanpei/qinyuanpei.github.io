@@ -74,7 +74,7 @@ using (var context = new DataContext())
 
 &emsp;&emsp;现在，我们需要将这个拦截器注册到EF中，注册过程非常简单，一旦拦截器注册完成，当我们在EF中执行相应操作的时候，就可以在日志中看到相对应的SQ语句了，这样我们就达到了用EF生成SQL语句的目的，虽然说这样可能还没手写来快，可它至少让你知道了，这个世界上有一种不需要手写SQL的可能性啊，你说对吗？
 
-![EF生成SQL语句比想象中更为复杂](http://7wy477.com1.z0.glb.clouddn.com/20180917105923.png)
+![EF生成SQL语句比想象中更为复杂](https://ws1.sinaimg.cn/large/4c36074fly1fz05glt2tij20j306x74e.jpg)
 
 ## EF Core
 &emsp;&emsp;对于EF Core来说，它并没有提供像EF6那样的拦截器，虽然官方曾经说过后续会做这方面的工作[摊手]……不过办法终究是人想出来的，对于EF Core我们可以通过注入日志的方式来实现。我们知道，微软在.NET Core中大力地发展了依赖注入、中间件等一系列特性，所以，这对于我们这种喜欢搞事情的人来说，简直太方便了有木有啊！.NET Core中日志注入主要集中在ILogger、ILoggerFactory和ILoggerProvider三个接口，简单来说，ILoggerFactory是日志工厂，负责返回具体的Logger；而ILoggerProvider，则决定在什么情况下应该提供什么样的Logger。最常见的两种LoggerProvider是Console和Debug，它们分别通过AddConsole()和AddDebug()来注入。具体到这里，我们通过下面的方式实现：

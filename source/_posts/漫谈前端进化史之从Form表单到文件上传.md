@@ -32,16 +32,16 @@ date: 2018-09-05 12:57:36
 # 神奇的Input控件
 &emsp;&emsp;OK，在本文的第一节，我们使用的是最简单的Input控件，即它的type属性为“text”。事实上，Input控件是一个神奇的控件，因为不同的type会有不同的作用。例如，type为password对应密码域；type为checkbox对应复选；type为radio对应单选域；type为button对应按钮域等等……有很多朋友可能会问，你说的这个和这篇文章有什么关系吗？我想说的是，当然有关系而且关系密切，因为我们下面要提到的这种Input控件，和本文想要说明的HTTP上传，在本质上有着千丝万缕的联系。具体是什么样的联系呢？我们来一起看下面的这个例子。
 
-![HTTP_Upload_06](http://7wy477.com1.z0.glb.clouddn.com/HTTP_Upload_06.png)
+![HTTP_Upload_06](https://ws1.sinaimg.cn/large/4c36074fly1fz05o9mcsoj20h606uq2s.jpg)
 
-![HTTP_Upload_05](http://7wy477.com1.z0.glb.clouddn.com/HTTP_Upload_05.png)
+![HTTP_Upload_05](https://ws1.sinaimg.cn/large/4c36074fly1fz05ljreo8j20me08vt98.jpg)
 
 &emsp;&emsp;通过这个例子，我们很容易发现的一点是，当我们采用type为file的Input控件上传一个文件时，它会采用multipart/form-data来传递数据，报文中使用了和第二个示例类似的结构，即第一部分负责描述文件信息，譬如文件的名称、扩展名类型等等；第二部分表示文件数据流，可以理解为二进制形式的内容。既然它采用multipart/form-data来传递数据，那么这是否意味着，我们可以在这个结构中携带更多的信息呢？譬如，有时候我们需要将文件和用户提交的信息关联起来，这个时候就需要将这些信息一切提交到服务器端，如果我们将其拆分为两个API来实现，那么就需要去花精力维护这个关联的id啦。答案自然是可以的，只要把文件视为一种特殊的键值对即可。
 
 # HTTP与文件上传
 &emsp;&emsp;好了，说了这多么内容，是时候来说说HTTP与文件上传啦！现在大家都知道了，HTTP上传实际上是在multipart/form-data基础上扩展而来的。早期人们在制定HTTP协议的时候，并没有想到用它来作为文件上传的协议，因为事实上TPC/IP或者FTP都可以提供更好的上传支持。当我们回顾Form表单中关于HTTP的部分，我们就会发现，HTTP中具备上传文件可能性的方式只有两种，即multipart/form-data和x-www-form-urlencode。这里为什么不考虑text/plain呢？尽管从理论上来讲，它可以作为文件上传的一种方式，此时，它相当于把整个文件的内容全部放在请求体(body)中。从实用性角度来讲，text/pain在实际应用中并不多见，因为采用纯文本意味着客户端与服务端必须按照某种规则去解析报文。而从功能性角度来讲，把整个文件的内容全部放在请求体中，则会造成文件信息的不完整，因为此时文件名等信息是没有办法传输到服务器端的，所以，这样综合下来再看的话，HTTP协议本身留给我们的选择的空间并不大，我们能够选择的就只有multipart/form-data和x-www-form-urlencode这两种啦，下面着重来分析下这种数据加密方式。
 
-![HTTP_Upload_07](http://7wy477.com1.z0.glb.clouddn.com/HTTP_Upload_07.png)
+![HTTP_Upload_07](https://ws1.sinaimg.cn/large/4c36074fly1fz05f46qf1j20rv0dvjso.jpg)
 
 &emsp;&emsp;对于Content-Type为multipart/form-data而言，首先，它会在请求头部的Content-Type字段中，声明当前的内容类型为multipart/form-data，并指定一个名为boundary的随机字符串，它的含义是说，从现在开始，请求中的每一个“字段”都会用这个名为boundary的随机字符串进行分割。而对于每一个“字段”而言，它可以拥有部分子头部字段，一个最为常见的头部字段是Content-Disposition，其取值为form-data。除此之外，每一个“字段”可以在**Content-Disposition: form-data;**后追加若干个字段，譬如name、filename以及用以指定文件类型的Content-Type(假如这个“字段”是一个文件的话)。HTTP协议中还规定这里可以支持扩展字段。我们通过type为file 的Input控件进行上传时，默认的name为multipartfile，当服务器端接受到类似的字段时，就会根据报文对文件进行拼接，所以，对于HTTP上传来说，它可以支持多个文件并发上传，但并不直接支持断点续传。注意这里我说的是，不直接支持断点续传，实际上它可以通过请求头部中的Range字段来实现，当然这已经超出了这篇文章的范畴。
 

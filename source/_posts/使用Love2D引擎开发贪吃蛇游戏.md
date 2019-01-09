@@ -15,9 +15,9 @@ date: 2015-03-10 10:51:19
 
 ## 游戏算法
 &emsp;&emsp;我们首先来看看贪吃蛇是怎么移动的？
-![贪吃蛇游戏算法演示1](http://7wy477.com1.z0.glb.clouddn.com/qinyuanpei_imgs_贪吃蛇算法演示.png)
-![贪吃蛇游戏算法演示2](http://7wy477.com1.z0.glb.clouddn.com/qinyuanpei_imgs_贪吃蛇算法演示2.png)
-![贪吃蛇游戏算法演示3](http://7wy477.com1.z0.glb.clouddn.com/qinyuanpei_imgs_贪吃蛇算法演示3.png)
+![贪吃蛇游戏算法演示1](https://ws1.sinaimg.cn/large/4c36074fly1fz05nhb62pj205m05lq33.jpg)
+![贪吃蛇游戏算法演示2](https://ws1.sinaimg.cn/large/4c36074fly1fz05k1yzipj205m05lq33.jpg)
+![贪吃蛇游戏算法演示3](https://ws1.sinaimg.cn/large/4c36074fly1fz05dugbchj205m05lq33.jpg)
 ![贪吃蛇游戏算法演示4](https://ws1.sinaimg.cn/large/4c36074fly1fz01zh5qn2j205m05lq33.jpg)
 &emsp;&emsp;通过这四张图的演示，我们可以发现这样一个规律：
 >蛇的移动其实是将蛇身体的最后一个元素移动到第一个元素的位置

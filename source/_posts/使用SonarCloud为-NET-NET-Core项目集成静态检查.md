@@ -28,11 +28,11 @@ date: 2018-05-12 01:16:52
 &emsp;&emsp;接下来，我们需要设置一个Token，其目的是通过这个Token登录SonarCloud，然后把SonarScanner在本地扫描的结果发送到SonarCloud。这里我们可以选择生成一个新的Token或者是使用一个已经存在的Token。建议使用一个Token来管理所有的项目，因为这个Token显示一次后就不再显示，同时维护多个Token实在是太痛苦啦，当然，如果你能管理好所有Token的Key的话。设置完Token点击下一步：
 ![设置Token](http://7wy477.com1.z0.glb.clouddn.com/SonarCloud02.png)
 &emsp;&emsp;设置完Token以后需要选择项目类型以及设置项目名称，在这个例子中，博主的项目名称是HttpServer，建议使用Sonar-${Project Name}的形式来为项目命名，而项目类型显然应该选择“C# or VB.NET”。
-![设置项目名称](http://7wy477.com1.z0.glb.clouddn.com/SonarCloud03.png)
+![设置项目名称](https://ws1.sinaimg.cn/large/4c36074fly1fz05nliq9vj21ef0bhaaj.jpg)
 &emsp;&emsp;接下来我们就得到最关键的信息，如图所示，这里有三条命令，我们将其复制下来，然后将其写到批处理(.bat)或者PowerShll脚本里。以后运行这三条命令，就可以对当前项目进行静态检查，是不是很简单啊？简单分析下，这三条命令，第一条命令根据我们设置的Token、项目名称、组织等信息“开始”对项目进行分析，注意到这里有一个“begin”；第二条命令是一个MSBuild命令，其目的是对整个项目重新构建；第三条命令是将静态分析的提交到SonarCloud，注意到这里有一个“end”。具体文档可以参考 [这里](https://docs.sonarqube.org/display/SCAN/Analyzing+with+SonarQube+Scanner+for+MSBuild)  哦！
-![复制3条命令](http://7wy477.com1.z0.glb.clouddn.com/SonarCloud04.png)
+![复制3条命令](https://ws1.sinaimg.cn/large/4c36074fly1fz05k8xmafj20r60h1t9n.jpg)
 &emsp;&emsp;好了，现在我们在SonarCloud中就可以看到扫描结果啦，开心！如果执行命令出现问题，请确保正确安装了相关工具，并检查这些工具是否被添加到系统变量中，特别是Java需要设置JAVA_HOME。
-![扫描结果](http://7wy477.com1.z0.glb.clouddn.com/Wechat_20180511183203.png)
+![扫描结果](https://ws1.sinaimg.cn/large/4c36074fly1fz05e26i0aj21h40pmdj2.jpg)
 # TravisCI与SonarCloud的集成
 &emsp;&emsp;现在我们来回顾下整个过程，我们需要在本地安装SonarScanner，这是一个Java编写的应用程序，因此我们需要一个Java运行环境。每次都需要通过SonarCloud来创建项目，获得项目相关的信息以后，在命令中携带这些参数并执行命令，就可以在SonarCloud中获得本地的扫描结果。在整个过程中，我们依然需要一个本地的环境，这一点都不灵活。现实世界的复杂性，就在于我们无法为还原出完全一致的处境。
 &emsp;&emsp;所以，托尔斯泰开宗明义地说道：“幸福的家庭都是相似的，不幸的家庭各有各的不幸”，况且作为一个执着于让重复的事情自动化的人，如果让我做这件事情，我保证第一次会意外地觉得好奇，而等到第二次、第三次的时候我就会感到厌烦，这就是人们所说的三分钟热度。诚然，我的确是一个花心的双子座。我们提到，SonarCloud支持TravisCI，所以，接下来我们来考虑如何让TravisCI帮助我们运行Sonar。
