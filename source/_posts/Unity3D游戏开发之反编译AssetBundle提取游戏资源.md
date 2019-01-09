@@ -91,7 +91,7 @@ disunity extract C:\Users\Robin\Desktop\s049.unity3d
 ```
 &emsp;&emsp;接下来程序会在桌面上生成一个上s049的文件夹，打开文件夹一看，尼玛，竟然直接拿到了模型的网格数据(.obj)和贴图数据(.dds)以及相关的Shader。这让我突然间有点不能接受啊，马上打开Blender将网格数据导入，结果童年的林月如就出现在了我们的面前：
 
-![林月如灰模](http://7wy477.com1.z0.glb.clouddn.com/imgs_林月如灰模.png)
+![林月如灰模](https://ws1.sinaimg.cn/large/4c36074fly1fz01ykrzepj20l70dpwfe.jpg)
 
 &emsp;&emsp;因为博主不会在Blender中给模型贴图，所以我们到Unity3D中完成贴图，首先需要将模型导出为FBX格式。好了，将模型导入Unity3D后，将贴图赋给模型，童年的林月如就闪亮登场了，哈哈！
 

@@ -43,7 +43,7 @@ date: 2015-04-19 23:31:30
 
 * 2、接下来通过VMD Loader打开加载VMD文件的窗口，选择场景中的模型文件和项目资源中的XMD动作文件，点击Convert，大概有1分钟多一点的样子就好了。此时我们选择场景中的模型文件，找到它的Animation组件，然后点击Animation右侧的按钮为其指定一个动画文件，因为刚刚我们已经为它添加了一个动作，所以我们可以很容易的在项目资源中找到名为初音_动作2的动画片段(AnimationClip)。
 
-![MMD4](http://7wy477.com1.z0.glb.clouddn.com/imgs_MMD4.png)
+![MMD4](https://ws1.sinaimg.cn/large/4c36074fly1fz01yd7d0dj20nn0hnjtn.jpg)
 
 &emsp;&emsp;好了，现在我们就来看看这个MMD的效果吧！
 

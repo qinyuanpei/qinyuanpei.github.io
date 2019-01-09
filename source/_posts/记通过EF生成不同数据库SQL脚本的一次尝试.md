@@ -138,7 +138,7 @@ public class DataContext : DbContext
 
 &emsp;&emsp;好啦，接下来就非常简单啦，我们在DbContext里对EF的Logger进行配置，把我们定义的SQLGenLoggerProvider注入到EF里，可以注意到，它可以如我们期望得那样，输出由EF生成的SQL脚本，这实在是有趣，Ok，打完收工！
 
-![通过注入日志获取EF生成的SQL](http://7wy477.com1.z0.glb.clouddn.com/20180917110748.png)
+![通过注入日志获取EF生成的SQL](https://ws1.sinaimg.cn/large/4c36074fly1fz02250ixxj20u904w74c.jpg)
 
 
 # 本文小结

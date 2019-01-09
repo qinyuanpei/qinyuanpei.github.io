@@ -191,7 +191,7 @@ public class LuckyRoll2 : MonoBehaviour {
 
 &emsp;&emsp;下面给出程序演示效果：
 
-![转盘游戏概率设计效果演示](http://7wy477.com1.z0.glb.clouddn.com/imgs_转盘抽奖概率问题.png)
+![转盘游戏概率设计效果演示](https://ws1.sinaimg.cn/large/4c36074fly1fz01zwac2hj20e407gq32.jpg)
 
 ## 参考资料
 [大家快来玩转盘抽奖游戏(走在网页游戏开发的路上)(七)](http://www.cnblogs.com/skynet/archive/2011/06/15/2081106.html)

@@ -101,7 +101,7 @@ CMD sudo ./jws start aspnet
 docker build -t jexus-aspnet:v1.0 .
 ```
 假如这个镜像被成功构建出来，我们就可以使用这个镜像来启动网站啦。如下图所示：
-![使用Docker创建网站镜像](http://7wy477.com1.z0.glb.clouddn.com/Blog_Jexus_02.jpg)
+![使用Docker创建网站镜像](https://ws1.sinaimg.cn/large/4c36074fly1fz01zbucjvj20m80d5jsm.jpg)
 具体地，我们可以使用docke image命令来管理所有的docker镜像。这里我们启动网站：
 ```
 docker run -p 4050:4000 -t jexus-aspnet:v1.0

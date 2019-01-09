@@ -36,7 +36,7 @@ date: 2015-04-16 14:50:35
 
 &emsp;&emsp;运行该程序，我们可以看到下面的结果：
 
-![Lua解释器程序](http://7wy477.com1.z0.glb.clouddn.com/imgs_Lua1.png)
+![Lua解释器程序](https://ws1.sinaimg.cn/large/4c36074fly1fz01zxszfqj20it0cdt8t.jpg)
 
 &emsp;&emsp;好了，现在我们来写一个简单的Lua程序：
 ```Lua

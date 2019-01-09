@@ -121,7 +121,7 @@ EXPOSE 2048
 docker build -t httpserver:v1 . 
 ```
 可以看到，我们整个过程除了单元测试没有通过以外，其它的环节都非常顺利，这其中一个重要的原因是，博主这个项目对Window依赖较少，它是一个C#开发的简易Web服务器，主要是类库和控制台程序，可以完美地运行在Linux平台下，所以，跨平台最终考验的还是开发人员。
-![Docker中构建的结果](http://7wy477.com1.z0.glb.clouddn.com/Docker-02.png)
+![Docker中构建的结果](https://ws1.sinaimg.cn/large/4c36074fly1fz0200fqctj212i0op77q.jpg)
 
 # One More Thing 
 &emsp;&emsp;这里我们主要针对的是.NET Framework，那么针对传统的ASP.NET以及最新的.NET Core又该如何做持续集成呢？这里简单说一下思路，具体的Dockerfile大家可以去DockerHub去找(抄)，这里我就不帮大家写了。对于传统的ASP.NET，在本文的基础上增加Jexus就可以做Linux下的部署，当然，前提是要避免和Window太过紧密的耦合，否则即便是大罗神仙亲临，这持续集成永远都是个梦。对于.NET Core，只要安装了它的SDK，编译、依赖管理、发布、部署都不再是问题，只要完善下单元测试和静态检查就可以，因为它是可以自部署的，并且天生就是为了跨平台而生，如果有可能，还是考虑用.NET Core吧，Windows最适合的还是吃鸡打游戏(逃……

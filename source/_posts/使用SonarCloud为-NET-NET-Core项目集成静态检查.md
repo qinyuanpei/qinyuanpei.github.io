@@ -102,7 +102,7 @@ cache:
     - '$HOME/.sonar/cache'
 ```
 &emsp;&emsp;好啦，感受技术的魅力吧！可以注意到，我这里有4个单元测试，其中2个通过、2个失败。虽然单元测试没有通过，可我代码没有Bug呀！
-![NUnit运行结果](http://7wy477.com1.z0.glb.clouddn.com/Wechat_20180512003928.png)
+![NUnit运行结果](https://ws1.sinaimg.cn/large/4c36074fly1fz01zprsfuj20jr0a73z5.jpg)
 
 # 本文小结
 &emsp;&emsp;本文介绍了一个“云”服务：SonarCloud。SonarCloud是一个基于SonarCube的静态分析工具，通过SonarCloud我们无需搭建Sonar环境就可以对项目进行静态分析。为了验证和实现这个诉求，我们首先提供了通过SonarScanner来扫描代码的示例，其原理是在命令行参数中携带相关信息，通过token来验证和登录SonarCloud，在完成对代码的扫描以后，就可以在SonarCloud中查看整个项目的分析结果。

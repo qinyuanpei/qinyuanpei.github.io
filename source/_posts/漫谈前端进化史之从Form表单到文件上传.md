@@ -45,7 +45,7 @@ date: 2018-09-05 12:57:36
 
 &emsp;&emsp;对于Content-Type为multipart/form-data而言，首先，它会在请求头部的Content-Type字段中，声明当前的内容类型为multipart/form-data，并指定一个名为boundary的随机字符串，它的含义是说，从现在开始，请求中的每一个“字段”都会用这个名为boundary的随机字符串进行分割。而对于每一个“字段”而言，它可以拥有部分子头部字段，一个最为常见的头部字段是Content-Disposition，其取值为form-data。除此之外，每一个“字段”可以在**Content-Disposition: form-data;**后追加若干个字段，譬如name、filename以及用以指定文件类型的Content-Type(假如这个“字段”是一个文件的话)。HTTP协议中还规定这里可以支持扩展字段。我们通过type为file 的Input控件进行上传时，默认的name为multipartfile，当服务器端接受到类似的字段时，就会根据报文对文件进行拼接，所以，对于HTTP上传来说，它可以支持多个文件并发上传，但并不直接支持断点续传。注意这里我说的是，不直接支持断点续传，实际上它可以通过请求头部中的Range字段来实现，当然这已经超出了这篇文章的范畴。
 
-![HTTP_Upload_08](http://7wy477.com1.z0.glb.clouddn.com/HTTP_Upload_08.png)
+![HTTP_Upload_08](https://ws1.sinaimg.cn/large/4c36074fly1fz020zu3ooj20t90903zd.jpg)
 
 &emsp;&emsp;对于Content-Type为x-www-form-urlencode而言，它会将请求中的每一个字段以key1=value1&key2=value2……的形式串联起来，并对每一个value进行编程，这种传值方式我们一般称为QueryString，而更为一般的场景是，我们在通过GET方式请求数据的时候，QueryString是唯一的传参方式，不同之处是GET请求的参数是附加在URL上，而POST请求的参数是附加在body里。如果我们用这种方式来上传文件会怎么样呢？答案是，当我们试图将一个文件以x-www-form-urlencode方式进行传输时，文件流会被彻底忽略，它实际传输的是对应文件的名称。所以，从这个角度来讲，它不能用于文件的上传。事实上，它是被设计用来传输非二进制数据的，那么可能有人要问啦，那我如果有JSON来传输文件可不可以呢？理论上应该没有问题，曾经我们在一个项目中用JSON描述图片，当然这是经过Base64编码以后的图片。回过头来看text/plain，我们把JSON字符串直接放到body里可不可以呢？当然没有问题，因为问题全部转移到服务器端。所以，官方建议用它来作为调试的一种选择。
 
