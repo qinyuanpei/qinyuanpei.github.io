@@ -257,6 +257,6 @@ public class LevelEvent : MonoBehaviour
 
 ![DEMO1](http://img.blog.csdn.net/20150609072855261)
 
-![DEMO2](http://img.blog.csdn.net/20150609072912905)
+![DEMO2](https://ws1.sinaimg.cn/large/4c36074fly1fz68k5yr87j20df08xjv1.jpg)
 
 &emsp;&emsp;可以注意到在第二次打开游戏后，第二个关卡已经解锁了，说明我们在最开始设计的两个目标都达到了，那么内容就是这样子啦，如果大家有什么好的想法或者建议，欢迎在文章后面给我留言，谢谢大家！

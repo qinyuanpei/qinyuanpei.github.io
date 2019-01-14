@@ -225,7 +225,7 @@ int positionX,int positionY,int textureWidth,int textureHeight)
 	SDL_RenderCopy(renderer,m_pTexture,m_pSrcRect,m_pTargetRect);
 }
 ```
-![SDL游戏开发](http://img.blog.csdn.net/20150727073901806)
+![SDL游戏开发](https://ws1.sinaimg.cn/large/4c36074fly1fz68jcze58j20vn0jvhdt.jpg)
 
 &emsp;&emsp;现在我们再来运行程序，可以发现在背景图片上绘制了一个美少女，并且这个美少女处于窗口的中心。好了，通过今天的这部分内容我们可以实现在屏幕任意位置绘制图片，这里要注意一个前提，即图片表示的是单个精灵，在绘制过程中不存在裁切和缩放的问题。作为一个有节操的程序员，我们怎么能为了目前的这点成果而止步不前呢？注意到窗口标题上出现了未响应的字样，这是因为我们这里使用了SDL_Delay()这个方法的缘故，该方法会造成程序在运行过程中的卡顿。那么怎么解决这个问题呢？这里就需要涉及到SDL中的事件机制，可能这里大家会有点迷茫，可是我们暂时只需要用到SDL_PollEvent这个方法，这个方法可以帮助我们判断是否触发了某个事件，比如我们需要判断用户是否点击了窗口右上角的关闭按钮：
 ```

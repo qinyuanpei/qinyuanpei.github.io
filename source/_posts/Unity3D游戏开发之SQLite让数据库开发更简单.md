@@ -359,7 +359,7 @@ public class SQLiteDemo : MonoBehaviour
 
 &emsp;&emsp;作为一个强大的数据库怎么能没有图形化的数据库管理工具呢？所以这里博主向大家推荐一个免安装的小工具SqliteStudio，使用这个工具可以帮助我们方便地管理Sqlite数据库里的数据，这样是不是比较方便呢？哈哈！这个工具可以从[这里](http://pan.baidu.com/s/1hqldZ3A)下载哦！
 
-![SQLiteStudio界面演示](http://img.blog.csdn.net/20150709094346962)
+![SQLiteStudio界面演示](https://ws1.sinaimg.cn/large/4c36074fly1fz68jpgvl4j20s00ibdik.jpg)
 
 &emsp;&emsp;好了，今天的内容就是这样了，为了写这篇文章花了三个晚上准备，希望大家喜欢啊！如果大家觉得这篇文章有用，请继续关注我的博客，我是秦元培，我的博客地址是[http://blog.csdn.net/qinyuanpei](http://blog.csdn.net/qinyuanpei)。
 

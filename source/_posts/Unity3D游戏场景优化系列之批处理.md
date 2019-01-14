@@ -83,7 +83,7 @@ date: 2015-09-07 10:59:13
 
 ![合并前](http://img.blog.csdn.net/20150907103347856)
 
-![合并后](http://img.blog.csdn.net/20150907103419424)
+![合并后](https://ws1.sinaimg.cn/large/4c36074fly1fz68ji32fwj214b0qfada.jpg)
 
 ###三、批处理效率分析
 &emsp;&emsp;那么批处理对游戏效率提升究竟有怎样的作用呢？我们来看下面几组测试对比：

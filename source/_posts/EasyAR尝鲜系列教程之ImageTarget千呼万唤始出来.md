@@ -140,7 +140,7 @@ public class CustomImageTargetBehaviour :ImageTargetBehaviour,ITargetEventHandle
 
 具体这些参数的定义请大家自己去看文档，因为我这里说得再明白如果大家不看等于我没有说。好了，下面我们来创建Marker，这个就比较简单了，我们直接找一个模型缩放到合适的大小然后拖拽到ImageTarget这个物体下面就可以了。如图是博主参照官方示例制作的两个识别图及其Marker：
 
-![两个ImageTarget及其对应Maker](http://img.blog.csdn.net/20160229101623272)
+![两个ImageTarget及其对应Maker](https://ws1.sinaimg.cn/large/4c36074fly1fz68j2ap8rj20fa09wacy.jpg)
 
 ##走向成功的关键步骤
 1、在EasyAR物体的EasyARConfig组件中填入从官网申请的KEY。

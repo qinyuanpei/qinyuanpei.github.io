@@ -329,7 +329,7 @@ public class TestSave : MonoBehaviour {
 
 &emsp;&emsp;加密后游戏存档：
 
-![p2](http://img.blog.csdn.net/20150819095928993)
+![p2](https://ws1.sinaimg.cn/large/4c36074fly1fz68k767w3j20l2033t8j.jpg)
 
 &emsp;&emsp;好了，这就是今天的内容了，希望大家能够喜欢，有什么问题可以给我留言，谢谢！
 &emsp;&emsp;感谢风宇冲[Unity3D教程宝典之两步实现超实用的XML存档](http://blog.sina.com.cn/s/blog_471132920101d3kh.html)一文提供相关思路！

@@ -220,4 +220,4 @@ public class PatrolPathEditor : Editor
 ```
 &emsp;&emsp;这里的PatrolNPC是一个可寻路NPC类，基本和这篇文章的内容无关，大家只要知道那个Paths字段是一个Vector3[]就好啦，这样当我们在场景中编辑这些路径节点的时候，对应NPC的路径节点信息就会同步发生更新，这样我们就可以随心所欲地规划NPC的移动路径啦，哈哈。好了，今天的内容就是这样啦，写完熬到这个点真心不容易啊，大家晚安，这是这个小工具在场景编辑器中的效果，嘻嘻，感觉还是蛮不错的吧，反正我是很喜欢就对啦！
 
-![路径节点编辑工具演示](http://img.blog.csdn.net/20151014090748963)
+![路径节点编辑工具演示](https://ws1.sinaimg.cn/large/4c36074fly1fz68jsnh8kj20nn0hrnnk.jpg)

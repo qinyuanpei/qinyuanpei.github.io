@@ -136,7 +136,7 @@ blog.Notify("Payne更新了Redis缓存技术学习系列文章");
 
 此时我们可以看到下图中所示的结果：
 
-![Redis中发布订阅模式](http://img.blog.csdn.net/20170510224237465)
+![Redis中发布订阅模式](https://ws1.sinaimg.cn/large/4c36074fly1fz68j9g791j20j80c7abz.jpg)
 
 
 

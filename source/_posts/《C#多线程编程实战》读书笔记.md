@@ -11,7 +11,7 @@ date: 2018-01-07 21:34:36
 ---
 本文是一篇读书笔记，由[《C#多线程编程实战》](https://book.douban.com/subject/26574917/)一书中的内容整理而来，主要梳理了.NET中多线程编程相关的知识脉络，从Thread、ThreadPool、Task、async/await、并发集合、Parallel、PLINQ到Rx及异步I/O等内容，均有所覆盖。为了帮助大家理解本文内容，首先给出博主在阅读该书过程中绘制的思维导图，大家可以根据个人需要针对性的查漏补缺。
 
-![《多线程编程实战》思维导图](http://img.blog.csdn.net/20180112234912008)
+![《多线程编程实战》思维导图](https://ws1.sinaimg.cn/large/4c36074fly1fz68k7w2o1j20m714q3zh.jpg)
 
 # 线程基础
 * Tips1：暂停线程，即通过Thread.Sleep()方法让线程等待一段时间而不用消耗操作系统资源。当线程处于休眠状态时，它会占用尽可能少的CPU时间。

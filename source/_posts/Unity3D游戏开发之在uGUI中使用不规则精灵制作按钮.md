@@ -269,7 +269,7 @@ public class UnregularButtonWithPixel : MonoBehaviour,IPointerClickHandler
 ```
 这里我为了让大家在学(复)习(制)的时候更容易理解，我在Click事件的响应上，使用的是实现IPointerClickHandler接口这种方法，希望通过动态绑定这种方式添加事件响应的可以自己解决，我是不会为了满足你们的好(懒)奇(惰)而奉献出我的EventTriggerListener的代码的。好了，现在我们要做的就是为需要响应点击的不规则精灵附加该脚本，这样就可以解决不规则精灵响应的问题了。这种方法使用起来非常简单，需要注意的是：图片的类型必须是Advance且保证可读可写。因为我们在脚本中访问了像素，而简单伴随着的代价就是我们无法使用图集、该图片在内存中会复制一份，所以在项目性能上允许的情况下这种方法还是可以考虑使用的。
 
-![演示效果2](http://img.blog.csdn.net/20160709211620591)
+![演示效果2](https://ws1.sinaimg.cn/large/4c36074fly1fz68k3znzij20p1061dfv.jpg)
 
 
 # 小结
