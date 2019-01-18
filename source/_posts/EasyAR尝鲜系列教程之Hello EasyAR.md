@@ -60,9 +60,9 @@ date: 2015-10-30 09:44:18
 
 &emsp;&emsp;好了，现在编译程序，将其导出为APK安装包，这样我们就可以在手机上测试EasyAR的效果啦。假如一切顺利的话，在手机上将会看到这样的画面。下面放点运行情况截图供大家参考：
 
-![截图1](http://img.blog.csdn.net/20151030084253279)
+![截图1](https://ws1.sinaimg.cn/large/None.jpg)
 
-![截图2](http://img.blog.csdn.net/20151030084315043)
+![截图2](https://ws1.sinaimg.cn/large/None.jpg)
 
 
 #问题汇总

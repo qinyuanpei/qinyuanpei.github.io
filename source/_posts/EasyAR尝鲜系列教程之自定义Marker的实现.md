@@ -48,7 +48,7 @@ date: 2015-11-03 10:23:14
 从这个文件中我们可以发现每一张图片都具有某些不同的属性，从目前博主掌握的资料来看，每张图片最重要的两个属性是image和name。其中image是指图片的相对路径，该路径相对于StreamingAssets目录，因为我们做Unity3D游戏开发的时候都知道这个目录下的资源在编译的时候不会被压缩，当导出APK安装包的时候它会被完整的保留到根目录下的assets目录中。同样地，name是指图片的名称即ID，EasyAR正是通过这个ID来和图片资源关联起来的。比如在默认的SDK项目中身份证背面这张图片是和idback这个ID对应的，如图所示，在这里Easy提供了四种存储方案即Assets、App、Absolute、Json。和官方的人交流的时候说可以支持路径和Json字符串两种形式，但是对更加具体的这四种存储方案上的区别和优缺点目前并没有一个确切的说法，所以在这里我们就继续沿用Assets这种存储方案吧！我们可以注意到idback这张图片和mousepad这张图片相比增加了两个属性，即uid和size。size目前基本可以了解为Unity3D中的缩放，因为这个值表示的是在物理空间里的范围大小，单位是米，而我们知道Unity3D里默认的单位就是米，所以这个数值可以暂时理解为Unity3D里的缩放，它对应到下图里的Size，我已经用红色字体标示出来。对于uid这个属性嘛，既然配置文件里都有todo标识出来了，那么我们就姑且认为这是一个暂时没有启用的属性值吧！
 
 
-![配置文件和ImagTarget的对应关系](http://img.blog.csdn.net/20151103130003544)
+![配置文件和ImagTarget的对应关系](https://ws1.sinaimg.cn/large/None.jpg)
 
 好了，下面我们来具体看看如何创建一个自定义Markder。
 * 首先我们在StreamingAssets目录中添加一张图片ziying.jpg，然后在dataset.json文件中增加该图片的信息。此时ziying.jpg的位置是在StreamingAssets根目录下。如果我们希望把它放在一个自定义的文件夹中，如StreamingAssets/ziying目录下，则需要将ziying的image属性值改为ziying/ziying.jpg，以此类推。
@@ -77,7 +77,7 @@ date: 2015-11-03 10:23:14
 * 在Materials目录下新建一个材质，然后找到ziying.jpg将其作为该材质的纹理贴图。
 * 在场景中找到ImageTargetDataSet-idback节点，修改其附加的SimpleImageTargetBehaviour脚本下的Name属性，将其修改为ziying，同时将第二步创建的材质赋给ImageTargetDataSet-idback节点。此时场景效果如图所示，这意味着我们使用手机摄像头来扫描这张图片就可以看到场景中的这个模型啦！
 
-![自定义Markder效果](http://img.blog.csdn.net/20151103132611641)
+![自定义Markder效果](https://ws1.sinaimg.cn/large/None.jpg)
 
 * 好了，现在编译这个项目并部署到手机上可以得到我们期望的结果，哈哈，慕容紫英站在桌面上和我一起玩对一个仙剑迷来说是不是特别有趣呢？
 
