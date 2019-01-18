@@ -325,7 +325,7 @@ public class TestSave : MonoBehaviour {
 ```
 &emsp;&emsp;脚本执行结果：
 
-![p1](http://img.blog.csdn.net/20150819095827562)
+![p1](https://ws1.sinaimg.cn/large/None.jpg)
 
 &emsp;&emsp;加密后游戏存档：
 

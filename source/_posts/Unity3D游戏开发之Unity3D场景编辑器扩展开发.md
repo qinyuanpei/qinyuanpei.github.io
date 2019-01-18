@@ -120,7 +120,7 @@ public class ExtendTransform : Editor
 ```
 该标记表明我们这个编辑器扩展是针对Transform组件进行扩展的，即当物体存在Tranform组件时会在编辑器中响应这个编辑器扩展程序。我们在这个编辑器扩展程序中都做了哪些事情呢？第一，我们实现了OnEnable()方法，该方法相当于一个初始化的方法；第二，我们重写了OnOnInspectorGUI()方法，该方法将覆盖默认的Inspector窗口外观。
 
-![扩展后的Transform](http://img.blog.csdn.net/20151014090620920)
+![扩展后的Transform](https://ws1.sinaimg.cn/large/None.jpg)
 
 好了，现在我们点击场景中默认的相机MainCamera可以发现默认的Transform会变成具有重置功能的扩展型Transform。下面我们来介绍这段程序中较为重要的核心内容：
 ##Unity3D中的可序列化对象
@@ -152,7 +152,7 @@ public class ExampleScript : MonoBehaviour
 ```
 此时如果我们给场景中的某个物体附加上该脚本，则我们在Inspector窗口可以看到Example类的实例Example将被序列化到编辑器面板中，同时我们可以注意到私有的editable字段并没有被序列化出来，这是因为**在Unity3D中，公有的字段默认支持序列化，私有的字段除非显式的增加[SerializeField]标记，否则都不会被序列化**，这一点希望大家注意。好了，那么我们为什么要讲这部分内容呢，这是因为它和我们下面要讲的**Editor基类中的属性和方法**有着十分密切的关联。
 
-![Unity3D中的可序列化对象](http://img.blog.csdn.net/20151014090701241)
+![Unity3D中的可序列化对象](https://ws1.sinaimg.cn/large/None.jpg)
 
 ##Editor基类中的属性和方法
 &emsp;&emsp;Editor基类中有两个重要的属性，即target和serializedObject。target表示当前受检查的物体我们可以通过它获得当前物体；而serializedObject表示当前物体的全部可序列化信息，我们可以通过它获得指定的序列化字段及其数值。Editor基类中重要的方法有：

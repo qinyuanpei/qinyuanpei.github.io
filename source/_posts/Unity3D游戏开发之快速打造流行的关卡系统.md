@@ -255,7 +255,7 @@ public class LevelEvent : MonoBehaviour
 ```
 &emsp;&emsp;记得在本文开始的时候，博主提到了一个假设，就是关卡的名称和其对应的游戏名称一致的假设，相信到此处大家都知道为什么了吧！为了让每个关卡的UI元素知道自己对应于哪个关卡，我们设置了一个level变量，这个变量的值在加载关卡的时候已经完成了初始化，所以此时我们可以在这里知道每个关卡的具体信息，从而完成事件的响应。好了，今天的内容就是这样了，我们来看看最终的效果吧！
 
-![DEMO1](http://img.blog.csdn.net/20150609072855261)
+![DEMO1](https://ws1.sinaimg.cn/large/None.jpg)
 
 ![DEMO2](https://ws1.sinaimg.cn/large/4c36074fly1fz68k5yr87j20df08xjv1.jpg)
 

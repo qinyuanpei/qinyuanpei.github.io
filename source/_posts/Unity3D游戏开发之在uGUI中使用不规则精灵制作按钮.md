@@ -174,7 +174,7 @@ public class UnregularButtonWithCollider : MonoBehaviour,IPointerClickHandler
 ```
 我们可以发现现在它可以正常工作啦！我们必须意识到的一点是，这个方法的空间复杂度为O(n-1)，所以随着多边形顶点数目的增加，这个方法的执行效率会越来越低，如果对不规则精灵的边界没有十分苛刻的要求的话，我的建议是我们使用多边形碰撞器标记出一个相对模糊的边界即可，因为现在我们这个方法主要依靠数学计算，没有涉及到摄像机相关计算，所以宣雨松[博客](http://www.xuanyusong.com/archives/3492)中有朋友指出他的方法仅仅适用于Canvas的模式为Screen-Space Camera这种情况，而我目前这个方法对除了World Space以外都是可以使用的，我最大的疑虑来自对鼠标位置进行转化的时候是否应该使用Screen.width和Screen.height，因为我担心可能会出现屏幕适配这种需求。
 
-![演示效果1](http://img.blog.csdn.net/20160709211338024)
+![演示效果1](https://ws1.sinaimg.cn/large/None.jpg)
 
 ## 精灵像素检测
 &emsp;&emsp;精灵像素检测这个方案的灵感来自Image组件，我们在MonoDevelop或者Visual Studio中通过"转到定义"这个功能可以获得Image组件的内部细节。我们发现uGUI在处理控件是否被点击的时候，主要是根据IsRaycastLocationValid这个方法的返回值来进行判断的，而这个方法用到的基本原理则是判断指定点对应像素的RGBA数值中的Alpha是否大于某个指定临界值。例如，我们知道半透明通常是指Alpha=0.5，而对一个.png格式的图片来说半透明甚至完全透明的区域理论上不应该被响应的，所以根据这个原理我们只需要设定一个透明度的临界值然后对当前鼠标位置对应的像素进行判断就可以了，因此这种方法叫做精灵像素检测。
@@ -223,7 +223,7 @@ public virtual bool IsRaycastLocationValid(Vector2 screenPoint, Camera eventCame
 ```
 从这段代码中我们可以看出，这个方法核心在第31行代码，即传入一个UV坐标返回一个RGBA数值并将其和临界值相比较。可是在此之前，我们看到在引入uGUI及其专属组件RectTransform以后，现在Unity中的坐标系转换变得更加复杂了，我个人看到这部分代码是相当凌乱的，或许我应该找时间补习下矩阵变换了吧。所以现在我们就有思路啦，我们有两种方式，第一种基于这个思路重新定制一个Image组件;第二种直接修改Image组件的eventAlphaThreshold属性。考虑到坐标系转换这里非常复杂，显然第二种方式更容易接受，为什么这里可以直接修改eventAlphaThreshold属性呢，因为它在Image组件内部和代码中的m_EventAlphaThreshold相关联，这就是这篇[文章](http://m.manew.com/forum.php?mod=viewthread&tid=45046&highlight=uGUI%2B%E4%B8%8D%E8%A7%84%E5%88%99&mobile=2)的完整解释啦！
 
-![圆形精灵图片](http://img.blog.csdn.net/20160709211445948)
+![圆形精灵图片](https://ws1.sinaimg.cn/large/None.jpg)
 
 &emsp;&emsp;好了，现在我们来一个简单的测试，我们这里准备一张圆形的精灵图片(如上图)，然后编写下面的代码：
 ```

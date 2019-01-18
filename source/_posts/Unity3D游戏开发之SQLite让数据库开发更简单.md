@@ -353,9 +353,9 @@ public class SQLiteDemo : MonoBehaviour
 ```
 &emsp;&emsp;在上面的代码中我们是在Start方法中创建了数据库和数据表，然而在实际使用中我们需要判断数据库和数据表是否存在，因此如果你使用这段脚本提示错误信息，请确保数据库和数据表是否已经存在。好了，下面的截图展示了程序运行的结果：
 
-![数据库效果演示](http://img.blog.csdn.net/20150709094136317)
+![数据库效果演示](https://ws1.sinaimg.cn/large/None.jpg)
 
-![Unity3D效果展示](http://img.blog.csdn.net/20150709094212852)
+![Unity3D效果展示](https://ws1.sinaimg.cn/large/None.jpg)
 
 &emsp;&emsp;作为一个强大的数据库怎么能没有图形化的数据库管理工具呢？所以这里博主向大家推荐一个免安装的小工具SqliteStudio，使用这个工具可以帮助我们方便地管理Sqlite数据库里的数据，这样是不是比较方便呢？哈哈！这个工具可以从[这里](http://pan.baidu.com/s/1hqldZ3A)下载哦！
 
