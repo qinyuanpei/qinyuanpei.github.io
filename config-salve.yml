@@ -87,10 +87,10 @@ douban:
   user: 60029335
   book:
     title: '读书'
-    quote: '哪里会有人喜欢孤独，不过是不喜欢失望'
+    quote: ''
   movie:
     title: '电影'
-    quote: '如果提前了解了你所要面对的人生，你是否还有勇气前来？'
+    quote: ''
 
 # JSON内容
 jsonContent:
