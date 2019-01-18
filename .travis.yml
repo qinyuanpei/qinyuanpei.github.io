@@ -19,7 +19,6 @@ install:
 
 script:
   - hexo clean
-  - python3 albums.py
 
 after_script:
   # Build Master Repository(Coding Pages) 
