@@ -13,7 +13,7 @@ date: 2015-09-07 10:59:13
 
 <!--more-->
 
-![仙剑奇侠传六](http://img.blog.csdn.net/20150907104113665)
+![仙剑奇侠传六](https://ws1.sinaimg.cn/large/None.jpg)
 
 ![不到20帧的优化](https://ws1.sinaimg.cn/large/None.jpg)
 

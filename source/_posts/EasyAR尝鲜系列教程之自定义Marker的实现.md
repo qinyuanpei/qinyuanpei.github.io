@@ -15,7 +15,7 @@ date: 2015-11-03 10:23:14
 
 #EasyAR的基本流程
 &emsp;&emsp;首先我们来看看官方给出的一张EasyAR的基本流程示意图：
-![EasyAR基本流程示意图](http://img.blog.csdn.net/20151103110413664)
+![EasyAR基本流程示意图](https://ws1.sinaimg.cn/large/4c36074fly1fzix180mu7j20g0057dft.jpg)
 在这张流程图，当中作为开发者的我们此刻需要关注的Target这一条线和Frame这条线。前者对应的是如何将普通的图片如.jpg、.png配合JSON文件转化为系统可以识别的Target，后者对应的是我们在识别到Target后要去处理哪些逻辑。在官方文档中我们可以找到这样一段话：
 * **创建相机设备、图像追踪器和增强对象（Create CameraDevice and ImageTracker and Augmenter objects）**.
 * **打开相机设备（Open CameraDevice）.**

@@ -20,7 +20,7 @@ date: 2015-11-21 14:47:26
 ##创建一个C++ CLR类库项目
 &emsp;&emsp;首先我们按照下图中的步骤创建一个C++ CLR项目：
 
-![截图是件讨厌的事情，虽然懒惰的人们都喜欢](http://img.blog.csdn.net/20151122130736076)
+![截图是件讨厌的事情，虽然懒惰的人们都喜欢](https://ws1.sinaimg.cn/large/4c36074fly1fzix18bmvyj20qi0gwdgh.jpg)
 
 请注意.Net版本问题，重要的事情说三遍，不认真看这里的人出现问题就不要到我这里来评论了，我最讨厌连文章都没有看明白就来和你纠缠不清的人，谢谢。创建好项目后请打开项目属性窗口设置【公共语言运行时支持】节点的值为【安全 MSIL 公共语言运行时支持(/clr:safe)】好了，下面我们找到CLR4Unity.h文件，添加ExampleClass声明：
 
@@ -78,7 +78,7 @@ using CLR4Unity;
 ```
 呵呵，我严重怀疑你对.Net的熟悉程度。你没有添加对CLR4Unity.dll的引用，你到底在using什么啊？
 
-![先添加引用然后using](http://img.blog.csdn.net/20151123093516870)
+![先添加引用然后using](https://ws1.sinaimg.cn/large/None.jpg)
 
 如果你对.NET熟悉到足以无视这里的一切，请闭上眼接着往下看，哈哈！
 
