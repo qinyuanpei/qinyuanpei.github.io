@@ -75,10 +75,10 @@ python -m pip install pyinstaller
 &emsp;&emsp;现在，在生成可执行文件以后，我们打开注册表，定位到以下节点：
 **计算机\HKEY_CLASSES_ROOT\Directory\Background\shell**，然后创建一级子节点WallPaper，其默认值填写"更换壁纸"，接下来创建二级子节点command，注意这个名称不能修改，其默认值填写可执行文件路径，本例中为：E:\Software\WallPaper\main.exe，如下图所示：
 
-![为右键菜单增加"更换壁纸"选项](http://img.blog.csdn.net/20180207140515219)
+![为右键菜单增加"更换壁纸"选项](https://ws1.sinaimg.cn/large/4c36074fly1fzixbecv5vj20vp0g3myc.jpg)
 
 &emsp;&emsp;好了，现在我们可以看看在右键菜单中增加"更换壁纸"选项以后的效果：
-![最终效果](http://img.blog.csdn.net/20180207143108184)
+![最终效果](https://ws1.sinaimg.cn/large/4c36074fly1fzix8icn54g20xi0ize81.jpg)
 
 # 文本小结
 &emsp;&emsp;本文使用Python实现了Windows下切换壁纸的功能，通过requests模块从网络上抓取图片，通过PIL模块实现JPEG格式到BMP格式的转换，通过win32api和win32gui模块实现壁纸设置，并通过修改注册表的方式，将这一功能整合到系统菜单中，可以非常便捷地更换桌面壁纸。作为一个设计上的扩展，我们需要考虑更多的问题，比如当网络断开的时候如何避免异常，如何接入更多的在线图库API，如何支持可配置的图片分类信息以及如何将修改注册表的过程自动化等等，这些问题博主会利用空闲时间去解决，今天这篇文章就是这样啦，本文源代码可以通过[这里](https://github.com/qinyuanpei/WallPaper)获取，谢谢大家！

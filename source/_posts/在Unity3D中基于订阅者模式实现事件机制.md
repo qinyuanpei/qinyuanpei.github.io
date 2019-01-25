@@ -247,7 +247,7 @@ public class Example : MonoBehaviour
 ```
 该示例运行效果如下：
 
-![事件机制的简单示例](http://img.blog.csdn.net/20160229103501294)
+![事件机制的简单示例](https://ws1.sinaimg.cn/large/4c36074fly1fzix8enrpvg20d108n0xz.jpg)
 
 #小结
 &emsp;&emsp;虽然目前这个事件机制在实现和使用上没有什么问题，可是从扩展性和可优化性上来考虑，这个设计目前存在以下问题：

@@ -53,7 +53,7 @@ date: 2016-11-18 20:23:44
 
 &emsp;&emsp;好吧，现在看起来Linux是我唯一可以去尝试的平台了，博主这里选择的是颜值最高的Elementary OS，这是一个衍生自Ubuntu的Linux发行版。在VSCode正式版发布以后，在Linux下用VSCode来编程是我一直在尝试的事情，请不要说Linux系统使用起来会非常困难，博主在安装这些软件的过程中可以说是相当顺利。建议大家在Linux平台下安装C#、Mono-Debug和Python这3个插件，需要说明的是C#和Mono-Debug在第一次使用的时候，需要在网络环境下下载相关依赖。下面是博主目前的插件安装情况：
 
-![VSCode中插件安装界面](http://img.blog.csdn.net/20170226164256843)
+![VSCode中插件安装界面](https://ws1.sinaimg.cn/large/4c36074fly1fzixbdu00aj20910icq3j.jpg)
 
 &emsp;&emsp;我们现在按F5进行调试，和编译时一样，如果用户没有为当前项目配置“任务调试程序”，VSCode会提示我们去创建一个配置文件launch.json，我们这里选择mono，该选项在安装Mono-Debug插件以前是没有的，该配置文件如下，我们注意到这里需要修改program属性为MainClass.exe:
 
@@ -90,7 +90,7 @@ sudo apt-get install mono-complete
 ```
 这样我们就可以看到眼前的成果啦，我们成功地在VSCode运行了一个C#程序：
 
-![VSCode中调试代码](http://img.blog.csdn.net/20170226163208634)
+![VSCode中调试代码](https://ws1.sinaimg.cn/large/4c36074fly1fzix8ge8e6j211y0laq4f.jpg)
 
 &emsp;&emsp;虽然我很想在这篇博客中搞点干货出来，但是当我折腾数天以后，我大概就能够写出这样一篇相当零碎的文章，到目前为止我还是没有搞明白，为什么我在调试地过程中，VSCode不会在我设置了断点地地方停下来，希望知道这个原因的朋友可以告诉我啊。这个过程最有意义的地方在于让我进一步熟悉了Linux，在不一样的地方，会有不一样的风景，这个世界很大，不要给自己设限。后续我会去研究VSCode中的调试技巧以及.NETCore相关内容，能看到C#跨平台运行是件幸福的事情，而跨平台开发是我一直在探索的方向之一。夜晚已然来临了，而这篇文章就是这样了，谢谢大家的关注，晚安！
 

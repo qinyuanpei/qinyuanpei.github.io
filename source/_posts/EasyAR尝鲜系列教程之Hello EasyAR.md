@@ -48,11 +48,11 @@ date: 2015-10-30 09:44:18
 *  找到SDK压缩包内的package/unity目录下的EasyAR.unitypackage文件并将其导入到Unity3D中。
 * 在Unity3D中找到Scenes目录下的easyar场景并打开该场景，然后找到EasyAR节点名称，在右侧属性窗口中填入应用对应的密钥。
 
-![填入应用程序密钥](http://img.blog.csdn.net/20151030000059604)
+![填入应用程序密钥](https://ws1.sinaimg.cn/large/4c36074fly1fzixb6r81jj20gt0i70u6.jpg)
 
 * 打开BuildSetting->PlayerSetting在右侧属性窗口中填入应用对应的包名。
 
-![填入应用程序包名](http://img.blog.csdn.net/20151030000451675)
+![填入应用程序包名](https://ws1.sinaimg.cn/large/4c36074fly1fzix80mo33j208z0ewjrt.jpg)
 
 * SDK默认提供了三张识别图片，我们选择每个人都有的身份证照片作为识别目标，在场景中找到ImageTargetDataSet-idback这个物体，找到它的子节点Cube。这意味着如果我们识别到了身份证照片，那么就会在身份证照片上显示一个Cube。如果大家手头上有自己喜欢的模型，可以将Cube隐藏，然后将模型添加进来，并为其添加VideoPlayerBehaviour.cs脚本。如手头上没有模型，这一步可以忽略。如图是我现在的场景效果：
 

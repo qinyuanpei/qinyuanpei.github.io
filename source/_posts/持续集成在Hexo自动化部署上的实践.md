@@ -92,11 +92,11 @@ env:
 
 大家可以注意到，这里我开启了qinyuanpei.github.io这个仓库的持续集成服务，如果大家没有在这里看到项目列表，可以点击"Sync account"按钮进行同步。好了，现在我们继续配置：
 
-![配置TravisCI](http://img.blog.csdn.net/20171028234224795)
+![配置TravisCI](https://ws1.sinaimg.cn/large/4c36074fly1fzixbn0vv8j20sa0euq3r.jpg)
 
 在这里我们配置了名为CI_TOKEN的环境变量，该值对应.travis.yml文件中的${CI_TOKEN}。现在我们在本地提交代码到blog分支，就会触发TravisCI执行Build任务，在这里Build任务是从blog分支拉取博客内容及主题，通过npm安装依赖的nodejs模块，最终Hexo生成的静态页面会被推送到master分支，这样就完成了整个自动化构建的流程。下面是TravisCI执行Build过程中的日志界面：
 
-![TravisCI日志](http://img.blog.csdn.net/20171029001105352)
+![TravisCI日志](https://ws1.sinaimg.cn/large/4c36074fly1fzix8yak5xj20rx0gg3za.jpg)
 
 &emsp;&emsp;从计划写这样一篇文章，到我一边写博客一篇将它发布在网络上，前后花了大概我3天左右的时间。这段时间发生了太多太多的事情，所以写东西受难免受到情绪影响，你现在看到这篇由TravisCI自动生成的博客，大概无法想象屏幕前的我有着怎样复杂的心绪，有时候我告诉自己要沉下心来学点什么，有时候我会觉得此时的我和过去没有什么区别。转眼间忙忙碌碌一年到头，可会想起来顿时觉得时间像虚度一般，有人说，当你对未来不再有什么期许的时候，就是你开始衰老的迹象，可我真的老了吗？我不是只有25岁吗？好啦，夜深人静，该去睡觉了，这篇文章就是这样子啦。
 

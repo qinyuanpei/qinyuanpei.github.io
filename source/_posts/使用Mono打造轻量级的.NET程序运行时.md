@@ -52,11 +52,11 @@ int main(int agrc,char *args[])
 ```
 我们将编译好的程序命名为Launcher.exe，放置我们前面定义的Mono运行时目录结构的根目录下，这个文件将作为启动文件暴露给用户，当用户点击这个程序后就可以打开主文件Main.exe。好了，现在我们来验证下我们的想法：
 
-![运行在Mono运行时下的程序](http://img.blog.csdn.net/20160503145100665)
+![运行在Mono运行时下的程序](https://ws1.sinaimg.cn/large/4c36074fly1fzixbbzwmij20kb0dz0vk.jpg)
 
 作为对比，我们给出正常情况下程序的运行截图：
 
-![运行在.NET框架下的程序](http://img.blog.csdn.net/20160503145122529)
+![运行在.NET框架下的程序](https://ws1.sinaimg.cn/large/4c36074fly1fzix8asiluj20kv0gngoo.jpg)
 
 这样我们现在这个程序就基本实现了脱离.NET框架运行，为什么说是基本呢？因为.NET中的基础类库是作为.NET框架中的一部分存在的，即它并非是CLR的内容。所以我们现在使用到的大部分的基础类库都是Mono重新实现的版本，如果我们使用的某一个库在Mono中没有相应的实现，那么我们就需要自己想办法来解决依赖问题了。现在这个方案每次运行的时候都会闪出命令行窗口，虽然不影响使用，但对一个追求完美的人来说就是瑕疵啦，怎么解决呢？答案就是Mono Embedding。
 

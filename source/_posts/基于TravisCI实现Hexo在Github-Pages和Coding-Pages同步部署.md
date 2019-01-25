@@ -28,7 +28,7 @@ tags:
 
 ![在Coding中保存访问令牌](http://img.blog.csdn.net/20180227150136197)
 
-![在Travis中新建全局变量](http://img.blog.csdn.net/20180227150209635)
+![在Travis中新建全局变量](https://ws1.sinaimg.cn/large/4c36074fly1fzixbhjw8vj216909p74i.jpg)
 
 &emsp;&emsp;好了，现在有了Token，就意味着 Travis CI 有权限向 Coding 推送或者拉取内容了，那么怎么让它工作起来呢？我们记得 Travis CI 有一个叫做 .travis.yml 的配置文件对吧？这里我们需要简单修改下这个文件，让 Travis CI 在生成静态页面以后同时推送静态页面到 Coding。修改后的关键配置如下，我已经写好了详细注释，关于这个文件配置可以参考[这里](https://docs.travis-ci.com/)，这里不再详细说明：
 
@@ -63,7 +63,7 @@ env:
 ```
 &emsp;&emsp;好了，现在我们就可以同时部署博客到 Github 和 Coding了，现在大家可以使用下面两种方式来访问我的博客。需要说明的是，使用 Coding Pages 的特性需要开启仓库的 **Pages **服务，并且 Coding 支持免费托管私有项目，虽然目前仓库的容量存在限制，对我们部署 Hexo 来说完全足够啦，下图是 Coding 上展示的提交历史，排版效果棒棒哒，哈哈，好了，以上就是这篇文章的内容啦，希望大家喜欢哦！
 
-![Coding上展示的提交历史](http://img.blog.csdn.net/20180227152041753)
+![Coding上展示的提交历史](https://ws1.sinaimg.cn/large/4c36074fly1fzix8o2p1ij20t40h4t9n.jpg)
 
 * [Github Pages 镜像](https://qinyuanpei.github.io)
 * [Coding Pages 镜像](http://qinyuanpei.coding.me)
