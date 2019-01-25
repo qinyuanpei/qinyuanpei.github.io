@@ -183,3 +183,6 @@ ICP_license: 宁ICP备6666666号
 #PWA特性
 pwa:
   manifest: /manifest.json
+
+#比心特效
+bixin: true

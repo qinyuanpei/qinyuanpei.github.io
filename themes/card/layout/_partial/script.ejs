@@ -11,8 +11,11 @@ lazyScripts.push('//s95.cnzz.com/z_stat.php?id=<%-theme.cnzz %>&web_id=<%-theme.
 
 <script src="<%- url_for(theme_js('assets/scripts/main', cache)) %>"></script>
 <% if (theme.search){ %>
-<%- partial('search') %>
-<script src="<%- url_for(theme_js('assets/scripts/search', cache)) %>" async></script>
+    <%- partial('search') %>
+    <script src="<%- url_for(theme_js('assets/scripts/search', cache)) %>" async></script>
+<% } %>
+<% if (theme.bixin){ %>
+    <script src="<%- url_for(theme_js('assets/scripts/bixin', cache)) %>" async></script>
 <% } %>
 
 <%- partial('plugins/mathjax') %>
