@@ -29,7 +29,7 @@ date: 2016-03-25 12:47:58
 #Mono运行时的搭建
 &emsp;&emsp;我们在前面说过，Mono主要由三部分组成，即C#编译器(mcs.exe)、Mono运行时(mono.exe)和基础类库。因为我们这里是为了让编写的.NET应用程序运行在Mono运行时中，所以我们这里需要的是Mono运行时(mono.exe)和基础类库。我们建立如下的目录结构：
 
-![Mono运行时目录结构](http://img.blog.csdn.net/20160503145031086)
+![Mono运行时目录结构](https://ws1.sinaimg.cn/large/4c36074fly1fzixya9n45j20dz047t9c.jpg)
 
 下面来说说这些目录各自的结构和功能：
 * bin目录：放置Mono运行时的目录，主要放置mono.exe、mono-2.0.dll、libgio-2.0-0.dll、libglib-2.0-0.dll、libgthread-2.0-0.dll共5个文件。

@@ -18,14 +18,14 @@ date: 2018-09-05 12:57:36
 
 &emsp;&emsp;如你所见，这是一个相当“简陋”的Web页面。对一名后端开发人员而言，精致的Web页面就是一段被套在华丽外壳里的代码(不知道这样会不会被前端网红们打死)。所以，排除了样式相关的CSS，可以让我们更加专注于核心原理。同样地，我们编写了一个简单的Web API，来处理前端发送来的HTTP请求，这不是本文的重点，我们假设它存在且可以工作就好。
 
-![HTML结构/界面](http://7wy477.com1.z0.glb.clouddn.com/HTTP_Upload_01.png)
+![HTML结构/界面](https://ws1.sinaimg.cn/large/4c36074fly1fziy867pz8j20ig07laa5.jpg)
 
 &emsp;&emsp;这里已经说过，比起炫酷的Web页面和后端接口，我们这里更关心的是，登录时到底发生了什么。所以，大家都猜对了，通过Chrome自带的开发人员工具，我们可以捕捉到点击“登录”按钮时发出的HTTP请求，我们一起来看看它的报文内容是什么吧，相信大家都会有一种恍然大悟的感觉，让我们拭目以待吧！
-![encrypt为x-www-form-urlencode时的请求报文](http://7wy477.com1.z0.glb.clouddn.com/HTTP_Upload_02.png)
+![encrypt为x-www-form-urlencode时的请求报文](https://ws1.sinaimg.cn/large/4c36074fly1fziy5kad23j20if08k3z9.jpg)
 
 
 &emsp;&emsp;通过这个报文内容，我们可以发现，“登录”实际上是一个POST请求，这是因为我们在HTML结构中声明了，Form表单用什么样的方式去提交数据。而实际上呢，Form表单默认的行为是GET。我们同样会注意到报文中的Content-Type为application/x-www-form-urlencode，它的特点是采用类似key1=value1&key2=value2……的形式来提交数据，并且每一个value都会被编码。这样，我们就不得不提到Form表单的encrypt属性，它有三种基本取值：text/plain、application/x-www-form-urlencode和multipart/form-data。其中，text/plain这种不必再说，因为它传递的是纯文本数据。而对于multipart/form-data来说，它的特点是采用一系列的boundary来分割不同的值，如果我们将示例中Form表单的encrypt属性设为multipart/form-data，就会得到下面的报文内容，可以注意到，它和我们预期是一致的。
-![encrypt为multipart/form-data时的请求报文](http://7wy477.com1.z0.glb.clouddn.com/HTTP_Upload_03.png)
+![encrypt为multipart/form-data时的请求报文](https://ws1.sinaimg.cn/large/4c36074fly1fzixzg5fsdj20rv0dv75u.jpg)
 
 &emsp;&emsp;或许大家会说，现在我们用AJAX来请求RESTful风格的API时，不都是用JSON作为数据交换的格式吗？对于这一点，或许我们可以理解为，Form表单是封装了有限的3种Content-Type的XHR对象，所以，Form表单足以让我们一窥AJAX最初的样子。虽然，我们今天已经不再主张使用jQuery，但是熟悉jQuery的朋友一定知道这一点，即jQuery中默认的Content-Type示例上是application/x-www-form-urlencoded。所以，即使我们今天有了全新的Fetch API，可它依然脱离不了HTTP协议的范畴。可或许正因为如此，HTTP中的文件上传多少像是某种妥协的产物。
 

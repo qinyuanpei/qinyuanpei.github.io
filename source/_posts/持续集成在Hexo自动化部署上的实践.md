@@ -88,7 +88,7 @@ env:
 
 &emsp;&emsp;我们在Github中的Setting->Developer Settings找到Personal Access Token，然后选择所有repo相关的权限，生成这个token后将其复制下来备用，因为它只有在这个地方是可见的。接下来我们打开[TravisCI](https://www.travis-ci.org)，在使用Github登录后我们就可以在这里看到所有的项目，如图是我个人的TravisCI界面：
 
-![TravisCI主界面](http://img.blog.csdn.net/20171028234101618)
+![TravisCI主界面](https://ws1.sinaimg.cn/large/4c36074fly1fzixz3sbutj20j70cvjrz.jpg)
 
 大家可以注意到，这里我开启了qinyuanpei.github.io这个仓库的持续集成服务，如果大家没有在这里看到项目列表，可以点击"Sync account"按钮进行同步。好了，现在我们继续配置：
 

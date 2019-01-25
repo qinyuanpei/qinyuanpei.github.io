@@ -24,9 +24,9 @@ date: 2018-05-12 01:16:52
 
 # 第一个.NET项目
 &emsp;&emsp;好了，下面我们来使用SonarCloud对博主的一个项目[HttpServer](https://github.com/qinyuanpei/HttpServer)进行分析。首先，我们需要在SonarCloud中创建一个项目。如下图所示，我们首先选择Organization，默认情况下，通过Github授权登录以后，会生成一个格式为：${UserName}-github的组织名称，例如我这里是：qinyuanpei-github。这里我们选择默认组织，然后点击：Continue。
-![设置组织名称](http://7wy477.com1.z0.glb.clouddn.com/Wechat_20180511174948.png)
+![设置组织名称](https://ws1.sinaimg.cn/large/4c36074fly1fziy4wzsedj21h40jcjsm.jpg)
 &emsp;&emsp;接下来，我们需要设置一个Token，其目的是通过这个Token登录SonarCloud，然后把SonarScanner在本地扫描的结果发送到SonarCloud。这里我们可以选择生成一个新的Token或者是使用一个已经存在的Token。建议使用一个Token来管理所有的项目，因为这个Token显示一次后就不再显示，同时维护多个Token实在是太痛苦啦，当然，如果你能管理好所有Token的Key的话。设置完Token点击下一步：
-![设置Token](http://7wy477.com1.z0.glb.clouddn.com/SonarCloud02.png)
+![设置Token](https://ws1.sinaimg.cn/large/4c36074fly1fzixye65qqj21gn0j7dh1.jpg)
 &emsp;&emsp;设置完Token以后需要选择项目类型以及设置项目名称，在这个例子中，博主的项目名称是HttpServer，建议使用Sonar-${Project Name}的形式来为项目命名，而项目类型显然应该选择“C# or VB.NET”。
 ![设置项目名称](https://ws1.sinaimg.cn/large/4c36074fly1fz05nliq9vj21ef0bhaaj.jpg)
 &emsp;&emsp;接下来我们就得到最关键的信息，如图所示，这里有三条命令，我们将其复制下来，然后将其写到批处理(.bat)或者PowerShll脚本里。以后运行这三条命令，就可以对当前项目进行静态检查，是不是很简单啊？简单分析下，这三条命令，第一条命令根据我们设置的Token、项目名称、组织等信息“开始”对项目进行分析，注意到这里有一个“begin”；第二条命令是一个MSBuild命令，其目的是对整个项目重新构建；第三条命令是将静态分析的提交到SonarCloud，注意到这里有一个“end”。具体文档可以参考 [这里](https://docs.sonarqube.org/display/SCAN/Analyzing+with+SonarQube+Scanner+for+MSBuild)  哦！

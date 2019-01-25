@@ -70,7 +70,7 @@ python -m pip install pyinstaller
 ```
 安装完成后按照[官方](http://www.pyinstaller.org/)文档即可在./dist/目录中找到生成的可执行文件，如果打包出错可以修改Python根目录下的./Scripts/pyinstaller-script.py文件，修改第一行Python.exe的路径，删除两端的引号即可，如下图所示。关于pyinstaller模块打包时的详细参数设定，请自行查阅官方文档。
 
-![pyinstaller-script.py文件](http://img.blog.csdn.net/20180207140459403)
+![pyinstaller-script.py文件](https://ws1.sinaimg.cn/large/4c36074fly1fzixyh5f8bj20wl0aj3za.jpg)
 
 &emsp;&emsp;现在，在生成可执行文件以后，我们打开注册表，定位到以下节点：
 **计算机\HKEY_CLASSES_ROOT\Directory\Background\shell**，然后创建一级子节点WallPaper，其默认值填写"更换壁纸"，接下来创建二级子节点command，注意这个名称不能修改，其默认值填写可执行文件路径，本例中为：E:\Software\WallPaper\main.exe，如下图所示：

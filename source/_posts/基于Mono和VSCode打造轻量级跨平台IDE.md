@@ -28,7 +28,7 @@ date: 2016-11-18 20:23:44
 
 所以这个时候我们在VSCode中的界面应该是如图所示：
 
-![在VSCode中编写代码](http://img.blog.csdn.net/20170226162907539)
+![在VSCode中编写代码](https://ws1.sinaimg.cn/large/4c36074fly1fzixygvqxsj20jg077aac.jpg)
 
 好了，下面我们直接按下Ctrl+Shift+B来编译代码，此时VSCode将提示我们“配置任务运行程序”，这里需要说明的是，在VSCode中你可以感受到微软对命令行和配置文件的偏执，这让适应了Visual Studio这样功能强大的我们相当不习惯，按照VSCode的提示或者是通过Ctrl+Shift+P打开命令面板，VSCode将在当前工作目录下为我们创建.vscode目录和tasks.json文件，在VSCode中任何和项目相关的配置信息都会存储在这里啦。此时我们配置tasks.json:
 

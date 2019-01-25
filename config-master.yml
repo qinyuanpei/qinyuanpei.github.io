@@ -143,4 +143,10 @@ license: by-nc-sa
 # 镜像设置
 image_version: master
 
+# Emoji
+githubEmojis:
+  enable: true
+  className: github-emoji
+  inject: true
+
 
