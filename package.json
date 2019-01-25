@@ -10,6 +10,7 @@
     "hexo-abbrlink": "^2.0.5",
     "hexo-deployer-git": "^0.3.1",
     "hexo-douban": "^0.2.16",
+    "hexo-filter-github-emojis": "^2.0.0",
     "hexo-generator-albums": "^1.0.5",
     "hexo-generator-archive": "^0.1.2",
     "hexo-generator-baidu-sitemap": "^0.1.2",
