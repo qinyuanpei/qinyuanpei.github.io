@@ -144,22 +144,22 @@ if __name__ == "__main__":
     sk = 'GZqa-JzynnnbCe_-q-AIDir1c8d_Jrk1lbVOKEU2'
     account = 'qinyuanpei@163.com'
     bucket = 'blogspace'
-    #sync(path,ak,sk,account,bucket)
+    sync(path,ak,sk,account,bucket)
     #sync(root,sys.argv[1],sys.argv[2],sys.argv[3],sys.argv[4])
 
-    Record = leancloud.Object.extend('MigrateRecord')
-    query_all = Record .query
-    query_list = query_all.find()
-    for query in query_list:
-        fileKey = query.get('fileKey')
-        query_group = Record .query
-        query_group.equal_to('fileKey', fileKey) 
-        group_list = query_group.find()
-        if(len(group_list)<=0):
-            continue
-        group_list = sorted(group_list, key=lambda x:x.created_at, reverse=True)
-        if(len(group_list) > 1):
-            leancloud.Object.destroy_all(group_list[1:])
-        else:
-            print(len(group_list))
+    # Record = leancloud.Object.extend('MigrateRecord')
+    # query_all = Record .query
+    # query_list = query_all.find()
+    # for query in query_list:
+    #     fileKey = query.get('fileKey')
+    #     query_group = Record .query
+    #     query_group.equal_to('fileKey', fileKey) 
+    #     group_list = query_group.find()
+    #     if(len(group_list)<=0):
+    #         continue
+    #     group_list = sorted(group_list, key=lambda x:x.created_at, reverse=True)
+    #     if(len(group_list) > 1):
+    #         leancloud.Object.destroy_all(group_list[1:])
+    #     else:
+    #         print(len(group_list))
            
