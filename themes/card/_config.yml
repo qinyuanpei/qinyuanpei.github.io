@@ -159,6 +159,9 @@ visit_counter:
   site_uv: UV：
   site_pv: PV：
 
+valine_counter: true
+
+
 reading_time: 
   wpm: 150 #每分钟阅读字数
   display: min. #显示文本标识
