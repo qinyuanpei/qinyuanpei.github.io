@@ -199,4 +199,4 @@ recommended_posts:
   fixedNumber: false
   autoDisplay: true  #自动在文章底部显示推荐文章
   excludePattern: []
-  titleHtml: <h1>推荐文章</h1> #自定义标题
+  titleHtml: <h1>你可能感兴趣</h1> #自定义标题

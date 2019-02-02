@@ -16,7 +16,7 @@
 
         <%- partial('post/copyright') %>
         <%- partial('post/reward-btn') %>
-        <% if (post && theme.recommended_posts.enabled) { %>
+        <% if (post && theme.recommended_posts) { %>
             <%- partial('post/recommended_posts', {page: post, site: site}) %>
         <% } %>
         <div class="post-footer">
