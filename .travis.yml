@@ -25,7 +25,6 @@ after_script:
   # Build Master Repository(Coding Pages) 
   - rm _config.yml
   - mv config-master.yml _config.yml
-  - hexo recommend
   - hexo generate
   - python3 readme.py https://blog.yuanpei.me/
   - cp README.md ./public/README.md
@@ -45,7 +44,6 @@ after_script:
   # Build Salver Repository(Github Pages)
   - rm _config.yml
   - mv config-salve.yml _config.yml
-  - hexo recommend
   - hexo generate
   - python3 readme.py https://qinyuanpei.github.io/
   - cp README.md ./public/README.md
