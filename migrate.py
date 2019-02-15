@@ -183,7 +183,7 @@ def syncVisitCount():
                     salve_pv = getVisitCount(url)
                 counter.set('master_pv',str(master_pv))
                 counter.set('salve_pv',str(salve_pv))
-                counter.set('pv',str(master_pv + salve_pv))
+                counter.set('total_pv',str(master_pv + salve_pv))
             else:
                 counter = Counter()
                 counter.set('post_id',post_id)
@@ -197,7 +197,7 @@ def syncVisitCount():
                     salve_pv = getVisitCount(url)
                 counter.set('master_pv',str(master_pv))
                 counter.set('salve_pv',str(salve_pv))
-                counter.set('pv',str(master_pv + salve_pv))
+                counter.set('total_pv',str(master_pv + salve_pv))
             counter.save()
             print('已完成不蒜子访问量的同步')
     
