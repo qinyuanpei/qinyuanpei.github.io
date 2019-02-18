@@ -159,7 +159,7 @@ busuanzi_counter:
   site_uv: UV：
   site_pv: PV：
 
-valine_counter: false
+# valine_counter: false
 
 
 reading_time: 
