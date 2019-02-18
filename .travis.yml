@@ -27,6 +27,7 @@ after_script:
   - mv config-master.yml _config.yml
   - hexo recommend
   - hexo generate
+  - python3 syncvisitor.py
   - python3 readme.py https://blog.yuanpei.me/
   - cp README.md ./public/README.md
   - cp albums.json ./public/albums.json
@@ -47,6 +48,7 @@ after_script:
   - mv config-salve.yml _config.yml
   - hexo recommend
   - hexo generate
+  - python3 syncvisitor.py
   - python3 readme.py https://qinyuanpei.github.io/
   - cp README.md ./public/README.md
   - cp albums.json ./public/albums.json
