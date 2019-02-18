@@ -54,13 +54,13 @@ def syncVisitCount():
                 counter = Counter.create_without_data(query_list[0].id)
                 if(conf['image_version'] == 'master'):
                     master_pv = getVisitCount(url)
-                    salve_pv = query_list[0].get('salve_pv')
+                    salve_pv = int(query_list[0].get('salve_pv'))
                 else:
                     master_pv = query_list[0].get('master_pv')
-                    salve_pv = getVisitCount(url)
+                    salve_pv = int(getVisitCount(url))
                 counter.set('master_pv',str(master_pv))
                 counter.set('salve_pv',str(salve_pv))
-                counter.set('pv',str(master_pv + salve_pv))
+                counter.set('total_pv',str(master_pv + salve_pv))
             else:
                 counter = Counter()
                 counter.set('post_id',post_id)
@@ -74,7 +74,7 @@ def syncVisitCount():
                     salve_pv = getVisitCount(url)
                 counter.set('master_pv',str(master_pv))
                 counter.set('salve_pv',str(salve_pv))
-                counter.set('pv',str(master_pv + salve_pv))
+                counter.set('total_pv',str(master_pv + salve_pv))
             counter.save()
             print('已完成不蒜子访问量的同步')
 
