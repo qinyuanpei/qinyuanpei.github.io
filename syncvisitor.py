@@ -67,11 +67,11 @@ def syncVisitCount():
                 counter.set('post_url',post_url)
                 counter.set('post_title',post_title)
                 if(conf['image_version'] == 'master'):
-                    master_pv = getVisitCount(url)
+                    master_pv = (int)getVisitCount(url)
                     salve_pv = 0
                 else:
                     master_pv = 0
-                    salve_pv = getVisitCount(url)
+                    salve_pv = (int)getVisitCount(url)
                 counter.set('master_pv',str(master_pv))
                 counter.set('salve_pv',str(salve_pv))
                 counter.set('total_pv',str(master_pv + salve_pv))
