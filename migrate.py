@@ -68,6 +68,7 @@ def sync(root,ak,sk,account,bucket):
             files.append(path)
     for file in files:
         links = []
+        
         newContent = ''
         with open(file,'rt',encoding='utf-8') as fp:
             content = fp.read()
@@ -87,7 +88,7 @@ def sync(root,ak,sk,account,bucket):
                         recordMigrate(fileKey,newLink)
                         newContent = content.replace(link,newLink)
                 elif(os.path.exists(link)):
-                    newLink = upload(link)
+                    newLink = upload(fileKey,link)
                     if(newLink!=None):
                         recordMigrate(fileKey,newLink)
                         newContent = content.replace(link,newLink)
