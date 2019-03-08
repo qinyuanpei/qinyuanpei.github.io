@@ -22,8 +22,17 @@ lazyScripts.push('//s95.cnzz.com/z_stat.php?id=<%-theme.cnzz %>&web_id=<%-theme.
 
 <%- partial('plugins/mathjax') %>
 
-<% if (theme.busuanzi_counter) { %>
+<% if (theme.busuanzi_counter.enable) { %>
 <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<% } %>
+
+<% if (theme.leancloud_counter.enable) { %>
+    <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.1.js"></script>
+    <script src="<%- url_for(theme_js('assets/scripts/leancloud-counter', cache)) %>" async></script>
+    <script>
+        var counter = new AVCounter(theme.leancloud_counter.appId,theme.leancloud_counter.appKey);
+        counter.addPagePV();
+    </script>
 <% } %>
 
 <%- partial('plugins/dynamic-title') %>

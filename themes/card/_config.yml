@@ -55,7 +55,7 @@ archives_title: 归档
 categories_title: 分类
 
 # 文章截断
-excerpt_render: true
+excerpt_render: false
 excerpt_length: 200
 excerpt_link: 阅读全文...
 mathjax: false
@@ -156,11 +156,15 @@ about: 双子座，典型精分/外冷内热/软萌/文艺。软件工程师，C
 
 # “不蒜子”访问量统计，详见 http://ibruce.info/2015/04/04/busuanzi/
 busuanzi_counter: 
+  enable: true
   site_uv: UV：
   site_pv: PV：
 
-# valine_counter: false
-
+# LenaCloid访问量统计
+leancloud_counter: 
+  enable: false
+  appId:  JbHqRp2eMrTgIwYpfERH0g79-gzGzoHsz
+  appKey: VsiKvLuiBGvJL1XrAfv7siY2
 
 reading_time: 
   wpm: 150 #每分钟阅读字数
