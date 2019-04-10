@@ -19,6 +19,7 @@
     "hexo-generator-index": "^0.1.2",
     "hexo-generator-json-content": "^3.0.1",
     "hexo-generator-portfolio": "^1.0.2",
+    "hexo-generator-search": "^2.4.0",
     "hexo-generator-sitemap": "^1.2.0",
     "hexo-generator-tag": "^0.1.1",
     "hexo-offline": "^1.0.0",
