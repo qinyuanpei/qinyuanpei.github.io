@@ -3,18 +3,17 @@
 ## Source: https://github.com/hexojs/hexo/
 
 # 标题设置
-title: PayneQinのBlog
+title: 七喜先生の猫
 eamil: qinyuanpei@163.com
-keywords: 秦元培,qinyuanpei,PayneQin,Payne,飞鸿踏雪
-subtitle: 人生到处知何似，应似飞鸿踏雪泥
+subtitle: 起风了，唯有努力生存
 description: 
-author: Payne
+author: 七喜先生
 language: zh-CN
 timezone:
 
 # URL设置
 ## If your site is put in a subdirectory, set url as 'http://yoursite.com/child' and root as '/child/'
-url: https://blog.yuanpei.me
+url: https://qinyuanpei.github.io
 root: /
 permalink: posts/:abbrlink/
 permalink_defaults:
@@ -142,6 +141,23 @@ aplayer:
 license: by-nc-sa
 
 # 镜像设置
-image_version: master
+image_version: salver
+
+# Emoji
+githubEmojis:
+  enable: true
+  className: github-emoji
+  inject: true
+
+# # 文章推荐
+# recommended_posts:
+#   server: https://api.truelaurel.com #后端推荐服务器地址
+#   timeoutInMillis: 10000 #服务时长，超过此时长，则使用离线推荐模式
+#   internalLinks: 3 #内部文章数量
+#   externalLinks: 1 #外部文章数量
+#   fixedNumber: false
+#   autoDisplay: true  #自动在文章底部显示推荐文章
+#   excludePattern: []
+#   titleHtml: <h1>你可能感兴趣</h1> #自定义标题
 
 
