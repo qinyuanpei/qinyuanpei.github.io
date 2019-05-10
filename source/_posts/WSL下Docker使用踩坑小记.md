@@ -6,8 +6,8 @@ tags:
   - WSL
   - Docker
   - Linux
+abbrlink: 4159187524
 date: 2019-04-22 22:13:36
-abbrlink:
 ---
 众所周知，Win10中开始提供Linux子系统，即Windows Subsystem for Linux，简称WSL，它可以让我们在Windows系统使用Linux系统，自从有了这个新功能以后，博主果断地放弃双系统的方案，因为折腾起来实在花费时间。关于如何使用WSL，网上有非常多的文章可以参考，这里不再赘述。今天想说的是，WSL下使用Docker遇到的各种坑。
 
