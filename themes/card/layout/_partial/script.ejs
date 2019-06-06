@@ -27,12 +27,19 @@ lazyScripts.push('//s95.cnzz.com/z_stat.php?id=<%-theme.cnzz %>&web_id=<%-theme.
 <% } %>
 
 <% if (theme.leancloud_counter.enable) { %>
-    <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.1.js"></script>
-    <script src="<%- url_for(theme_js('assets/scripts/leancloud-counter', cache)) %>" async></script>
     <script>
-        var counter = new AVCounter(theme.leancloud_counter.appId,theme.leancloud_counter.appKey);
-        counter.addPagePV();
+        window.PAGE_COUNTER_CONFIG = {
+          serverless: 'leancloud',
+          leancloud: {
+            history: 24160,
+            table: 'visitor-counters',
+            appId: 'JbHqRp2eMrTgIwYpfERH0g79-gzGzoHsz',
+            appKey: 'VsiKvLuiBGvJL1XrAfv7siY2'
+          }
+        }
     </script>
+    <script src="//cdn.jsdelivr.net/npm/leancloud-storage@3.13.1/dist/av-min.js"></script>
+    <script src="//unpkg.com/page-counter@1.4.1/dist/page-counter.min.js"></script>
 <% } %>
 
 <%- partial('plugins/dynamic-title') %>

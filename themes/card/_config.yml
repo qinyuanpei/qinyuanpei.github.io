@@ -156,13 +156,14 @@ about: 双子座，典型精分/外冷内热/软萌/文艺。软件工程师，C
 
 # “不蒜子”访问量统计，详见 http://ibruce.info/2015/04/04/busuanzi/
 busuanzi_counter: 
-  enable: true
+  enable: false
   site_uv: UV：
   site_pv: PV：
 
 # LenaCloid访问量统计
 leancloud_counter: 
-  enable: false
+  enable: true
+  table: visitor-counters
   appId:  JbHqRp2eMrTgIwYpfERH0g79-gzGzoHsz
   appKey: VsiKvLuiBGvJL1XrAfv7siY2
 
