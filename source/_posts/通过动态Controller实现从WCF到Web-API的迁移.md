@@ -1,13 +1,13 @@
 ---
 title: 通过动态Controller实现从WCF到Web API的迁移.
 categories:
-  - null
+  - 编程语言
 tags:
-  - null
-  - null
-  - null
+  - RESTful
+  - WebApi
+  - 动态代理
 abbrlink: 4236649
-date: 2019-06-22 13:48:41
+date: 2019-06-08 13:48:41
 ---
 在《**又见AOP之基于RealProxy实现WCF动态代理**》这篇文章中，我和大家分享了关于使用动态代理来简化WCF调用过程的相关内容，当时我试图解决的问题是，项目中大量通过T4生成甚至手动编写的“代理方法”。今天，我想和大家分享的是，如何通过动态的Controller来实现从WCF到Web API的迁移。为什么会有这个环节呢？因为我们希望把一个老项目逐步迁移到.NET Core上面，在这个过程中首当其冲的就是WCF，它在项目中主要承担着内部RPC的角色，因为.NET Core目前尚未提供针对WCF服务端的支持，因此面对项目中成百上千的WCF接口，我们必须通过Web API重新“包装”一次，区别于那些通过逐个API进行改造的方式，这里我们通过Castle动态生成Controller来实现从WCF到Web API的迁移。
 
@@ -18,12 +18,54 @@ date: 2019-06-22 13:48:41
 好了，不卖关子啦，下面隆重请出Castle中的Dynamic Proxy，我们曾经介绍过Castle中的动态代理，它可以为指定的类和接口创建对应的代理类，除此以外，它提供了一种称为**AdditionalInterfaces**的接口，这个接口可以在某个代理对象上“组合”一个或者多个接口，换句话说，代理对象本身包含被代理对象的全部功能，同时又可以包含某个接口的全部功能，这样就实现了一个类和一个接口的组合。为什么我们会需要这样一个功能呢？因为假如我们可以把一个ApiController类和指定的接口类如CalculatorService进行组合，在某种程度上，CalculatorService就变成了一个ApiController，这样就实现了我们的目标的第一步，即动态生成一个ApiController。与此同时，它会包含我们现有的全部功能，为了方便大家理解，我们从下面这个简单的例子开始：
 
 ```CSharp
+/// <summary>
+ /// IEchoService定义
+ /// </summary>
+ public interface IEchoService {
+     void Echo (string receiver);
+ }
 
+ /// <summary>
+ /// IEchoServicee实现
+ /// </summary>
+ public class EchoService : IEchoService {
+     public void Echo (string receiver) {
+         Console.WriteLine ($"Hi，{receiver}");
+     }
+ }
+
+ /// <summary>
+ /// 空类EmptyClass
+ /// </summary>
+ public class EmptyClass { }
+
+ public class EchoInterceptor : IInterceptor {
+     private IEchoService _realObject;
+     public EchoInterceptor (IEchoService realObject) {
+         _realObject = realObject;
+     }
+
+     public void Intercept (IInvocation invocation) {
+         invocation.Method.Invoke (_realObject, invocation.Arguments);
+     }
+ }
+ 
+ var container = new WindsorContainer ();
+ container.Register (
+     Component.For<EchoService, IEchoService>(),
+     Component.For (typeof (EchoInterceptor)).LifestyleTransient(),
+     Component.For (typeof (EmptyClass)).Proxy.AdditionalInterfaces (typeof(IEchoService))
+     .Interceptors (typeof (EchoInterceptor)).LifestyleTransient()
+ );
+
+ var emptyClass = container.Resolve<EmptyClass> ();
+ var methodInfo = emptyClass.GetType().GetMethod ("Echo");
+ methodInfo.Invoke (emptyClass, new object[] { "Dynamic WebApi" });
 ```
 
 此时，我们会发现通过Castle动态生成的代理类，同时具备了类和接口的功能。
 
-![](通过Castle实现类和接口的组合功能)
+![通过Castle实现类和接口的组合功能](https://ws1.sinaimg.cn/large/4c36074fly1g4a1c3r3i8j20rz0f43yj.jpg)
 
 # 重温ASP.NET MVC原理
 
@@ -195,7 +237,7 @@ GlobalConfiguration.Configuration.Services.Replace(typeof(IHttpControllerActivat
 
 假设现在我希望调用ICalcultor接口中的Add方法，理论上它的URL应该是**http://localhost/Service/Calculator/Add**，因为截至到目前为止，所有的接口默认都是通过Get来访问的，下面是整个流程第一次跑通时的截图：
 
-![迁移后的ICalculator接口]()
+![迁移后的ICalculator接口](https://ws1.sinaimg.cn/large/4c36074fly1g49z1cvrw3j20pe05njrj.jpg)
 
 # 接口迁移后的二三事
 
@@ -277,7 +319,7 @@ public override Task<object> ExecuteAsync(HttpControllerContext controllerContex
 
 从代码中大家大致可以猜出DynamicApiResult的结构了，它包含三个属性：Flag、Msg、Result。这是一个最常见的Web API的返回值封装，即通过Flag判断方法是否调用成功，通过Msg来返回异常信息，通过Result来返回具体的返回值。最近对接某公司的API接口的时候，发现一个非常奇葩的现象，一般没有返回值可以返回null或者空字符串，可这家公司居然返回的是**”无数据"**，你以为这是放在Msg里的吗？不，人家是放在Result里的。对此，我只能说，互联网发展到2019年了，那些年野蛮生长留下的坑却还一直都在。好了，现在我们来看看接口调用的结果，喏，这次是不是感觉顺眼多啦！
 
-![优化后的ICalculator接口返回值]()
+![优化后的ICalculator接口返回值](https://ws1.sinaimg.cn/large/4c36074fly1g49z2ku45tj20il06dmxa.jpg)
 
 # POCOController 
 
@@ -291,3 +333,6 @@ public override Task<object> ExecuteAsync(HttpControllerContext controllerContex
 
 # 参考文章
 
+* [Castle中AdditionalInterfaces用法介绍](https://www.cnblogs.com/1zhk/p/5399548.html)
+* [ABP源码分析三十五：ABP中动态WebAPI原理解析](https://www.cnblogs.com/1zhk/p/5418694.html)
+* https://github.com/FJQBT/ABP
