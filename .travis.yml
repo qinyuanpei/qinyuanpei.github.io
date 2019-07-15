@@ -26,6 +26,7 @@ after_script:
   - rm _config.yml
   - mv config-master.yml _config.yml
   - hexo recommend
+  - hexo douban
   - hexo generate
   - python3 syncvisitor.py
   - python3 readme.py https://blog.yuanpei.me/
@@ -47,6 +48,7 @@ after_script:
   - rm _config.yml
   - mv config-salve.yml _config.yml
   - hexo recommend
+  - hexo douban
   - hexo generate
   - python3 syncvisitor.py
   - python3 readme.py https://qinyuanpei.github.io/
