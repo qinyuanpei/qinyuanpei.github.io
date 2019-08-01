@@ -15,7 +15,7 @@ install:
   - npm install
   - sudo apt-get install python3 -y
   - sudo apt-get install python3-pip -y
-  - sudo pip3 install -r requirements.txt
+  #- sudo pip3 install -r requirements.txt
 
 script:
   - hexo clean
@@ -28,10 +28,10 @@ after_script:
   - hexo recommend
   - hexo douban
   - hexo generate
-  - python3 syncvisitor.py
+  #- python3 syncvisitor.py
   - python3 readme.py https://blog.yuanpei.me/
   - cp README.md ./public/README.md
-  - cp albums.json ./public/albums.json
+  #- cp albums.json ./public/albums.json
   - git config user.name "qinyuanpei"
   - git config user.email "qinyuanpei@163.com"
   - cd ./public
@@ -50,7 +50,7 @@ after_script:
   - hexo recommend
   - hexo douban
   - hexo generate
-  - python3 syncvisitor.py
+  #- python3 syncvisitor.py
   - python3 readme.py https://qinyuanpei.github.io/
   - cp README.md ./public/README.md
   - cp albums.json ./public/albums.json
