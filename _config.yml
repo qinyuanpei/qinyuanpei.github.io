@@ -85,12 +85,14 @@ deploy:
 # 豆瓣插件
 douban:
   user: 60029335
+  timeout: 50000
+  builtin: true
   book:
     title: '读书'
-    quote: ''
+    quote: '1'
   movie:
     title: '电影'
-    quote: ''
+    quote: '2'
 
 # JSON内容
 jsonContent:
