@@ -35,10 +35,11 @@
                 <% } %>
                 Powered by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a><br>
                 <% if (config.image_version == 'master') { %>
-                    <p>Hosted by <a href="https://pages.coding.me" style="font-weight: bold">Coding Pages</a></p>
+                    <p>Hosted by <a href="https://pages.coding.me" style="font-weight: bold">Coding Pages</a></p><br>
                 <% } else { %>
-                    <p>Hosted by <a href="https://pages.github.com" style="font-weight: bold">Github Pages</a></p>
+                    <p>Hosted by <a href="https://pages.github.com" style="font-weight: bold">Github Pages</a></p><br>
                 <% } %>
+                <p>版本构建自：<%- config.build_version %></p><br>
             </span>
         </p>
     </div>
