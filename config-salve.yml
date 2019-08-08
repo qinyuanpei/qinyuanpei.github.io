@@ -162,4 +162,6 @@ githubEmojis:
 #   excludePattern: []
 #   titleHtml: <h1>你可能感兴趣</h1> #自定义标题
 
+build_version: 
+
 

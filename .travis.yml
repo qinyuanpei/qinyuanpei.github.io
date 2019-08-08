@@ -15,10 +15,11 @@ install:
   - npm install
   - sudo apt-get install python3 -y
   - sudo apt-get install python3-pip -y
-  #- sudo pip3 install -r requirements.txt
+  - sudo pip3 install -r requirements.txt
 
 script:
   - hexo clean
+  - git rev-parse --short HEAD > VERSION.txt
 # - python3 migrate.py 
 
 after_script:

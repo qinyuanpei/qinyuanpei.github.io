@@ -1,0 +1,371 @@
+﻿# Hexo Configuration
+## Docs: http://hexo.io/docs/configuration.html
+## Source: https://github.com/hexojs/hexo/
+
+# 标题设置
+title: 七喜先生の猫
+eamil: qinyuanpei@163.com
+subtitle: 起风了，唯有努力生存
+description: 
+author: 七喜先生
+language: zh-CN
+timezone:
+
+# URL设置
+## If your site is put in a subdirectory, set url as 'http://yoursite.com/child' and root as '/child/'
+url: https://qinyuanpei.github.io
+root: /
+permalink: posts/:abbrlink/
+permalink_defaults:
+
+
+# 目录设置
+source_dir: source
+public_dir: public
+tag_dir: tags
+archive_dir: archives
+category_dir: categories
+code_dir: downloads/code
+i18n_dir: :lang
+skip_render:
+
+# 写作设置
+new_post_name: :title.md # File name of new posts
+default_layout: post
+titlecase: false # Transform title into titlecase
+external_link: true # Open external links in new tab
+filename_case: 0
+render_drafts: false
+post_asset_folder: false
+relative_link: false
+future: true
+highlight:
+  enable: true
+  line_number: true
+  auto_detect: true
+  tab_replace:
+
+# 分类与标签
+default_category: uncategorized
+category_map:
+tag_map:
+
+# 日期设置
+## Hexo uses Moment.js to parse and display date
+## You can customize the date format as defined in
+## http://momentjs.com/docs/#/displaying/format/
+date_format: YYYY-MM-DD
+time_format: HH:mm:ss
+
+# 分页设置
+## Set per_page to 0 to disable pagination
+per_page: 10
+pagination_dir: pages
+
+# 主题设置
+## Plugins: http://hexo.io/plugins/
+## Themes: http://hexo.io/themes/
+#theme: card
+theme: card
+
+# RSS订阅
+feed:
+  type: atom
+  path: atom.xml
+  limit: 20 
+
+# 部署设置
+## Docs: http://hexo.io/docs/deployment.html
+deploy:
+- type: git
+  repo: git@git.coding.net:qinyuanpei/qinyuanpei.coding.me.git
+  branch: master
+  message: Updated at {{ now('YYYY-MM-DD HH:mm:ss') }}
+
+# 豆瓣插件
+douban:
+  user: 60029335
+  timeout: 50000
+  builtin: true
+  book:
+    title: '读书'
+    quote: '1'
+  movie:
+    title: '电影'
+    quote: '2'
+
+# JSON内容
+jsonContent:
+  meta: false
+  pages: false
+  posts:
+    title: true
+    date: true
+    path: true
+    text: true
+    raw: false
+    content: false
+    slug: false
+    updated: false
+    comments: false
+    link: false
+    permalink: false
+    excerpt: false
+    categories: false
+    tags: true
+
+# 永久链接
+abbrlink:
+  alg: crc32  #support crc16(default) and crc32
+  rep: dec    #support dec(default) and hex
+
+# 评论系统
+issues:
+  owner: qinyuanpei
+  repo: qinyuanpei.github.io
+  token: 52318dae4ef574e063fae602ae957d38b8627b8a 
+
+# 个人作品
+portfolio:
+  file: portfolio.json
+  title: 作品
+
+albums:
+  url: https://qinyuanpei.github.io/albums.json
+  file: albums.json
+  title: 相册
+
+# APlayer
+aplayer:
+  meting: true
+
+# 版权设置
+license: by-nc-sa
+
+# 镜像设置
+image_version: salver
+
+# Emoji
+githubEmojis:
+  enable: true
+  className: github-emoji
+  inject: true
+
+# # 文章推荐
+# recommended_posts:
+#   server: https://api.truelaurel.com #后端推荐服务器地址
+#   timeoutInMillis: 10000 #服务时长，超过此时长，则使用离线推荐模式
+#   internalLinks: 3 #内部文章数量
+#   externalLinks: 1 #外部文章数量
+#   fixedNumber: false
+#   autoDisplay: true  #自动在文章底部显示推荐文章
+#   excludePattern: []
+#   titleHtml: <h1>你可能感兴趣</h1> #自定义标题
+
+
+abbrlink:
+  alg: crc32
+  rep: dec
+albums:
+  file: albums.json
+  title: "\u76F8\u518C"
+  url: https://qinyuanpei.github.io/albums.json
+aplayer:
+  meting: true
+archive_dir: archives
+author: "\u4E03\u559C\u5148\u751F"
+build_version: '9c3fbd7d
+
+  '
+category_dir: categories
+category_map: null
+code_dir: downloads/code
+date_format: YYYY-MM-DD
+default_category: uncategorized
+default_layout: post
+deploy:
+- branch: master
+  message: Updated at {{ now('YYYY-MM-DD HH:mm:ss') }}
+  repo: git@git.coding.net:qinyuanpei/qinyuanpei.coding.me.git
+  type: git
+description: null
+douban:
+  book:
+    quote: '1'
+    title: "\u8BFB\u4E66"
+  builtin: true
+  movie:
+    quote: '2'
+    title: "\u7535\u5F71"
+  timeout: 50000
+  user: 60029335
+eamil: qinyuanpei@163.com
+external_link: true
+feed:
+  limit: 20
+  path: atom.xml
+  type: atom
+filename_case: 0
+future: true
+githubEmojis:
+  className: github-emoji
+  enable: true
+  inject: true
+highlight:
+  auto_detect: true
+  enable: true
+  line_number: true
+  tab_replace: null
+i18n_dir: :lang
+image_version: salver
+issues:
+  owner: qinyuanpei
+  repo: qinyuanpei.github.io
+  token: 52318dae4ef574e063fae602ae957d38b8627b8a
+jsonContent:
+  meta: false
+  pages: false
+  posts:
+    categories: false
+    comments: false
+    content: false
+    date: true
+    excerpt: false
+    link: false
+    path: true
+    permalink: false
+    raw: false
+    slug: false
+    tags: true
+    text: true
+    title: true
+    updated: false
+language: zh-CN
+license: by-nc-sa
+new_post_name: :title.md
+pagination_dir: pages
+per_page: 10
+permalink: posts/:abbrlink/
+permalink_defaults: null
+portfolio:
+  file: portfolio.json
+  title: "\u4F5C\u54C1"
+post_asset_folder: false
+public_dir: public
+relative_link: false
+render_drafts: false
+root: /
+skip_render: null
+source_dir: source
+subtitle: "\u8D77\u98CE\u4E86\uFF0C\u552F\u6709\u52AA\u529B\u751F\u5B58"
+tag_dir: tags
+tag_map: null
+theme: card
+time_format: HH:mm:ss
+timezone: null
+title: "\u4E03\u559C\u5148\u751F\u306E\u732B"
+titlecase: false
+url: https://qinyuanpei.github.io
+abbrlink:
+  alg: crc32
+  rep: dec
+albums:
+  file: albums.json
+  title: "\u76F8\u518C"
+  url: https://qinyuanpei.github.io/albums.json
+aplayer:
+  meting: true
+archive_dir: archives
+author: "\u4E03\u559C\u5148\u751F"
+build_version: '9c3fbd7d
+
+  '
+category_dir: categories
+category_map: null
+code_dir: downloads/code
+date_format: YYYY-MM-DD
+default_category: uncategorized
+default_layout: post
+deploy:
+- branch: master
+  message: Updated at {{ now('YYYY-MM-DD HH:mm:ss') }}
+  repo: git@git.coding.net:qinyuanpei/qinyuanpei.coding.me.git
+  type: git
+description: null
+douban:
+  book:
+    quote: '1'
+    title: "\u8BFB\u4E66"
+  builtin: true
+  movie:
+    quote: '2'
+    title: "\u7535\u5F71"
+  timeout: 50000
+  user: 60029335
+eamil: qinyuanpei@163.com
+external_link: true
+feed:
+  limit: 20
+  path: atom.xml
+  type: atom
+filename_case: 0
+future: true
+githubEmojis:
+  className: github-emoji
+  enable: true
+  inject: true
+highlight:
+  auto_detect: true
+  enable: true
+  line_number: true
+  tab_replace: null
+i18n_dir: :lang
+image_version: salver
+issues:
+  owner: qinyuanpei
+  repo: qinyuanpei.github.io
+  token: 52318dae4ef574e063fae602ae957d38b8627b8a
+jsonContent:
+  meta: false
+  pages: false
+  posts:
+    categories: false
+    comments: false
+    content: false
+    date: true
+    excerpt: false
+    link: false
+    path: true
+    permalink: false
+    raw: false
+    slug: false
+    tags: true
+    text: true
+    title: true
+    updated: false
+language: zh-CN
+license: by-nc-sa
+new_post_name: :title.md
+pagination_dir: pages
+per_page: 10
+permalink: posts/:abbrlink/
+permalink_defaults: null
+portfolio:
+  file: portfolio.json
+  title: "\u4F5C\u54C1"
+post_asset_folder: false
+public_dir: public
+relative_link: false
+render_drafts: false
+root: /
+skip_render: null
+source_dir: source
+subtitle: "\u8D77\u98CE\u4E86\uFF0C\u552F\u6709\u52AA\u529B\u751F\u5B58"
+tag_dir: tags
+tag_map: null
+theme: card
+time_format: HH:mm:ss
+timezone: null
+title: "\u4E03\u559C\u5148\u751F\u306E\u732B"
+titlecase: false
+url: https://qinyuanpei.github.io
