@@ -165,4 +165,31 @@ githubEmojis:
 # 构建版本
 build_version: feed2a40
 
+html_minifier:
+  enable: false
+  ignore_error: false
+  silent: false
+  exclude:
+css_minifier:
+  enable: true
+  silent: false
+  exclude: 
+    - '*.min.css'
+js_minifier:
+  enable: true
+  mangle: true
+  silent: false
+  # output:
+  # compress:
+  exclude: 
+    - '*.min.js'
+image_minifier:
+  enable: false
+  interlaced: false
+  multipass: false
+  optimizationLevel: 2
+  pngquant: false
+  progressive: false
+  silent: false
+
 
