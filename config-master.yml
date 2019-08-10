@@ -163,5 +163,33 @@ githubEmojis:
 #   titleHtml: <h1>你可能感兴趣</h1> #自定义标题
 
 # 构建版本
-build_version: feed2a40
+build_version: 76d6cdc0
+
+# minifier插件
+html_minifier:
+  enable: false
+  ignore_error: false
+  silent: false
+  exclude:
+css_minifier:
+  enable: true
+  silent: false
+  exclude: 
+    - '*.min.css'
+js_minifier:
+  enable: true
+  mangle: true
+  silent: false
+  # output:
+  # compress:
+  exclude: 
+    - '*.min.js'
+image_minifier:
+  enable: false
+  interlaced: false
+  multipass: false
+  optimizationLevel: 2
+  pngquant: false
+  progressive: false
+  silent: false
 
