@@ -93,6 +93,9 @@ cnzz: false
 # 百度统计，如要开启，改为你的 key
 baidu_tongji: false
 
+# 百度链接提交 
+baidu_push: true
+
 # 腾讯分析，如要开启，输入站点id
 tajs: 65355341
 
