@@ -75,7 +75,7 @@ E: Unable to correct problems, you have held broken packages.
 ```
 我向作者发邮件寻求帮助，作者非常热心地回复了我三次邮件，对方表示应该是Elementary OS团队正在基于Ubuntu19.04开发新版本，所以可能没有意识到`elementary-desktop`这个包已经broken了，并且他们在18.04版本上复现了这个问题，建议我直接联系官方。好吧，博主的英语表示受宠若惊，邮件在此为证：
 
-![来自国外网友的热心指导](C:\Users\admin\Downloads\Projects\Blog\source\_posts\1566397381961.png)
+![来自国外网友的热心指导](https://ws1.sinaimg.cn/large/4c36074fly1g6877vhqhcj20io0hut9u.jpg)
 
 
 总而言之，博主试图在WSL上体验Elementary OS的想法彻底失败，既然这个最美的Linux发行版已失败告终，并不打算就此罢手的博主，决定继续在命令行终端里折腾Linux Deepin。这个发行版是我从大学时开始接触的Linux发行版，那时有个小学弟第一次给我介绍了Linux Mint，不过我对这个版本实在爱不起来，因为太像Windows了啊，可谁能想到若干年后，Windows反而变成了最好的Linux发行版呢(:smile:)，果真是`“人生不相见，动如参与商”`啊……
