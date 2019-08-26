@@ -1,14 +1,14 @@
 ---
-title: 基于WebSocket和Redis实现Bilibili弹幕效果
-categories:
-  - 编程语言
-tags:
-  - Redis
-  - WebSocket
-  - .NET Core
 abbrlink: 3269605707
+categories:
+- 编程语言
 date: 2018-08-22 14:07:23
-
+description: OK，现在我们来一起看看最终的效果，如你所见，在视频播放过程中，我们可以通过视频下方的输入框发送弹幕，弹幕会首先经由Redis缓存起来，当到达一定的时间间隔以后，我们就会将消息推送到客户端，这样所有的客户端都会看到这条弹幕，而对于客户端来说，它在和服务端建立WebSocket连接以后，唯一要做的事情就是在onmessage回调中取得弹幕数据，并将其追加到弹幕数组中，关于弹幕绘制的细节，我们在本文的第三节已经做了相关说明，在此不再赘述
+tags:
+- Redis
+- WebSocket
+- .NET Core
+title: 基于WebSocket和Redis实现Bilibili弹幕效果
 ---
 
 &emsp;&emsp;嗨，大家好，欢迎大家关注我的博客，我是Payne，我的博客地址是[https://qinyuanpei.github.io](https://qinyuanpei.github.io)。在上一篇博客中，我们使用了.NET Core和Vue搭建了一个基于WebSocket的聊天室。在今天这篇文章中，我们会继续深入这个话题。博主研究WebSocket的初衷是，我们的项目上有需要实时去推送数据来完成图表展示的业务，而博主本人对这个内容比较感兴趣，因为博主有对爬虫抓取的内容进行数据可视化(**ECharts**)的想法。可遗憾的是，这些数据量都不算太大，因为难以支持实时推送这个想法，当然更遗憾的是，我无法在项目中验证以上脑洞，所以，最终退而求其次，博主打算用Redis和WebSocket做一个弹幕的Demo，之所以用Redis，是因为博主懒到不想折腾RabbitMQ。的确，这世界上有很多事情都是没有道理的啊……

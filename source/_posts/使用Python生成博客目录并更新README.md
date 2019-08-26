@@ -1,13 +1,15 @@
 ---
-title: 使用Python生成博客目录并自动更新README
 abbrlink: 1329254441
-date: 2018-02-23 09:32:45
 categories:
-  - 独立博客
+- 独立博客
+date: 2018-02-23 09:32:45
+description: 我意识到我的博客配置了 [hexo-generator-json-content](https://github.com/alexbruno/hexo-generator-json-content)
+  插件，这个插件最初的目的是为博客提供离线的搜索能力，该插件会在博客的根目录里生成一个**content.json**文件，而这个文件中含有我们想要的一切信息，因此我们的思路转变为解析这个文件，人生苦短啊，我果断选择了我最喜欢的Python，这里我们会提取出所有的文章信息，按照日期由近到远排序后生成列表
 tags:
-  - Python
-  - Github
-  - Script
+- Python
+- Github
+- Script
+title: 使用Python生成博客目录并自动更新README
 ---
 
 &emsp;&emsp;各位朋友，大家好，我是Payne，欢迎大家关注我的博客，我的博客地址是：[https://qinyuanpei.github.io](https://qinyuanpei.github.io)。首先在这里祝大家春节快乐，作为过完年以后的第一篇文章，博主想写点内容风格相对轻松的内容。自从博主的博客采用 [TravisCI](https://www.travis-ci.org/) 提供的持续集成(CI)服务以以来，博客的更新部署变得越来越简单，所有的流程都被简化为Git工作流下的**提交(commit)**和**推送(push)**操作。考虑到博客是托管在 [Github](https://github.com/qinyuanpei/qinyuanpei.github.io) 上的，一直希望可以自动更新仓库主页的README文件，这样可以显示每次提交代码后的变更历史。基于这样一个构想，我想到了为博客生成目录并自动更新README，其好处是可以为读者建立良好的文档导航，而且Markdown是一种简单友好的文档格式，Github等代码托管平台天生就支持Markdown文档的渲染。关于博客采用 [TravisCI](https://www.travis-ci.org/)  提供持续集成(CI)服务相关内容，可以参考 [持续集成在Hexo自动化部署上的实践](https://qinyuanpei.github.io/posts/3521618732/) 这篇文章。

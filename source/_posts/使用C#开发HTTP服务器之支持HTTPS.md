@@ -1,14 +1,16 @@
 ---
-title: 使用C#开发HTTP服务器之支持HTTPS
-categories:
-  - 编程语言
-tags:
-  - HTTP
-  - 服务器
-  - 'C#'
 abbrlink: 2734896333
+categories:
+- 编程语言
 date: 2017-03-05 14:01:39
+description: 这恰恰印证了我们最初的观点，即HTTPS协议依然采用HTTP协议(三次握手)进行通讯，不同的地方在于中间环节增加了加密处理，例如在客户端和服务器端相互验证的环节采用的是非对称加密，在客户端验证通过以后双方采用随机数作为密钥是对称加密，而三次握手以后验证消息是否被篡改则是采用HASH算法
+tags:
+- HTTP
+- 服务器
+- C#
+title: 使用C#开发HTTP服务器之支持HTTPS
 ---
+
 &emsp;&emsp;各位朋友大家好，我是秦元培，欢迎大家关注我的博客，我的博客地址是[http://qinyuanpei.com](http://qinyuanpei.com)。本文是“使用C#开发HTTP服务器”系列的第六篇文章，在这个系列文章中我们实现了一个基础的Web服务器，它支持从本地读取静态HTML页面，支持GET和POST 两种请求方式。该项目托管在我的[Github](https://github.com/qinyuanpei)上，项目地址为[https://github.com/qinyuanpei/HttpServer](https://github.com/qinyuanpei/HttpServer)，感兴趣的朋友可以前往了解。其间有朋友为我提供了HTTPS的PR，或许这偏离了这个系列开发HTTP服务器的初衷，可是我们应该认识到普及HTTPS是大势所趋。所以在今天这篇文章中，我将为大家带来HTTPS相关知识的普及，以及如何为我们的这个Web服务器增加HTTPS的支持。
 
 <!--more-->

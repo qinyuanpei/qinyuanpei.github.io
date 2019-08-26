@@ -1,14 +1,16 @@
 ---
-title: EasyAR尝鲜系列教程之视频播放功能的实现
-categories:
-  - Unity3D
-tags:
-  - 增强现实
-  - EasyAR
-  - Unity3D
 abbrlink: 316230277
+categories:
+- Unity3D
 date: 2015-12-09 08:40:22
+description: 这个增强ImageTarget是指在ImageTarget的基础上融入VideoPlayerBehaviour的功能，因为按照官方的示例来考虑，这两部分功能是独立的，博主希望让大家在制作识别图的时候完全忘记区别ImageTarget和VideoTarget，这样我们可以更为专注地制作识别图，因为视频组件就只是设置参数这一件事情，完全可以一次性搞定，所以我们首先来定义一个VideoTargetBaseBehaviour类，一起来看代码：
+tags:
+- 增强现实
+- EasyAR
+- Unity3D
+title: EasyAR尝鲜系列教程之视频播放功能的实现
 ---
+
 &emsp;&emsp;各位朋友大家好，欢迎大家关注我的博客，我是秦元培，我的博客地址是[http://qinyuanpei.com](http://qinyuanpei.com)。到现在为止，我们对EasyAR中的ImageTarget基本上可以说是驾轻就熟了，因此我们这个系列教程可以说是接近尾声了。博主第一次接触AR这个概念是在大学时候读到一本讲解计算机图形视觉的书籍里，相对VR技术目前华而不实的市场现状，AR技术从实用性和成熟度都能得到较好的保证。可是大家都清楚这些技术背后都是建立在复杂而高深的图形学算法的基础上的，如果想学习AR技术请回归计算机图形学的本源，这就和学习游戏技术要追寻可编程渲染管线是一样的，所以这个系列完全是博主个人的兴趣使然，希望了解这个技术的可以进行更加深入的探索。这次我们来说说VideoTarget如何实现吧！
 
 <!--more-->
@@ -193,5 +195,3 @@ public class VideoTargetBaseBehaviour : ImageTargetBehaviour,ITargetEventHandler
 ![我制作的VideoTarget](https://ws1.sinaimg.cn/large/4c36074fly1fz68j6clw5j208t075jrn.jpg)
 
 这里博主继续选择idback这张图片，这种方法是博主喜欢的方法，大家可以按照个人喜欢的方式来实现，总而言之万变不离其宗，只需要掌握它的原理就好了。在文章中已经提到过这个组件在32位操作系统下无法正常工作，所以这篇文章就不给大家展示相关的截图了，本文暂时先写到这里等有时间测试成功了再来更新这篇文章。如果像博主这样对Unity3D比较熟悉的朋友，可以考虑使用MovieTexture或者其它的方式来替代官方目前的这个方案，好了，这篇文章就是这样了，希望大家喜欢!
-
-

@@ -1,14 +1,16 @@
 ---
-title: 《Web API 的设计与开发》读书笔记
-categories:
-  - 读书笔记
-tags:
-  - Web API
-  - RSETful
-  - 笔记
 abbrlink: 3677280829
+categories:
+- 读书笔记
 date: 2019-05-28 12:00:53
+description: '- 指使用符合RPC风格的XML或JSON + HTTP接口的系统(不使用SOAP)'
+tags:
+- Web API
+- RSETful
+- 笔记
+title: 《Web API 的设计与开发》读书笔记
 ---
+
 # 设计优美的Web API：
 易于使用、便于更改、健壮性好、不怕公开
 

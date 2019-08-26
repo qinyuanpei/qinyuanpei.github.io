@@ -1,15 +1,17 @@
 ---
-title: Unity3D游戏开发之分页效果在uGUI中的实现
-categories:
-  - Unity3D
-tags:
-  - 游戏开发
-  - uGUI
-  - Unity3D
-toc: false
 abbrlink: 166983157
+categories:
+- Unity3D
 date: 2015-11-10 20:46:35
+description: 经过博客中一位朋友指出，这篇文章中实现BindPage这个方法时可以在代码上再精简些，主要是考虑这个代码中有部分功能是重合的，因此这里对这个方法进行重写，分页从本质上来讲是编写这样一个函数：输入数据集合data、每页显示的元素个数pageSize以及当前页数page，然后返回一个新的数据集合
+tags:
+- 游戏开发
+- uGUI
+- Unity3D
+title: Unity3D游戏开发之分页效果在uGUI中的实现
+toc: false
 ---
+
 &emsp;&emsp;各位朋友大家好，我是**秦元培**，欢迎大家关注我的博客，我的博客地址是[http://qinyuanpei.com](http://qinyuanpei.com)。今天想和大家分享的是uGUI中分页效果的实现，我们知道相对NGUI来说uGUI在功能覆盖上来讲，它并没有像NGUI那样提供较为丰富和炫酷的组件，可是因为uGUI有着较好的扩展性，因此我们可以通过编写脚本来扩展它的功能。虽然在移动开发时代以开发速度论成败，可是这并不是我们“不求甚解”的正当理由。每次看到NGUI各种"丰富"的组件在脑海中打转的时候，每次看到编译项目时弹出各种Warming的时候，我内心是如此地期望有这样一个简单高效的UI系统啊，直到有一天我遇上了uGUI。
 
 <!--more-->

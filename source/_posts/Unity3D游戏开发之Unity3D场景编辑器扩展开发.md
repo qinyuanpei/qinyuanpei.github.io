@@ -1,14 +1,16 @@
 ---
-title: Unity3D游戏开发之Unity3D场景编辑器扩展开发
-categories:
-  - 游戏开发
-tags:
-  - 编辑器
-  - 扩展
-  - Unity3D
 abbrlink: 3019914405
+categories:
+- 游戏开发
 date: 2015-10-13 12:59:01
+description: 注意到DrawRotate()方法与DrawPositin()及DrawScale()方法在实现方式上略有不同，这是因为Transform组件的Rotation属性是一个Quaternion即四元数的结构，四元数是利用x、y、z、w四个数值来表示物体的三维旋转，这不仅和我们平时习惯的欧拉角相违背而且更为关键的是貌似目前我还没有发现可以直接绘制四元数的API接口，如果有的话希望大家可以告诉我，所以这里我们用了变通的一种方法，即通过Transform的eulerAngles来实现，但是这种方式绘制的属性框大小和EditorGUILayout.PropertyField()方法绘制的属性框大小并不一致，同时我们需要自己去完成属性值的更新
+tags:
+- 编辑器
+- 扩展
+- Unity3D
+title: Unity3D游戏开发之Unity3D场景编辑器扩展开发
 ---
+
 &emsp;&emsp;今天博主想和大家分享的是Unity3D场景编辑器的扩展开发，相关的话题我们在[Unity3D游戏开发之编辑器扩展程序开发实例](http://localhost:4000/2015/03/31/unity3d-plugins-development-application-case/)这篇文章中我们已经有所涉及，今天博主想特别针对场景编辑器的扩展开发来进行下深入研究。对于一个场景编辑器来说，它主要的作用是3D场景视图中实时显示、输入反馈和相关信息的更新。在Unity3D中提供了Editor、EditorWindow、GUILayout、EditorGUILayout、GUIUtility、EditorGUIUtility、Handles、Event等来完成这些工作。其中基于EditorWindow的这种扩展方式我们已经研究过了，这种扩展方式拥有自己的独立窗口使用OnGUI方法进行界面的绘制。<!--more-->今天我们想说的是基于Editor的这种扩展方式，这种扩展方式只能针对脚本，从脚本内容在Inspector里的显示布局到变量在Scene视图的可视化编辑，它都可以完全胜任。这里特别想说的是Handles和Event这两个类，这两个类分别提供了3D显示和输入反馈的功能，我们下面就来学习如何使用这些类来扩展Unity3D的场景编辑器。
 
 #创建一个扩展的Transform组件

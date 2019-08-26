@@ -1,14 +1,16 @@
 ---
-title: 使用VSCode作为SourceTree的Diff和Merge工具
-categories:
-  - 开发工具
-tags:
-  - Git
-  - VSCode
-  - SourceTree
 abbrlink: 3222622531
+categories:
+- 开发工具
 date: 2018-09-30 08:43:44
+description: 既然，作为Git可视化工具的SourceTree可以使用VSCode作为Diff和Merge的工具，那么，我们干脆一鼓作气，将VSCode作为Git默认的Diff和Merge的工具吧
+tags:
+- Git
+- VSCode
+- SourceTree
+title: 使用VSCode作为SourceTree的Diff和Merge工具
 ---
+
 &emsp;&emsp;使用SourceTree有一段时间啦，从界面舒适度和易用性两个方面来看，的确要比小乌龟更好一点，日常配合命令行来使用，基本能覆盖到各种使用场景，譬如分支、版本、变基、合并等等。我本人在工作中接触到的Git工作流，大体上可以分为两类，从最早是官方所推崇的5个分支的Git Workflow，到如今在Github上更为流行的PR(Pull Request)。这两种方式，实际使用中各有优劣吧，而且这个话题似乎更适合专门写一篇文章来说。
 
 &emsp;我真正想说的是，我需要一个优雅的Diff和Merge工具。虽然，对一个使用命令行的人来说，使用git diff来展示差异对比已经完全足够啦，可在某些需要解决冲突的场合，命令行就显得有点力不从心。我个人一直不习惯小乌龟的合并工具，因为使用起来总觉得相当别扭。直到我发现，VSCode可以在打开冲突文件的时候，自动提示解决冲突的选项，我觉得我开始喜欢上这个工具啦。所以，平时我解决冲突的做法是，在命令行里找到冲突的文件，然后逐一用VSCode打开来解决冲突。

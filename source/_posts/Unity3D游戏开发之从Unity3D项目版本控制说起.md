@@ -1,14 +1,15 @@
 ---
-title: Unity3D游戏开发之从Unity3D项目版本控制说起
-categories:
-  - Unity3D
-tags:
-  - 版本控制
-  - Unity3D
-  - SVN
-  - Github
 abbrlink: 1320325685
+categories:
+- Unity3D
 date: 2015-07-02 09:35:42
+description: Unity3D的[Asset Server](http://unity3d.com/unity/team/assetserver/)是一个Unity3D内部集成的版本控制软件，它和我们熟知的SVN类似，适合在小团队内进行版本控制，这是一个收费软件，尽管在某些方面它甚至比SVN还要方便，不过在实际的项目中使用这个的还是比较少的，所以如果大家对这个感兴趣，可以从这里了解它的具体情况，这里我们不打算介绍这个软件的使用
+tags:
+- 版本控制
+- Unity3D
+- SVN
+- Github
+title: Unity3D游戏开发之从Unity3D项目版本控制说起
 ---
 
 &emsp;&emsp;各位朋友，大家好，欢迎大家关注我的博客，我是秦元培，我的独立博客地址是[http://qinyuanpei.com](http://qinyuanpei.com)、CSDN博客地址是[http://blog.csdn.net/qinyuanpei](http://blog.csdn.net/qinyuanpei)。今天我想和大家聊聊Unity3D游戏项目的版本控制。

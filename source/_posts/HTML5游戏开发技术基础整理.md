@@ -1,14 +1,16 @@
 ---
-title: HTML5游戏开发技术基础整理
-categories:
-  - 读书笔记
-tags:
-  - 游戏
-  - HTML5
-  - 技术
 abbrlink: 2038378679
+categories:
+- 读书笔记
 date: 2015-03-08 19:14:44
+description: '## JavaScript中的面向对象编程'
+tags:
+- 游戏
+- HTML5
+- 技术
+title: HTML5游戏开发技术基础整理
 ---
+
 &emsp;&emsp;随着HTML5标准最终敲定，HTML5将有望成为游戏开发领域的的热门平台。HTML5游戏能够运行于包括iPhone系列和iPad系列在内的计算机、智能手机以及平板电脑上，是目前跨平台应用开发的最佳实施方案。本文系根据[HML5 Canvas游戏开发实战]一书中的内容整理而成，是了解和学习HTML5游戏开发的基础内容，希望能够帮助到那些和博主一样致力于游戏开发的朋友们！
 <!--more-->
 
@@ -292,4 +294,3 @@ ctx.fillStyle=grd;
 &emsp;&emsp;灰度计算公式：gary=red*0.3+green*0.59+blue*0.11
 
 &emsp;&emsp;基础的内容就是这些了，以后如果碰到需要HTML5的地方可以回过头来看看。
-

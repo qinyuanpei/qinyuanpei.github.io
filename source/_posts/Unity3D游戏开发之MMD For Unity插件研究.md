@@ -1,14 +1,16 @@
 ---
-title: Unity3D游戏开发之MMD For Unity插件研究
-categories:
-  - 单机游戏
-tags:
-  - Unity3D
-  - 单机游戏
-  - MMD
 abbrlink: 4088452183
+categories:
+- 单机游戏
 date: 2015-04-19 23:31:30
+description: '* 1、通过PMD Loader打开加载PMD文件的窗口，建议这里将ShaderType设置为Default，因为如果使用MMD的Shader的话，待会转换出来的模型可能会存在找不到材质的问题'
+tags:
+- Unity3D
+- 单机游戏
+- MMD
+title: Unity3D游戏开发之MMD For Unity插件研究
 ---
+
 &emsp;&emsp;今天想来说说MMD。MMD是MikuMikuDance的简称，是由日本人樋口优开发的一组3D动画制作软件。该软件最初希望能够将3D建模软件完成的VOCALOID的初音未来等角色模型制作成可以随着音乐跳舞的动画，因此称为MMD。作者在此基础上开发了能够将歌曲让初音未来等角色歌唱的MikuMikuVoice。2011年9月11日，樋口优宣布停止MMD新版本的开发工作。不过人们对制作MMD的热情丝毫没有减少，在动漫、游戏等领域总是能够不断看到MMD的影子。例如[MMD/宇月](http://www.tudou.com/programs/view/qZtdjlAg34Q/?bid=03&pid=2&resourceId=51473713_03_05_02)和[千本樱/夏侯瑾轩](http://www.tudou.com/programs/view/WxxZZOR3EEc/?resourceId=0_06_02_99)都是较为典型的MMD。
 
 <!--more-->
@@ -57,4 +59,3 @@ date: 2015-04-19 23:31:30
 * PMD转换出来的模型没有办法选择其中的某一个部分，因此在操作模型的时候可能会不太方便吧，以前都是选择某一部分然后给模型贴图，现在这招不行了啊。
 
 &emsp;&emsp;好了，今天的内容就是这样了，有什么问题大家给我留言哦！
-

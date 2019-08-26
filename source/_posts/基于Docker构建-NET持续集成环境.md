@@ -1,14 +1,18 @@
 ---
-title: 基于Docker构建.NET持续集成环境
-categories:
-  - 开发工具
-tags:
-  - .NET
-  - Docker
-  - MSBuild
 abbrlink: 3995512051
+categories:
+- 开发工具
 date: 2018-06-12 17:53:59
+description: RUN sudo mono ./sonar-scanner/SonarQube.Scanner.MSBuild.exe begin /k:"Sonar-HttpServer"
+  /d:sonar.organization="qinyuanpei-github" /d:sonar.host.url="https://sonarcloud.io"
+  /d:sonar.login="db795a28468dc7c12805b330afed53d362fdd2d9"
+tags:
+- .NET
+- Docker
+- MSBuild
+title: 基于Docker构建.NET持续集成环境
 ---
+
 &emsp;&emsp;最近在考虑将整个项目组的产品，努力向着持续集成(CI)/持续部署(CD)的方向靠拢，因为目前我们仅仅实现了基于Docker的自动化部署，而部署包的构建依然依赖于人工打包，而每个版本的测试和部署，基本上都要给所有相关人员发一遍邮件，而写邮件无非是填写版本号和变更历史。身处在这样一个社会化分工逐渐加剧的『摩登时代』，我们唯一的希望就追求技能的多元化，你越是担心有一天会被AI所替代，就越是应该去追求灵动与美。这个世界何尝不是一个运行中的大型机器，可恰恰就是这种掺杂了情感的冰冷法则，让我们意识到需要更多的理解和宽容。管理者常常迷信敏捷开发的人月神话，希望人可以像零件一样按部就班，在这场噩梦到来以前，为何不去做一点更有用的事情，让云计算帮我们解放双手。
 
 # 背景说明

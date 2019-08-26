@@ -1,14 +1,16 @@
 ---
-title: 基于Mono和VSCode打造轻量级跨平台IDE
-categories:
-  - 编程语言
-tags:
-  - Mono
-  - VSCode
-  - 跨平台
 abbrlink: 3568552646
+categories:
+- 编程语言
 date: 2016-11-18 20:23:44
+description: '我们现在按F5进行调试，和编译时一样，如果用户没有为当前项目配置“任务调试程序”，VSCode会提示我们去创建一个配置文件launch.json，我们这里选择mono，该选项在安装Mono-Debug插件以前是没有的，该配置文件如下，我们注意到这里需要修改program属性为MainClass.exe:'
+tags:
+- Mono
+- VSCode
+- 跨平台
+title: 基于Mono和VSCode打造轻量级跨平台IDE
 ---
+
 &emsp;&emsp;最近Visual Studio推出Mac版本的消息迅速在技术圈里刷屏，当工程师们最喜欢的笔记本电脑Mac，邂逅地球上最强大的集成开发环境Visual Studio的时候，会碰撞出怎样精彩的火花呢？在微软新任CEO纳德拉的“移动为先、云为先”战略下，微软的转变渐渐开始让人欣喜，从.NET Core、VSCode、TypeScript再到近期的Visual Studio For Mac，这一系列动作让我们感觉到，微软的技术栈越来越多地向着开源和跨平台两个方向努力。我们曾经固执地认为，微软的技术栈注定永远无法摆脱Windows的束缚，而事实上这个世界每天都在发生着变化。或许这次Visual Studio推出Mac版这件事情，本质上是微软收购的Xamarin公司旗下产品Xamarin Studio的一次改头换面。可是这件事情说明，微软正在努力让.NET技术栈融入更多的应用场景。对我而言，我是没有钱去买一台Mac的，所以在这篇文章中，我们将在Linux下通过Mono和VSCode来打造一个轻量级的IDE。而据说Mono会和Xamarin一样，将来会成为.NET基金会的一部分。
 
 <!--more-->
@@ -93,11 +95,3 @@ sudo apt-get install mono-complete
 ![VSCode中调试代码](https://ws1.sinaimg.cn/large/4c36074fly1fzix8ge8e6j211y0laq4f.jpg)
 
 &emsp;&emsp;虽然我很想在这篇博客中搞点干货出来，但是当我折腾数天以后，我大概就能够写出这样一篇相当零碎的文章，到目前为止我还是没有搞明白，为什么我在调试地过程中，VSCode不会在我设置了断点地地方停下来，希望知道这个原因的朋友可以告诉我啊。这个过程最有意义的地方在于让我进一步熟悉了Linux，在不一样的地方，会有不一样的风景，这个世界很大，不要给自己设限。后续我会去研究VSCode中的调试技巧以及.NETCore相关内容，能看到C#跨平台运行是件幸福的事情，而跨平台开发是我一直在探索的方向之一。夜晚已然来临了，而这篇文章就是这样了，谢谢大家的关注，晚安！
-
-
-
-
-
-
-
-

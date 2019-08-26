@@ -1,14 +1,16 @@
 ---
-title: Unity3D游戏开发之C++插件接入
-categories:
-  - Unity3D
-tags:
-  - Unity3D
-  - C++
-  - 插件
 abbrlink: 2527231326
+categories:
+- Unity3D
 date: 2015-11-21 14:47:26
+description: 目前主要有C++ CLR和C++ Native两种实现方法，其中C++ CLR可以理解为运行在.Net CLR即公共语言运行库上的C++代码，这种代码是托管的C++代码，目前并没有被C++标准承认，因为它更像是C++和C#两种语言的混合代码，这种代码的优势是可以像普通的.NET库一样被C#调用，考虑到Unity3D建立在和.Net类似的Mono上，因此这种方式应该是我们的最佳实践方案
+tags:
+- Unity3D
+- C++
+- 插件
+title: Unity3D游戏开发之C++插件接入
 ---
+
 &emsp;&emsp;各位朋友大家好，我是**秦元培**，欢迎大家关注我的博客，我的博客地址是[http://qinyuanpei.com](http://qinyuanpei.com)。虽然Unity3D引擎依靠强大的跨平台能力睥睨高手林立的游戏引擎世界，我们在使用Unity3D游戏引擎的时候基本上不会去接触底层的东西，可是有时候面对某些奇葩的要求的时候，我们就不得不考虑使用C++这样的语言来为其编写相关的插件。你如果问我是什么样的奇葩要求，比如接入蓝牙手柄来控制游戏、接入类似街机的设备来控制游戏、接入同一个游戏到两个不同的设备上并响应不同的控制......诸如此类的种种问题，可能目前在Unity3D引擎中找不到解决方案，这个时候写C++插件就变成了一种刚性需求，这就是我们今天要来一起探讨的问题。
 
 <!--more-->
@@ -179,4 +181,3 @@ if(GUILayout.Button("调用C++ Native中的方法", GUILayout.Height (30)))
 最终程序的运行效果如图：
 
 ![这个结果来之不易请大家珍惜](https://ws1.sinaimg.cn/large/4c36074fly1fz68jlzlyqj20kr08edfr.jpg)
-

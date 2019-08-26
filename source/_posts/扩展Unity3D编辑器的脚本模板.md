@@ -1,14 +1,16 @@
 ---
-title: 扩展Unity3D编辑器的脚本模板
-categories:
-  - 游戏引擎
-tags:
-  - Unity3D
-  - 编辑器
-  - 模板
 abbrlink: 3653662258
+categories:
+- 游戏引擎
 date: 2016-01-08 13:58:44
+description: 现在解决了创建资源的问题，我们接下来只要调用ProjectWindowUtil的StartNameEditingIfProjectWindowExists方法即可，该方法需要传入一个继承自EndNameEditAction的类的实例、目标文件路径和模板文件的路径
+tags:
+- Unity3D
+- 编辑器
+- 模板
+title: 扩展Unity3D编辑器的脚本模板
 ---
+
 &emsp;&emsp;最近在学习Shader时感觉Shader语言参数众多、语法诡异，如果每次都从头开始写Shader一定是一件痛苦的事情。如果可以在本地定义好一组标准的Shader模板，这样当我们需要实现某些效果类似的Shader时，就可以在这个Shader模板的基础上进行修改。因为Shader文件是一个文本文件，所以我们可以非常容易地创建这样一个模板，在这个模板中我们可以进一步完善相关的参数注释，这样就不用每次写Shader的时候都需要查文档了，从这个角度出发，就进入了这篇文章的正题：扩展Unity3D编辑器的脚本模板。
 <!--more-->
 
@@ -132,4 +134,3 @@ static void CreateLuaScripts()
 
 # 小结
 &emsp;&emsp;现在有了这个黑科技以后，我们可以创建更多的模板来扩展编辑器的功能，比如对Shader而言，我们可以创建些基础性的Shader模板，然后每次需要写Shader的时候直接从模板库中选择一个功能类似的Shader然后在此基础上进行修改，这样比从头开始写一个新的Shader应该会轻松不少，这段时间学习Shader，感觉进程缓慢离图形学高手遥遥无期，行了，这篇博客就是这样了。
-

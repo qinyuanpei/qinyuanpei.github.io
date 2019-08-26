@@ -1,14 +1,17 @@
 ---
-title: 基于Server-Sent Events实现服务端消息推送
-categories:
-  - 编程语言
-tags:
-  - WebSocket
-  - SSE
-  - 后端
 abbrlink: 3175881014
+categories:
+- 编程语言
 date: 2019-01-18 13:46:44
+description: 所谓**万变不离其宗"**，下面我们以.NET为例来快速集成Server-Sent Events，这里需要说明的是，博主下面的例子采用ASP.NET
+  Core 2.0版本编写，首先，我们建一个名为SSEController的控制器，在默认的Index()方法中，按照SSE规范，我们首先组织HTTP响应头，然后发送了一个名为SSE_Start的自定义事件，接下来，我们每隔10秒钟给客户端发送一条消息，请原谅我如此敷衍的Sleep()：
+tags:
+- WebSocket
+- SSE
+- 后端
+title: 基于Server-Sent Events实现服务端消息推送
 ---
+
 前段时间，为客户定制了一个类似看板的东西，用户可以通过看板了解任务的处理情况，通过APP扫面页面上的二维码就可以领取任务，而当任务被领取以后需要通知当前页面刷新。原本这是一个相对简单的需求，可是因为APP端和PC端是两个不同的Team在维护，换句话说，两个Team各自有一套自己的API接口，前端页面永远无法知道APP到底什么时候扫描了二维码，为此前端页面不得不通过轮询的方式去判断状态是否发生了变化。这种方式会发送大量无用的HTTP请求，因此在最初的版本里，无论是效率还是性能都不能满足业务要求，最终博主采用一种称为服务器推送事件(**Server-Sent Events**)的技术，所以，在今天这篇文章里，博主相和大家分享下关于服务器推送事件(**Server-Sent Events**)相关的内容。
 
 # 什么是Server-Sent Events
@@ -229,4 +232,3 @@ OK，这篇文章写到这里，相信大家已经对SSE有了一个比较具体
 * [阮一峰 - Server-Sent Events 教程](http://www.ruanyifeng.com/blog/2017/05/server-sent_events.html)
 * [呆呆_小茗 - Ajax轮询，Ajax长轮询和Websocket(详细使用)](https://blog.csdn.net/baidu_38990811/article/details/79172163)
 * [ hrhguanli - HTTP长连接和短连接](https://www.cnblogs.com/hrhguanli/p/3818452.html)
-

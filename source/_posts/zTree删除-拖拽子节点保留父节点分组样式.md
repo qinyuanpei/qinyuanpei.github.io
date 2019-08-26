@@ -1,14 +1,16 @@
 ---
-title: zTree删除/拖拽子节点保留父节点分组样式
-categories:
-  - 前端开发
-tags:
-  - JavaScript
-  - zTree
-  - 前端
 abbrlink: 1397717193
+categories:
+- 前端开发
 date: 2019-04-12 12:37:10
+description: var treeNode = zTree[i]
+tags:
+- JavaScript
+- zTree
+- 前端
+title: zTree删除/拖拽子节点保留父节点分组样式
 ---
+
 最近需要在项目中实现报表的自定义设置功能，即用户可以针对报表新建自定义分组，分组间可以互相嵌套，分组及分组内的报表需要支持拖拽排序、编辑、删除……相信听到这里，你大概明白我要实现一个什么样的功能了。不错，我要实现一个集美观、功能于一身的树形菜单。本着“不要重复制造轮子”的原则，我在考察了JQuery EasyUI、layui、Bootstrap、Kendo UI等不同框架提供的“树形菜单”组件以后，最终选择了[zTree](http://www.treejs.cn/v3/main.php#_zTreeInfo)这样一个插件，虽然这个官网看上去相当复古，虽然最终的成品依然被同事吐槽丑，可它的确完美得实现了我想要的功能，是当之无愧的“树形菜单”王者。
 
 zTree的API相当复杂，尤其是属性和事件的种类，简直叫一个繁杂，这是大部分基于jQuery插件的一个特点。不过zTree的使用还是比较简单的，我们只需要提供一个DOM节点，一份JSON数据，zTree就可以帮我们在界面上渲染出一个完整的树形菜单：

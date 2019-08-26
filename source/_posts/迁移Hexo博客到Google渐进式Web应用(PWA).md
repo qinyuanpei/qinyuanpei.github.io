@@ -1,14 +1,17 @@
 ---
-title: 迁移Hexo博客到Google渐进式Web应用(PWA)
-categories:
-  - 独立博客
-tags:
-  - Hexo
-  - PWA
-  - Web
 abbrlink: 450254281
+categories:
+- 独立博客
 date: 2017-10-24 23:13:41
+description: 现在，我们基本了解了PWA的概念以及实现PWA的关键技术，我们现在考虑将Hexo博客改造成一个PWA应用，我们这里不打算考虑消息推送的相关问题，所以对Hexo这样一个静态博客生成器而言，我们可以做的实际上只有两件事情，即通过Web
+  App Manifest让它更像一个Native应用，通过ServiceWorker为它提供离线缓存的特性
+tags:
+- Hexo
+- PWA
+- Web
+title: 迁移Hexo博客到Google渐进式Web应用(PWA)
 ---
+
 &emsp;&emsp;如果说通过TravisCI实现博客的自动化部署，是持续集成这个概念在工作以外的一种延伸，那么今天这篇文章想要和大家分享的，则是我自身寻求技术转型和突破的一种挣扎。前段时间Paul同我聊到Web技术的发展趋势，Paul认为Web应用会逐渐取代原生应用成为主流，我对此不置可否。真正让我陷入思考的是，在这个充满变化的时代，知识的更新速度远远超过你我的学习速度，我们应该如何去追随这个时代的步伐。如同那些淹没在时间河流里的技术名词，当青春不再的时候，我们喜欢把这个过程称之为成长，当发现距离第一次使用FontPage制作网站已过去十年，当发现曾经的网页三剑客在岁月蹉跎里频频改换姓名，当发现那些淹没在历史里的技术来不及学习就成为过往......或许，这个世界真正迷人的地方，就在于它每天都在不断变化。
 
 # 新一代Web应用——PWA
@@ -213,14 +216,3 @@ self.addEventListener('notificationclose', event => {
 * [PWA 入门: 理解和创建 Service Worker 脚本](https://zhuanlan.zhihu.com/p/25524382)
 * [PWA 入门: 写个非常简单的 PWA 页面](https://zhuanlan.zhihu.com/p/25459319)
 * [下一代 Web 应用模型 —— Progressive Web App](http://huangxuan.me/2017/02/09/nextgen-web-pwa/)
-
-
-
-
-
-
-
-
-
-
-

@@ -1,14 +1,16 @@
 ---
-title: 使用SonarCloud为.NET/.NET Core项目集成静态检查
-categories:
-  - 开发工具
-tags:
-  - Mono
-  - Sonar
-  - Travis
 abbrlink: 4891372
+categories:
+- 开发工具
 date: 2018-05-12 01:16:52
+description: 经过反复尝试，最终我们实现了：**在TravisCI下使用MSBuild构建项目**、**使用Nuget在线安装NUnit并运行单元测试**、**使用SonarCloud对代码进行静态检查**
+tags:
+- Mono
+- Sonar
+- Travis
+title: 使用SonarCloud为.NET/.NET Core项目集成静态检查
 ---
+
 &emsp;&emsp;Hi，朋友们，大家好，欢迎大家关注我的博客，我是Payne，我的博客地址是[http://qinyuanpei.github.io](http://qinyuanpei.github.io)。在不知不觉间，5月份已然度过大半，最近无论是读书还是写作均停滞不前，被拖延症支配的我深感有虚度时光之嫌。今天这篇文章，我将为大家介绍如何使用[SonarCloud](https://about.sonarcloud.io/)，来为.NET/.NET Core项目集成静态检查。如果大家使用过[SonarCube](https://www.sonarqube.org/)的话，对接下来我要讲的内容一定不会感到陌生，因为[SonarCloud](https://about.sonarcloud.io/)实际上就是[SonarCube](https://www.sonarqube.org/)的“云”版本。在云计算概念深入人心的今天，我们可以通过互联网来访问各种各样的服务。譬如，我曾经为大家介绍过的TravisCI就是一个在线的持续集成(CI)服务。这些云服务可以让我们不再关心基础设施如何去搭建，进而集中精力去解决最核心、最关键的问题。和持续集成关注“持续”不同，静态检查关注的是代码质量。目前，SonarCloud支持**.NET Framework 4.6**以上及**.NET Core**版本。通过这篇文章，你将了解到**SonarCloud的基本使用**、**SonarCloud与TravisCI的服务集成**这两方面的内容。
 
 # SonarCloud

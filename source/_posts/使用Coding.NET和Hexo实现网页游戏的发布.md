@@ -1,14 +1,16 @@
 ---
-title: 使用Coding.NET和Hexo实现网页游戏的发布
-categories:
-  - 独立博客
-tags:
-  - Hexo
-  - 游戏
-  - 部署
 abbrlink: 1150071886
+categories:
+- 独立博客
 date: 2015-03-24 08:54:48
+description: 博主是最近了解到，Github除了可以用xxx.github.io这种方式搭建博客外，还可以通过gh-pages分支来实现，换句话说只要我们把静态的网页放到项目的gh-pages下，Github就能帮你把页面显示出来，因此我们就可以将Unity3D导出的网页版本游戏放到Github上，从而实现游戏的在线演示
+tags:
+- Hexo
+- 游戏
+- 部署
+title: 使用Coding.NET和Hexo实现网页游戏的发布
 ---
+
 &emsp;&emsp;本文将尝试借助Coding.NET的项目演示功能，通过对Hexo中支持的发布类型进行扩充，实现可以在Hexo中发布网页游戏，从而方便博主展示游戏作品和帮助读者了解游戏效果。
 
 <!--more-->

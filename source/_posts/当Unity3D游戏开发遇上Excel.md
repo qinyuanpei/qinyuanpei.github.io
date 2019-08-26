@@ -1,14 +1,16 @@
 ---
-title: 当Unity3D游戏开发遇上Excel
-categories:
-  - 游戏开发
-tags:
-  - Unity3D
-  - 游戏
-  - Excel
 abbrlink: 906436376
+categories:
+- 游戏开发
 date: 2015-01-25 19:41:57
+description: 尽管我们可以使用Xml、Json、ini、数据库等存储形式来存储这些数据，可是毫无疑问的是，Excel是Window平台上最好的数据处理软件，因此数值策划更倾向于使用Excel来设计游戏中的数据，面对如此重要的数值策划工作，我们自然希望在解析Excel文件时不会出现错误，可是我们总不能指望着策划把Excel数据转换成我们能处理的数据类型吧，因此就有了博主今天的这篇文章，所以在今天的文章中我们主要的内容就是如何通过程序来解析Excel文件
+tags:
+- Unity3D
+- 游戏
+- Excel
+title: 当Unity3D游戏开发遇上Excel
 ---
+
 &emsp;&emsp;各位朋友，大家好，我是秦元培，欢迎大家关注我的博客，我的博客地址是[http://blog.csdn.net/qinyuanpei](http://blog.csdn.net/qinyuanpei)。今天我们来聊聊常用办公软件Excel和游戏开发那不为人知的秘密。今天的内容将涉及到Excel在游戏开发中的应用以及如何利用程序解析Excel中的数据。
 
 <!--more-->
@@ -114,4 +116,3 @@ public class ExcelScripts : MonoBehaviour
 
 ```
 &emsp;&emsp;好了，这就是今天这篇文章的全部内容了，希望大家喜欢！
-

@@ -1,14 +1,16 @@
 ---
-title: 通过动态Controller实现从WCF到Web API的迁移.
-categories:
-  - 编程语言
-tags:
-  - RESTful
-  - WebApi
-  - 动态代理
 abbrlink: 4236649
+categories:
+- 编程语言
 date: 2019-06-08 13:48:41
+description: DynamicControllerActivator 实现了IHttpControllerActivator接口，这里我们通过单例模式获得了DynamicHttpControllerManager对象的一个实例，其内部封装了Castle的容器接口IWindsorContainer，所以，在这里我们直接通过controllerType从容器中Resolve对应的Controller即可，而默认情况下，所有的Controller都实现了IHttpController接口，所以，这一步我们需要做一个显示的类型转换，后面我们会通过它替换微软默认的实现，这样，当一个请求被发送过来的时候，我们实际上是从这个自定义容器中获取对应Controller的实例
+tags:
+- RESTful
+- WebApi
+- 动态代理
+title: 通过动态Controller实现从WCF到Web API的迁移.
 ---
+
 在《**又见AOP之基于RealProxy实现WCF动态代理**》这篇文章中，我和大家分享了关于使用动态代理来简化WCF调用过程的相关内容，当时我试图解决的问题是，项目中大量通过T4生成甚至手动编写的“代理方法”。今天，我想和大家分享的是，如何通过动态的Controller来实现从WCF到Web API的迁移。为什么会有这个环节呢？因为我们希望把一个老项目逐步迁移到.NET Core上面，在这个过程中首当其冲的就是WCF，它在项目中主要承担着内部RPC的角色，因为.NET Core目前尚未提供针对WCF服务端的支持，因此面对项目中成百上千的WCF接口，我们必须通过Web API重新“包装”一次，区别于那些通过逐个API进行改造的方式，这里我们通过Castle动态生成Controller来实现从WCF到Web API的迁移。
 
 # 如何对类和接口进行组合

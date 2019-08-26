@@ -1,14 +1,16 @@
 ---
-title: Unity3D游戏开发游戏读/存档在Unity3D中的实现
-categories:
-  - 游戏开发
-tags:
-  - 游戏开发
-  - JSON
-  - 加密
 abbrlink: 887585917
+categories:
+- 游戏开发
 date: 2015-08-20 08:57:10
+description: 因为我们这里要做的是一个游戏存档的方案设计，因为考虑到存档数据的安全性，我们可以考虑采用相关的加密/解密算法来实现对序列化后的明文数据进行加密，这样可以从一定程度上保证游戏存档数据的安全性
+tags:
+- 游戏开发
+- JSON
+- 加密
+title: Unity3D游戏开发游戏读/存档在Unity3D中的实现
 ---
+
 &emsp;&emsp;大家好，我是秦元培，欢迎大家关注我的博客。近期博客的更新频率基本直降到冰点，因为这段时间实在是忙得没有时间来写博客了。今天想和大家分享的内容是RPG游戏中游戏存档的实现，因为最近在做一个RPG游戏的项目，所以遇到这个问题就随时记录下来，在对知识进行总结的同时可以将这种思路或者想法分享给大家，这是一件快乐而幸运的事情。我讨厌写按部就班的技术教程，因为我觉得学习是一种自我的探索行为，如果一切都告诉你了，探索的过程便会变得没有意义了。
 
 <!--more-->
@@ -336,5 +338,3 @@ public class TestSave : MonoBehaviour {
 
 >喜欢我的博客请记住我的名字：**秦元培**，我的博客地址是：[http://qinyuanpei.com](http://qinyuanpei.com)
 转载请注明出处，本文作者：**秦元培**， 本文出处：[http://blog.csdn.net/qinyuanpei/article/details/39717795](http://blog.csdn.net/qinyuanpei/article/details/39717795)
-
-

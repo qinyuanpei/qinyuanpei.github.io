@@ -1,14 +1,16 @@
 ---
-title: EasyAR尝鲜系列教程之ImageTarget千呼万唤始出来
-categories:
-  - Unity3D
-tags:
-  - 增强现实
-  - EasyAR
-  - AR
 abbrlink: 3736599391
+categories:
+- Unity3D
 date: 2015-12-09 08:39:54
+description: 好了，在了解了EasyAR中常用的标准接口以后，我们下面来着手构建第一个ImageTarget项目，和我们第一次接触EasyAR不同，这次我们会编写些简单地代码，打开场景填入应用程序密钥(Key)然后运行它，这种方式在这里会显得略LOW
+tags:
+- 增强现实
+- EasyAR
+- AR
+title: EasyAR尝鲜系列教程之ImageTarget千呼万唤始出来
 ---
+
 &emsp;&emsp;各位朋友大家好，欢迎大家关注我的博客，我是秦元培，我的博客地址是[http://qinyuanpei.com](http://qinyuanpei.com)。最近EasyAR终于迎来了一次重大的版本更新：v1.10，真可谓是“千呼万唤始出来”啊，所以在官方文档和示例项目基本完善的情况下，博主决定将EasyAR尝鲜系列教程继续下去。本次教程主要以官方新发布的Unity示例项目为基础来进行讲解，关注Androis/iOS原生应用开发的朋友请自行针对官方示例项目进行研究。好了，今天主要的内容是通过EasyAR SDK来自行构建一个ImageTarget的实例，采用Unity3D 4.6.4版本进行开发。
 
 <!--more-->
@@ -152,4 +154,3 @@ public class CustomImageTargetBehaviour :ImageTargetBehaviour,ITargetEventHandle
 #截图展示
 
 ![截图展示]()
-

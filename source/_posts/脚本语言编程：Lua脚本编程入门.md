@@ -1,15 +1,17 @@
 ---
-title: 脚本语言编程：Lua脚本编程入门
-categories:
-  - 读书笔记
-tags:
-  - Lua
-  - 脚本语言
-  - 语法
-  - 游戏
 abbrlink: 1940333895
+categories:
+- 读书笔记
 date: 2015-02-03 16:06:31
+description: '*  数据类型：在Lua中支持6种数据类型，即数字(number)、字符串(string)、函数(function)、表(table)、用户数据(userdata)、空值(nil)'
+tags:
+- Lua
+- 脚本语言
+- 语法
+- 游戏
+title: 脚本语言编程：Lua脚本编程入门
 ---
+
 Lua是一门简单而强大的语言，其本身强大的扩展性使得这门语言在游戏设计等领域发挥着重要的作用。博主曾在Unity3D中使用过这门语言，并且针对Lua和Unity、C++等方面的内容进行了学习和讨论。最近因为在【游戏脚本高级编程】这本书中详细介绍了Lua脚本的相关内容，因此在这里记录下博主的读书心得，方便以后在需要的时候查阅。
 <!--more-->
 ###Lua系统构成
@@ -240,8 +242,3 @@ print("Average=".average)
 print("Sum=".sum)
 
 ```
-
-
-
-
-

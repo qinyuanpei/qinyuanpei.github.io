@@ -1,13 +1,14 @@
 ---
-title: 在WSL中使用Linux桌面环境的尝试与总结
-categories:
-  - 开发工具
-tags:
-  - WSL
-  - Linux
-  - 桌面
 abbrlink: 3972610476
+categories:
+- 开发工具
 date: 2019-08-17 21:09:46
+description: Linux Deepin安装是非常顺畅的，但即便安装完这个桌面环境，博主还是不知道怎么启动这个环境，因为你常规使用Ubuntu的话，安装完切换桌面管理器就可以了，可当你用WSL这种方式使用Ubuntu的时候，可能你就会感到非常困惑
+tags:
+- WSL
+- Linux
+- 桌面
+title: 在WSL中使用Linux桌面环境的尝试与总结
 ---
 
 最近忙里偷闲的博主，再次迷恋上折腾Linux。话说自从微软推出WSL以后，我就彻底地停止了Windows + Linux 的双系统组合。回想起从前使用过的各种Linux发行版，基本上每隔一段时间就会崩溃一次，所以，面对WSL这种近乎`应用`级别的方案，我个人是非常愿意去接受的。因为一不小心玩坏了的话，可以直接对应用程序进行重置，或者重新从应用商店下载，相比重装系统，我觉得这种方式要更友好一点。虽然说Windows10是有史以来最好的Linux发行版:smile:，可面对只有命令行的Linux，果然还是有一丝丝的失望啊:beetle:。所以，在这篇博客里，主要想和大家分享下，关于在WSL下使用Linux桌面系统的一点点尝试和体会。虽然目前应用商店里已经提供了Ubuntu、Debian、Kail Linux、OpenSUSE这些常见的发行版，可当你熟悉了Linux的世界以后，就会明白这个世界对多元化的追求是永无止境的，我不想去Judge这些多元化间优劣，我只想自由地使用我喜欢的技术，比如Linux Deepin、Elementary OS。这是我想要使用Linux桌面环境的理由。

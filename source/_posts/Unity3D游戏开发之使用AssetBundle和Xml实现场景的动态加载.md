@@ -1,14 +1,16 @@
 ---
-title: Unity3D游戏开发之使用AssetBundle和Xml实现场景的动态加载
-categories:
-  - 游戏开发
-tags:
-  - Unity3D
-  - 动态加载
-  - AssetBundle
 abbrlink: 1467630055
+categories:
+- 游戏开发
 date: 2015-06-15 07:24:17
+description: 可是因为这种打包方式仅仅是保证了场景中的GameObject与本地资源的引用关系而非是将本地资源打包，因此从减少游戏容量的角度来说并不是十分实用，而且当我们使用WWW下载完AssetBundle后，需要使用Application.Load()方法来加载场景，我们知道在Unity3D中加载一个关卡(场景)是需要在BuildSetting中注册关卡的，因此在使用这种方式动态加载的时候请注意到这一点
+tags:
+- Unity3D
+- 动态加载
+- AssetBundle
+title: Unity3D游戏开发之使用AssetBundle和Xml实现场景的动态加载
 ---
+
 &emsp;&emsp;各位朋友，大家好，我是秦元培，欢迎大家关注我的博客，我的博客地址是[http://qinyuanpei.com](http://qinyuanpei.com)。 今天我想和大家聊聊在Unity3D中关于场景的动态加载的问题。众所周知在Unity3D游戏开发过程中，因为受到游戏容量、平台性能和热更新等诸多因素的限制，我们可能无法将所有的游戏场景打包到项目中然后相对"静态"地加载，那么这个时候就需要我们使用动态加载的方式来将游戏场景加载到场景中。博主在研究了Unity3D动态加载的相关资料后发现，目前Unity3D中实现动态加载场景的方式主要有以下两种方式：<!--more-->
 
 * 使用BuildStreamedSceneAssetBundle()方法将场景打包为AssetBundle：这种方法将生成一个流式的.unity3d文件，从而实现按需下载和加载，因此这种方式特别适合Web环境下游戏场景的加载，因为在Web环境下我们可以希望的是玩家可以在玩游戏的同时加载游戏。可是因为这种打包方式仅仅是保证了场景中的GameObject与本地资源的引用关系而非是将本地资源打包，因此从减少游戏容量的角度来说并不是十分实用，而且当我们使用WWW下载完AssetBundle后，需要使用Application.Load()方法来加载场景，我们知道在Unity3D中加载一个关卡(场景)是需要在BuildSetting中注册关卡的，因此在使用这种方式动态加载的时候请注意到这一点。

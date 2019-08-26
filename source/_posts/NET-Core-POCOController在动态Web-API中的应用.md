@@ -1,14 +1,18 @@
 ---
-title: .NET Core POCOController在动态Web API中的应用
-categories:
-  - 编程语言
-tags:
-  - .NET Core
-  - Dynamic WebApi
-  - POCOController
 abbrlink: 116795088
+categories:
+- 编程语言
 date: 2019-08-01 16:44:59
+description: POCOController是ASP.NET Core中提供的一个新特性，按照约定大于配置的原则，在ASP.NET Core项目中，所有带有Controller后缀的类，或者是使用了[Controller]标记的类，即使它没有像模板中一样继承Controller类，ASP.NET
+  Core依然会将其识别为Controller，并拥有和普通Controller一样的功能，说到这里，你是不是有点兴奋了呢，因为我们在ASP.NET里花了大力气去做类似的事情，因为ASP.NET里一个普通的类是没有办法成为Controller的，即使通过Castle的Dynamic
+  Proxy黑科技，我们依然需要去Hack整个MVC框架创建、筛选Controller和Action的过程
+tags:
+- .NET Core
+- Dynamic WebApi
+- POCOController
+title: .NET Core POCOController在动态Web API中的应用
 ---
+
 Hi，大家好，我是Payne，欢迎大家关注我的博客，我的博客地址是：[<https://blog.yuanpei.me>](https://blog.yuanpei.me)。在上一篇文章中，我和大家分享了ASP.NET中动态Web API的实现，这种方案的现实意义是，它可以让我们把任意一个接口转换为Web API，所以，不单单局限在文章里提到的WCF迁移到Web API，任意领域驱动开发(DDD)中的服务层，甚至是更为普遍的传统三层，都可以通过这种方式快速构建前后端分离的应用。可能大家会觉得直接把Service层暴露为API，会引发一系列关于鉴权、参数设置(FromQuery/FromBody)等等的问题，甚至更极端的想法是，这样和手写的没什么区别，通过中间件反射能达到相同的目的，就像我们每天都在写各种接口，经常有人告诉我们说，不要在Controller层写太重的业务逻辑，所以，我们的做法就是不断地在Service层里增加新接口，然后再把Service层通过Controller层暴露出来，这样子真的是对的吗？
 
 
@@ -247,5 +251,3 @@ services.AddSwaggerGen (swagger => {
 # 本文小结
 
 又是漫长的一个夏天，下雨并不能让这座城市温柔起来。这篇博客延续了上一篇博客中关于动态Controller的设想，而借助于.NET Core框架提供的良好特性，它以一种更为简洁的方式被实现了，核心的内容有两个点，其一是ControllerFeatureProvider，它能决定MVC会不会把一个普通的类当做控制器。其二是IApplicationModelConvention接口，它能对全局的路由规则进行修改，以满足我们特殊的定制化需要。再此基础上，继续引入Swagger和WebApiClient两个轮子，来解决微服务构建中的API文档和API调用问题。写博客真的是一件辛苦的事情诶，好啦，今天这篇博客就先写到这里，我们下一篇博客再见，晚安！本文中涉及到的代码可以通过：[https://github.com/qinyuanpei/DynamicWCFProxy/tree/master/DynamicWebApi.Core](https://github.com/qinyuanpei/DynamicWCFProxy/tree/master/DynamicWebApi.Core)来做进一步的了解，以上！
-
-

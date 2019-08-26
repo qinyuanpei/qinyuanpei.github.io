@@ -1,14 +1,16 @@
 ---
-title: 解析OBJ模型并将其加载到Unity3D场景中
-categories:
-  - 游戏开发
-tags:
-  - OBJ
-  - Unity3D
-  - 格式
 abbrlink: 1124152964
+categories:
+- 游戏开发
 date: 2015-11-15 13:07:57
+description: 最后，全部的三角面会被读取到faceVertexNormalUV列表中，它表示的是每个三角面的顶点、法线和UV的索引向量，是一个List<Vector3>类型的变量
+tags:
+- OBJ
+- Unity3D
+- 格式
+title: 解析OBJ模型并将其加载到Unity3D场景中
 ---
+
 &emsp;&emsp;各位朋友，大家好，欢迎大家关注我的博客，我是**秦元培**，我的博客地址是[http://qinyuanpei.com](http://qinyuanpei.com)。今天想和大家交流的是解析obj模型并将其加载到Unity3D场景中，虽然我们知道Unity3D是可以直接导入OBJ模型的，可是有时候我们并不能保证我们目标客户知道如何使用Unity3D的这套制作流程，可能对方最终提供给我们的就是一个模型文件而已，所以这个在这里做这个尝试想想还是蛮有趣的呢，既然如此，我们就选择在所有3D模型格式中最为简单的OBJ模型来一起探讨这个问题吧！<!--more-->
 
 #关于OBJ模型
@@ -327,6 +329,3 @@ MeshRenderer meshRenderer = go.AddComponent<MeshRenderer>();
 ![最终效果，这是一个悲伤的故事](https://ws1.sinaimg.cn/large/4c36074fly1fzix9cbxdaj20kt0h6t8j.jpg)
 
 材质大家可以尝试用代码去创建一个材质，然后在给一张贴图，这个玩玩就好，哈哈！好了，今天的内容就是这样子了，希望大家喜欢，为了写这篇文章我都怀疑我是不是有拖延症啊！
-
-
-

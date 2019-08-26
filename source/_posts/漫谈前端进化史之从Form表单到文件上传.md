@@ -1,14 +1,16 @@
 ---
-title: 漫谈前端进化史之从Form表单到文件上传
-categories:
-  - 编程语言
-tags:
-  - HTTP
-  - Form
-  - RFC
 abbrlink: 2463121881
+categories:
+- 编程语言
 date: 2018-09-05 12:57:36
+description: 而从功能性角度来讲，把整个文件的内容全部放在请求体中，则会造成文件信息的不完整，因为此时文件名等信息是没有办法传输到服务器端的，所以，这样综合下来再看的话，HTTP协议本身留给我们的选择的空间并不大，我们能够选择的就只有multipart/form-data和x-www-form-urlencode这两种啦，下面着重来分析下这种数据加密方式
+tags:
+- HTTP
+- Form
+- RFC
+title: 漫谈前端进化史之从Form表单到文件上传
 ---
+
 &emsp;&emsp;Hi，大家好，欢迎大家关注我的博客，我是Payne，我的博客地址是[https://qinyuanpei.github.io](https://qinyuanpei.github.io)。今天这篇博客，我们来说说文件上传相关的内容。看到这里，大家一定觉得博主在技术上越来越没追求了吧，文件上传这种再简单不过的东西，真的值得博主你专门写篇博客吗？在介绍声明式RESTful客户端WebApiClient的这篇[文章]()中，博主曾经提到，HTTP协议中对文件上传的支持，主要是通过multipart/form-data来实现。因为这种方式是将文件视为一种特殊的键值对，所以对这种方式我本人不太喜欢。可作为标准的意义就是要忽略个人的情感因素，所以，在今天这篇文章中，博主更多的是想从HTTP协议(**RFC2388**)的角度来看待这个问题，即为什么它选择了multipart/form-data来实现上传，以及伴随着前端技术的发展它经历了哪些变化。
 
 # 从Form表单说起

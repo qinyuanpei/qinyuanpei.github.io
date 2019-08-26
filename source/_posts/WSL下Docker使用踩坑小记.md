@@ -1,14 +1,16 @@
 ---
-title: WSL下Docker使用踩坑小记
-categories:
-  - 编程语言
-tags:
-  - WSL
-  - Docker
-  - Linux
 abbrlink: 4159187524
+categories:
+- 编程语言
 date: 2019-04-22 22:13:36
+description: 好了，以上就是在使用WSL中的Docker搭建ELK全家桶过程中遇到的问题的梳理，从体验上来讲，我个人会把Linux平台相关的工作渐渐转移到WSL上，因为安装双系统总会分散你的精力去处理维护相关的事情，虽然装系统对程序员来说都不算是个事儿，可我内心依旧排斥自己被贴上“修电脑”的标签
+tags:
+- WSL
+- Docker
+- Linux
+title: WSL下Docker使用踩坑小记
 ---
+
 众所周知，Win10中开始提供Linux子系统，即Windows Subsystem for Linux，简称WSL，它可以让我们在Windows系统使用Linux系统，自从有了这个新功能以后，博主果断地放弃双系统的方案，因为折腾起来实在花费时间。关于如何使用WSL，网上有非常多的文章可以参考，这里不再赘述。今天想说的是，WSL下使用Docker遇到的各种坑。
 
 装完WSL以后，对各种编译环境的使用相当满意，最近在研究日志可视化平台ELK，其中需要使用Docker来搭建环境，一顿sudo操作猛如虎，快速安装完Docker环境，结果发现熟悉的命令行居然无法正常工作，是可忍孰不可忍。

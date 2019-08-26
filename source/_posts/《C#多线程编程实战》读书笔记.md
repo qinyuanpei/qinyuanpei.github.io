@@ -1,14 +1,16 @@
 ---
-title: 《C#多线程编程实战》读书笔记
-categories:
-  - 读书笔记
-tags:
-  - 读书
-  - 多线程
-  - 笔记
 abbrlink: 345410188
+categories:
+- 读书笔记
 date: 2018-01-07 21:34:36
+description: '* Tips38：通过Task实例的ConfigureAwait()方法，可以设置使用await时同步上下文的行为，默认情况下，await操作符会尝试捕捉同步上下文，并在其中执行代码，即调度器会向UI线程投入成千上百个后续操作任务，这会使用它的消息循环来异步地执行这些任务，当我们不需要在UI线程中运行这些代码时，向ConfigureAwait方法传入false将会是一个更高效的方案'
+tags:
+- 读书
+- 多线程
+- 笔记
+title: 《C#多线程编程实战》读书笔记
 ---
+
 本文是一篇读书笔记，由[《C#多线程编程实战》](https://book.douban.com/subject/26574917/)一书中的内容整理而来，主要梳理了.NET中多线程编程相关的知识脉络，从Thread、ThreadPool、Task、async/await、并发集合、Parallel、PLINQ到Rx及异步I/O等内容，均有所覆盖。为了帮助大家理解本文内容，首先给出博主在阅读该书过程中绘制的思维导图，大家可以根据个人需要针对性的查漏补缺。
 
 ![《多线程编程实战》思维导图](https://ws1.sinaimg.cn/large/4c36074fly1fz68k7w2o1j20m714q3zh.jpg)

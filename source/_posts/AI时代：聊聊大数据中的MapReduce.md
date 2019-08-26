@@ -1,14 +1,17 @@
 ---
-title: AI时代：聊聊大数据中的MapReduce
-categories:
-  - 人工智能
-tags:
-  - AI
-  - MapReduce
-  - FP
 abbrlink: 2911923212
+categories:
+- 人工智能
 date: 2018-01-19 00:45:08
+description: '因此，这些论文的问世直接催生了Hadoop的诞生，可以说今天主流的大数据框架如Hadoop、Spark等，无一不是受到Google这些论文的影响，而这正是MapReduce由来，其得名则是因为函数式编程中的两个内置函数:
+  map()和reduce()'
+tags:
+- AI
+- MapReduce
+- FP
+title: AI时代：聊聊大数据中的MapReduce
 ---
+
 各位朋友，大家好，我是Payne，欢迎大家关注我的博客。最近读一本并行计算相关的书籍，在这本书中作者提到了MapReduce。相信熟悉大数据领域的朋友，一定都知道MapReduce是Hadoop框架中重要的组成部分。在这篇文章中，博主将以函数式编程作为切入点，来和大家聊一聊大数据中的MapReduce。如今人工智能正成为行业内竞相追逐的热点，选择MapReduce这个主题，更多的是希望带领大家一窥人工智能的门庭，更多深入的话题需要大家来探索和挖掘。
 
 # MapReduce的前世今生
