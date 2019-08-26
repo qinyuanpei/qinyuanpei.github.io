@@ -7,15 +7,12 @@ from io import BytesIO
 
 baseDir = os.path.abspath('.')
 blogDir = os.path.join(baseDir,'source\_posts')
-print(blogDir)
 blogFiles = os.listdir(blogDir)
-tr4s = TextRank4Sentence()
 
 for blogFile in blogFiles:
-    print(blogFile)
-    print(os.path.join(blogDir,blogFile))
-    with open(os.path.join(blogDir,blogFile),encoding='utf-8') as f:
-        post = frontmatter.load(f)
+    with open(os.path.join(blogDir,blogFile),'r+', encoding='utf-8') as f:
+        post = frontmatter.loads(f.read())
+        tr4s = TextRank4Sentence()
         tr4s.analyze(text=post.content, lower=True, source='all_filters')
         descriptions = [item.sentence for item in tr4s.get_key_sentences(3)]
         if len(descriptions) == 0 :
@@ -24,7 +21,7 @@ for blogFile in blogFiles:
             post['description']=descriptions[0]
         bytes = BytesIO()
         frontmatter.dump(post,bytes)  
-        print('正在为博客：' + blogFile + "生成摘要...")
+        f.seek(0,0)
         f.write(bytes.getvalue().decode('utf-8'))            
 
 ##def get_key_words(text, num=5):
