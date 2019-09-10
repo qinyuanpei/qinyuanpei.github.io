@@ -2,7 +2,7 @@
 <script src="https://cdn.jsdelivr.net/npm/vue"></script>
 <script src="https://cdn.bootcss.com/axios/0.18.0/axios.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/4.2.1/echarts.min.js"></script>
-<script src="<%- url_for(theme_js('assets/scripts/echarts-wordcloud.min', cache)) %>" async></script>
+<script src="<%- url_for(theme_js('assets/scripts/echarts-wordcloud', cache)) %>" async></script>
 <script>
 var BLOG = { ROOT: '<%= config.root %>', SHARE: <%- theme.share %>, REWARD: <%- Boolean(page.reward) %> };
 
