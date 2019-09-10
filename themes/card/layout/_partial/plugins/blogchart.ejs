@@ -1,7 +1,7 @@
 <% if (post.title == '关于') { %>
-    <div id="chart1" style="width: 450px;height:400px;margin:25px;"></div>
-    <div id="chart2" style="width: 450px;height:400px;margin:25px;"></div>
-    <div id="chart3" style="width: 450px;height:400px;margin:25px;"></div>
+    <div id="chart1" style="width: 450px;height:400px;margin:0 auto;"></div>
+    <div id="chart2" style="width: 450px;height:400px;margin:0 auto;"></div>
+    <div id="chart3" style="width: 450px;height:400px;margin:0 auto;"></div>
     <script type="text/javascript">
         fetch('<%- config.url %>' + '/content.json')
             .then(function(res) {
