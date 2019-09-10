@@ -2,6 +2,8 @@
     <div id="chart1" style="width: 450px;height:400px;margin:0 auto;"></div>
     <div id="chart2" style="width: 450px;height:400px;margin:0 auto;"></div>
     <div id="chart3" style="width: 450px;height:400px;margin:0 auto;"></div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/4.2.1/echarts.min.js"></script>
+    <script src="<%- url_for(theme_js('assets/scripts/echarts-wordcloud', cache)) %>" async></script>
     <script type="text/javascript">
         fetch('<%- config.url %>' + '/content.json')
             .then(function(res) {
