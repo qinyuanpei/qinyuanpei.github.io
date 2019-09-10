@@ -3,7 +3,7 @@
     <div id="chart2" style="width: 450px;height:400px;margin:25px;"></div>
     <div id="chart3" style="width: 450px;height:400px;margin:25px;"></div>
     <script type="text/javascript">
-        fetch(config.url + 'content.json')
+        fetch('<%- config.url %>' + '/content.json')
             .then(function(res) {
                 res.json().then(function(data) {
                     var result = handleData(data);
