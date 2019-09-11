@@ -1,9 +1,29 @@
 <% if (post.title == '关于') { %>
-    <div id="chart1" style="width: 450px;height:400px;margin:0 auto;"></div>
-    <div id="chart2" style="width: 450px;height:400px;margin:0 auto;"></div>
-    <div id="chart3" style="width: 450px;height:400px;margin:0 auto;"></div>
+    <style>
+        .parent {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-flow: row wrap;
+            justify-content: center;
+            align-content: flex-start;
+        }
+        .child {
+            box-sizing: border-box;
+            background-color: white;
+            flex: 0 0 33%;
+            height: 300px;
+            border: 1px solid #ffffff;
+        }
+    </style>
+
+    <div id="container" class="parent">
+        <div id="chart1" class="child"></div>
+        <div id="chart2" class="child"></div>
+        <div id="chart3" class="child"></div>
+    </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/4.2.1/echarts.min.js"></script>
-    <script src="<%- url_for(theme_js('assets/scripts/echarts-wordcloud', cache)) %>" async></script>
+    <script src="<%- url_for(theme_js('assets/scripts/echarts-wordcloud.min', cache)) %>" async></script>
     <script type="text/javascript">
         fetch('<%- config.url %>' + '/content.json')
             .then(function(res) {
@@ -62,12 +82,10 @@
             var chart = echarts.init(document.getElementById(el));
             var option = {
                 title: {
-                    text: '文章统计'
+                    text: '文章统计',
+                    x: 'center'
                 },
                 tooltip: {},
-                legend: {
-                    data: ['数量']
-                },
                 xAxis: {
                     data: Object.keys(data.yearly)
                 },
@@ -98,26 +116,17 @@
             var option = {
                 title: {
                     text: '分类统计',
-                    subtext: '',
                     x: 'center'
                 },
                 tooltip: {
                     trigger: 'item',
                     formatter: "{a} <br/>{b} : {c} ({d}%)"
                 },
-                legend: {
-                    type: 'scroll',
-                    orient: 'vertical',
-                    right: 10,
-                    top: 20,
-                    bottom: 20,
-                    data: Object.keys(data.categories)
-                },
                 series: [{
                     name: '分类',
                     type: 'pie',
-                    radius: '55%',
-                    center: ['40%', '50%'],
+                    radius: '50%',
+                    center: ['50%', '50%'],
                     data: seriesData,
                     itemStyle: {
                         emphasis: {
@@ -145,7 +154,8 @@
             console.log(seriesData);
             var option = {
                 title: {
-                    text: '标签词云'
+                    text: '标签词云',
+                    x: 'center'
                 },
                 series: [{
                     type: 'wordCloud',
