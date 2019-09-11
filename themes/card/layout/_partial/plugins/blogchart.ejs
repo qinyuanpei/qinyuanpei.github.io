@@ -23,7 +23,7 @@
         <div id="chart3" class="child"></div>
     </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/4.2.1/echarts.min.js"></script>
-    <script src="<%- url_for(theme_js('assets/scripts/echarts-wordcloud.min', cache)) %>" async></script>
+    <script src="<%- url_for(theme_js('assets/scripts/echarts-wordcloud', cache)) %>" async></script>
     <script type="text/javascript">
         fetch('<%- config.url %>' + '/content.json')
             .then(function(res) {
