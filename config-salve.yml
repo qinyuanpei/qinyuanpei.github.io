@@ -82,17 +82,20 @@ deploy:
   branch: master
   message: Updated at {{ now('YYYY-MM-DD HH:mm:ss') }}
 
+
 # 豆瓣插件
 douban:
   user: 60029335
   timeout: 50000
   builtin: true
   book:
-    title: '读书'
+    title: '书单'
     quote: ''
+    subtitle: '书籍是人类进步的阶梯'
   movie:
-    title: '电影'
+    title: '影单'
     quote: ''
+    subtitle: '如果有多一张船票，你会不会跟我一起走？'
 
 # JSON内容
 jsonContent:
