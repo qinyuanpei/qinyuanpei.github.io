@@ -89,10 +89,11 @@ douban:
   builtin: true
   book:
     title: '书单'
-    quote: '书籍是人类进步的阶梯'
+    quote: '书籍是人类进步的阶梯 —— 高尔基'
   movie:
     title: '影单'
-    quote: '如果有多一张船票，你会不会跟我一起走？'
+    quote: '如果有多一张船票，你会不会跟我一起走？ —— 《花样年华》'
+    
     
 
 # JSON内容
