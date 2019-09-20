@@ -100,7 +100,7 @@ baidu_push: true
 tajs: 65355341
 
 # google
-google_analytics: false
+google_analytics: true
 google_site_verification: 8AqkWAh0QNZqCYB2oKA5yIrqEA3sgxUvglVmtWkuU0s
 
 # less
@@ -195,8 +195,8 @@ ICP_license: 宁ICP备6666666号
 pwa:
   manifest: /manifest.json
 
-#比心特效
-bixin: true
+#桃心特效
+heart: true
 
 # 文章推荐
 recommended_posts:
