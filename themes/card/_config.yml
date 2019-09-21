@@ -100,7 +100,7 @@ baidu_push: true
 tajs: 65355341
 
 # google
-google_analytics: false
+google_analytics: true
 google_site_verification: 8AqkWAh0QNZqCYB2oKA5yIrqEA3sgxUvglVmtWkuU0s
 
 # less
@@ -159,14 +159,13 @@ about: 双子座，典型精分/外冷内热/软萌/文艺。软件工程师，C
 
 # “不蒜子”访问量统计，详见 http://ibruce.info/2015/04/04/busuanzi/
 busuanzi_counter: 
-  enable: true
+  enable: false
   site_uv: UV：
   site_pv: PV：
 
 # LenaCloid访问量统计
 leancloud_counter: 
-  enable: false
-  table: visitor-counters
+  enable: true
   appId:  JbHqRp2eMrTgIwYpfERH0g79-gzGzoHsz
   appKey: VsiKvLuiBGvJL1XrAfv7siY2
 
@@ -195,8 +194,8 @@ ICP_license: 宁ICP备6666666号
 pwa:
   manifest: /manifest.json
 
-#比心特效
-bixin: true
+#桃心特效
+heart: true
 
 # 文章推荐
 recommended_posts:

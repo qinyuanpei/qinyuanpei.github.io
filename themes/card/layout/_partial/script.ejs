@@ -3,8 +3,6 @@
 <script src="https://cdn.bootcss.com/axios/0.18.0/axios.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/4.2.1/echarts.min.js"></script>
 <script src="<%- url_for(theme_js('assets/scripts/echarts-wordcloud', cache)) %>" async></script>
-<script src="https://cdn.bootcss.com/jquery_lazyload/1.9.7/jquery.lazyload.js"></script>
-<script src="https://unpkg.com/minigrid@3.1.1/dist/minigrid.min.js"></script>
 <script>
 var BLOG = { ROOT: '<%= config.root %>', SHARE: <%- theme.share %>, REWARD: <%- Boolean(page.reward) %> };
 
@@ -20,13 +18,23 @@ lazyScripts.push('//s95.cnzz.com/z_stat.php?id=<%-theme.cnzz %>&web_id=<%-theme.
     <script src="<%- url_for(theme_js('assets/scripts/search', cache)) %>" async></script>
 <% } %>
 
-<% if (theme.bixin){ %>
-    <script src="<%- url_for(theme_js('assets/scripts/bixin', cache)) %>" async></script>
+<% if (theme.heart){ %>
+    <script src="<%- url_for(theme_js('assets/scripts/heart', cache)) %>" async></script>
 <% } %>
 
 <%- partial('plugins/mathjax') %>
 
 <% if (theme.busuanzi_counter.enable) { %>
-<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<% } %>
+<% if (theme.leancloud_counter.enable) { %>
+    <script src="<%- url_for(theme_js('assets/scripts/leancloud-counter', cache)) %>" async></script>
+    <script>
+        (function () {
+            var appId = '<%- theme.leancloud_counter.appId %>';
+            var appKey = '<%- theme.leancloud_counter.appKey %>';
+            new VisitorCounter(appId, appKey).pagePV();
+        })();
+    </script>
 <% } %>
 <%- partial('plugins/dynamic-title') %>
