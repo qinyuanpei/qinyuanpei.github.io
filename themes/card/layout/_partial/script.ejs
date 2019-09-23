@@ -28,7 +28,7 @@ lazyScripts.push('//s95.cnzz.com/z_stat.php?id=<%-theme.cnzz %>&web_id=<%-theme.
     <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
 <% } %>
 <% if (theme.leancloud_counter.enable) { %>
-    <script src="<%- url_for(theme_js('assets/scripts/leancloud-counter', cache)) %>" async></script>
+    <script src="<%- url_for(theme_js('assets/scripts/leancloud-counter', cache)) %>"></script>
     <script>
         (function () {
             var appId = '<%- theme.leancloud_counter.appId %>';
