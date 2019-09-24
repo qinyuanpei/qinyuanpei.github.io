@@ -32,6 +32,9 @@ menu:
   link:
     text: 相册
     url: /albums
+  link:
+    text: 关于
+    url: /about
 
 
 # 你的头像url
