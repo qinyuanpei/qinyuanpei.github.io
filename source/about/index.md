@@ -8,7 +8,7 @@ abbrlink: 994796909
 一个努力探索01世界的(**伪**)全栈攻城狮，探索方向是**微服务架构**和**数据分析**，[书籍](https://blog.yuanpei.me/books)和[电影](https://blog.yuanpei.me/movies)是旅途中永恒的陪伴，[日剧]()和[音乐](https://blog.yuanpei.me/musics)是疲惫时最好的治愈，喜欢[许嵩](https://music.163.com/#/playlist?id=806720729)的素面朝天，喜欢[孙燕姿](https://music.163.com/#/playlist?id=635672945)的直来直往，双子座与生俱来的双重性格，理性中夹杂着感性，悲观与乐观并存，而这就是我，这世界里独一无二的我。
 
 通过以下方式联系我：
-[旧版博客](https://blog.csdn.net/qinyuanpei) | [新版博客](https://blog.yuanpei.me) | [新浪微博](https://weibo.com/1278609231/profile) | [豆瓣主页](https://www.douban.com/people/60029335/) | [网易音乐](https://music.163.com/#/user/home?id=47002864)|  [电子邮箱](mailto:qinyuanpei@163.com)
+[旧版博客](https://blog.csdn.net/qinyuanpei) | [新版博客](https://blog.yuanpei.me) | [新浪微博](https://weibo.com/1278609231/profile) | [豆瓣主页](https://www.douban.com/people/60029335/) | [网易音乐](https://music.163.com/#/user/home?id=47002864)| [知乎主页](https://www.zhihu.com/people/qinyuanpei/activities) |  [电子邮箱](mailto:qinyuanpei@163.com)
 
 
 # 关于昵称
