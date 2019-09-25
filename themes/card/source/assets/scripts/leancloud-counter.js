@@ -10,6 +10,36 @@ function VisitorCounter(appId, appKey, region, className) {
         'Content-Type': 'application/json'
     }
 
+    /* 初始化UV/PV */
+    this.init = function(opts) {
+        var site_uv = opts.site_uv || 0;
+        var site_pv = opts.site_pv || 0;
+        var page_url = location.href;
+        var site_url = page_url.split('//')[1];
+        site_url = site_url.substring(0, site_url.indexOf('/'));
+        var site_title = document.title;
+        var where = { page_url: site_url };
+        var self = this;
+        this.queryCounter('VisitorCounter', where).then(function (data) {
+            if (data.results.length == 0) {
+                var newCounter = {};
+                newCounter.page_pv = site_pv;
+                newCounter.page_uv = site_uv;
+                newCounter.page_url = site_url;
+                newCounter.page_title = site_title
+                self.createCounter('VisitorCounter',newCounter).then(function(data){
+                    console.log('init PV/UV of ' + site_url + 'success');
+                });
+            }
+        });
+
+        //填充DOM
+        this.pagePV();
+        this.pageUV();
+        this.sitePV();
+        this.pageUV();
+    }
+
     /* 返回站点PV */
     this.sitePV = function () {
         return 0;
@@ -54,7 +84,34 @@ function VisitorCounter(appId, appKey, region, className) {
 
     /* 返回页面UV */
     this.pageUV = function () {
-        return 0;
+        var ele = document.getElementById('lc_counter_container_page_uv');
+        var url = location.href;
+        var title = ele.getAttribute('data-page-title').trim();
+        var where = { page_url: url };
+        var self = this;
+        this.queryCounter('VisitorCounter', where).then(function (data) {
+            if (data.results.length > 0) {
+                var counter = data.results[0];
+                var newCounter = {};
+                newCounter.objectId = counter.objectId;
+                newCounter.page_pv = counter.page_pv;
+                newCounter.page_pv += 1;
+                self.updateCounter('VisitorCounter', newCounter).then(function (data) { console.log(data); });
+                ele.style.display = 'inline';
+                ele = document.getElementById('lc_counter_value_page_uv')
+                ele.innerText = newCounter.page_pv;
+            } else {
+                var newCounter = {};
+                newCounter.page_title = title;;
+                newCounter.page_url = url;
+                newCounter.page_pv = 1;
+                newCounter.page_uv = 1;
+                self.createCounter('VisitorCounter', newCounter);
+                ele.style.display = 'inline';
+                ele = document.getElementById('lc_counter_value_page_uv')
+                ele.innerText = newCounter.page_pv;
+            }
+        });
     };
 
     /* 查询访客记录 */
