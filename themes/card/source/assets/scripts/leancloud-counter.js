@@ -127,7 +127,7 @@ function VisitorCounter(appId, appKey, region, className) {
         self.queryClass('VisitorCounter', where).then(function (data) {
             if (data.results.length > 0) {
                 var counter = data.results[0];
-                var ele = document.getElementById('lc_counter_value_page_pv')
+                var ele = document.getElementById('lc_counter_value_page_uv')
                 ele.innerText = counter.page_uv;
             }
         });
