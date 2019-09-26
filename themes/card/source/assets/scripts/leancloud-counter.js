@@ -136,7 +136,7 @@ function VisitorCounter(appId, appKey, region, className) {
         });
     };
 
-    /* 查询访客记录 */
+    /* 查询Class */
     this.queryClass = function (className, where) {
         var url = this.baseUrl + '/1.1/classes/' + className + '?where=' + JSON.stringify(where);
         return fetch(url, {
@@ -148,7 +148,7 @@ function VisitorCounter(appId, appKey, region, className) {
         });
     };
 
-    /* 新建访客记录 */
+    /* 新建Class */
     this.createClass = function (className, obj) {
         var url = this.baseUrl + '/1.1/classes/' + className;
         return fetch(url, {
@@ -161,7 +161,7 @@ function VisitorCounter(appId, appKey, region, className) {
         });
     };
 
-    /* 更新访客记录 */
+    /* 更新Class */
     this.updateClass = function (className, obj) {
         var url = this.baseUrl + '/1.1/classes/' + className + '/' + obj.objectId;
         return fetch(url, {
@@ -175,7 +175,7 @@ function VisitorCounter(appId, appKey, region, className) {
     };
 
     /* 脚本注册 */
-    this.injectScript() = function (callback) {
+    this.injectScript = function (callback) {
         var ipScript = document.createElement('script');
         ipScript.type = 'text/javascript';
         ipScript.src = 'https://api.ip.sb/jsonip?callback=handleIP';
