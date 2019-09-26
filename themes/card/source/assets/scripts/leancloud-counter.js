@@ -9,9 +9,12 @@ function VisitorCounter(appId, appKey, region, className) {
         'X-LC-Key': this.appKey,
         'Content-Type': 'application/json'
     }
+    this.ipInfo = {};
+
 
     /* 初始化UV/PV */
     this.init = function (opts) {
+        var self = this;
         var site_uv = opts.site_uv || 0;
         var site_pv = opts.site_pv || 0;
         var page_url = location.href;
@@ -33,6 +36,11 @@ function VisitorCounter(appId, appKey, region, className) {
             }
         });
 
+        //注入脚本
+        this.injectScript(function (data) {
+            self.ipInfo = data;
+        });
+
         //填充DOM
         this.pagePV();
         this.pageUV();
@@ -43,9 +51,9 @@ function VisitorCounter(appId, appKey, region, className) {
     /* 返回站点PV */
     this.sitePV = function () {
         var url = location.href;
-        if(url.indexOf('//')!=-1){
+        if (url.indexOf('//') != -1) {
             url = url.split('//')[1];
-            url = url.substring(0,url.indexOf('/'));
+            url = url.substring(0, url.indexOf('/'));
         }
         var where = { page_url: url };
         this.queryClass('VisitorCounter', where).then(function (data) {
@@ -60,9 +68,9 @@ function VisitorCounter(appId, appKey, region, className) {
     /* 返回站点UV */
     this.siteUV = function () {
         var url = location.href;
-        if(url.indexOf('//')!=-1){
+        if (url.indexOf('//') != -1) {
             url = url.split('//')[1];
-            url = url.substring(0,url.indexOf('/'));
+            url = url.substring(0, url.indexOf('/'));
         }
         var where = { page_url: url };
         this.queryClass('VisitorCounter', where).then(function (data) {
@@ -108,20 +116,15 @@ function VisitorCounter(appId, appKey, region, className) {
         var url = location.href;
         var title = document.title;
         var self = this;
-        this.getIp().then(function(res)
-        {
-            console.log(res);
-            var where = { page_url: url, visitor_ip: res.ip };
-            self.queryClass('VisitorRecord', where).then(function (data) {
-                if (data.results.length == 0) {
-                    newRecord = {};
-                    newRecord.page_url = url;
-                    newRecord.visitor_ip = ip;
-                    self.createClass('VisitorRecord', newRecord);
-                }
-            });
+        var where = { page_url: url, visitor_ip: this.ipInfo.ip };
+        self.queryClass('VisitorRecord', where).then(function (data) {
+            if (data.results.length == 0) {
+                newRecord = {};
+                newRecord.page_url = url;
+                newRecord.visitor_ip = ip;
+                self.createClass('VisitorRecord', newRecord);
+            }
         });
-        
 
         where = { page_url: url };
         self.queryClass('VisitorCounter', where).then(function (data) {
@@ -171,17 +174,15 @@ function VisitorCounter(appId, appKey, region, className) {
         });
     };
 
-    /* 返回IP */
-    this.getIp = function () {
-        var url = 'http://ip-api.com/json/?lang=zh-CN';
-        return fetch(url, {
-            mode: 'cors',
-            method: 'GET',
-            headers: {
-                'Access-Control-Allow-Origin': '*',
-            }
-        }).then(function (response) {
-            return response.json();
-        });
+    /* 脚本注册 */
+    this.injectScript() = function (callback) {
+        var ipScript = document.createElement('script');
+        ipScript.type = 'text/javascript';
+        ipScript.src = 'https://api.ip.sb/jsonip?callback=handleIP';
+        var head = document.getElementsByTagName('head')[0]
+        head.appendChild(ipScript);
+        window.handleIP = function (data) {
+            callback(data);
+        };
     }
 };
