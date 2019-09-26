@@ -33,7 +33,7 @@ lazyScripts.push('//s95.cnzz.com/z_stat.php?id=<%-theme.cnzz %>&web_id=<%-theme.
         (function () {
             var appId = '<%- theme.leancloud_counter.appId %>';
             var appKey = '<%- theme.leancloud_counter.appKey %>';
-            new VisitorCounter(appId, appKey).pagePV();
+            new VisitorCounter(appId, appKey).init({});
         })();
     </script>
 <% } %>

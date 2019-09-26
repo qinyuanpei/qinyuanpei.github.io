@@ -20,7 +20,7 @@ function VisitorCounter(appId, appKey, region, className) {
         var site_title = document.title;
         var where = { page_url: site_url };
         var self = this;
-        this.queryCounter('VisitorCounter', where).then(function (data) {
+        this.queryClass('VisitorCounter', where).then(function (data) {
             if (data.results.length == 0) {
                 var newCounter = {};
                 newCounter.page_pv = site_pv;
@@ -52,7 +52,7 @@ function VisitorCounter(appId, appKey, region, className) {
             if (data.results.length > 0) {
                 var counter = data.results[0];
                 var ele = document.getElementById('lc_counter_value_site_pv')
-                ele.innerText = counter.page_uv;
+                ele.innerText = counter.page_pv;
             }
         });
     };
@@ -80,7 +80,7 @@ function VisitorCounter(appId, appKey, region, className) {
         var title = document.title;
         var where = { page_url: url };
         var self = this;
-        this.queryCounter('VisitorCounter', where).then(function (data) {
+        this.queryClass('VisitorCounter', where).then(function (data) {
             if (data.results.length > 0) {
                 var counter = data.results[0];
                 var newCounter = {};
@@ -107,16 +107,21 @@ function VisitorCounter(appId, appKey, region, className) {
     this.pageUV = function () {
         var url = location.href;
         var title = document.title;
-        var ip = getIp();
-        var where = { page_url: url, visitor_ip: ip };
         var self = this;
-        this.queryClass('VisitorRecord', where).then(function (data) {
-            if (data.results.length == 0) {
-                newRecord.page_url = url;
-                newRecord.visitor_ip = ip;
-                self.createClass('VisitorRecord', newRecord);
-            }
+        this.getIp().then(function(res)
+        {
+            console.log(res);
+            var where = { page_url: url, visitor_ip: res.ip };
+            self.queryClass('VisitorRecord', where).then(function (data) {
+                if (data.results.length == 0) {
+                    newRecord = {};
+                    newRecord.page_url = url;
+                    newRecord.visitor_ip = ip;
+                    self.createClass('VisitorRecord', newRecord);
+                }
+            });
         });
+        
 
         where = { page_url: url };
         self.queryClass('VisitorCounter', where).then(function (data) {
@@ -168,12 +173,14 @@ function VisitorCounter(appId, appKey, region, className) {
 
     /* 返回IP */
     this.getIp = function () {
-        var url = 'https://api.ip.sb/jsonip';
+        var url = 'http://ip-api.com/json/?lang=zh-CN';
         return fetch(url, {
-            mode: 'no-cors',
-            method: 'POST',
+            mode: 'cors',
+            method: 'GET',
+            headers: {
+                'Access-Control-Allow-Origin': '*',
+            }
         }).then(function (response) {
-            console.log(response);
             return response.json();
         });
     }

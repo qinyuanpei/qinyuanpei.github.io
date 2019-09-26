@@ -1,4 +1,4 @@
-<% if (theme.busuanzi_counter) { %>
+<% if (theme.busuanzi_counter.enable) { %>
 <p>
     <span id="busuanzi_container_site_uv" style='display:none'>
        <i class="icon icon-user"></i><span id="busuanzi_value_site_uv"></span>
@@ -9,11 +9,11 @@
 </p>
 <% } else if (theme.leancloud_counter.enable) { %>
    <p>
-      <span id="busuanzi_container_site_uv" style='display:none'>
-         <i class="icon icon-user"></i><span id="page-counter-total-times"></span>
+      <span id="lc_counter_container_site_uv">
+         <i class="icon icon-user"></i><span id="lc_counter_value_site_uv"></span>
       </span>
-      <span id="busuanzi_container_site_pv" style='display:none'>
-         <i class="icon icon-eye"></i><span id="page-counter-total-times"></span>
+      <span id="lc_counter_container_site_pv">
+         <i class="icon icon-eye"></i><span id="lc_counter_value_site_pv"></span>
       </span>
   </p>
 <% } %>
