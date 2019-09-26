@@ -59,8 +59,10 @@ function VisitorCounter(appId, appKey, region, className) {
         this.queryClass('VisitorCounter', where).then(function (data) {
             if (data.results.length > 0) {
                 var counter = data.results[0];
-                var ele = document.getElementById('lc_counter_value_site_pv')
-                ele.innerText = counter.page_pv;
+                var ele = document.getElementById('lc_counter_value_site_pv');
+                if (ele != null) {
+                    ele.innerText = counter.page_pv;
+                }
             }
         });
     };
@@ -76,8 +78,10 @@ function VisitorCounter(appId, appKey, region, className) {
         this.queryClass('VisitorCounter', where).then(function (data) {
             if (data.results.length > 0) {
                 var counter = data.results[0];
-                var ele = document.getElementById('lc_counter_value_site_pv')
-                ele.innerText = counter.page_uv;
+                var ele = document.getElementById('lc_counter_value_site_pv');
+                if (ele != null ){
+                    ele.innerText = counter.page_uv;
+                }
             }
         });
     };
@@ -96,8 +100,10 @@ function VisitorCounter(appId, appKey, region, className) {
                 newCounter.page_pv = counter.page_pv;
                 newCounter.page_pv += 1;
                 self.updateClass('VisitorCounter', newCounter).then(function (data) { console.log(data); });
-                var ele = document.getElementById('lc_counter_value_page_pv')
-                ele.innerText = newCounter.page_pv;
+                var ele = document.getElementById('lc_counter_value_page_pv');
+                if(ele!=null){
+                    ele.innerText = newCounter.page_pv;
+                }
             } else {
                 var newCounter = {};
                 newCounter.page_title = title;;
@@ -105,8 +111,10 @@ function VisitorCounter(appId, appKey, region, className) {
                 newCounter.page_pv = 1;
                 newCounter.page_uv = 1;
                 self.createClass('VisitorCounter', newCounter);
-                var ele = document.getElementById('lc_counter_value_page_pv')
-                ele.innerText = newCounter.page_pv;
+                var ele = document.getElementById('lc_counter_value_page_pv');
+                if(ele!=null){
+                    ele.innerText = newCounter.page_pv;
+                }
             }
         });
     };
@@ -121,7 +129,7 @@ function VisitorCounter(appId, appKey, region, className) {
             if (data.results.length == 0) {
                 newRecord = {};
                 newRecord.page_url = url;
-                newRecord.visitor_ip = ip;
+                newRecord.visitor_ip = self.ipInfo.ip;
                 self.createClass('VisitorRecord', newRecord);
             }
         });
@@ -130,8 +138,10 @@ function VisitorCounter(appId, appKey, region, className) {
         self.queryClass('VisitorCounter', where).then(function (data) {
             if (data.results.length > 0) {
                 var counter = data.results[0];
-                var ele = document.getElementById('lc_counter_value_page_uv')
-                ele.innerText = counter.page_uv;
+                var ele = document.getElementById('lc_counter_value_page_uv');
+                if(ele!=null){
+                    ele.innerText = counter.page_uv;
+                }
             }
         });
     };
