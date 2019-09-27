@@ -100,7 +100,7 @@ baidu_tongji: false
 baidu_push: true
 
 # 腾讯分析，如要开启，输入站点id
-tajs: 65355341
+tajs: 66474307
 
 # google
 google_analytics: true
