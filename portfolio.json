@@ -7,7 +7,7 @@
         "cover":"https://ws1.sinaimg.cn/large/4c36074fly1fyy4r87z0sj21k40zgdif.jpg",
         "subTitle":"",
         "description":"一个使用Python + SQLite抓取并分析新浪微博数据的项目，通过抓取@西安月老牵线的微博来分析男女性的择偶观，使用朴素贝叶斯进行特征提取和文本分类，使用matplotlib对数据进行了可视化。",
-        "link": "https://github.com/qinyuanpei/weibo-analyse",
+        "link": "https://github.com/qinyuanpei/weibo-spider",
         "tags": ["Python","数据分析","微博"]
        },
         {
