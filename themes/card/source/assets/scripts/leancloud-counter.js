@@ -122,15 +122,20 @@ function VisitorCounter(appId, appKey, region, className) {
     this.pageUV = function () {
         var url = location.href;
         var title = document.title;
+        var ipInfo = JSON.parse(localStorage.getItem('ipInfo'));
+        var where = { page_url: url, visitor_ip: ipInfo.ip };
         var self = this;
-        var where = { page_url: url, visitor_ip: self.ipInfo.ip };
         self.queryClass('VisitorRecord', where).then(function (data) {
             if (data.results.length == 0) {
                 newRecord = {};
                 newRecord.page_url = url;
-                newRecord.visitor_ip = self.ipInfo.ip;
+                var ipInfo = JSON.parse(localStorage.getItem('ipInfo'));
+                newRecord.visitor_ip = ipInfo.ip;
                 self.createClass('VisitorRecord', newRecord);
             }
+        })
+        .then(function(error){
+            console.log(error);
         });
 
         where = { page_url: url };
@@ -192,8 +197,8 @@ function VisitorCounter(appId, appKey, region, className) {
         var head = document.getElementsByTagName('head')[0]
         head.appendChild(ipScript);
         window.handleIP = function (data) {
-            self.ipInfo = data;
-            this.console.log(data);
+            this.localStorage.clear();
+            this.localStorage.setItem('ipInfo',this.JSON.stringify(data));
         };
     }
 };
