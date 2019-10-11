@@ -1,7 +1,6 @@
 DateTime==4.2
 Pillow==5.0.0
 pytz==2017.3
-qiniu==7.2.2
 lxml==4.2.4
 PyYAML==3.13
 leancloud==2.1.8
