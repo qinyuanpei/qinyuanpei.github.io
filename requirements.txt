@@ -2,4 +2,3 @@ DateTime==4.2
 Pillow==5.0.0
 pytz==2017.3
 lxml==4.2.4
-leancloud==2.1.8
