@@ -32,7 +32,7 @@ menu:
   link:
     text: 相册
     url: /albums
-  profile:
+  circle:
     text: 关于
     url: /about
 
