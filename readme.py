@@ -6,6 +6,7 @@ import sys
 import json
 import pytz
 import datetime
+import requests
 from PIL import Image
 from lxml import etree
 from itertools import groupby
@@ -20,6 +21,14 @@ tz = pytz.timezone('Asia/Shanghai')
 # URL定义
 master_url = 'https://blog.yuanpei.me'
 salver_url=  'http://qinyuanpei.github.io'
+
+# 百度地址提交定义
+baseUrl = "http://data.zz.baidu.com/urls"
+querystring = {"site":"https://blog.yuanpei.me","token":"RDl7DmfXeoWMVvWP"}
+headers = {
+    'User-Agent': "curl/7.12.1",
+    'Content-Type': "text/plain",
+}
 
 # 文档实体结构定义
 class Post:
@@ -86,8 +95,29 @@ def baiduSitemap():
             with open('.public/baidusitemap.xml', 'wt',encoding='utf-8') as fi:
                 fi.write(DOMTree.toprettyxml())
 
+def submitSitemap():
+    urls = []
+    with open('_config.yml', 'rt', encoding='utf-8') as f:
+        conf = yaml.load(f)
+        if(conf['image_version'] == "master"):
+            DOMTree = xml.dom.minidom.parse('./public/baidusitemap.xml')
+            root = DOMTree.documentElement
+            urls = root.getElementsByTagName("url")
+            for url in urls:
+                loc = url.getElementsByTagName("loc")[0]
+                urls.append(loc.childNodes[0].data)
+    
+    for url in urls:
+        payload = url
+        response = requests.request("POST", baseUrl, data=payload, headers=headers, params=querystring)
+        data = json.loads(response.text)
+        if(data['success'] == 1):
+            print('提交地址{url}至百度成功'.format(url=url))
+
+
 
 if(__name__ == "__main__"):
     items = sorted(loadData(sys.argv[1]),key=lambda x:x.getDate(),reverse=True)
     mkMarkdown(items)
     baiduSitemap()
+    submitSitemap()
