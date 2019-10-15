@@ -107,8 +107,9 @@ def submitSitemap():
                 payload = loc.childNodes[0].data
                 response = requests.request("POST", baseUrl, data=payload, headers=headers, params=querystring)
                 data = json.loads(response.text)
-                if(data['success'] == 1):
-                    print('提交地址{payload}至百度成功'.format(payload=payload))
+                print(data)
+                # if(data['success'] == 1):
+                #     print('提交地址{payload}至百度成功'.format(payload=payload))
 
         
 
