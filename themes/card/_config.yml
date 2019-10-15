@@ -106,6 +106,9 @@ tajs: 66474307
 google_analytics: true
 google_site_verification: 8AqkWAh0QNZqCYB2oKA5yIrqEA3sgxUvglVmtWkuU0s
 
+# baidu
+baidu-site-verification: c50FGqYOSh
+
 # less
 less:
   compress: true
