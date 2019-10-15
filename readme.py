@@ -96,7 +96,6 @@ def baiduSitemap():
                 fi.write(DOMTree.toprettyxml())
 
 def submitSitemap():
-    urls = []
     with open('_config.yml', 'rt', encoding='utf-8') as f:
         conf = yaml.load(f)
         if(conf['image_version'] == "master"):
@@ -105,14 +104,13 @@ def submitSitemap():
             urls = root.getElementsByTagName("url")
             for url in urls:
                 loc = url.getElementsByTagName("loc")[0]
-                urls.append(loc.childNodes[0].data)
-    
-    for url in urls:
-        payload = url
-        response = requests.request("POST", baseUrl, data=payload, headers=headers, params=querystring)
-        data = json.loads(response.text)
-        if(data['success'] == 1):
-            print('提交地址{url}至百度成功'.format(url=url))
+                payload = loc.childNodes[0].data
+                response = requests.request("POST", baseUrl, data=payload, headers=headers, params=querystring)
+                data = json.loads(response.text)
+                if(data['success'] == 1):
+                    print('提交地址{payload}至百度成功'.format(payload=payload))
+
+        
 
 
 
