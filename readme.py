@@ -23,8 +23,8 @@ master_url = 'https://blog.yuanpei.me'
 salver_url=  'http://qinyuanpei.github.io'
 
 # 百度地址提交定义
-baseUrl = "http://data.zz.baidu.com/urls"
-querystring = {"site":"https://blog.yuanpei.me","token":"RDl7DmfXeoWMVvWP"}
+baseUrl = "http://data.zz.baidu.com/urls?site=https://blog.yuanpei.me&token=RDl7DmfXeoWMVvWP"
+querystring = {"site":"","token":"RDl7DmfXeoWMVvWP"}
 headers = {
     'User-Agent': "curl/7.12.1",
     'Content-Type': "text/plain",
@@ -106,12 +106,11 @@ def submitSitemap():
                 loc = url.getElementsByTagName("loc")[0]
                 payload = loc.childNodes[0].data
                 print(payload)
-                response = requests.request("POST", baseUrl, data=payload, headers=headers, params=querystring)
+                response = requests.request("POST", baseUrl, data=payload, headers=headers,)
                 print(response.text)
                 data = json.loads(response.text)
-                print(data)
-                # if(data['success'] == 1):
-                #     print('提交地址{payload}至百度成功'.format(payload=payload))
+                if(data['success'] == 1):
+                    print('提交地址{payload}至百度成功'.format(payload=payload))
 
         
 
