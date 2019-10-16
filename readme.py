@@ -105,7 +105,9 @@ def submitSitemap():
             for url in urls:
                 loc = url.getElementsByTagName("loc")[0]
                 payload = loc.childNodes[0].data
+                print(payload)
                 response = requests.request("POST", baseUrl, data=payload, headers=headers, params=querystring)
+                print(response.text)
                 data = json.loads(response.text)
                 print(data)
                 # if(data['success'] == 1):
