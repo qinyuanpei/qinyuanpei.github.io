@@ -132,6 +132,7 @@ function VisitorCounter(appId, appKey, region, className) {
                 newRecord.page_title = title;
                 var ipInfo = JSON.parse(localStorage.getItem('ipInfo'));
                 newRecord.visitor_ip = ipInfo.ip;
+                newRecord.visitor_geo = JSON.stringify(ipInfo);
                 self.createClass('VisitorRecord', newRecord);
             }
         })
@@ -194,7 +195,7 @@ function VisitorCounter(appId, appKey, region, className) {
     this.injectScript = function () {
         var ipScript = document.createElement('script');
         ipScript.type = 'text/javascript';
-        ipScript.src = 'https://api.ip.sb/jsonip?callback=handleIP';
+        ipScript.src = 'https://api.ip.sb/geoip?callback=handleIP';
         var head = document.getElementsByTagName('head')[0]
         head.appendChild(ipScript);
         window.handleIP = function (data) {
