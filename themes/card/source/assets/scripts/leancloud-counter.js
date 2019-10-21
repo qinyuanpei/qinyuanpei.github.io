@@ -132,7 +132,7 @@ function VisitorCounter(appId, appKey, region, className) {
                 newRecord.page_title = title;
                 var ipInfo = JSON.parse(localStorage.getItem('ipInfo'));
                 newRecord.visitor_ip = ipInfo.ip;
-                newRecord.visitor_geo = JSON.stringify(ipInfo);
+                newRecord.visitor_geo = ipInfo;
                 self.createClass('VisitorRecord', newRecord);
             }
         })
