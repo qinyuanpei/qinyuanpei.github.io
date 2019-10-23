@@ -133,13 +133,8 @@ function VisitorCounter(appId, appKey, region, className) {
                 var ipInfo = JSON.parse(localStorage.getItem('ipInfo'));
                 newRecord.visitor_ip = ipInfo.ip;
                 newRecord.visitor_geo = ipInfo;
-                var ua = new UserAgent();
-                newRecord.visitor_ua = {
-                    "raw":ua.userAgent,
-                    "device":ua.device(),
-                    "version":ua.version(),
-                    "from":ua.from()
-                };
+                var parser = new UAParser();;
+                newRecord.visitor_ua = parser.getResult();
                 console.log(newRecord.visitor_ua);
                 self.createClass('VisitorRecord', newRecord);
             }
@@ -210,61 +205,12 @@ function VisitorCounter(appId, appKey, region, className) {
             this.localStorage.clear();
             this.localStorage.setItem('ipInfo',this.JSON.stringify(data));
         };
+
+        var uaScript = document.createElement('script');
+        uaScript.type = 'text/javascript';
+        uaScript.src = 'http://faisalman.github.io/ua-parser-js/src/ua-parser.js'
+        head.appendChild(uaScript);
     }
 
     
-};
-
-
-function UserAgent() {
-    this.userAgent = navigator.userAgent;
-    this.version = function(){
-        if(this.userAgent.indexOf('Trident') > -1){
-            return 'Trident';
-        }else if(this.userAgent.indexOf('Presto') > -1){
-            return 'Presto';
-        }else if(this.userAgent.indexOf('AppleWebKit') > -1){
-            return 'WebKit';
-        }else if(this.userAgent.indexOf('Safari') > -1){
-            return 'Safari';
-        }else {
-            return this.userAgent;
-        }
-    };
-
-    this.device = function(){
-        if(this.isMobile()){
-            if(!!this.userAgent.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/)){
-                return 'iOS'
-            }else if(this.userAgent.indexOf('Android') > -1 || this.userAgent.indexOf('Linux') > -1){
-                return 'Android';
-            } else if(this.userAgent.indexOf('iPhone') > -1 ){
-                return 'iPhone';
-            } else if(this.userAgent.indexOf('iPad') > -1 ){
-                return 'iPad';
-            } 
-        }else {
-            return "PC";
-        }
-    };
-
-    this.from = function(){
-        if(this.isMobile()){
-            if (this.userAgent.match(/MicroMessenger/i) == "micromessenger") { 
-                return "WeChat" 
-            }else if(this.userAgent.match(/WeiBo/i) == "weibo"){
-                return "Weibo"
-            }else if(this.userAgent.match(/WeiBo/i) == "weibo"){
-                return "Weibo"
-            }else {
-                return "Browser"
-            }
-        }else{
-            return "Browser"
-        }
-    };
-
-    this.isMobile = function(){
-        return !!this.userAgent.match(/AppleWebKit.*Mobile.*/)
-    }
 };
