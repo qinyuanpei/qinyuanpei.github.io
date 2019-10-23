@@ -133,7 +133,7 @@ function VisitorCounter(appId, appKey, region, className) {
                 var ipInfo = JSON.parse(localStorage.getItem('ipInfo'));
                 newRecord.visitor_ip = ipInfo.ip;
                 newRecord.visitor_geo = ipInfo;
-                var parser = new UAParser();;
+                var parser = new UAParser();
                 newRecord.visitor_ua = parser.getResult();
                 console.log(newRecord.visitor_ua);
                 self.createClass('VisitorRecord', newRecord);
