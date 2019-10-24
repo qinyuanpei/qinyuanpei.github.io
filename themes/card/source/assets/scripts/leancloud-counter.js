@@ -133,6 +133,9 @@ function VisitorCounter(appId, appKey, region, className) {
                 var ipInfo = JSON.parse(localStorage.getItem('ipInfo'));
                 newRecord.visitor_ip = ipInfo.ip;
                 newRecord.visitor_geo = ipInfo;
+                var parser = new UAParser();
+                newRecord.visitor_ua = parser.getResult();
+                console.log(newRecord.visitor_ua);
                 self.createClass('VisitorRecord', newRecord);
             }
         })
@@ -202,5 +205,12 @@ function VisitorCounter(appId, appKey, region, className) {
             this.localStorage.clear();
             this.localStorage.setItem('ipInfo',this.JSON.stringify(data));
         };
+
+        var uaScript = document.createElement('script');
+        uaScript.type = 'text/javascript';
+        uaScript.src = 'http://faisalman.github.io/ua-parser-js/src/ua-parser.js'
+        head.appendChild(uaScript);
     }
+
+    
 };
