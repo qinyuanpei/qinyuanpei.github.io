@@ -13,17 +13,17 @@ date: 2019-10-22 12:50:49
 
 # PV/UV的概念
 
-首先，我们从两个最基本的概念PV和UV开始说起。我们都知道，互联网产品的核心就是流量，前期通过免费的产品吸引目标客户的目的，在积累了一定用户流量以后，再通过广告等增值服务实现盈利，这可以说是互联网产品的典型商业模式啦。而在这个过程中，为了对一个产品的流量进行科学地分析，就产生了譬如访客数(**UV**)、浏览量(**PV**)、访问次数(**VV**)等等的概念，这些概念通常作为衡量流量多少的指标。除此以外，我们还有类似日活跃用户(**DAU**)、月活跃用户(**MAU**)等等这种衡量服务用户粘性的指标，以及平均访问深度、平均访问时间、跳出率等等这种衡量流量质量优劣的指标。如果各位和我一样都写博客的话，对这些概念应该都不会感到陌生，因为我们多多少少会使用到诸如[百度站长]()、[站长统计]()、[腾讯统计]()、[Google Analytics这样的统计服务，这些统计服务可以让我们即时掌握博客的访问情况。博主目前使用了[腾讯统计]()来查看整个博客的流量情况，而每一篇博客的访问量则是通过**“不蒜子”**这个第三方服务，这里再次对作者表示感谢。
+首先，我们从两个最基本的概念PV和UV开始说起。我们都知道，互联网产品的核心就是流量，前期通过免费的产品吸引目标客户的目的，在积累了一定用户流量以后，再通过广告等增值服务实现盈利，这可以说是互联网产品的典型商业模式啦。而在这个过程中，为了对一个产品的流量进行科学地分析，就产生了譬如访客数(**UV**)、浏览量(**PV**)、访问次数(**VV**)等等的概念，这些概念通常作为衡量流量多少的指标。除此以外，我们还有类似日活跃用户(**DAU**)、月活跃用户(**MAU**)等等这种衡量服务用户粘性的指标，以及平均访问深度、平均访问时间、跳出率等等这种衡量流量质量优劣的指标。如果各位和我一样都写博客的话，对这些概念应该都不会感到陌生，因为我们多多少少会使用到诸如[百度站长](https://ziyuan.baidu.com/site/index)、[站长统计](https://www.umeng.com/)、[腾讯统计](https://ta.qq.com/#/)、[Google Analytics](https://developers.google.cn/analytics/devguides/reporting/?hl=zh-cn)这样的统计服务，这些统计服务可以让我们即时掌握博客的访问情况。博主目前使用了[腾讯统计](https://ta.qq.com/#/)来查看整个博客的流量情况，而每一篇博客的访问量则是通过**[“不蒜子”](http://busuanzi.ibruce.info/)**这个第三方服务，这里再次对作者表示感谢。
 
 
 
-![使用腾讯统计来查看网站的流量情况]()
+![使用腾讯统计来查看网站的流量情况](https://i.loli.net/2019/10/24/VN2ubT71aLK6eZp.png)
 
 
 
 回到问题本身，PV，即**Page View**，**表示页面浏览量或者点击量，每当一个页面被打开或者被刷新，都会产生一次PV，只要这个请求从浏览器端发送到了服务器端**。聪明的各位肯定会想到，如果我写一个爬虫不停地去请求一个页面，那么这个页面的PV不就会一直增长下去吗？理论上的确是这样，所以，我们有第二个指标UV，来作为进一步的参考，所谓UV，即**Unique Visitor，表示独立访客数**。在上面这个问题中，尽管这个页面的PV在不断增长，可是因为这些访客的IP都是相同的，所以，这个页面只会产生一次UV，这就是PV和UV的区别。所以，我们结合这两个指标，可以非常容易得了解到，这个页面实际的访问情况是什么样的。这让我想起数据分析中的一个例子，虽然以统计学为背景的数学计算不会欺骗人类，可如果人类片面地相信某一个方面的分析结果，数据分析一样是带有欺骗性的。就像有人根据《战狼2》和《前任3》两部电影的观众购买冷/热饮的情况，得出下面的结论：**看动作片的观众更喜欢喝冷饮来清凉紧绷着的神经，而看爱情片的观众更喜欢喝热饮来温暖各自的内心**。其实想想就知道这里混淆了因果性和相关性，选择冷饮还是热饮无非是两部电影上映的季节不同而已。
 
-## 如何设计一个访问统计系统
+# 如何设计一个访问统计系统
 OK，了解了PV和UV的概念后，我们来思考如何去设计一个访问统计系统，这是今天这篇博客的主题内容。我知道，如果问如何设计一个访问系统，大家可能都会不由自主地想到建两张表。的确，这是最简单的做法。可问题是，我们对于PV的认识，其实一直都在不断地变化着。比如PV的定义是是一个页面被打开或者被刷新时视为一次有效PV，所以，我们通常的做法是在页面底部嵌入JavaScript脚本，这种方式一直工作得非常好。可在引入AJAX以后，用户几乎不会主动去刷新页面，那么，在这个过程中用户点击**更多**或者使用**下拉刷新**时，是否应该算作一次有效PV呢？甚至在PC端网页逐渐式微以后，越来越多的工作转移到手机等移动设备上来，越来越多的原生+Web混合App或者是单页面应用(**SPA**)或者是渐进式应用(**PWA**)，此时我们又该如何认识PV呢？微信公众号里的PV甚至更为严格，必须通过微信内置的浏览器访问才能算作一次有效PV。
 
 可以发现，我们对PV的认识其实一直在不断的变化着，更多的时候，我们想追踪的并非页面被加载(**Page Load**)的次数，而是页面被浏览(**Page View**)的次数。这时候，我们可以Page Visiblity和History API结合的方式。前者在页面的visibilityState可见或者由隐藏变为可见时发送一次Page View，而后者则是在浏览器地址发生变化的时候发送一次Page View。这听起来非常像单页面应用(**SPA**)里前端路由的那套玩法，的确，当一个地址中的pathname或者search部分发生变化时，应该发送一次Page View请求，而hash部分的变化则应该忽略，因为它表示的是应用内部页面的跳转。对于页面的visibilityState由隐藏变为可见，不同的人有不同的看法，因为有时我们像合并多次Page View，而有时候则想通过Page View了解所谓的”回头客“，所以，这里面还可以继续引入Session的概念，比如Google Analytics默认会在30分钟内无交互的情况下结束。所以，这个问题要考虑的东西实际上比想象中的要多。
@@ -34,7 +34,11 @@ OK，了解了PV和UV的概念后，我们来思考如何去设计一个访问�
 
 我们首先来介绍Nginx的access_log，顾名思义，这是Nginx的访问日志，由ngx_http_log_module模块提供相应功能。Nginx会把每一个用户访问网站的日志信息记录到指定文件里，从而帮助网站提供者分析用户的浏览行为。而PV/UV则是分析用户的浏览行为的最基础指标，所以，通过Nginx的访问日志来统计UV和PV是再合适不过的啦！在Nginx里主要使用`log_format`和`access_log` 两条指令来完成相关的配置。这里以博主自己使用的配置为例来说明：
 ```Shell
-这里展示两条日志相关的指令
+    log_format  main  '$remote_addr - $remote_user [$time_iso8601] "$request" '
+                      '$status $body_bytes_sent "$http_referer" '
+                      '"$http_user_agent" "$http_x_forwarded_for"';
+                      
+    access_log  logs/access.log  main;
 ```
 可以注意到，我们在这里首先通过`log_format`命令定义了一个日志格式，而这个日志格式则被定义为main，这表示我们我们可以在Nginx的配置文件中定义多个日志格式。它其实就是一个日志模板，相信大家在使用NLog、Log4Net这类日志库的时候，都接触过Layout这个概念，这里就是Nginx中访问日志的Layout。那么，在定义了这样一个日志格式以后，我们该怎么使用这个日志格式呢？这就要说到下面的`access_log`指令，它的基本用法就是一个路径 + 一个模板，在这里我们使用了定义好的main模板，然后指定了日志路径为：\logs\localhost.access_log.log。当然啦，大家使用NLog和Log4Net时，日志对应的Layout中都会有“变量”这样的概念，同样地，在Nginx中我们有一些常用的“变量”：
 
@@ -52,12 +56,21 @@ OK，了解了PV和UV的概念后，我们来思考如何去设计一个访问�
 
 为什么说这些时最常用的“变量”呢？因为通过这些，我们想要统计PV和UV的想法就能变成现实，关于更多的Nginx日志变量，大家可以从这里来了解：[http://nginx.org/en/docs/http/ngx_http_log_module.html](http://nginx.org/en/docs/http/ngx_http_log_module.html)。现在，通过Nginx托管一个简单的静态页面，然后在浏览器中访问：localhost:9090，此时，我们应该可以在前面设置的日志路径里找到Nginx生成的日志文件，它大概长下面这个样子：
 
-![这里插入Nginx日志图片]()
+![Nginx日志长什么样子](https://i.loli.net/2019/10/24/sGT7QYRWariKDHz.png)
 
 OK，现在有日志文件啦，这PV/UV到底从哪里来呢？其实，到这里已经无所谓用什么方法啦，因为你可以用ELK全家桶把给它收集了去，或是选一门你喜欢的语言用正则给它匹配出来，这都完全没有问题，无非就是一个工具选择的问题。为了简单起见，我们直接用Shell命令：
 
 ```shell
-这里展示统计UV/PV的Shell脚本
+#统计指定页面的PV
+grep / localhost.access.log | wc -l
+grep /favicon.ico localhost.access.log | wc -l
+
+#统计站点PV
+awk '{print $6}' localhost.access.log | wc -l #$6表示模板中的第6个变量，即Referer
+
+#统计访客IP
+awk '{print $1}' localhost.access.log | sort -r |uniq -c |wc -l #$1表示模板中第一个变量，即客户端IP
+
 ```
 
 至此，我们就达到了基于Nginx访问日志实现PV/UV统计的目的。我知道有同学要问啦，你不是说要在前端通过埋点的方式来收集访客的信息吗，你这说了半天，完全就是说Nginx的事情嘛！的确，我们现在可以统计出自己网站的PV/UV了，可如果我们想对外提供一个访问统计的服务，我们又该如何做呢？一起来看下面的代码：
@@ -66,14 +79,65 @@ OK，现在有日志文件啦，这PV/UV到底从哪里来呢？其实，到这�
 这里展示前端JS
 ```
 
-
-
 ## 通过Redis的Hyperlog实现统计
+不知道大家有没有发现，统计PV其实蛮简单的，因为它只需要对访问量做更新即可。可统计UV就会有点麻烦啦，因为同一个人可以多次访问同一篇文章，
 
 ## 通过LeanCloud的Hooks实现统计
 
-像Hexo、Jekyll这类静态博客，本质上是非常依赖Valine、不蒜子等等的第三方服务，而使用LeanCloud作为访问量统计的服务提供商，更是早就在博客圈子里流行了。不过我注意到，这些设计都少都会有一点不足，那就是网上的各种设计都没有实现站点的PV/UV统计。当我被迫从”不蒜子“上迁移过来以后，我其实非常想实现一个和”不蒜子“一模一样的统计服务，因为这样子的话，我对博客的修改会非常非常小。所以， 我不得不在现有方案上扩展更多的功能。
+像Hexo、Jekyll这类静态博客，本质上是非常依赖Valine、不蒜子等等的第三方服务，而使用LeanCloud作为访问量统计的服务提供商，更是早就在博客圈子里流行了。不过我注意到，这些设计都少都会有一点不足，那就是网上的各种设计都没有实现站点的PV/UV统计。当我被迫从”不蒜子“上迁移过来以后，我其实非常想实现一个和”不蒜子“一模一样的统计服务，因为这样子的话，我对博客的修改会非常非常小。所以， 我不得不在现有方案上扩展更多的功能，实现单篇文章的UV、整个站点的PV/UV、访客IP/地理位置、客户端UA等的统计功能。
 
-在这个过程中，我发现LeanCloud不支持传统关系型数据库里的Sum()操作，而我更不想在客户端通过分页去对表记录做Sum()操作。官方提供了离线分析和云函数，可这两个东西都是商业版里支持的东西。最终我找到了，通过Hooks来实现站点PV/UV统计的这样一种方法。所谓Hooks，你可以理解为传统关系型数据库里的触发器，它可以在你更新或者插入某个对象的时候，
+在这个过程中，我发现LeanCloud不支持传统关系型数据库里的Sum()操作，而我更不想在客户端通过分页去对表记录做Sum()操作。官方提供了离线分析和云函数，可这两个东西都是商业版里支持的东西。最终我找到了，通过Hooks来实现站点PV/UV统计的这样一种方法。所谓Hooks，你可以理解为传统关系型数据库里的触发器，它可以在你更新或者插入某个对象的时候，去做一点额外的工作。所以，单篇文章会根据文章链接+访客IP生成一条UV，而PV则是每次打开文章就视为一条PV。所以，最终的方案是插入访客记录(**VisitorRecord**)时更新文章的对应的访问次数(**VisitorCounter**)，而单篇文章的更新则会触发站点UV/PV的更新。听起来有点绕人，我们直接来看下面的代码：
+```JavaScript
+//新建访客记录时，更新对应的UV记录
+AV.Cloud.afterSave('VisitorRecord', async function(request) {
+    var query = new AV.Query('VisitorCounter');
+    var page_url = request.object.get('page_url');
+    console.log('query page_url: ' + page_url);
+    query.equalTo('page_url', page_url);
+    return query.find().then(function (counters) {
+        if (counters.length > 0){
+            counters[0].increment('page_uv');
+            console.log('increment UV of page_url: ' + page_url + ", " + counters[0].get('page_pv'));
+            return counters[0].save()
+        }
+    });
+});
 
-## 本文小结
+//页面PV/UV更新时，更新站点PV/UV
+AV.Cloud.afterUpdate('VisitorCounter', async function(request) {
+    var page_url = request.object.get('page_url');
+    if(page_url.indexOf('//') == -1){
+        return;
+    }
+    var site_url = page_url.split('//')[1];
+    site_url = site_url.substring(0, site_url.indexOf('/'));
+    console.log('now to update site PV/UV with: ' + site_url);
+    if (request.object.updatedKeys.indexOf('page_pv') != -1) {
+        var query = new AV.Query('VisitorCounter');
+        query.equalTo('page_url',site_url);
+        query.find().then(function(counters){
+            if(counters.length>0){
+                counters[0].increment('page_pv');
+                console.log('update site PV of ' + site_url + ", " + counters[0].get('page_pv'));
+                return counters[0].save();
+            }
+        });
+    } else if (request.object.updatedKeys.indexOf('page_uv') != -1) {
+        var query = new AV.Query('VisitorCounter');
+        query.equalTo('page_url',site_url);
+        query.find().then(function(counters){
+            if(counters.length>0){
+                counters[0].increment('page_uv');
+                console.log('update site PV of ' + site_url + ", " + counters[0].get('page_uv'));
+                return counters[0].save();
+            }
+        });
+    }
+});
+```
+
+实际上这里整个站点的UV统计是不严谨的，因为严格地来讲，同一个IP访问了同一个站点下的N篇文章，它的UV严格地来说应该算1次，可我们这个方案本身就是向LeanCloud妥协的一种做法，就像我这里直接使用了`location.href`和`document.title`，它带来的问题就是，一个网站的域名或者链接发生变化的时候，访问统计就会被重置从0开始。“不蒜子”本身就有这个问题。所以，博主这个博客从15年到现在，总访问量只有3万多，就是因为中间更换过两次域名。从我切换到自己写的统计服务以后，我发现每天来读我博客的人居然不少，我实在不忍心写下这种夸自己的句子啊！
+
+想解决这个问题，并不是没有办法。像博主一开始设计的时候，是打算用每个页面唯一的Id来存储的，而这就要通过HTML5中的**data-**或者通过JavaScript来传参。可当你打算设计一个更通用的东西的时候，这些想法就显得有点多余，我和大部分人一样，喜欢开箱即用的东西，所以，最好它可以像大多数统计服务一样，只需要在页面里加入一行JavaScript脚本。所以，最终采用这样的设计是为了最大限度的开箱即用。考虑到“不蒜子”里因为更换域名而导致的访问统计重置的问题，我增加了一个初始化站点UV/PV的功能，满足了像博主这样虚荣心爆棚的人的需要。这一刻，我突然觉得，我和产品经理们一样“自信”啊。
+
+# 本文小结
