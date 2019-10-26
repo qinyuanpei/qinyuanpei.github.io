@@ -137,9 +137,12 @@ albums:
   file: albums.json
   title: 相册
 
+
 # APlayer
 aplayer:
   meting: true
+  script_dir: assets/scripts
+  style_dir: assets/styles
 
 # 版权设置
 license: by-nc-sa
@@ -213,5 +216,5 @@ live2d:
     hOffset: -30
     vOffset:  10
   mobile:
-    show: true
+    show: false
 
