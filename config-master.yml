@@ -195,3 +195,23 @@ image_minifier:
   progressive: false
   silent: false
 
+# live2d
+live2d:
+  enable: true
+  scriptFrom: local
+  pluginRootPath: assets/live2dw/
+  pluginJsPath: lib/
+  pluginModelPath: assets/
+  tagMode: false
+  log: false
+  model:
+    use: live2d-widget-model-tororo
+  display:
+    position: right
+    width: 150
+    height: 300
+    hOffset: -30
+    vOffset:  10
+  mobile:
+    show: true
+
