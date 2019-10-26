@@ -138,6 +138,8 @@ albums:
 # APlayer
 aplayer:
   meting: true
+  script_dir: assets/scripts                        # Script asset path in public directory, default: 'assets/js'
+  style_dir: assets/styles
 
 # 版权设置
 license: by-nc-sa
@@ -191,5 +193,25 @@ image_minifier:
   pngquant: false
   progressive: false
   silent: false
+
+# live2d
+live2d:
+  enable: true
+  scriptFrom: local
+  pluginRootPath: assets/live2dw/
+  pluginJsPath: lib/
+  pluginModelPath: assets/
+  tagMode: false
+  log: false
+  model:
+    use: live2d-widget-model-tororo
+  display:
+    position: right
+    width: 150
+    height: 300
+    hOffset: -30
+    vOffset:  10
+  mobile:
+    show: true
 
 
