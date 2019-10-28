@@ -34,6 +34,7 @@ after_script:
   #- python3 syncvisitor.py
   - python3 readme.py https://blog.yuanpei.me/
   - cp README.md ./public/README.md
+  - cp VERSION.txt ./public/VERSION.txt
   #- cp albums.json ./public/albums.json
   - git config user.name "qinyuanpei"
   - git config user.email "qinyuanpei@163.com"
@@ -57,6 +58,7 @@ after_script:
   - python3 readme.py https://qinyuanpei.github.io/
   - cp README.md ./public/README.md
   - cp albums.json ./public/albums.json
+  - cp VERSION.txt ./public/VERSION.txt
   - git config user.name "qinyuanpei"
   - git config user.email "qinyuanpei@163.com"
   - cd ./public

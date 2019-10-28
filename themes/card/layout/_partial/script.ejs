@@ -37,4 +37,17 @@ lazyScripts.push('//s95.cnzz.com/z_stat.php?id=<%-theme.cnzz %>&web_id=<%-theme.
         })();
     </script>
 <% } %>
+<script type="text/javascript">
+    fetch('<%- config.url %>' + '/VERSION.txt')
+        .then(function(res) {
+            res.text().then(function(data) {
+               console.log('Build Version：' + data);
+               var ele = document.getElementById('version');
+               ele.innerText = 'Build Version：' + data;
+            });
+        })
+        .catch(function(err) {
+            console.log('Fetch Error : %S', err);
+        })
+</script>
 <%- partial('plugins/dynamic-title') %>
