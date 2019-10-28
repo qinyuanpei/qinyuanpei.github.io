@@ -208,10 +208,10 @@ live2d:
   model:
     use: live2d-widget-model-hijiki
   display:
-    position: right
+    position: left
     width: 150
     height: 300
-    hOffset: -30
+    hOffset: 10
     vOffset:  10
   mobile:
     show: false
