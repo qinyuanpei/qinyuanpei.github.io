@@ -32,7 +32,10 @@
     "hexo-server": "^0.1.2",
     "hexo-tag-aplayer": "^3.0.3",
     "hexo-tag-cloudmusic": "^1.2.2",
+    "live2d-widget-model-hijiki": "^1.0.5",
+    "live2d-widget-model-shizuku": "^1.0.5",
     "live2d-widget-model-tororo": "^1.0.5",
+    "live2d-widget-model-tsumiki": "^1.0.5",
     "lunr": "^2.2.0"
   }
 }
