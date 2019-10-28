@@ -217,4 +217,7 @@ live2d:
     vOffset:  10
   mobile:
     show: false
+  dialog:
+    enable: true
+    hitokoto: true
 
