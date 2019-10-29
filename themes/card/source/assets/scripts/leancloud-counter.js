@@ -208,7 +208,7 @@ function VisitorCounter(appId, appKey, region, className) {
 
         var uaScript = document.createElement('script');
         uaScript.type = 'text/javascript';
-        uaScript.src = 'http://faisalman.github.io/ua-parser-js/src/ua-parser.js'
+        uaScript.src = 'https://faisalman.github.io/ua-parser-js/src/ua-parser.js'
         head.appendChild(uaScript);
     }
 
