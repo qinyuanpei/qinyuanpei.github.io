@@ -166,7 +166,8 @@ githubEmojis:
 #   titleHtml: <h1>你可能感兴趣</h1> #自定义标题
 
 # 构建版本
-build_version: 2fc85838
+build_version: 
+  enable: true
 
 # minifier插件
 html_minifier:

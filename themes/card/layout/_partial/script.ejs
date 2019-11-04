@@ -4,17 +4,17 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/4.2.1/echarts.min.js"></script>
 <script src="<%- url_for(theme_js('assets/scripts/echarts-wordcloud', cache)) %>" async></script>
 <script>
-var BLOG = { ROOT: '<%= config.root %>', SHARE: <%- theme.share %>, REWARD: <%- Boolean(page.reward) %> };
+    var BLOG = { ROOT: '<%= config.root %>', SHARE: <% - theme.share %>, REWARD: <% - Boolean(page.reward) %> };
 
-<% if (theme.cnzz){ %>
-lazyScripts.push('//s95.cnzz.com/z_stat.php?id=<%-theme.cnzz %>&web_id=<%-theme.cnzz %>')
-<% } %>
+<% if (theme.cnzz) { %>
+        lazyScripts.push('//s95.cnzz.com/z_stat.php?id=<%-theme.cnzz %>&web_id=<%-theme.cnzz %>')
+        <% } %>
 </script>
 
 <script src="<%- url_for(theme_js('assets/scripts/main', cache)) %>"></script>
 
 <% if (theme.search){ %>
-    <%- partial('search') %>
+<%- partial('search') %>
     <script src="<%- url_for(theme_js('assets/scripts/search', cache)) %>" async></script>
 <% } %>
 
@@ -29,25 +29,34 @@ lazyScripts.push('//s95.cnzz.com/z_stat.php?id=<%-theme.cnzz %>&web_id=<%-theme.
 <% } %>
 <% if (theme.leancloud_counter.enable) { %>
     <script src="<%- url_for(theme_js('assets/scripts/leancloud-counter', cache)) %>"></script>
-    <script>
+<script>
         (function () {
             var appId = '<%- theme.leancloud_counter.appId %>';
             var appKey = '<%- theme.leancloud_counter.appKey %>';
-            new VisitorCounter(appId, appKey).init({});
+            new VisitorCounter().init({
+                appId: appId,       //应用ID, 必输
+                appKey: appKey,      //应用Key, 必输
+                region: '华北',      //华东,华北,国际, 默认华东
+                domain: '',      //自定义域名
+                collectIP: true, //是否收集IP及位置信息, 默认开启
+                collectUA: true  //是否收集UserAgent, 默认开启
+            });
         })();
+</script>
+<% } %>
+<% if (config.build_version.enable) { %>
+    <script type="text/javascript">
+        fetch('<%- config.url %>' + '/VERSION.txt')
+            .then(function (res) {
+                res.text().then(function (data) {
+                    console.log('Build Version：' + data);
+                    var ele = document.getElementById('version');
+                    ele.innerText = 'Build Version：' + data;
+                });
+            })
+            .catch(function (err) {
+                console.log('Fetch Error : %S', err);
+            })
     </script>
 <% } %>
-<script type="text/javascript">
-    fetch('<%- config.url %>' + '/VERSION.txt')
-        .then(function(res) {
-            res.text().then(function(data) {
-               console.log('Build Version：' + data);
-               var ele = document.getElementById('version');
-               ele.innerText = 'Build Version：' + data;
-            });
-        })
-        .catch(function(err) {
-            console.log('Fetch Error : %S', err);
-        })
-</script>
 <%- partial('plugins/dynamic-title') %>
