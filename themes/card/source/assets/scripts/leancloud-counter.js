@@ -227,7 +227,7 @@ function VisitorCounter() {
     this.injectScript = function () {
         var head = document.getElementsByTagName('head')[0]
         var scripts = ['https://api.ip.sb/geoip?callback=handleIP', 'https://faisalman.github.io/ua-parser-js/src/ua-parser.js'];
-        for (script in scripts) {
+        for (script of scripts) {
             var ele = document.createElement('script');
             ele.type = 'text/javascript';
             ele.src = script;
@@ -289,7 +289,6 @@ function VisitorCounter() {
         return {
             'X-LC-Id': this.appId,
             'X-LC-Sign': this.appKey,
-            'timestamp': timestamp,
             'Content-Type': 'application/json'
         }
     }
