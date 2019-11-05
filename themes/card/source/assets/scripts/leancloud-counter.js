@@ -287,7 +287,7 @@ function VisitorCounter() {
         var timestamp = new Date().getTime();
         var sign = new Utils().md5(timestamp + self.config.appKey);
         return {
-            'X-LC-Id': this.appId,
+            'X-LC-Id': self.config.appId,
             'X-LC-Sign': self.config.appKey + ',' + timestamp,
             'Content-Type': 'application/json'
         }
