@@ -285,10 +285,10 @@ function VisitorCounter() {
     this.buildHeaders = function () {
         var self = this;
         var timestamp = new Date().getTime();
-        var sign = new Utils().md5(timestamp + self.appKey);
+        var sign = new Utils().md5(timestamp + self.config.appKey);
         return {
             'X-LC-Id': this.appId,
-            'X-LC-Sign': this.appKey + ',' + timestamp,
+            'X-LC-Sign': self.config.appKey + ',' + timestamp,
             'Content-Type': 'application/json'
         }
     }
