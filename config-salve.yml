@@ -168,6 +168,7 @@ githubEmojis:
 # 构建版本
 build_version: 
   enable: true
+  repository: https://github.com/qinyuanpei/qinyuanpei.github.io/
 
 # minifier插件
 html_minifier:

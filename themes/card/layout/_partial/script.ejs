@@ -51,7 +51,10 @@
                 res.text().then(function (data) {
                     console.log('Build Version：' + data);
                     var ele = document.getElementById('version');
-                    ele.innerText = 'Build Version：' + data;
+                    var commitUrl = '<%- config.build_version.repository %>' + '/commit/' + data
+                    var commitHash = data.substring(0,7);
+                    ele.href = commitUrl;
+                    ele.innerText = commitHash;
                 });
             })
             .catch(function (err) {
