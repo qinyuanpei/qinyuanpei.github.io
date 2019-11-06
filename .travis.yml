@@ -21,7 +21,7 @@ install:
 
 script:
   - hexo clean
-  - git rev-parse --short HEAD > VERSION.txt
+  - git rev-parse HEAD > VERSION.txt
 # - python3 migrate.py 
 
 after_script:
