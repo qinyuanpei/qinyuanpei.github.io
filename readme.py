@@ -71,6 +71,8 @@ def mkMarkdown(items):
         datetime.datetime.strftime(items[-1].getDate(),'%Y-%m-%d'),
         len(list(items))
     ))
+    mdfile.write("Coding Pages版本：[https://blog.yuanpei.me](https://blog.yuanpei.me)\n\n")
+    mdfile.write("Github Pages版本：[https://qinyuanpei.github.io](https://qinyuanpei.github.io)\n\n")
 
     groups = groupby(items,key=lambda x:x.getDate().year)
     for key,group in groups:
