@@ -15,19 +15,19 @@ title: EasyAR尝鲜系列教程之Hello EasyAR
 
 <!--more-->
 
-#什么是增强现实？
+# 什么是增强现实？
 &emsp;&emsp;为了让更多的人了解增强现实，所以在开始本文教程前，我们首先来了解下什么是增强现实。增强现实(Augmented Reality，简称 AR)，它是一种将真实世界信息和虚拟世界信息进行融合和集成的新技术，这种技术的目标是在屏幕上把虚拟世界和现实世界进行叠加并在此基础上进行互动。增强现实是真实世界和虚拟世界的信息集成，具有实时交互性，是在三维尺度空间中增添定位虚拟物体。增强现实技术可广泛应用到军事、医疗、建筑、教育、工程、影视、娱乐等领域。增强现实是新型的人机交互和三维仿真工具，目前已发挥出了重要的作用，具有巨大的应用潜力。
 
 ![增强现实概念图](https://ws1.sinaimg.cn/large/4c36074fly1fziy7k2yssj20m80b4tad.jpg)
 
-#增强现实应用现状
+# 增强现实应用现状
 &emsp;&emsp;目前，增强现实在国内尚处在起步阶段。2012年4月Google发布的Google Class是全球唯一一款真正意义上实现增强现实技术的硬件设备。随着移动设备的普及和相关技术的成熟，增强现实开始逐渐地走进人们的生活。如国内首款聚合了目前移动互联最新增强现实技术的智能手机应用《城市镜头》以及中视典数字科技研发的VRP系统等。AR技术在人工智能、CAD、图形仿真、虚拟通讯、遥感、娱乐、模拟训练等许多领域带来了革命性的变化。
 目前增强现实相关技术主要有开源社区的[ARToolkit](http://www.hitl.washington.edu/artoolkit/)、面向商业化解决方案的[Metaio](http://www.metaio.com/)和[Vuforia](http://developer.vuforia.com/)等。
 
-#国产增强现实引擎EasyAR
+# 国产增强现实引擎EasyAR
 &emsp;&emsp;EasyAR(Easy Augmented Reality)是视辰信息科技（上海）有限公司的增强现实解决方案系列的子品牌，其含义是希望让增强现实变得简单易实施。EasyAR提供了诸如手机APP互动营销、户外大屏幕互动活动、网络营销互动等形式在内的增强现实互动营销技术和解决方案。著作权归作者所有。EasyAR无需授权、无水印、无识别次数的限制，开放后可免费下载，无需任何费用，是一款完全免费的AR引擎。EasyAR具有强大的跨平台特性可支持Windows、 Mac OS、 Android和iOS等主流平台。从目前的情况来看，EasyAR的SDK是目前市场上同类产品中最为简单易用的，唯一的不足是产品刚发布不久尚未能提供完整的技术文档。
 
-#Hello EasyAR
+# Hello EasyAR
 &emsp;&emsp;好了，下面我们以[EasyAR](http://www.easyar.cn/view/index.html)提供的Unity3D版本SDK为例来学习EasySDK的使用。在开始前请确保你的计算机上正确安装了以下开发工具或者硬件：
 
 * Unity3D(必选)：主要的开发环境
@@ -67,7 +67,7 @@ title: EasyAR尝鲜系列教程之Hello EasyAR
 ![截图2](https://ws1.sinaimg.cn/large/None.jpg)
 
 
-#问题汇总
+# 问题汇总
 &emsp;&emsp;作为一款国产的增强现实引擎，目前EasyAR的表现我还是比较满意的，虽然在识别的准确度上无法和国外的同类产品相比，但是它的简单易用确实是做得不错。作为一个程序员尝鲜更像是吃螃蟹，目前发现的问题及解决方案有：
 
 *  编辑器提示DllNotFoundException错误，请安装SDK中对应的VC++运行库。
