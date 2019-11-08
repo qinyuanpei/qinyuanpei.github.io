@@ -65,7 +65,7 @@ def mkMarkdown(items):
     itemTpl = '* {0} - [{1}]({2})\n'
     mdfile.write('本文档由脚本自动生成，最后更新时间：{0}，最后部署版本：{1}\n\n'.format(
         datetime.datetime.strftime(datetime.datetime.now(tz),'%Y-%m-%d %H:%M:%S'),
-        open('VERSION.txt', 'r', encoding='utf-8').readlines()[0]
+        open('VERSION.txt', 'r', encoding='utf-8').readlines()[0][0:7]
     ))
     mdfile.write('Hi, Payne. 从{0}至今，你撰写博客共计{1}篇，请继续努力！\n\n'.format(
         datetime.datetime.strftime(items[-1].getDate(),'%Y-%m-%d'),
