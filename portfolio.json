@@ -3,7 +3,7 @@
       {
          "title": "LeanCloud-Counter",
          "date": "2019.09",
-         "cover": "https://ws1.sinaimg.cn/large/4c36074fly1fyy4r87z0sj21k40zgdif.jpg",
+         "cover": "https://raw.githubusercontent.com/qinyuanpei/qinyuanpei.github.io/blog/images/BlogSpace/leancloud-counter%20for%20profile.png",
          "subTitle": "",
          "description": "基于LeanCloud的访问量统计工具，理论上可以接入任意站点，支持PV和UV统计、访客地理位置(https://api.ip.sb)、UserAgent(UAParser.js)等信息的统计功能",
          "link": "https://github.com/qinyuanpei/leancloud-counter",
