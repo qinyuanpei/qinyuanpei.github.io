@@ -16,7 +16,7 @@
       {
          "title": "WallPaper",
          "date": "2019.01",
-         "cover": "https://ws1.sinaimg.cn/large/4c36074fly1fyy4r87z0sj21k40zgdif.jpg",
+         "cover": "https://ws1.sinaimg.cn/large/4c36074fly1fzix8icn54g20xi0ize81.jpg",
          "subTitle": "",
          "description": "一个基于Python的Windows下的壁纸更换工具，支持以扩展的方式从不同源上抓取壁纸。目前已支持以下站点：Unsplash、必应壁纸、WallHaven、国家地理",
          "link": "https://github.com/qinyuanpei/WallPaper",
