@@ -5,7 +5,7 @@
          "date": "2019.09",
          "cover": "https://raw.githubusercontent.com/qinyuanpei/qinyuanpei.github.io/blog/images/BlogSpace/leancloud-counter%20for%20profile.png",
          "subTitle": "",
-         "description": "基于LeanCloud的访问量统计工具，理论上可以接入任意站点，支持PV和UV统计、访客地理位置(https://api.ip.sb)、UserAgent(UAParser.js)等信息的统计功能",
+         "description": "基于LeanCloud的访问量统计工具，理论上可以接入任意站点，支持PV和UV统计、访客地理位置(https://api.ip.sb)、UserAgent(UAParser.js)等信息的统计功能。",
          "link": "https://github.com/qinyuanpei/leancloud-counter",
          "tags": [
             "LeanCloud",
@@ -18,7 +18,7 @@
          "date": "2019.01",
          "cover": "https://ws1.sinaimg.cn/large/4c36074fly1fzix8icn54g20xi0ize81.jpg",
          "subTitle": "",
-         "description": "一个基于Python的Windows下的壁纸更换工具，支持以扩展的方式从不同源上抓取壁纸。目前已支持以下站点：Unsplash、必应壁纸、WallHaven、国家地理",
+         "description": "一个基于Python的Windows下的壁纸更换工具，支持以扩展的方式从不同源上抓取壁纸。目前已支持以下站点：Unsplash、必应壁纸、WallHaven、国家地理。",
          "link": "https://github.com/qinyuanpei/WallPaper",
          "tags": [
             "Python",
