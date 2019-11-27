@@ -7,8 +7,8 @@
     var BLOG = { ROOT: '<%= config.root %>', SHARE: <%- Boolean(theme.share) %>, REWARD: <%- Boolean(page.reward) %> };
 
 <% if (theme.cnzz) { %>
-        lazyScripts.push('//s95.cnzz.com/z_stat.php?id=<%-theme.cnzz %>&web_id=<%-theme.cnzz %>')
-        <% } %>
+    lazyScripts.push('//s95.cnzz.com/z_stat.php?id=<%-theme.cnzz %>&web_id=<%-theme.cnzz %>')
+<% } %>
 </script>
 
 <script src="<%- url_for(theme_js('assets/scripts/main', cache)) %>"></script>
