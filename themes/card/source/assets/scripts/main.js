@@ -405,6 +405,20 @@
                 s.async = true;
                 body.appendChild(s);
             })
+        },
+        dialog: function (title, content, fulfilled, rejected) {
+            var modal = new this.modal('#dialog');
+            $('.mdui-dialog-title').innerText = title;
+            $('.mdui-dialog-content').innerText = content;
+            if(fulfilled){
+                $('#btnOK').addEventListener('click',fulfilled);
+            }
+            if(rejected){
+                $('#btnCancel').addEventListener('click',function(){
+                    rejected();
+                    modal.hide();
+                });
+            }
         }
     };
 
