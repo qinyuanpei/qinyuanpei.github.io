@@ -1,7 +1,7 @@
 <header class="top-header" id="header">
     <div class="flex-row">
         <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
-          <i class="icon icon-lg icon-navicon"></i>
+            <i class="icon icon-lg icon-navicon"></i>
         </a>
         <div class="flex-col header-title ellipsis"><%=title %></div>
         <% if(theme.search){ %>
@@ -9,7 +9,8 @@
             <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
                 <i class="icon icon-lg icon-chevron-left"></i>
             </a>
-            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="<%= __('global.search_input_hint') %>">
+            <input type="text" id="key" class="search-input" autocomplete="off"
+                placeholder="<%= __('global.search_input_hint') %>">
             <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
                 <i class="icon icon-lg icon-search"></i>
             </a>
@@ -22,23 +23,29 @@
         <% } %>
     </div>
 </header>
+<div class="mdui-dialog mdui-dialog-alert mdui-dialog-open" style="display: block; top: 393.5px; height: 188px;">
+    <div class="mdui-dialog-title">Demo Alert</div>
+    <div class="mdui-dialog-content" style="height: 68px;">
+        This site and its content are for demo only! If the site reloaded, you will see this alert again.</div>
+    <div class="mdui-dialog-actions ">
+        <a href="javascript:void(0)" class="mdui-btn mdui-ripple mdui-text-color-primary ">ok</a>
+        <a href="javascript:void(0)" class="mdui-btn mdui-ripple mdui-text-color-primary ">cancel</a>
+    </div>
+</div>
 <header class="content-header <%-hdClass %>">
-
     <div class="container fade-scale">
         <h1 class="title"><%=title %></h1>
         <h5 class="subtitle">
             <% if(is_post()){ %>
-                <%- partial('post/head-meta') %>
+            <%- partial('post/head-meta') %>
             <% } else if(is_home()){ %>
-                <%- config.subtitle %>
+            <%- config.subtitle %>
             <% } else if (page.layout === 'page' && page.description) {%>
-                <%- page.description %>
+            <%- page.description %>
             <% } %>
         </h5>
     </div>
-
     <%- partial('tags-bar', {
         type: hdClass.split('-')[0]
     }) %>
-
 </header>

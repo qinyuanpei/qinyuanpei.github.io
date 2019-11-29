@@ -216,4 +216,8 @@ live2d:
   mobile:
     show: true
 
+# vConsole
+vConsole:
+  enable: true
+
 
