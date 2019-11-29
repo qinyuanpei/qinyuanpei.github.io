@@ -223,3 +223,7 @@ live2d:
     enable: true
     hitokoto: true
 
+# vConsole
+vConsole:
+  enable: true
+
