@@ -19,7 +19,7 @@
     <%
         var title = page.title;
         if (is_archive()){
-            title = theme.archives_title || 'Archives';
+            title = theme.archives_title || '归档';
 
             if (is_month()){
             title += ': ' + page.year + '/' + page.month;
@@ -27,9 +27,9 @@
             title += ': ' + page.year;
             }
         } else if (is_category()){
-            title = (theme.categories_title || 'Categories') + ': ' + page.category;
+            title = (theme.categories_title || '分类') + ': ' + page.category;
         } else if (is_tag()){
-            title = (theme.tags_title || 'Tags') + ': ' + page.tag;
+            title = (theme.tags_title || '标签') + ': ' + page.tag;
         }
     %>
     <title>
