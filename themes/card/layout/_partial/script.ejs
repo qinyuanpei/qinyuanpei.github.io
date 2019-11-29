@@ -62,4 +62,10 @@
             })
     </script>
 <% } %>
+<% if (config.vConsole.enable) { %>
+    <script src="<%- url_for(theme_js('assets/scripts/vconsole', cache)) %>"></script>
+    <script type="text/javascript">
+        new vConsole({});
+    </script>
+<% } %>
 <%- partial('plugins/dynamic-title') %>
