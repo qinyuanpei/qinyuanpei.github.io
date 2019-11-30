@@ -63,12 +63,20 @@
 <% if (config.vConsole.enable) { %>
     <script src="<%- url_for(theme_js('assets/scripts/vconsole', cache)) %>"></script>
     <script type="text/javascript">
+    //当地址中存在debug=true时，实例化vConsole
+    if(location.href.indexOf('debug=true') > -1){
         var vConsole = new VConsole();
+    }
     </script>
 <% } %>
 <% if (config.image_version == 'salver')  { %>
     <script>
+        //国内用户自动重定向Coding Pages镜像
         var ipInfo = JSON.parse(localStorage.getItem('ipInfo'));
+        location.href = location.href.replace('<%- config.url %>','blog.yuanpei.me')
+
+        /* 
+         * TODO：继续完善对话框组件
         if(ipInfo.country_code == 'CN'){
             BLOG.dialog('温馨提示','检测到当前页面打开速度过慢，是否立即切换到国内镜像?',function(){
                 location.href = location.href.replace("qinyuanpei.github.io",'blog.yuanpei.me')
@@ -76,6 +84,7 @@
 
             })
         }
+        */
     </script>
 <% } %>
 <%- partial('plugins/dynamic-title') %>
