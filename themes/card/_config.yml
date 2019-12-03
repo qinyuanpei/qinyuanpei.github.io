@@ -29,9 +29,9 @@ menu:
   code:
     text: 作品
     url: /works
-  link:
-    text: 相册
-    url: /albums
+  # link:
+  #   text: 相册
+  #   url: /albums
   circle:
     text: 关于
     url: /about
