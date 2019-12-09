@@ -202,7 +202,7 @@ image_minifier:
 
 # live2d
 live2d:
-  enable: true
+  enable: false
   scriptFrom: local
   pluginRootPath: assets/live2dw/
   pluginJsPath: lib/
