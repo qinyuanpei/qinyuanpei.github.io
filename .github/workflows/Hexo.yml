@@ -16,7 +16,7 @@ jobs:
       with:
         node-version: 8.x
     - name: Install Packages
-      run: npm install 
+      run: npm install -g
     - name: Clean & Generate
       run: hexo clean & hexo generate
       env:
