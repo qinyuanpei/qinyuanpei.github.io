@@ -15,9 +15,15 @@ jobs:
       uses: actions/setup-node@v1
       with:
         node-version: 8.x
+
+    - name: Setup Hexo
+      run: npm install hexo-cli -g
+      
     - name: Install Packages
-      run: npm install -g
+      run: npm install
+      
     - name: Clean & Generate
       run: hexo clean & hexo generate
+      
       env:
         CI: true
