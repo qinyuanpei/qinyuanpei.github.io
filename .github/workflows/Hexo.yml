@@ -10,11 +10,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v1
-    - name: Use Node.js ${{ matrix.node-version }}
+    - name: Use Node.js
       uses: actions/setup-node@v1
       with:
         node-version: 8.x
-    - name: Setup Python
+    - name: Use Python
+      uses: actions/setup-python@v1
+      with:
+        python-version:  3.x
+    - name: Install Requirements
       run: |
         - sudo apt-get install python3 -y
         - sudo apt-get install python3-pip -y
