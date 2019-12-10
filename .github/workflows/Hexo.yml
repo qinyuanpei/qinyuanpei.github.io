@@ -20,9 +20,9 @@ jobs:
         python-version:  3.x
     - name: Install Requirements
       run: |
-        - sudo pip install pip -U
-        - sudo -H pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple
-        - sudo -H pip install -r requirements.txt
+        - pip install pip -U
+        - pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple
+        - pip install -r requirements.txt
     - name: Setup Hexo
       run: npm install hexo-cli -g
     - name: Install Packages
