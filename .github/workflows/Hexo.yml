@@ -14,7 +14,6 @@ jobs:
       uses: actions/setup-node@v1
       with:
         node-version: 8.x
-      env:
     - name: Setup Python
       run: |
         - sudo apt-get install python3 -y
