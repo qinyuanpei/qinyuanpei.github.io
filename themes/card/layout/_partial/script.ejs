@@ -2,7 +2,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/4.2.1/echarts.min.js"></script>
 <script src="<%- url_for(theme_js('assets/scripts/echarts-wordcloud', cache)) %>" async></script>
 <script>
-    var BLOG = { ROOT: '<%= config.root %>', SHARE: <% - Boolean(theme.share) %>, REWARD: <% - Boolean(page.reward) %> };
+    var BLOG = { ROOT: '<%= config.root %>', SHARE: <%- Boolean(theme.share) %>, REWARD: <%- Boolean(page.reward) %> };
 
 <% if (theme.cnzz) { %>
         lazyScripts.push('//s95.cnzz.com/z_stat.php?id=<%-theme.cnzz %>&web_id=<%-theme.cnzz %>')
