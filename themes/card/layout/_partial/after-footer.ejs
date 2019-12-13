@@ -2,14 +2,5 @@
 <a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span
         class="icon icon-lg icon-chevron-up"></span></a>
 <% if(theme.share){ %>
-<%- partial('post/share', {scope: 'global'}) %>
+    <%- partial('post/share', {scope: 'global'}) %>
 <% } %>
-<div class="page-modal mdui-dialog mdui-dialog-alert mdui-dialog-open" id="dialog" style="display: block; top: 393.5px; height: 188px;">
-    <div class="mdui-dialog-title">Demo Alert</div>
-    <div class="mdui-dialog-content" style="height: 68px;">
-        This site and its content are for demo only! If the site reloaded, you will see this alert again.</div>
-    <div class="mdui-dialog-actions ">
-        <a id="btnOK" href="javascript:void(0)" class="mdui-btn mdui-ripple mdui-text-color-primary ">确定</a>
-        <a id="btnCancel" href="javascript:void(0)" class="mdui-btn mdui-ripple mdui-text-color-primary ">取消</a>
-    </div>
-</div>

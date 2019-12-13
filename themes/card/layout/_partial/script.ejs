@@ -2,89 +2,93 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/4.2.1/echarts.min.js"></script>
 <script src="<%- url_for(theme_js('assets/scripts/echarts-wordcloud', cache)) %>" async></script>
 <script>
-    var BLOG = { ROOT: '<%= config.root %>', SHARE: <%- Boolean(theme.share) %>, REWARD: <%- Boolean(page.reward) %> };
+    var BLOG = { ROOT: '<%= config.root %>', SHARE: <% - Boolean(theme.share) %>, REWARD: <% - Boolean(page.reward) %> };
 
 <% if (theme.cnzz) { %>
-    lazyScripts.push('//s95.cnzz.com/z_stat.php?id=<%-theme.cnzz %>&web_id=<%-theme.cnzz %>')
-<% } %>
+        lazyScripts.push('//s95.cnzz.com/z_stat.php?id=<%-theme.cnzz %>&web_id=<%-theme.cnzz %>')
+        <% } %>
 </script>
 
 <script src="<%- url_for(theme_js('assets/scripts/main', cache)) %>"></script>
 
 <% if (theme.search){ %>
 <%- partial('search') %>
-    <script src="<%- url_for(theme_js('assets/scripts/search', cache)) %>" async></script>
+<script src="<%- url_for(theme_js('assets/scripts/search', cache)) %>" async></script>
 <% } %>
 
 <% if (theme.heart){ %>
-    <script src="<%- url_for(theme_js('assets/scripts/heart', cache)) %>" async></script>
+<script src="<%- url_for(theme_js('assets/scripts/heart', cache)) %>" async></script>
 <% } %>
 
 <%- partial('plugins/mathjax') %>
 
 <% if (theme.busuanzi_counter.enable) { %>
-    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
 <% } %>
 <% if (theme.leancloud_counter.enable) { %>
-    <script src="<%- url_for(theme_js('assets/scripts/leancloud-counter', cache)) %>"></script>
-    <script>
-            (function () {
-                var appId = '<%- theme.leancloud_counter.appId %>';
-                var appKey = '<%- theme.leancloud_counter.appKey %>';
-                new VisitorCounter().init({
-                    appId: appId,       //应用ID, 必输
-                    appKey: appKey,      //应用Key, 必输
-                    region: '华北',      //华东,华北,国际, 默认华东
-                    domain: '',      //自定义域名
-                    collectIP: true, //是否收集IP及位置信息, 默认开启
-                    collectUA: true  //是否收集UserAgent, 默认开启
-                });
-            })();
-    </script>
+<script src="<%- url_for(theme_js('assets/scripts/leancloud-counter', cache)) %>"></script>
+<script>
+        (function () {
+            var appId = '<%- theme.leancloud_counter.appId %>';
+            var appKey = '<%- theme.leancloud_counter.appKey %>';
+            new VisitorCounter().init({
+                appId: appId,       //应用ID, 必输
+                appKey: appKey,      //应用Key, 必输
+                region: '华北',      //华东,华北,国际, 默认华东
+                domain: '',      //自定义域名
+                collectIP: true, //是否收集IP及位置信息, 默认开启
+                collectUA: true  //是否收集UserAgent, 默认开启
+            });
+        })();
+</script>
 <% } %>
 <% if (config.build_version.enable) { %>
-    <script type="text/javascript">
-        fetch('<%- config.url %>' + '/VERSION.txt')
-            .then(function (res) {
-                res.text().then(function (data) {
-                    console.log('Build Version：' + data);
-                    var ele = document.getElementById('version');
-                    var commitUrl = '<%- config.build_version.repository %>' + '/commit/' + data
-                    var commitHash = data.substring(0,7);
-                    ele.href = commitUrl;
-                    ele.innerText = commitHash;
-                });
-            })
-            .catch(function (err) {
-                console.log('Fetch Error : %S', err);
-            })
-    </script>
+<script type="text/javascript">
+    fetch('<%- config.url %>' + '/VERSION.txt')
+        .then(function (res) {
+            res.text().then(function (data) {
+                console.log('Build Version：' + data);
+                var ele = document.getElementById('version');
+                var commitUrl = '<%- config.build_version.repository %>' + '/commit/' + data
+                var commitHash = data.substring(0, 7);
+                ele.href = commitUrl;
+                ele.innerText = commitHash;
+            });
+        })
+        .catch(function (err) {
+            console.log('Fetch Error : %S', err);
+        })
+</script>
 <% } %>
 <% if (config.vConsole.enable) { %>
-    <script src="<%- url_for(theme_js('assets/scripts/vconsole', cache)) %>"></script>
-    <script type="text/javascript">
+<script src="<%- url_for(theme_js('assets/scripts/vconsole', cache)) %>"></script>
+<script type="text/javascript">
     //当地址中存在debug=true时，实例化vConsole
-    if(location.href.indexOf('debug=true') > -1){
+    if (location.href.indexOf('debug=true') > -1) {
         var vConsole = new VConsole();
     }
-    </script>
+</script>
 <% } %>
 <% if (config.image_version == 'salver')  { %>
     <script>
         //国内用户自动重定向Coding Pages镜像
         var ipInfo = JSON.parse(localStorage.getItem('ipInfo'));
-        location.href = location.href.replace('qinyuanpei.github.io','blog.yuanpei.me')
-
-        /* 
-         * TODO：继续完善对话框组件
-        if(ipInfo.country_code == 'CN'){
-            BLOG.dialog('温馨提示','检测到当前页面打开速度过慢，是否立即切换到国内镜像?',function(){
-                location.href = location.href.replace("qinyuanpei.github.io",'blog.yuanpei.me')
-            },function(){
-
-            })
+        if (ipInfo.country_code == 'CN') {
+            mdui.confirm('检测到当前网络环境较差，是否理解切换到国内镜像?', '温馨提示',
+                function () {
+                    console.log('切换至国内镜像')
+                    location.href = location.href.replace('qinyuanpei.github.io', 'blog.yuanpei.me')
+                },
+                function () {
+                    console.log('用户取消')
+                },
+                {
+                    confirmText: "确定",
+                    cancelText: "取消",
+                    history: false
+                }
+            );
         }
-        */
     </script>
 <% } %>
 <%- partial('plugins/dynamic-title') %>
