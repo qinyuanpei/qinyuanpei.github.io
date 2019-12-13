@@ -68,7 +68,7 @@
       {
          "title": "塔防游戏Demo",
          "date": "2015.10",
-         "cover": "http://7wy477.com1.z0.glb.clouddn.com/Works_TD.png",
+         "cover": "https://i.loli.net/2019/12/13/4cFSimTzdLGeos9.gif",
          "subTitle": "",
          "description": "该游戏是用使用《保卫萝卜》的素材制作的一款简单的塔防游戏，在这个游戏中实现一个基础的塔防游戏的框架,可以使用Unity3D的编辑器来编辑和生成地图、敌人寻路路径等，可以通过配置Xml文件来设置敌人的攻击序列，实现了防守单位的AI和防守单位的部署等功能。",
          "link": "https://github.com/qinyuanpei/LightGames/tree/master/Unity3D_TDSample",
