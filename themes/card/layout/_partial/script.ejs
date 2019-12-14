@@ -74,20 +74,7 @@
         //国内用户自动重定向Coding Pages镜像
         var ipInfo = JSON.parse(localStorage.getItem('ipInfo'));
         if (ipInfo.country_code == 'CN') {
-            mdui.confirm('检测到当前网络环境较差，是否理解切换到国内镜像?', '温馨提示',
-                function () {
-                    console.log('切换至国内镜像')
-                    location.href = location.href.replace('qinyuanpei.github.io', 'blog.yuanpei.me')
-                },
-                function () {
-                    console.log('用户取消')
-                },
-                {
-                    confirmText: "确定",
-                    cancelText: "取消",
-                    history: false
-                }
-            );
+            location.href = location.href.replace('qinyuanpei.github.io', 'blog.yuanpei.me');
         }
     </script>
 <% } %>
