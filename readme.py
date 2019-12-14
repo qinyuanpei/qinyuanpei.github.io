@@ -117,7 +117,7 @@ def submitSitemap():
                 data = json.loads(response.text)
                 if(data['success'] == 1):
                     print('提交地址{payload}至百度成功'.format(payload=payload))
-        
+                time.sleep(5)
 
 
 
