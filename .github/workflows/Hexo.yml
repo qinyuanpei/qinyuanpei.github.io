@@ -20,9 +20,9 @@ jobs:
         python-version:  3.7
     - name: Install Requirements
       run: |
-        - python3 -m pip install pip -U
-        - python3 -m pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple
-        - python3 -m pip install -r requirements.txt
+        - python -m pip install pip -U
+        - python -m pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple
+        - python -m pip install -r requirements.txt
     - name: Setup Hexo
       run: npm install hexo-cli -g
     - name: Install Packages
