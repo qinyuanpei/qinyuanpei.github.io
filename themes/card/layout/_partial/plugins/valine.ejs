@@ -4,11 +4,11 @@
 <script type="text/javascript">
 new Valine({
     el: '#comment' ,
-    notify:false, 
-    verify:false, 
+    notify: false, 
+    verify: true, 
     appId: '<%- theme.valine.appId %>',
     appKey: '<%- theme.valine.appKey %>',
-    placeholder: '',
+    placeholder: '雁云中谁寄锦书来，雁字回时，月满西楼',
     path:'<%- post.permalink %>', 
     avatar:'identicon',
 });
