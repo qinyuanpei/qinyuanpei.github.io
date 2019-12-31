@@ -104,6 +104,7 @@ def baiduSitemap():
 def submitSitemap():
     with open('_config.yml', 'rt', encoding='utf-8') as f:
         conf = yaml.load(f)
+        session = requests.session()
         if(conf['image_version'] == "master"):
             DOMTree = xml.dom.minidom.parse('./public/baidusitemap.xml')
             root = DOMTree.documentElement
@@ -112,7 +113,7 @@ def submitSitemap():
                 loc = url.getElementsByTagName("loc")[0]
                 payload = loc.childNodes[0].data
                 print(payload)
-                response = requests.request("POST", baseUrl, data=payload, headers=headers,)
+                response = session.request("POST", baseUrl, data=payload, headers=headers,)
                 print(response.text)
                 data = json.loads(response.text)
                 if(data['success'] == 1):
