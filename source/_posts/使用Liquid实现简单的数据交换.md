@@ -91,3 +91,23 @@ string RenderTpl(string filePath, dynamic model)
 
 ## 本文小结
 通过日常工作中的接口对接这一典型场景，我们引出了“数据交换”的概念，而最低层级的数据交换实际上是接口报文的交换。为此，我们介绍了`Liquid`模板引擎，它提供的语法可以让我们完成一系列的绑定，顺着这个思路，博主为大家展示了这种想法的可行性。`Liquid`是一个非常成熟的模板引擎，无论是编写邮件、短信的文本模板，还是轻量级的文本表达式实现，都是一个非常不错的选择。即使是做一个ApiCaller，一定要做一个有头脑的ApiCaller。好了，以上就是这篇博客的全部内容啦，欢迎大家留言，谢谢大家。
+
+## 2020-01-09 更新
+在组织JSON中的数组结构时，需要在各元素间添加`,`，同时最后一个元素不需要`,`，此时，可以使用以下语法：
+```
+"FEntity": [
+  {% for Detail in Details %}
+  {
+    "FCOSTID": {
+      "FNumber": "{{Detail.FCOSTID}}"
+    },
+    "FCOSTDEPARTMENTID": {
+      "FNumber": "BM000005"
+    },
+    "FINVOICETYPE": "0",
+      "FTOTALAMOUNTFOR": {{Detail.FEE_AMOUNT}},
+    }
+		{% if forloop.last == false %},{% endif %}
+    {% endfor %}
+  ]
+```
