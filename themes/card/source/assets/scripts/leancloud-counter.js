@@ -226,7 +226,7 @@ function VisitorCounter() {
      **/
     this.injectScript = function () {
         var head = document.getElementsByTagName('head')[0]
-        var scripts = ['https://api.ip.sb/geoip?callback=handleIP', 'https://faisalman.github.io/ua-parser-js/src/ua-parser.js'];
+        var scripts = ['https://api.ip.sb/geoip?callback=handleIP', 'https://blog.yuanpei.me/assets/scripts/ua-parser.min.js'];
         for (script of scripts) {
             var ele = document.createElement('script');
             ele.type = 'text/javascript';
