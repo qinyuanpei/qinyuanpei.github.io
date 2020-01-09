@@ -105,9 +105,9 @@ string RenderTpl(string filePath, dynamic model)
       "FNumber": "BM000005"
     },
     "FINVOICETYPE": "0",
-      "FTOTALAMOUNTFOR": {{Detail.FEE_AMOUNT}},
-    }
-		{% if forloop.last == false %},{% endif %}
-    {% endfor %}
-  ]
+    "FTOTALAMOUNTFOR": {{Detail.FEE_AMOUNT}},
+  }
+	{% if forloop.last == false %},{% endif %}
+  {% endfor %}
+]
 ```
