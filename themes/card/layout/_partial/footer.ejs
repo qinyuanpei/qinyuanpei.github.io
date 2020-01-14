@@ -1,41 +1,46 @@
 <footer class="footer">
     <div class="top">
         <%- partial('plugins/site-visit') %>
-        <p>
-            <% if ((config.feed) && (config.feed.path.length)) { %>
-                <span><a href="<%- url_for(config.feed.path) %>" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
-            <% } %>
-            <span>
+            <p>
+                <% if ((config.feed) && (config.feed.path.length)) { %>
+                    <span><a href="<%- url_for(config.feed.path) %>" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+                    <% } %>
+                        <span>
                 <a href="https://creativecommons.org/licenses/<%= config.license %>/4.0/deed.zh" rel="license">
                     <%= config.license.toUpperCase() %>
                 </a>
             </span>
-            <span>
+                        <span>
                 <a href="https://www.travis-ci.org/qinyuanpei/qinyuanpei.github.io" rel="license">
                     Travis CI
                 </a>
             </span>
-            <span>
+                        <span>
                 <a href="https://github.com/qinyuanpei/qinyuanpei.github.io" rel="license">
                     Github
                 </a>
             </span>
-            <span>
+                        <span>
                 <a href="https://coding.net/u/qinyuanpei/p/qinyuanpei.coding.me" rel="license">
                     Coding
                 </a>
             </span>
-            <span>
+                        <span>
                 <a href="https://leancloud.cn" rel="license">
                     LeanCloud
                 </a>
             </span>
-            <span>
+                        <span>
                 <a href="https://www.heroku.com/" rel="license">
                     Heroku
                 </a>
             </span>
-        </p>
+                        <span>
+                <a href="https://qinyuanpei.github.io/VisitorMapV/" rel="license">
+                    VisitorMapV
+                </a>
+            </span>
+            </p>
     </div>
     <div class="bottom">
         <p><span><%-config.author %> &copy; <%if (theme.since_year && theme.since_year < date(new Date(), 'YYYY')) {%><%- theme.since_year %> - <%}%><%- date(new Date(), 'YYYY') %></span>
