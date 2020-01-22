@@ -88,4 +88,6 @@ env:
    # Github Pages
    - GH_REF: github.com/qinyuanpei/qinyuanpei.github.io
    # Coding Pages
-   - CO_REF: git.coding.net/qinyuanpei/qinyuanpei.coding.me.git
+   - CO_REF: e.coding.net/qinyuanpei/qinyuanpei.coding.me.git
+   
+   
