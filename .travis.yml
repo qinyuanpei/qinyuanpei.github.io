@@ -86,7 +86,7 @@ branches:
 env:
  global:
    # Github Pages
-   - GH_REF: github.com/qinyuanpei/qinyuanpei.github.io
+   - GH_REF: github.com/qinyuanpei/qinyuanpei.github.io.git
    # Coding Pages
    - CO_REF: e.coding.net/qinyuanpei/qinyuanpei.coding.me.git
    
