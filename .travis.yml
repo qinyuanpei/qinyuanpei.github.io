@@ -43,7 +43,7 @@ after_script:
   - git remote add origin master https://github.com/qinyuanpei/qinyuanpe.github.io 
   - git add .
   - git commit -m "Update Blog By Travis-CI With Build $TRAVIS_BUILD_NUMBER For Coding Pages"
-  - git push --force --quiet "https://qinyuanpei:${CO_TOKEN}@${CO_REF}" master:master
+  - git push --force --quiet "https://${CO_USER}:${CO_TOKEN}@${CO_REF}" master:master
   # Prepare Rebuild
   - cd ..
   - rm -rf ./public
