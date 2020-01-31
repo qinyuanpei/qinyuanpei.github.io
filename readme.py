@@ -118,6 +118,11 @@ def submitSitemap():
                 loc = url.getElementsByTagName("loc")[0]
                 payload = loc.childNodes[0].data
                 print(payload)
+                response = session.request("POST", baseUrl, data=payload, headers=headers,)
+                print(response.text)
+                data = json.loads(response.text)
+                if(data['success'] == 1):
+                    print('提交地址:{payload},至百度成功'.format(payload=payload))
                 time.sleep(5)
                 # query = UrlSubmit.query
                 # query.equal_to('url', payload) 
