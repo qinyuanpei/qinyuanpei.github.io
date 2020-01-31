@@ -15,7 +15,7 @@ from html.parser import HTMLParser
 from xml.dom.minidom import parse
 import xml.dom.minidom
 import yaml
-# import leancloud
+import leancloud
 
 # 时区定义
 tz = pytz.timezone('Asia/Shanghai')
@@ -33,8 +33,8 @@ headers = {
 }
 
 # LeanCloud
-# leancloud.init("JbHqRp2eMrTgIwYpfERH0g79-gzGzoHsz", "VsiKvLuiBGvJL1XrAfv7siY2")
-# UrlSubmit = leancloud.Object.extend('UrlSubmit')
+leancloud.init("JbHqRp2eMrTgIwYpfERH0g79-gzGzoHsz", "VsiKvLuiBGvJL1XrAfv7siY2")
+UrlSubmit = leancloud.Object.extend('UrlSubmit')
 
 # 文档实体结构定义
 class Post:
@@ -118,25 +118,19 @@ def submitSitemap():
                 loc = url.getElementsByTagName("loc")[0]
                 payload = loc.childNodes[0].data
                 print(payload)
-                response = session.request("POST", baseUrl, data=payload, headers=headers,)
-                print(response.text)
-                data = json.loads(response.text)
-                if(data['success'] == 1):
-                    print('提交地址:{payload},至百度成功'.format(payload=payload))
-                time.sleep(5)
-                # query = UrlSubmit.query
-                # query.equal_to('url', payload) 
-                # query_list = query.find()
-                # if len(query_list) == 0:
-                #     response = session.request("POST", baseUrl, data=payload, headers=headers,)
-                #     print(response.text)
-                #     data = json.loads(response.text)
-                #     if(data['success'] == 1):
-                #         print('提交地址:{payload},至百度成功'.format(payload=payload))
-                #         submit = UrlSubmit()
-                #         submit.set('url', payload)
-                #         submit.save()
-                #     time.sleep(5)
+                query = UrlSubmit.query
+                query.equal_to('url', payload) 
+                query_list = query.find()
+                if len(query_list) == 0:
+                    response = session.request("POST", baseUrl, data=payload, headers=headers,)
+                    print(response.text)
+                    data = json.loads(response.text)
+                    if(data['success'] == 1):
+                        print('提交地址:{payload},至百度成功'.format(payload=payload))
+                        submit = UrlSubmit()
+                        submit.set('url', payload)
+                        submit.save()
+                    time.sleep(5)
 
 
 
