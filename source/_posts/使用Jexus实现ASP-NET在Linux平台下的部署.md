@@ -68,9 +68,9 @@ sudo /usr/jexus/jws stop [站点名(可选，不指定时表示所有)]
 ```
 sudo /usr/jexus/jws start aspnet
 ```
-当终端中返回OK时，就表示启动成功啦，此时，我们打开浏览器，输入http://localhost:4000就可以看到如下画面(这里的端口号为4000)：
+当终端中返回OK时，就表示启动成功啦，此时，我们打开浏览器，输入`http://localhost:4000` 就可以看到如下画面(这里的端口号为4000)：
 ![运行在Linux上的ASP.NET](https://ws1.sinaimg.cn/large/4c36074fly1fz05dq1tcmj20m80aqjsf.jpg)
-你就说，这算不算惊喜。我们还可以输入http://localhost:4000/info来验证Jexus是否配置正确，当Jexus被正确配置以后，你就会看到一个显示着“Welcome to Jexus”的页面。嗯嗯，好像是和Nginx挺像的哈！
+你就说，这算不算惊喜。我们还可以输入`http://localhost:4000/info`来验证Jexus是否配置正确，当Jexus被正确配置以后，你就会看到一个显示着“Welcome to Jexus”的页面。嗯嗯，好像是和Nginx挺像的哈！
 
 # Docker+
 &emsp;&emsp;接下来，让我们考虑将这些Linux上的工作转移到Docker中来做，因为借助Docker的容器技术，它可以为我们提供一个足以自给自足的环境。通过这个环境编译测试通过的镜像可以批量地部署到生产环境中。如果你不想在每一台Linux Server上都覆盖本文的流程，那么Docker将是提高你部署效率的不二选择，而且从认知完整性的角度来看待Docker，你就会发现它和Jekins、TravisCI、VSTS工具一样，都可以非常完美地被接入到持续集成(CI)的流程里去，譬如我们项目组采用的是Jekins + Gitlib + Docker的方案，所以，如果你想要选择一个最适合你的持续集成(CI)方案，无论如何，Docker都是需要去了解的一个知识。关于Docker的背景知识大家可以自己去了解，这里我们通过编写Dockerfile来完成网站镜像的构建：
