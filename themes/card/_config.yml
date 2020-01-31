@@ -205,6 +205,7 @@ heart: true
 
 # 文章推荐
 recommended_posts:
+  enable: false
   server: https://api.truelaurel.com #后端推荐服务器地址
   timeoutInMillis: 10000 #服务时长，超过此时长，则使用离线推荐模式
   internalLinks: 3 #内部文章数量
