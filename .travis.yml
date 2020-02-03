@@ -39,7 +39,7 @@ after_script:
   - git init
   - git remote add origin master https://github.com/qinyuanpei/qinyuanpe.github.io 
   - git add .
-  - git commit -m "Update Blog By Travis-CI With Build $TRAVIS_BUILD_NUMBER For Coding Pages"
+  - git commit -m "Coding Pages Build (v$TRAVIS_BUILD_NUMBER)"
   - git push --force --quiet "https://${CO_USER}:${CO_TOKEN}@${CO_REF}" master:master
   # Prepare Rebuild
   - cd ..
@@ -59,7 +59,7 @@ after_script:
   - git init 
   - git remote add origin master https://github.com/qinyuanpei/qinyuanpe.github.io
   - git add .
-  - git commit -m "Update Blog By Travis-CI With Build $TRAVIS_BUILD_NUMBER For Github Pages"
+  - git commit -m "Github Pages Build (v$TRAVIS_BUILD_NUMBER)"
   - git push --force --quiet "https://${CI_TOKEN}@${GH_REF}" master:master
   # - git fetch origin
   # - git checkout -b blog origin/blog
