@@ -25,13 +25,10 @@ script:
 # - python3 migrate.py 
 
 after_script:
-  # Build Master Repository(Coding Pages) 
+  - echo 'Build Master Repository(Coding Pages)'
   - rm _config.yml
   - mv config-master.yml _config.yml
-  - hexo recommend
-  - hexo douban
   - hexo generate
-  #- python3 syncvisitor.py
   - python3 readme.py https://blog.yuanpei.me/
   - cp README.md ./public/README.md
   - cp VERSION.txt ./public/VERSION.txt
@@ -48,13 +45,10 @@ after_script:
   - cd ..
   - rm -rf ./public
   - hexo clean
-  # Build Salver Repository(Github Pages)
+  - echo 'Build Salver Repository(Github Pages)'
   - rm _config.yml
   - mv config-salve.yml _config.yml
-  - hexo recommend
-  - hexo douban
   - hexo generate
-  #- python3 syncvisitor.py
   - python3 readme.py https://qinyuanpei.github.io/
   - cp README.md ./public/README.md
   - cp albums.json ./public/albums.json
