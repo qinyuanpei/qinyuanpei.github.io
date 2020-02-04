@@ -71,11 +71,11 @@
 <% } %>
 <% if (config.image_version == 'salver')  { %>
     <script>
-        //国内用户自动重定向Coding Pages镜像
-        var ipInfo = JSON.parse(localStorage.getItem('ipInfo'));
-        if (ipInfo.country_code == 'CN') {
-            location.href = location.href.replace('qinyuanpei.github.io', 'blog.yuanpei.me');
-        }
+    //国内用户自动重定向Coding Pages镜像
+    // var ipInfo = JSON.parse(localStorage.getItem('ipInfo'));
+    // if (ipInfo.country_code == 'CN') {
+    //     location.href = location.href.replace('qinyuanpei.github.io', 'blog.yuanpei.me');
+    // }
     </script>
 <% } %>
 <%- partial('plugins/dynamic-title') %>
