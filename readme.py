@@ -70,7 +70,7 @@ def mkMarkdown(items):
     itemTpl = '* {0} - [{1}]({2})\n'
     commitHash = open('VERSION.txt', 'r', encoding='utf-8').readlines()[0]
     mdfile.write("[![Build Status](https://www.travis-ci.org/qinyuanpei/qinyuanpei.github.io.svg?branch=master)](https://www.travis-ci.org/qinyuanpei/qinyuanpei.github.io)\n")
-    mdfile.write("[![jsDelivr](https://data.jsdelivr.com/v1/package/gh/qinyuanpei/qinyuanpei.github.io/badge)](https://www.jsdelivr.com/package/gh/qinyuanpei/qinyuanpei.github.io)\n")
+    mdfile.write("[![jsDelivr](https://data.jsdelivr.com/v1/package/gh/qinyuanpei/qinyuanpei.github.io/badge)](https://www.jsdelivr.com/package/gh/qinyuanpei/qinyuanpei.github.io)\n\n")
     mdfile.write('本文档由脚本自动生成，最后更新时间：{0}，最后部署版本：[{1}]({2})\n\n'.format(
         datetime.datetime.strftime(datetime.datetime.now(tz),'%Y-%m-%d %H:%M:%S'),
         commitHash[0:7],
