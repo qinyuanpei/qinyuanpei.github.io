@@ -62,7 +62,7 @@ after_script:
   - git commit -m "Github Pages Build (v$TRAVIS_BUILD_NUMBER)"
   - git tag v$TRAVIS_BUILD_NUMBER
   - git push --force --quiet "https://${CI_TOKEN}@${GH_REF}" master:master
-  - git push origin v$TRAVIS_BUILD_NUMBER "https://${CI_TOKEN}@${GH_REF}"
+  - git push origin v$TRAVIS_BUILD_NUMBER "https://${CI_TOKEN}@${GH_REF}" master:master
   # - git fetch origin
   # - git checkout -b blog origin/blog
   # - cd ..
