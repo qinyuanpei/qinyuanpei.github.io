@@ -228,3 +228,10 @@ live2d:
 vConsole:
   enable: true
 
+# jsdelivr CDN
+jsdelivr:
+  enable: false
+  gh_user: qinyuanpei
+  gh_repo: qinyuanpei.github.io
+  baseUrl: cdn.jsdelivr.net
+
