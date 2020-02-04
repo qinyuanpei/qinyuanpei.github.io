@@ -223,8 +223,8 @@ vConsole:
 # jsdelivr CDN
 jsdelivr:
   enable: true
-  gh-user: qinyuanpei
-  gh-repo: qinyuanpei.github.io
+  gh_user: qinyuanpei
+  gh_repo: qinyuanpei.github.io
   baseUrl: cdn.jsdelivr.net
   
 
