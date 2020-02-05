@@ -6,8 +6,8 @@ tags:
   - Hexo
   - CDN
   - njsDelivr
+abbrlink: 1417719502
 date: 2020-02-05 19:01:00
-abbrlink:
 ---
 最近给博客做了升级，从3.x升级到了4.x，主要是在官网看到了关于静态页面生成效率提升的内容。众所周知，Hexo在文章数目增加以后会越来越慢。博主大概是从14年年底开始使用Hexo这个静态博客的，截止到目前一共有176篇博客，其中的“慢”可想而知，中间甚至动过使用Hugo和VuePress的念头，所以，听说有性能方面的提升，还是决定第一时间来试试。整个升级过程挺顺利的，唯一遇到的问题是关于外部链接检测方面的，具体可以参考[这里](https://github.com/hexojs/hexo/issues/4107)。今天，博主主要想和大家分享下关于如何使用[jsDelivr](http://www.jsdelivr.com/)来为博客提供免费、高效的CDN服务，希望对大家有所帮助。
 
@@ -29,7 +29,7 @@ https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/js/bootstrap.js
 > https://cdn.jsdelivr.net/gh/user/repo@version/file
 
 如果大家感兴趣，可以把这里的user和repo改成自己的来体验一番。需要注意的是，这里的版本号同样可以换成Commit ID或者是分支的名称。我个人建议用tag，因为它通常携带了版本号信息，语义上要更好一点。那么，顺着这个思路，我们只要把Hexo中的资源的相对路径改为jsDelivr的CDN加速路径就好啦！为了让切换更加自如，这里我们为Hexo写一个Helper，它可以理解为Hexo中的辅助代码片段。我们在<YouTheme>/scripts/目录下新建一个plugins.js文件，这样Hexo会在渲染时自动加载这个脚本文件：
-```
+```JavaScript
 const source = (path, cache, ext) => {
     if (cache) {
         const minFile = `${path}${ext === '.js' ? '.min' : ''}${ext}`;
@@ -43,14 +43,14 @@ hexo.extend.helper.register('theme_js', (path, cache) => source(path, cache, '.j
 hexo.extend.helper.register('theme_css', (path, cache) => source(path, cache, '.css'))
 ```
 接下来，修改布局文件，项目中的JavaScript和CSS文件，均通过`theme_js()`和`thems_css()`两个函数引入：
-```
+```Shell
 //加载JavaScript
 <script src="<%- url_for(theme_js('assets/scripts/search', cache)) %>" async></script>
 //加载CSS
 <link rel="stylesheet" href="<%- url_for(theme_css('/assets/styles/style', cache)) %>">
 ```
 既然是否使用CDN加速是可配置的，我们要在_config.yml文件中添加相应的配置项：
-```
+```yaml
 # jsdelivr CDN
 jsdelivr:
   enable: true
@@ -59,7 +59,7 @@ jsdelivr:
   baseUrl: cdn.jsdelivr.net
 ```
 除此以外，我们还需要在部署博客的时候，生成一个名为latest的tag。虽然官网上说，在引用CDN的时候版本号可以省略，不过经过博主反复尝试，不带版本号并不会指向正确的版本，有些资源文件会报404，因为这部分资源文件回滚以后发现还是没有。所以，最后博主只好把这个版本号给固定下来了，这样又引入一个新问题，即：每次部署的时候都要先删除远程的latest。所以，这块儿的[Travis CI脚本](https://raw.githubusercontent.com/qinyuanpei/qinyuanpei.github.io/blog/.travis.yml)看起来会有点讨厌，如果大家有更好的方案，欢迎大家在博客中留言：
-```
+```Shell
  git tag latest
  git push --force --quiet "https://${CI_TOKEN}@${GH_REF}" master:master --tags
 ```
