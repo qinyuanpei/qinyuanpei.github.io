@@ -44,7 +44,9 @@
                     <a href="http://www.miitbeian.gov.cn/" target="_blank"><%- theme.ICP_license %></a><br>
                 <% } %>
                 Powered by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a><br>
-                <p>Build Version：<a id="version"></a></p>
+                <% if(config.build_version.enable) { %>
+                    <p>Build Version：<a id="version"></a></p>
+                <% } %>
                 <% if (config.image_version == 'master') { %>
                     <p>Hosted by <a href="https://pages.coding.me" style="font-weight: bold">Coding Pages</a></p>
                 <% } else { %>
