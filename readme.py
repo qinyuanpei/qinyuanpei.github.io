@@ -21,8 +21,8 @@ import leancloud
 tz = pytz.timezone('Asia/Shanghai')
 
 # URL定义
-master_url = 'https://blog.yuanpei.me'
-salver_url=  'http://qinyuanpei.github.io'
+master_url = 'https://blog.yuanpei.me/'
+salver_url=  'http://qinyuanpei.github.io/'
 
 # 百度地址提交定义
 baseUrl = "http://data.zz.baidu.com/urls?site=https://blog.yuanpei.me&token=RDl7DmfXeoWMVvWP"
