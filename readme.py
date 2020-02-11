@@ -76,6 +76,7 @@ def mkMarkdown(items):
         commitHash[0:7],
         'https://github.com/qinyuanpei/qinyuanpei.github.io/commit/' + commitHash
     ))
+    mdfile.write('如果想订阅我的博客，请使用Github的Watch功能，**请不要fork此项目**\n\n')
     mdfile.write('Hi, Payne. 从{0}至今，你撰写博客共计{1}篇，请继续努力！\n\n'.format(
         datetime.datetime.strftime(items[-1].getDate(),'%Y-%m-%d'),
         len(list(items))
