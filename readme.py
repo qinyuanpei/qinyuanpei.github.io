@@ -49,7 +49,7 @@ class Post:
         return self.title
 
     def getLink(self):
-        return self.prefix + self.link
+        return self.prefix + '/' + self.link
 
     def getDate(self):
         d = re.findall(r'\d{4}-\d{1,2}-\d{1,2}',self.date)[0]
