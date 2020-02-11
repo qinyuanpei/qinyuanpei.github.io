@@ -63,11 +63,6 @@ after_script:
   - git push --force --quiet "https://${CI_TOKEN}@${GH_REF}" master:master
   - git tag latest
   - git push --force --quiet "https://${CI_TOKEN}@${GH_REF}" master:master --tags
-  - python3 readme.py https://qinyuanpei.github.io/
-  - cp README.md ./public/README.md
-  - git add .
-  - git commit -m "Update README.md"
-  - git push "https://${CI_TOKEN}@${GH_REF}" blog:blog
 
 addons:
   apt:
