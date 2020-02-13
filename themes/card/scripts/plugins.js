@@ -1,9 +1,9 @@
 //const { version, name } = require('../package.json');
 var fs = require('fs');
 var version = 'latest'
-fs.readFile('../BUILD_NUMBER.txt', function (error, data) {
+fs.readFile('./BUILD_NUMBER.txt', function (error, data) {
     if (error) {
-      console.log('load ../BUILD_NUMBER.txt fails' + error)
+      console.log('load BUILD_NUMBER.txt fails, ' + error)
     } else {
         version = data.toString().trim();
     }

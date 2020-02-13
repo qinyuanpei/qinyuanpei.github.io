@@ -23,8 +23,7 @@ install:
 script:
   - hexo clean
   - git rev-parse HEAD > VERSION.txt
-  - echo "v$TRAVIS_BUILD_NUMBER" > BUILD_NUMBER.txt
-  - cp BUILD_NUMBER.txt ./themes/card/BUILD_NUMBER.txt
+  - echo v$TRAVIS_BUILD_NUMBER > BUILD_NUMBER.txt
 # - python3 migrate.py 
 
 after_script:
