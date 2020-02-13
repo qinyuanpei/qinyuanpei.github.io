@@ -38,7 +38,7 @@ title: 在Windows下使用Visual Studio编译Lua5.3
 
 &emsp;&emsp;运行该程序，我们可以看到下面的结果：
 
-![Lua解释器程序](https://ws1.sinaimg.cn/large/4c36074fly1fz01zxszfqj20it0cdt8t.jpg)
+![Lua解释器程序](https://ww1.sinaimg.cn/large/4c36074fly1fz01zxszfqj20it0cdt8t.jpg)
 
 &emsp;&emsp;好了，现在我们来写一个简单的Lua程序：
 ```Lua

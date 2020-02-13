@@ -20,7 +20,7 @@ title: 基于Travis CI实现 Hexo 在 Github 和 Coding 的同步部署
 
 &emsp;&emsp;我们知道 [Github Pages](https://pages.github.com/) 是 Github 提供的静态页面托管服务，其初衷是为个人项目或者组织项目创建演示或者文档站点，而 [Coding Pages](https://coding.net/pages/) 则是国内的代码托管平台 [Coding](https://coding.net/git) 提供的类似服务，国内类似的代码托管平台还有[码云](https://gitee.com/login)、[Gitlab](https://about.gitlab.com/) 等。[Coding Pages](https://coding.net/pages/) 支持自定义域名、SSL 等基本特性，随着官方不断对这一服务进行升级，目前该服务除支持静态页面部署以外，同时支持 PHP 和 MySQL这类动态页面部署的特性。对 Hexo 来说，静态页面部署的特性完全可以支撑我们这个想法。我的想法是以 [Github](https://github.com/qinyuanpei/qinyuanpei.github.io) 作为代码的主仓库，其上面的 **blog** 分支存放博客的源代码， **master** 分支存放博客的静态页面，在此基础上，我们同时推送静态页面到 Github 和 Coding 的代码仓库，这样就可以实现两个平台的同步部署，这里的部署自然是指由 Travis 完成的自动化部署。整体的流程设想如下图所示：
 
-![博客同步部署流程图](https://ws1.sinaimg.cn/large/4c36074fly1fziy7q299mj20t10c5407.jpg)
+![博客同步部署流程图](https://ww1.sinaimg.cn/large/4c36074fly1fziy7q299mj20t10c5407.jpg)
 
 &emsp;&emsp;通过这个流程图，我们可以注意到，新增加的工作量，主要体现在 Travis 向 Coding 的代码仓库推送静态页面，因此我们首先要有一个 Coding 的代码仓库。关于如何注册 Coding 及在 Coding 上创建代码仓库，这里不再详细赘述啦，大家可以自行百度、Google 或者阅读官方文档。Travis CI 的行为主要由 **.travis.yml** 这个文件来决定，要推送静态页面到 Coding 的代码仓库，Travis CI 需要有代码仓库的读写权限。顺着这个思路，尝试让 Coding 授权 给 Travis CI，结果从文档中发现Travis CI 并不支持 Coding，而 Coding 官方支持的持续集成 flow.ci 需要使用者从 Docker 创建镜像，所以看起来这条路无法走通。从搜索引擎中检索相关问题，从 Git 工作机制的角度入手，可以想到三种常见思路，即 SSH Key、Hexo 的 deploy 插件和 HTTPS协议。
 
@@ -28,11 +28,11 @@ title: 基于Travis CI实现 Hexo 在 Github 和 Coding 的同步部署
 
 &emsp;&emsp;正所谓"行至水穷处，坐看云起时"，山重水复之间，柳暗花明之际，我意外发现 Coding 提供了和 Github 类似的"访问令牌"，我们在使用 Travis CI 的时候，实际上做了两步授权操作，第一次是授权 Travis CI 读取我们在 Github 上的仓库列表，这是一个通过 OAuth 授权的过程；第二次授权是授权 Travis CI 向指定仓库推送或者拉取内容，这是一个通过 Token 授权的过程。我们会在 Travis CI 的后台设置中将 Token 作为全局变量导出，这样我们就可以在 .travis.yml 文件中引用这些全局变量。我意识到这是一个值得一试的想法，首先我们在 Coding 的**”个人设置"**页面中找到**访问令牌**，新建一个新的访问令牌，这里我们选第一个权限即可，因为我们只需要为 Travis 提供基本的读写权限，这样我们会生成一个 Token，这里注意保存 Token，因为它在这里只显示这一次，我们将 Token 填写到 Travis CI 的后台，取名为 CO_Token 即可，依次如下图所示：
 
-![在Coding中新建访问令牌](https://ws1.sinaimg.cn/large/4c36074fly1fziy50hkqpj215p0m40ul.jpg)
+![在Coding中新建访问令牌](https://ww1.sinaimg.cn/large/4c36074fly1fziy50hkqpj215p0m40ul.jpg)
 
-![在Coding中保存访问令牌](https://ws1.sinaimg.cn/large/4c36074fly1fzixyjxr27j20xv0acaad.jpg)
+![在Coding中保存访问令牌](https://ww1.sinaimg.cn/large/4c36074fly1fzixyjxr27j20xv0acaad.jpg)
 
-![在Travis中新建全局变量](https://ws1.sinaimg.cn/large/4c36074fly1fzixbhjw8vj216909p74i.jpg)
+![在Travis中新建全局变量](https://ww1.sinaimg.cn/large/4c36074fly1fzixbhjw8vj216909p74i.jpg)
 
 &emsp;&emsp;好了，现在有了Token，就意味着 Travis CI 有权限向 Coding 推送或者拉取内容了，那么怎么让它工作起来呢？我们记得 Travis CI 有一个叫做 .travis.yml 的配置文件对吧？这里我们需要简单修改下这个文件，让 Travis CI 在生成静态页面以后同时推送静态页面到 Coding。修改后的关键配置如下，我已经写好了详细注释，关于这个文件配置可以参考[这里](https://docs.travis-ci.com/)，这里不再详细说明：
 
@@ -67,7 +67,7 @@ env:
 ```
 &emsp;&emsp;好了，现在我们就可以同时部署博客到 Github 和 Coding了，现在大家可以使用下面两种方式来访问我的博客。需要说明的是，使用 Coding Pages 的特性需要开启仓库的 **Pages **服务，并且 Coding 支持免费托管私有项目，虽然目前仓库的容量存在限制，对我们部署 Hexo 来说完全足够啦，下图是 Coding 上展示的提交历史，排版效果棒棒哒，哈哈，好了，以上就是这篇文章的内容啦，希望大家喜欢哦！
 
-![Coding上展示的提交历史](https://ws1.sinaimg.cn/large/4c36074fly1fzix8o2p1ij20t40h4t9n.jpg)
+![Coding上展示的提交历史](https://ww1.sinaimg.cn/large/4c36074fly1fzix8o2p1ij20t40h4t9n.jpg)
 
 * [Github Pages 镜像](https://qinyuanpei.github.io)
 * [Coding Pages 镜像](http://qinyuanpei.coding.me)

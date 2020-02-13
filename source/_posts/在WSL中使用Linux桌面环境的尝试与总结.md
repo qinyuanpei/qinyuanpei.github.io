@@ -44,15 +44,15 @@ sudo dpkg-reconfigure dbus && service dbus restart
 
 接下来配置`XLaunch`，这是我们安装完`VcXsrv`后自带一个应用程序：
 
-![配置XLaunch](https://ws1.sinaimg.cn/large/4c36074fly1g633ck83tij20ek0bpwfg.jpg)
+![配置XLaunch](https://ww1.sinaimg.cn/large/4c36074fly1g633ck83tij20ek0bpwfg.jpg)
 
 按照默认配置直至完成后我，我们会发现桌面上出现了一个黑色的窗口，如下图所示：
 
-![XLaunch经典黑屏](https://ws1.sinaimg.cn/large/4c36074fly1g633jddpbcj21200lcabq.jpg)
+![XLaunch经典黑屏](https://ww1.sinaimg.cn/large/4c36074fly1g633jddpbcj21200lcabq.jpg)
 
 此时，我们在Ubuntu的Bash窗口中输入`sudo compiz`命令并切回`XLaunch`界面。接下来，就是见证奇迹的时刻：
 
-![经典的Ubuntu桌面](https://ws1.sinaimg.cn/large/4c36074fly1g67nqmov1yj21410p0qdr.jpg)
+![经典的Ubuntu桌面](https://ww1.sinaimg.cn/large/4c36074fly1g67nqmov1yj21410p0qdr.jpg)
 
 如你所见，这是Ubuntu默认的Unity桌面，博主一开始是在Ubuntu16.04上研(折)究(腾)的，当时安装完以后桌面其实是黑色的，因为当时并没有保留下这历史性的一刻，所以，从网上找了张图来这里充数啦，这张图片出自：[Run any Desktop Environment in WSL](https://github.com/microsoft/WSL/issues/637)。
 
@@ -76,7 +76,7 @@ E: Unable to correct problems, you have held broken packages.
 ```
 我向作者发邮件寻求帮助，作者非常热心地回复了我三次邮件，对方表示应该是Elementary OS团队正在基于Ubuntu19.04开发新版本，所以可能没有意识到`elementary-desktop`这个包已经broken了，并且他们在18.04版本上复现了这个问题，建议我直接联系官方。好吧，博主的英语表示受宠若惊，邮件在此为证：
 
-![来自国外网友的热心指导](https://ws1.sinaimg.cn/large/4c36074fly1g6877vhqhcj20io0hut9u.jpg)
+![来自国外网友的热心指导](https://ww1.sinaimg.cn/large/4c36074fly1g6877vhqhcj20io0hut9u.jpg)
 
 
 总而言之，博主试图在WSL上体验Elementary OS的想法彻底失败，既然这个最美的Linux发行版已失败告终，并不打算就此罢手的博主，决定继续在命令行终端里折腾Linux Deepin。这个发行版是我从大学时开始接触的Linux发行版，那时有个小学弟第一次给我介绍了Linux Mint，不过我对这个版本实在爱不起来，因为太像Windows了啊，可谁能想到若干年后，Windows反而变成了最好的Linux发行版呢(:smile:)，果真是`“人生不相见，动如参与商”`啊……
@@ -89,4 +89,4 @@ sudo apt install dde dde-file-manager
 ```
 Linux Deepin安装是非常顺畅的，但即便安装完这个桌面环境，博主还是不知道怎么启动这个环境，因为你常规使用Ubuntu的话，安装完切换桌面管理器就可以了，可当你用WSL这种方式使用Ubuntu的时候，可能你就会感到非常困惑。相比之下，`xfce`就让人感觉友好得多，因为它只有一个命令`startxfce4`，而安装只需要安装`xfce4`和`xfce4-terminal`就可以了。在对比了Gnome、KDE、Unity、Mint、xfce等等的桌面环境以后，我觉得Linux在桌面市场输给Windows是理所当然的，因为实在太混乱了，WSL下需要的应该是一个轻量级的桌面，因为越是华而不实东西，越会消耗大量资源。我最初想要折腾桌面环境，无非是为了下面这个结果，撒花完结，以上！
 
-![简洁/简陋的xfce桌面](https://ws1.sinaimg.cn/large/4c36074fly1g67nrxqcm4j21hc0u0nat.jpg)
+![简洁/简陋的xfce桌面](https://ww1.sinaimg.cn/large/4c36074fly1g67nrxqcm4j21hc0u0nat.jpg)

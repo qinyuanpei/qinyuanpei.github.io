@@ -17,14 +17,14 @@ title: 又见AOP之基于RealProxy实现WCF动态代理
 
 在我们的业务系统中，对内是使用WCF来进行相互通信的，而对外则是使用Web API来进行数据交换。关于RPC还是REST的争论由来已有，严格地来说，两者没有绝对的高下之分，从风格上而言，RPC倾向于让接口映射到一个方法上，而REST则倾向于让接口映射到一个资源上。从我们实际的使用情况来看，REST在系统中应用得并不是很完美，因为大多数情况下，我们实现的仅仅是HTTP+JSON这样一种协议组合，因此业务系统中存在着大量的WCF接口供系统内部调用。
 
-![内部服务调用示意图](https://ws1.sinaimg.cn/large/4c36074fly1g2wasftjc2j20dl0b6t8z.jpg)
+![内部服务调用示意图](https://ww1.sinaimg.cn/large/4c36074fly1g2wasftjc2j20dl0b6t8z.jpg)
 
 
 最早的时候，是通过T4模板来生成针对某个接口的代理类，而代理类中通常封装了ChannelFactory的创建、释放等等WCF相关的代码，实际应用中还会对WCF接口的异常进行捕获、记录日志、统计调用时间等，因此早期的T4模板实际上承担了生成代理类的职责。虽然业务的不断推进，接口中加入的新方法越来越多，导致具体业务类中的代码越来越多，动辄出现单个文件中代码行数达3000行以上，与此同时，每当WCF接口中增加了新方法，就不得不在其相关的代理类中增加代理方法。坦白地讲，就是增加一个看起来差不多的方法，因为你依然要处理ChannelFactory的创建、释放、异常处理、日志记录等等的工作。
 
 其实，WCF可以直接生成客户端代码，因为每个WCF的服务都可以以WebService服务的形式暴露出来，而只要是WebService，总可以通过WSDL生成一个代理类。不过这显然不利于团队间的协作，更不利于服务终结点配置的集中化，更失去了异常处理、日志记录等等这些“通用”工作的可能性。T4应该可以基于“工作”，可显然大家觉得手写比生成要来得更容易些，所以，这个故事最终演变成这样一个局面，我们不得不通过局部类(Partial Class)的方式来开辟新的类文件。
 
-![系统中充斥着大量类似的代码](https://ws1.sinaimg.cn/large/4c36074fly1g2wad7ddv6j20tn09bt9o.jpg)
+![系统中充斥着大量类似的代码](https://ww1.sinaimg.cn/large/4c36074fly1g2wad7ddv6j20tn09bt9o.jpg)
 
 那么，说了这么多，从一个历史遗留问题入手，它真正的痛点在哪里呢？在我看来，主要有两点：第一，是手写代理类的“此恨绵绵无绝期”，明明就是对接口的简单封装，看起来是增加一个代理方法，其实最多就是复制黏贴，因为代理方法的核心代码就是调用接口，而剩下的都是重复的“服务型”代码；第二，是异常处理、日志记录的“哀鸿遍野”，同核心代码交织在一起，一遍又一遍的“重复”，为什么不考虑让它统一地去处理呢？难道每个人都抄着同一段代码，这样就实现了某种意义上的复用吗？
 
@@ -129,7 +129,7 @@ calculator.Divide(36, 12);
 
 现在，我们可以说，刚刚所说的一切都是真的，因为我们真的创建了一个ICalculator接口的实例，它真的记录了每个方法调用的参数、结果和执行时间。
 
-![RealPrxoy牛刀小试](https://ws1.sinaimg.cn/large/4c36074fly1g2w7brst4dj20rm0eqgmc.jpg)
+![RealPrxoy牛刀小试](https://ww1.sinaimg.cn/large/4c36074fly1g2w7brst4dj20rm0eqgmc.jpg)
 
 # WCF动态代理
 
@@ -233,7 +233,7 @@ var serviceUrl = "http://localhost:8502/Calculator.svc";
 var calculator = ServiceProxyFactory.CreatePorxy<Server.Service.ICalculator>(binding, serviceUrl);
 ```
 
-![通过RealPrxoy动态代理WCF服务](https://ws1.sinaimg.cn/large/4c36074fly1g2w85svbrfj20rp0eqq41.jpg)
+![通过RealPrxoy动态代理WCF服务](https://ww1.sinaimg.cn/large/4c36074fly1g2w85svbrfj20rp0eqq41.jpg)
 
 在调用WCF的时候，因为超时、网络等原因造成的调用异常，此时，我们可以为WCF添加异常处理相关的标签，而相应地，我们可以在异常中对异常的种类进行判断和处理，以便于及时地关闭ChannelFactory，因为如果它不能正确地关闭，会导致后续的通信出现问题，而这恰好是当初的代理类想要解决的问题，考虑到创建ChannelFactory是需要付出一定的性能代价的，因此，可以适当地考虑对ChannelFactory进行缓存，而这恰好是原来业务中的一个盲点。
 

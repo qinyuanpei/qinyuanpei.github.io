@@ -190,11 +190,11 @@ self.addEventListener('notificationclose', event => {
 ```
 &emsp;&emsp;好了，现在我们来考虑如何去实现一个ServiceWorker，Google官方提供了一个ServiceWorker的[示例项目](https://github.com/GoogleChrome/samples/tree/gh-pages/service-worker/basic)，以及网友提供的[Minimal-PWA](https://github.com/minimal-xyz/minimal-pwa)，这两个项目都可以帮助我们去了解，如何去实现一个ServiceWorker，甚至于我们有[sw-toolbox](http://link.zhihu.com/?target=https%3A//github.com/GoogleChrome/sw-precache)和[sw-precache](http://link.zhihu.com/?target=https%3A//github.com/GoogleChrome/sw-precache)这样的工具，配合gulp和webpack我们定制缓存策略并生成ServiceWorker。可是你要知道，懒惰对程序员而言是一种美德，在这里我选择了Hexo的插件[hexo-offline](https://github.com/JLHwung/hexo-offline)，该插件可以帮助我们生成ServiceWoker，关于它的使用及配置，大家可以自行去了解，我重点想说说支持ServiceWorker以后，我的博客所呈现出来的变化以及PWA实际运行的效果。
 
-![ServiceWorker和Cache Storage](https://ws1.sinaimg.cn/large/4c36074fly1fzixbuc4amj211x0d3q4j.jpg)
+![ServiceWorker和Cache Storage](https://ww1.sinaimg.cn/large/4c36074fly1fzixbuc4amj211x0d3q4j.jpg)
 
 &emsp;&emsp;通过这张图，我们可以清楚地看到，ServiceWorker确实在后台工作着，而Cache Storage确实对博客内的静态资源做了缓存处理。事实上对Hexo这样的静态博客而言，整个博客都是静态资源，所以在实际运行中它会对所有内容进行缓存，我们可以在终端中验证这个想法：
 
-![在Hexo中监听到的缓存请求](https://ws1.sinaimg.cn/large/4c36074fly1fzix9dj42pj20gh099wf9.jpg)
+![在Hexo中监听到的缓存请求](https://ww1.sinaimg.cn/large/4c36074fly1fzix9dj42pj20gh099wf9.jpg)
 
 &emsp;&emsp;可我想说这一切并没有什么用，因为我并不能如愿地在离线状态下访问我的博客，甚至因为有了缓存机制，当我在撰写这篇博客时，虽然我改变了markdown文档的内容，但当我刷新博客的时候，因为缓存机制的存在，我不能像从前那样直接看到博客的变化，更重要的一点是，整个缓存大概有8M左右的体积，因此每次请求页面时，我能够明显地感觉到页面加载的延迟，看起来我们费了大量周折最终却一无所获，这听起来实在是讽刺不是吗？
 

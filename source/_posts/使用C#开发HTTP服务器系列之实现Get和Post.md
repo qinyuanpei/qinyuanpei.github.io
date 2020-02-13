@@ -183,6 +183,6 @@ IEnumerator Post()
 ```
 而运行这个实例，我们可以得到下面的结果：
 
-![测试结果](https://ws1.sinaimg.cn/large/4c36074fly1fzix87avuaj20dj05974c.jpg)
+![测试结果](https://ww1.sinaimg.cn/large/4c36074fly1fzix87avuaj20dj05974c.jpg)
 
 都是谁告诉你做服务器开发一定要用Java的啊，现在我们可以写出自己的服务器了，本篇结束，下期见！

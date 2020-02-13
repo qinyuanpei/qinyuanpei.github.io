@@ -37,7 +37,7 @@ $ docker run hello-world docker: Cannot connect to the Docker daemon at unix:///
 ```
 此时，你可能会尝试通过执行systemctl start docker命令来启动Docker服务，因为错误信息告诉我们，Docker的守护进程没有启动，可你会发现这样依然报错。可是为什么呢？明明Docker都在WSL里安装成功了啊，事实上除了docker -v不需要依赖守护进程，其余的命令都需要依赖守护进程，而WSL恰恰是不支持docker-engine的，所以，一种曲线救国的思路就是，让WSL去连接宿主机上的docker engine。果然，还是要安装Docker for Windows啊！那么，剩下的事情变得就非常简单啦，确保系统开启Hyper-V，然后安装Docker for Windows，并打开对宿主机Docker的监听，这些相信玩过Docker的人都会啦！
 
-![暴露宿主机器Docker端口](https://ws1.sinaimg.cn/large/4c36074fly1g2oho3u2jcj20m80f8757.jpg)
+![暴露宿主机器Docker端口](https://ww1.sinaimg.cn/large/4c36074fly1g2oho3u2jcj20m80f8757.jpg)
 
 接下来，我们给WSL中的Docker设置宿主机的地址，在终端中输入下列命令即可：
 ```Shell
@@ -45,11 +45,11 @@ export DOCKER_HOST=tcp://localhost:2375
 ```
 此时，我们执行docker run hello-world命令，如果不出意外的话，我们会看到下面的画面，这说明我们的Docker环境已经正常工作啦：
 
-![WSL中完美运行的Docker](https://ws1.sinaimg.cn/large/4c36074fly1g2ohrctulqj20m80bomy1.jpg)
+![WSL中完美运行的Docker](https://ww1.sinaimg.cn/large/4c36074fly1g2ohrctulqj20m80bomy1.jpg)
 
 博主按捺不住内心的激动，果断安装ELK全家桶，体验了下Kibana的可视化界面，开始思考：如何把存储在Mongodb中的日志数据放到ElasticSearch中。当然，这都是后话啦，因为博主马上发现了WSL中Docker的第二个坑，那就是终端关闭以后，针对宿主机的Docker连接就结束了。
 
-![ELK全家桶](https://ws1.sinaimg.cn/large/4c36074fly1g2oht8m7jnj20m80badgj.jpg)
+![ELK全家桶](https://ww1.sinaimg.cn/large/4c36074fly1g2oht8m7jnj20m80badgj.jpg)
 
 OK，为了解决这个问题，我们继续在终端中输入以下命令：
 ```Shell

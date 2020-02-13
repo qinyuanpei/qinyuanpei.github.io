@@ -22,7 +22,7 @@ title: Unity3D游戏开发之C++插件接入
 ##创建一个C++ CLR类库项目
 &emsp;&emsp;首先我们按照下图中的步骤创建一个C++ CLR项目：
 
-![截图是件讨厌的事情，虽然懒惰的人们都喜欢](https://ws1.sinaimg.cn/large/4c36074fly1fzix18bmvyj20qi0gwdgh.jpg)
+![截图是件讨厌的事情，虽然懒惰的人们都喜欢](https://ww1.sinaimg.cn/large/4c36074fly1fzix18bmvyj20qi0gwdgh.jpg)
 
 请注意.Net版本问题，重要的事情说三遍，不认真看这里的人出现问题就不要到我这里来评论了，我最讨厌连文章都没有看明白就来和你纠缠不清的人，谢谢。创建好项目后请打开项目属性窗口设置【公共语言运行时支持】节点的值为【安全 MSIL 公共语言运行时支持(/clr:safe)】好了，下面我们找到CLR4Unity.h文件，添加ExampleClass声明：
 
@@ -80,7 +80,7 @@ using CLR4Unity;
 ```
 呵呵，我严重怀疑你对.Net的熟悉程度。你没有添加对CLR4Unity.dll的引用，你到底在using什么啊？
 
-![先添加引用然后using](https://ws1.sinaimg.cn/large/None.jpg)
+![先添加引用然后using](https://ww1.sinaimg.cn/large/None.jpg)
 
 如果你对.NET熟悉到足以无视这里的一切，请闭上眼接着往下看，哈哈！
 
@@ -99,9 +99,9 @@ if(GUILayout.Button("调用C++ CLR中的方法", GUILayout.Height (30)))
 ##创建一个C++动态链接库项目
 &emsp;&emsp;首先我们按照下图中的步骤来创建一个C++ Win32项目：
 
-![不要问我从哪里来](https://ws1.sinaimg.cn/large/None.jpg)
+![不要问我从哪里来](https://ww1.sinaimg.cn/large/None.jpg)
 
-![我的故乡在远方](https://ws1.sinaimg.cn/large/None.jpg)
+![我的故乡在远方](https://ww1.sinaimg.cn/large/None.jpg)
 
 好了，接下来我们找到Native4Unity.cpp写入下列代码：
 
@@ -180,4 +180,4 @@ if(GUILayout.Button("调用C++ Native中的方法", GUILayout.Height (30)))
 
 最终程序的运行效果如图：
 
-![这个结果来之不易请大家珍惜](https://ws1.sinaimg.cn/large/4c36074fly1fz68jlzlyqj20kr08edfr.jpg)
+![这个结果来之不易请大家珍惜](https://ww1.sinaimg.cn/large/4c36074fly1fz68jlzlyqj20kr08edfr.jpg)

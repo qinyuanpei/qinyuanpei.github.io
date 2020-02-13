@@ -48,7 +48,7 @@ public void Configure (IApplicationBuilder app, IHostingEnvironment env) {
 
 注意到在配置持久化的部分，我们使用了一个数据库连接字符串Hangfire，它需要我们在appsettings.json中配置ConnectionStrings部分。这里我们为Hangfire设置了默认队列default、默认服务器default、并发数目为5。与此同时，我们开启了Hangfire中自带的Dashboard，可以通过这个界面来监控后台任务的执行情况。此时运行项目，输入以下地址：http://locahost:<port>/hangfire，就会看到下面的画面，这说明Hangfire配置成功：
 
-![Hangfire Dashboard](https://ws1.sinaimg.cn/large/4c36074fly1g4vsktdif4j21hb0rz406.jpg)
+![Hangfire Dashboard](https://ww1.sinaimg.cn/large/4c36074fly1g4vsktdif4j21hb0rz406.jpg)
 
 Hangfire中默认支持四种类型的后台任务，他们分别是**Fire-and-forget jobs**、**Delayed jobs**、**Recurring jobs**和**Continuations**。严格来说，**Fire-and-forget jobs**和**Delayed jobs**并不能算后台任务，因为它们在执行一次后就会从队列中移除，属于一次性“消费”的任务，这两者的不同在于**Delayed jobs**可以在设定的时间上延迟执行。而**Recurring jobs**和**Continuations**则是周期性任务，任务在入队后可以按照固定的时间间隔去执行，周期性任务都是支持CRON表达式的，**Continuations**类似于Task中的ContinueWith()方法，可以对多个任务进行组合，我们现在的项目中开发了大量基于Quartz的Job，可当你试图把这些Job相互组合起来的时候，你就会觉得相当尴尬，因为后台任务做所的事情往往都是大同小异的。从官方文档中 ，我们会发现Hangfire的关键代码只有下面这四行代码，可以说是相当简洁啦！
 
@@ -213,11 +213,11 @@ public static void DoRequest (HttpJobDescriptor jobDestriptor) {
 
 在这里，我们以HealthCheck这个接口为例，来展示HttpJob是如何工作的。顾名思义，这是一个负责健康检查的接口。我们现在通过Postman来触发健康检查这个后台任务。在这里，该接口是一个GET请求：
 
-![通过Postman创建后台任务](https://ws1.sinaimg.cn/large/4c36074fly1g4v4si2z4tj20t10cvaam.jpg)
+![通过Postman创建后台任务](https://ww1.sinaimg.cn/large/4c36074fly1g4v4si2z4tj20t10cvaam.jpg)
 
 接下来，我们我们就会在Hangfire的Dashborad中找到对应的记录，因为这是一个**Fire & Forget**类型的任务，因此我们几乎看不到中间的过程，它就已经执行结束啦。我们可以在Dashboard中找到对应的任务，然后了解它的具体执行情况。值得一提的是，Hangfire自带了重试机制，对于执行失败的任务，我们可以重试栏目下看到，这里是其中一条任务的执行记录。可以注意到，Hangfire会把每个Job的参数序列化为JSON并持久化起来，仔细对照的话，你会发现，它和我们在Postman中传入的参数是完全一样的！
 
-![Hangfire中Job执行详情查看](https://ws1.sinaimg.cn/large/4c36074fly1g4v55j6cgfj21160j8wfq.jpg)
+![Hangfire中Job执行详情查看](https://ww1.sinaimg.cn/large/4c36074fly1g4v55j6cgfj21160j8wfq.jpg)
 
 
 
@@ -252,7 +252,7 @@ public class HttpJobFilter : JobFilterAttribute, IApplyStateFilter {
 
 为什么我说这个Filter有点鸡肋呢？因为你看下面的图就会明白了啊！
 
-![使用Serilog记录日志](https://ws1.sinaimg.cn/large/4c36074fly1g4vs8s6f2zj21f2074mxq.jpg)
+![使用Serilog记录日志](https://ww1.sinaimg.cn/large/4c36074fly1g4vs8s6f2zj21f2074mxq.jpg)
 
 # 本文小结
 果然，我还是不得不承认，这又是一篇彻彻底底的"水文"啊,因为写着写着就发现自己变成了标题党。这篇文章总结下来其实只有两句话，一个不喜欢写XML报文的博主，如何与ERP、SAP、ESB里的XML报文斗智斗勇的故事，在这样一个背景下，为了满足对方的"异步"场景, 不得不引入一个后台任务系统来处理这些事情，其实，这个事情用消息队列、用Redis、甚至普通的中间表都能解决，可惜我写这篇文章的时候，是有一点个人化的情绪在里面的，这种情绪化导致的后果就是，可能我越来越难以控制一篇文章的写作走向啦，大概是写东西越来越困难，而又没有时间取吸收新的知识进来，这让我觉得自己的进步越来越少，Hangfire的有点说起来就是挺好用的，以上！

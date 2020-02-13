@@ -124,11 +124,11 @@ OK，接下来我们简单写几个MVC的控制器，来验证下我们为Swagge
 
 两个非常简单的Controller，这里就不再贴代码啦！
 
-![非常简单的Controller](https://ws1.sinaimg.cn/large/4c36074fly1g5sqi6pwx2j20kh0ggtav.jpg)
+![非常简单的Controller](https://ww1.sinaimg.cn/large/4c36074fly1g5sqi6pwx2j20kh0ggtav.jpg)
 
 可以注意到，一切都工作的很好，我们在Swagger里可以看到我们编写的Api接口，并且可以直接对接口进行调试。因为MVC本身的原因，这些MVC控制器的注释都不会生成到XML注释文档里。所以，稍微有一点遗憾的地方就是，这些接口都没有对应注释。不过，这已经达到了本文最初的目的，至少我不用再去写文档，告诉使用者这个接口里有哪些参数，以及这个接口的地址是什么啦，说到底啊，懒惰是人类进步的阶梯。这篇博客里实现的扩展，我已经发布到Github上，并附带了一个简单的示例(不要想太多哦，就是这篇文章里的示例)，感兴趣的朋友可以自助研究，仓库地址为：[https://github.com/qinyuanpei/Swashbuckle.Extension.Mvc](https://github.com/qinyuanpei/Swashbuckle.Extension.Mvc)
 
-![差一点就完美了](https://ws1.sinaimg.cn/large/4c36074fly1g5sqlzk1mrj211y0ifgn1.jpg)
+![差一点就完美了](https://ww1.sinaimg.cn/large/4c36074fly1g5sqlzk1mrj211y0ifgn1.jpg)
 
 # 本文小结
 

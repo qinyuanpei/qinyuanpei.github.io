@@ -72,11 +72,11 @@ disunity extract C:\Users\Robin\Desktop\s049_1.unity3d
 ### 将模型和贴图合并
 我们打开Blender并将s049.obj文件导入，然后将场景中默认的灯光和摄像机都删除，因为我们只需要一个模型文件，我们发现在Blender中已经可以看到模型了，因为Unity3D中使用的是FBX模型，所以我们这里将模型文件导出为FBX备用。因为Unity3D可以识别dds类型的贴图，所以对贴图我们不用做任何处理。
 
-![童年林月如的模型](https://ws1.sinaimg.cn/large/4c36074fly1fz05jg3u49j20s50gz0to.jpg)
+![童年林月如的模型](https://ww1.sinaimg.cn/large/4c36074fly1fz05jg3u49j20s50gz0to.jpg)
 
 &emsp;&emsp;打开Unity3D将童年林月如的模型和贴图一起导入，将童年林月如的模型拖入到游戏场景中，因为模型的尺寸没有经过调整，所以模型刚开始可能会比较小，我们可以在Unity3D进行局部的调整。接下来我们会发现模型没有贴图，只要选择这个模型然后在属性窗口为它附上s049_1.dds的贴图文件即可。下面是童年林月如的模型导入Unity3D以后的效果:
 
-![童年林月如导入Unity3D后的效果](https://ws1.sinaimg.cn/large/4c36074fly1fz05d13ddij20ax0bpdgo.jpg)
+![童年林月如导入Unity3D后的效果](https://ww1.sinaimg.cn/large/4c36074fly1fz05d13ddij20ax0bpdgo.jpg)
 
 ## 解析《新仙剑OL》的assets文件
 &emsp;&emsp;和AssetBundle不同，assets文件是整个Unity3D项目中项目资源的打包集合，比如说Asset文件下的资源都会被打包到这里，所以说解析assets文件可能会有更大的收获吧！因为所有的Unity3D游戏都会有这样的文件，而AssetBundle文件只有在使用了这项技术的游戏项目中才有。比如说在Unity3D中有一个重要的Resource文件夹，这个文件夹打包后被被打包成resources.assets文件。这里我们以xianjian_Data/resources.assets文件为例。首先执行命名:
@@ -96,11 +96,11 @@ disunity extract C:\Users\Robin\Desktop\resources.assets
 ```
 &emsp;&emsp;哈哈，这款游戏果然没有让我们失望，我们得到了什么呢？
 
-![蜃楼中各种Boss的头像](https://ws1.sinaimg.cn/large/4c36074fly1fz01yhmincj20ur0cdqan.jpg)
+![蜃楼中各种Boss的头像](https://ww1.sinaimg.cn/large/4c36074fly1fz01yhmincj20ur0cdqan.jpg)
 
-![蜃楼中游戏连招视频1](https://ws1.sinaimg.cn/large/4c36074fly1fz01tz1bvqj208w050mxb.jpg)
+![蜃楼中游戏连招视频1](https://ww1.sinaimg.cn/large/4c36074fly1fz01tz1bvqj208w050mxb.jpg)
 
-![蜃楼中游戏连招视频2](https://ws1.sinaimg.cn/large/4c36074fly1fyzcu600c0j208w0500sp.jpg)
+![蜃楼中游戏连招视频2](https://ww1.sinaimg.cn/large/4c36074fly1fyzcu600c0j208w0500sp.jpg)
 
 
 #总结

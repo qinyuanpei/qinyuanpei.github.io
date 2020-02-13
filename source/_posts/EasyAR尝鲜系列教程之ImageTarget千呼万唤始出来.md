@@ -138,11 +138,11 @@ public class CustomImageTargetBehaviour :ImageTargetBehaviour,ITargetEventHandle
 
 &emsp;&emsp;编写完脚本以后我们就可以着手制作识别图和Marker了，EasyAR最让人喜欢的一点就是你可以按照自己的意愿来制作识别图和Marker。虽然Vuforia在识别效果上比EasyAR更好点，可是对程序员来说选择一个透明的产品方案比面对着黑箱子进行调试要明智得多。EasyAR中的识别图相对来说比较简单，因为我们只需要选择一张图片然后为其创建一个材质，再将这个材质附加到ImageTarget物体上就可以了。此外还会涉及到某些参数的设置，我们下面会提到。好了，我们继续选择官方示例中的idback这张图片来作为我们的识别图，因为身份证每个人都有可以随时用来进行测试，而一般的图片则需要打印出来制成硬质卡片来使用。我们在Assets目录中创建一个StreamingAssets目录，将官方示例中targets.json和idbcak.jpg两个文件拷贝过来。创建材质就不再说了，这是Unity3D中非常非常基础的内容。我们将创建好的材质附加到ImageTarget物体上以后，可能在场景中并不会看到对应的识别图，这是因为我们没有为其配置参数。具体的参数配置如下图：
 
-![ImageTarget参数配置](https://ws1.sinaimg.cn/large/None.jpg)
+![ImageTarget参数配置](https://ww1.sinaimg.cn/large/None.jpg)
 
 具体这些参数的定义请大家自己去看文档，因为我这里说得再明白如果大家不看等于我没有说。好了，下面我们来创建Marker，这个就比较简单了，我们直接找一个模型缩放到合适的大小然后拖拽到ImageTarget这个物体下面就可以了。如图是博主参照官方示例制作的两个识别图及其Marker：
 
-![两个ImageTarget及其对应Maker](https://ws1.sinaimg.cn/large/4c36074fly1fz68j2ap8rj20fa09wacy.jpg)
+![两个ImageTarget及其对应Maker](https://ww1.sinaimg.cn/large/4c36074fly1fz68j2ap8rj20fa09wacy.jpg)
 
 ##走向成功的关键步骤
 1、在EasyAR物体的EasyARConfig组件中填入从官网申请的KEY。

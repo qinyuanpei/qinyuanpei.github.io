@@ -115,7 +115,7 @@ int main(int agrc,char *args[])
 ```
 &emsp;&emsp;好了，现在运行这段代码，在运行这段代码前请确保完成了SDL的配置、在Debug目录中存放有一张名为background.bmp的位图文件以及SDL2.dll。如果你准确无误地完成以上注意事项，那么你将毫无意外地看到这样一个画面：
 
-![SDL游戏开发](https://ws1.sinaimg.cn/large/None.jpg)
+![SDL游戏开发](https://ww1.sinaimg.cn/large/None.jpg)
 
 #工程示例
 &emsp;&emsp;现在让我们为这个示例增加点有趣的东西，我们知道在游戏设计中一般背景图片的大小是和游戏设计的窗口大小保持一致的，因为这样能够避免图片拉伸的问题。假定我们目前使用的精灵图片素材都是单个精灵的素材，那么我们可以设计这样一个方法来更加自由地绘制图片：
@@ -227,7 +227,7 @@ int positionX,int positionY,int textureWidth,int textureHeight)
 	SDL_RenderCopy(renderer,m_pTexture,m_pSrcRect,m_pTargetRect);
 }
 ```
-![SDL游戏开发](https://ws1.sinaimg.cn/large/4c36074fly1fz68jcze58j20vn0jvhdt.jpg)
+![SDL游戏开发](https://ww1.sinaimg.cn/large/4c36074fly1fz68jcze58j20vn0jvhdt.jpg)
 
 &emsp;&emsp;现在我们再来运行程序，可以发现在背景图片上绘制了一个美少女，并且这个美少女处于窗口的中心。好了，通过今天的这部分内容我们可以实现在屏幕任意位置绘制图片，这里要注意一个前提，即图片表示的是单个精灵，在绘制过程中不存在裁切和缩放的问题。作为一个有节操的程序员，我们怎么能为了目前的这点成果而止步不前呢？注意到窗口标题上出现了未响应的字样，这是因为我们这里使用了SDL_Delay()这个方法的缘故，该方法会造成程序在运行过程中的卡顿。那么怎么解决这个问题呢？这里就需要涉及到SDL中的事件机制，可能这里大家会有点迷茫，可是我们暂时只需要用到SDL_PollEvent这个方法，这个方法可以帮助我们判断是否触发了某个事件，比如我们需要判断用户是否点击了窗口右上角的关闭按钮：
 ```

@@ -18,7 +18,7 @@ title: EasyAR尝鲜系列教程之Hello EasyAR
 # 什么是增强现实？
 &emsp;&emsp;为了让更多的人了解增强现实，所以在开始本文教程前，我们首先来了解下什么是增强现实。增强现实(Augmented Reality，简称 AR)，它是一种将真实世界信息和虚拟世界信息进行融合和集成的新技术，这种技术的目标是在屏幕上把虚拟世界和现实世界进行叠加并在此基础上进行互动。增强现实是真实世界和虚拟世界的信息集成，具有实时交互性，是在三维尺度空间中增添定位虚拟物体。增强现实技术可广泛应用到军事、医疗、建筑、教育、工程、影视、娱乐等领域。增强现实是新型的人机交互和三维仿真工具，目前已发挥出了重要的作用，具有巨大的应用潜力。
 
-![增强现实概念图](https://ws1.sinaimg.cn/large/4c36074fly1fziy7k2yssj20m80b4tad.jpg)
+![增强现实概念图](https://ww1.sinaimg.cn/large/4c36074fly1fziy7k2yssj20m80b4tad.jpg)
 
 # 增强现实应用现状
 &emsp;&emsp;目前，增强现实在国内尚处在起步阶段。2012年4月Google发布的Google Class是全球唯一一款真正意义上实现增强现实技术的硬件设备。随着移动设备的普及和相关技术的成熟，增强现实开始逐渐地走进人们的生活。如国内首款聚合了目前移动互联最新增强现实技术的智能手机应用《城市镜头》以及中视典数字科技研发的VRP系统等。AR技术在人工智能、CAD、图形仿真、虚拟通讯、遥感、娱乐、模拟训练等许多领域带来了革命性的变化。
@@ -39,32 +39,32 @@ title: EasyAR尝鲜系列教程之Hello EasyAR
 
 * 打开[EasyAR官网](http://www.easyar.cn/view/index.html)并登录官网，我们将在登陆后创建应用以获得开发所需的密钥以及SDK。如果尚未注册可以在注册后完成这一步骤。
 
-![创建应用](https://ws1.sinaimg.cn/large/4c36074fly1fziy4rryipj20b60aj3zh.jpg)
+![创建应用](https://ww1.sinaimg.cn/large/4c36074fly1fziy4rryipj20b60aj3zh.jpg)
 
 * 点击创建应用，并在这里填入应用的名称和包的名称，此处以“EasyAR测试”和“com.easyar.first”为例，在创建完应用后可以在应用列表中找到当前创建的应用，点击显示可以查看当前应用对应的密钥。
 * 点击“下载EasyAR SDK v1.0.1”完成SDK的下载。
 
-![下载SDK](https://ws1.sinaimg.cn/large/4c36074fly1fzixy15c8yj20rd06tac3.jpg)
+![下载SDK](https://ww1.sinaimg.cn/large/4c36074fly1fzixy15c8yj20rd06tac3.jpg)
 
 * 解压下载的SDK压缩包，找到vc_redist目录安装对应平台的VC++运行库。请注意，即使在你的计算机上安装了VC++运行库，这里依然需要安装。Win8及Win8.1请先使用磁盘清理工具清理系统垃圾，否则可能会出现无法安装的问题。建议使用64位操作系统且安装x86和x64的VC++运行库。
 *  找到SDK压缩包内的package/unity目录下的EasyAR.unitypackage文件并将其导入到Unity3D中。
 * 在Unity3D中找到Scenes目录下的easyar场景并打开该场景，然后找到EasyAR节点名称，在右侧属性窗口中填入应用对应的密钥。
 
-![填入应用程序密钥](https://ws1.sinaimg.cn/large/4c36074fly1fzixb6r81jj20gt0i70u6.jpg)
+![填入应用程序密钥](https://ww1.sinaimg.cn/large/4c36074fly1fzixb6r81jj20gt0i70u6.jpg)
 
 * 打开BuildSetting->PlayerSetting在右侧属性窗口中填入应用对应的包名。
 
-![填入应用程序包名](https://ws1.sinaimg.cn/large/4c36074fly1fzix80mo33j208z0ewjrt.jpg)
+![填入应用程序包名](https://ww1.sinaimg.cn/large/4c36074fly1fzix80mo33j208z0ewjrt.jpg)
 
 * SDK默认提供了三张识别图片，我们选择每个人都有的身份证照片作为识别目标，在场景中找到ImageTargetDataSet-idback这个物体，找到它的子节点Cube。这意味着如果我们识别到了身份证照片，那么就会在身份证照片上显示一个Cube。如果大家手头上有自己喜欢的模型，可以将Cube隐藏，然后将模型添加进来，并为其添加VideoPlayerBehaviour.cs脚本。如手头上没有模型，这一步可以忽略。如图是我现在的场景效果：
 
-![加入自定义模型后的效果](https://ws1.sinaimg.cn/large/4c36074fly1fzix17ov4dj20dl0c7js5.jpg)
+![加入自定义模型后的效果](https://ww1.sinaimg.cn/large/4c36074fly1fzix17ov4dj20dl0c7js5.jpg)
 
 &emsp;&emsp;好了，现在编译程序，将其导出为APK安装包，这样我们就可以在手机上测试EasyAR的效果啦。假如一切顺利的话，在手机上将会看到这样的画面。下面放点运行情况截图供大家参考：
 
-![截图1](https://ws1.sinaimg.cn/large/None.jpg)
+![截图1](https://ww1.sinaimg.cn/large/None.jpg)
 
-![截图2](https://ws1.sinaimg.cn/large/None.jpg)
+![截图2](https://ww1.sinaimg.cn/large/None.jpg)
 
 
 # 问题汇总
@@ -74,6 +74,6 @@ title: EasyAR尝鲜系列教程之Hello EasyAR
 *  视频导入失败，Unity3D导入视频需要依赖苹果公司的QuickTime播放器，所以请安装最新版的QuickTime后重试。
 * 在64位计算机上编译的Android应用可以正常运行，在32位计算机上编译的Android应用无法正常运行。具体表现如图
 
-![32位计算机下的问题](https://ws1.sinaimg.cn/large/4c36074fly1fz68j0wjkcj20dc0m8tb0.jpg)
+![32位计算机下的问题](https://ww1.sinaimg.cn/large/4c36074fly1fz68j0wjkcj20dc0m8tb0.jpg)
 
 &emsp;&emsp;好了，作为整个系列的第一篇文章，我们至此对EasyAR有了一个较为直观的印象。在接下来的内容中，我们将对SDK中的内容进行更加深入的了解，因此希望大家继续关注我的博客，谢谢大家！

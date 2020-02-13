@@ -70,7 +70,7 @@ mcs D:\项目管理\CSharp\MonoApplication\MonoApplication\Main.cs
 mono D:\项目管理\CSharp\MonoApplication\MonoApplication\Main.exe
 ```
 
-![在Mono中运行.NET程序](https://ws1.sinaimg.cn/large/4c36074fly1fzix8b6eq5j20ir0c7t8p.jpg)
+![在Mono中运行.NET程序](https://ww1.sinaimg.cn/large/4c36074fly1fzix8b6eq5j20ir0c7t8p.jpg)
 
 我们可以看到命令行下输出了我们期望的Hello World，这意味着我们编写的程序现在运行在Mono中了，实际上在Windows下由Mono提供的C#编译器mcs.exe编译的IL文件双击是可以直接运行的，因为我们的计算机上安装了CLR，它作为.NET的一部分内置在我们的计算机中。由此我们会发现一个问题，我们这里的跨平台实际上是编译器、运行时和基础类库这三部分的跨平台，这意味着我们在Linux下运行.NET程序是需要Mono提供支持的。因为在这里我无法在Linux离线安装Mono，所以Linux下运行.NET程序的验证需要等博主以后有时间再来更新啦！可是我们可以想象到，通过C#编译器编译得到的可执行文件在Linux下是无法正常运行的，因为通常情况下Windows程序在Linux下运行是需要虚拟机环境或者Wine这样的软件来支持的，显然让这样一个Windows程序运行在Linux环境下是因为我们在Linux下安装了Mono。
 

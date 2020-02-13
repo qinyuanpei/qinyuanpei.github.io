@@ -147,7 +147,7 @@ public class PrefabWrap : EditorWindow {
 ```
 &emsp;&emsp;首先我们让这个脚本继承自EditorWindow，这样它将在Unity3D中显示一个窗口。在OnGUI()方法中我们定义了窗口需要绘制的内容为一个文本框、两个选择框和一个按钮，当单击按钮后会执行CreatePrefab()方法。当界面发生变化的时候，需要对窗口进行重绘。最终的程序演示效果如下：
 
-![动态生成Prefab效果演示](https://ws1.sinaimg.cn/large/4c36074fly1fyzcvrvdgej20kx0ejaak.jpg)
+![动态生成Prefab效果演示](https://ww1.sinaimg.cn/large/4c36074fly1fyzcvrvdgej20kx0ejaak.jpg)
 
 &emsp;&emsp;当我们在场景中选择好物体后，只要填好预设物体的名称、tag、Layer就可以直接生成Prefab了，不过这里有个问题，因为生成Prefab必须要传入一个GameObject，因此如果直接选择项目资源文件夹里的内容可能会报错，因为你选择的不是一个GameObject。博主做这样一个功能的初衷原本是想直接为每一个精灵图片生成预设文件，现在看来需要寻找其它的方法了，不过基本思路是创建一个空物体，然后向这个空物体中增加子物体，如果大家对此有兴趣的话，可以结合本文的方法自行去尝试。
 ## 案例3 快速为Sprite设置图集tag
@@ -237,6 +237,6 @@ public class PackageTools : EditorWindow
 ```
 &emsp;&emsp;因为打包图集只需要一个参数，因此这个打包工具只需要一个文本框和一个按钮，整个过程和案例2是一样的，这里就不做分析了。这个扩展程序的演示效果如下：
 
-![图集打包效果演示](https://ws1.sinaimg.cn/large/4c36074fly1fyzcue77dpj20ky0e5weu.jpg)
+![图集打包效果演示](https://ww1.sinaimg.cn/large/4c36074fly1fyzcue77dpj20ky0e5weu.jpg)
 
 &emsp;&emsp;好了，这就是今天的内容了，今天的内容基本上涵盖了为Unity3D开发扩展程序的基本内容，我们接下来要做的就是积极地在平时生活、工作和学习中寻找问题和解决问题，"授人以鱼不如授人以渔"，向他人传授知识和技能，这件事情本身对博主而言就是是快乐的，博主希望今天的内容大家能够喜欢。好了，谢谢大家！

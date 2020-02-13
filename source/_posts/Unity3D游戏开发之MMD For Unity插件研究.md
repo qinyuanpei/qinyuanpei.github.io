@@ -34,22 +34,22 @@ title: Unity3D游戏开发之MMD For Unity插件研究
 
 &emsp;&emsp;好了，现在我们注意到Unity3D菜单栏上会增加一个Plugin菜单项，我们单击这个菜单项会发现MMD Loader和XFile Importer这两个项目，这里我们选择MMD Loader这个菜单项：
 
-![MMD1](https://ws1.sinaimg.cn/large/4c36074fly1fz05n3ashpj20kg06eweo.jpg)
+![MMD1](https://ww1.sinaimg.cn/large/4c36074fly1fz05n3ashpj20kg06eweo.jpg)
 
 &emsp;&emsp;这两个子菜单项的意义十分地明确了，PMD Loader负责加载PMD模型并将其转化为Unity3D可以识别的模型文件，VMD负责将一个动作文件套用到一个模型上。所以：
 * 1、通过PMD Loader打开加载PMD文件的窗口，建议这里将ShaderType设置为Default，因为如果使用MMD的Shader的话，待会转换出来的模型可能会存在找不到材质的问题。接下来我们点击Convert，稍等片刻就会在场景中看到一个模型(prefab)文件。
 
-![MMD2](https://ws1.sinaimg.cn/large/4c36074fly1fz05je07wnj20fb0c10th.jpg)
+![MMD2](https://ww1.sinaimg.cn/large/4c36074fly1fz05je07wnj20fb0c10th.jpg)
 
-![MMD3](https://ws1.sinaimg.cn/large/4c36074fly1fz05cy1ajqj20k90hpdit.jpg)
+![MMD3](https://ww1.sinaimg.cn/large/4c36074fly1fz05cy1ajqj20k90hpdit.jpg)
 
 * 2、接下来通过VMD Loader打开加载VMD文件的窗口，选择场景中的模型文件和项目资源中的XMD动作文件，点击Convert，大概有1分钟多一点的样子就好了。此时我们选择场景中的模型文件，找到它的Animation组件，然后点击Animation右侧的按钮为其指定一个动画文件，因为刚刚我们已经为它添加了一个动作，所以我们可以很容易的在项目资源中找到名为初音_动作2的动画片段(AnimationClip)。
 
-![MMD4](https://ws1.sinaimg.cn/large/4c36074fly1fz01yd7d0dj20nn0hnjtn.jpg)
+![MMD4](https://ww1.sinaimg.cn/large/4c36074fly1fz01yd7d0dj20nn0hnjtn.jpg)
 
 &emsp;&emsp;好了，现在我们就来看看这个MMD的效果吧！
 
-![MMD5](https://ws1.sinaimg.cn/large/4c36074fly1fyzctxp079g208506hh78.gif)
+![MMD5](https://ww1.sinaimg.cn/large/4c36074fly1fyzctxp079g208506hh78.gif)
 
 &emsp;&emsp;哈哈，感觉效果还不错吧！
 

@@ -19,7 +19,7 @@ title: 基于Server-Sent Events实现服务端消息推送
 
 说到这里，可能大家会感到疑惑：WebSocket不是同样可以实现服务端向客户端推送信息吗？那么这两种技术有什么不一样呢？首先，WebSocket和SSE都是在建立一种浏览器与服务器间的通信通道，然后由服务器向浏览器推送信息。两者最为不同的地方在于，WebSocket建立的是一个全双工通道，而SSE建立的是一个单工通道。所谓单工和双工，是指数据流动的方向上的不同，对WebSocket而言，客户端和服务端都可以发送信息，所以它是双向通信；而对于SSE而言，只有服务端可以发送消息，故而它是单向通信。从下面的图中我们可以看得更为直观，在WebSocket中数据"有来有往"，客户端既可以接受信息亦可发送信息，而在SSE中数据是单向的，客户端只能被动地接收来自服务器的信息。所以，这两者在通信机制上不同到这里已经非常清晰啦！
 
-![WebSocket与SSE对比](https://ws1.sinaimg.cn/large/4c36074fly1fzf5w39987j20se0dv77u.jpg)
+![WebSocket与SSE对比](https://ww1.sinaimg.cn/large/4c36074fly1fzf5w39987j20se0dv77u.jpg)
 
 ## SSE服务端
 
@@ -191,11 +191,11 @@ if ('EventSource' in window) {
 ```
 此时，不需要任何**现代前端**方面的技术，我们直接打开浏览器，就可以看到：
 
-![SSEDemo](https://ws1.sinaimg.cn/large/4c36074fly1fzfbt5m898g20jk06jdfw.gif)
+![SSEDemo](https://ww1.sinaimg.cn/large/4c36074fly1fzfbt5m898g20jk06jdfw.gif)
 
 更为直观的，我们可以通过Chrome开发者工具观察到实际的请求情况，相比普通的HTTP请求，SSE会出现一个名为EventStream的选项卡，这是因为我们在服务端设置的Content-Type为**text/event-stream**的缘故，可以注意到，我们定义的id(GUID)会在这里显示出来：
 
-![有点与众不同的SSE](https://ws1.sinaimg.cn/large/4c36074fly1fzfc3ik2l2j20ww07kgmo.jpg)
+![有点与众不同的SSE](https://ww1.sinaimg.cn/large/4c36074fly1fzfc3ik2l2j20ww07kgmo.jpg)
 
 # 同类技术优劣对比
 

@@ -51,7 +51,7 @@ $ src/redis-cli
 
   需要注意的是在这里服务端和客户端，是在两个不同的终端窗口中运行的，当我们看到下面的窗口时，即表明Redis服务开启就绪，此时我们就可以通过客户端来输入各种命令来完成数据的存取，默认情况下Redis每次会随机分配一个端口，这里Redis采用6379端口进行通信：
 
-![Redis服务](https://ws1.sinaimg.cn/large/4c36074fly1fz68jad5qcj211y0laq73.jpg)
+![Redis服务](https://ww1.sinaimg.cn/large/4c36074fly1fz68jad5qcj211y0laq73.jpg)
 
   Redis是一个采用键-值存储方案的数据库，因而传统关系型数据库里的SQL在这里将不再适用。你可以将Redis理解为一个字典，我们可以向这个字典中储存任何Redis支持的数据类型，并通过键名来获取字典中存储的对应数值。我们来看下面的例子，以下命令均在redis-cli中执行：
 

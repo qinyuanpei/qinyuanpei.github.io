@@ -92,6 +92,8 @@ def sync(root,ak,sk,account,bucket):
                     if(newLink!=None):
                         recordMigrate(fileKey,newLink)
                         newContent = content.replace(link,newLink)
+                elif ('ws1.sinaimg.cn' in link):
+                    newContent = content.replace('ws1.sinaimg.cn','ww1.sinaimg.cn')
         if(newContent!='' and len(links)>0):
             with open(file,'wt',encoding='utf-8') as fp:
                 fp.write(newContent)

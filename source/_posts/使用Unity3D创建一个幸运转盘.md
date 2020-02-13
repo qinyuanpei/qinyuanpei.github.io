@@ -19,7 +19,7 @@ title: 使用Unity3D创建一个幸运转盘
 
 &emsp;&emsp;首先我们来看看在Unity3D中如何实现转盘抽奖：
 
-![转盘游戏示意图](https://ws1.sinaimg.cn/large/4c36074fly1fz05nmzwwtj20nb0h9q7h.jpg)
+![转盘游戏示意图](https://ww1.sinaimg.cn/large/4c36074fly1fz05nmzwwtj20nb0h9q7h.jpg)
 
 &emsp;&emsp;从这张图片我们可以看出，转盘抽奖有两部分组成：转盘是可以旋转的、转盘指针是固定不动的。那么，好了，抽奖无非就是让转盘转起来然后再停下来嘛，直接给出代码：
 ```C#
@@ -78,7 +78,7 @@ public class LuckyRoll : MonoBehaviour {
 ```
 &emsp;&emsp;这里我们随机给出一个速度mInitSpeed，然后让它按照mDelta的速率缓慢的减少，当mInitSpeed的数值为0时表示转盘停止转动。好了，我们来看看最后的效果：
 
-![转盘游戏演示](https://ws1.sinaimg.cn/large/4c36074fly1fz05knyqung20ln0e67wk.gif)
+![转盘游戏演示](https://ww1.sinaimg.cn/large/4c36074fly1fz05knyqung20ln0e67wk.gif)
 
 &emsp;&emsp;从现在的效果来看，这个案例基本上成功了，所以以后如果碰到需要这种抽奖活动的场合，大家就可以跟美术协调好，快速地制作出这样一个幸运转盘来向身边的人们炫耀了。不过这个案例同样存在问题：
 *  基于随机数的转盘转动不受玩家控制，玩家无法参与到互动当中，可以考虑触摸操作，这样可以根据玩家的操作来模拟转动，提高游戏的真实性和可玩性。
@@ -92,7 +92,7 @@ public class LuckyRoll : MonoBehaviour {
 &emsp;&emsp;今天找到了关于转盘游戏概率设计的相关内容，所以经过整理后补充在这里：
 首先这种转盘游戏概率设计的前提是转盘固定不动，转盘指针绕中心位置旋转，与这篇文章中的恰好相反。如下图所示，在这个转盘游戏的设计中主要遵循基本的三角函数,这里以指针默认位置朝上来讲解该原理。如果指针的默认位置在其它位置上的，可以此类推。
 
-![转盘游戏示意图](https://ws1.sinaimg.cn/large/4c36074fly1fz05e8swoxj20f20c2t99.jpg)
+![转盘游戏示意图](https://ww1.sinaimg.cn/large/4c36074fly1fz05e8swoxj20f20c2t99.jpg)
 
 >x+=x*cosᶱ
 >y+=y*cosᶱ
@@ -193,7 +193,7 @@ public class LuckyRoll2 : MonoBehaviour {
 
 &emsp;&emsp;下面给出程序演示效果：
 
-![转盘游戏概率设计效果演示](https://ws1.sinaimg.cn/large/4c36074fly1fz01zwac2hj20e407gq32.jpg)
+![转盘游戏概率设计效果演示](https://ww1.sinaimg.cn/large/4c36074fly1fz01zwac2hj20e407gq32.jpg)
 
 ## 参考资料
 [大家快来玩转盘抽奖游戏(走在网页游戏开发的路上)(七)](http://www.cnblogs.com/skynet/archive/2011/06/15/2081106.html)

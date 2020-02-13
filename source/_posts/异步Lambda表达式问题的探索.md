@@ -46,7 +46,7 @@ static void Main(string[] args)
 
   我们注意到这里声明了两个Action，即两个没有返回值的委托类型，它们的不同点在于前者使用了async/await这两个关键字，而后者则是一个普通的同步方法，那么这两者生成的IL代码是否有区别呢？我们可以通过IL DASM或者是IL Spy这两个工具来查看IL代码：
 
-![查看IL代码](https://ws1.sinaimg.cn/large/4c36074fly1fzix8rsjiej20sh0g0tav.jpg)
+![查看IL代码](https://ww1.sinaimg.cn/large/4c36074fly1fzix8rsjiej20sh0g0tav.jpg)
 
   我们可以注意到两点，第一，两个委托类型生成的中间代码完全一致，都是**CachedAnonymousMethodDelegate**，这在某种程度上说明不管Action里包装的是一个同步方法还是一个异步方法，最终生成的IL代码应该都是相同的。第二，同匿名方法和扩展方法一样，async/await并未引入新的IL指令，async/await内部应该是在维护一个状态机，这一点和yield关键字应该是相似的，并且对于异步的匿名方法(指voild类型)，通过IL代码可知它是由[AsyncVoidMethodBuilder](http://msdn.microsoft.com/en-us/library/system.runtime.compilerservices.asyncvoidmethodbuilder.aspx)类来生成的，而对于异步的方法(指Task和Task<T>类型)，则是由[AsyncTaskMethodBuilder](http://msdn.microsoft.com/en-us/library/system.runtime.compilerservices.asynctaskmethodbuilder.aspx)类来生成，需要说明的是这两者在功能上相差无几，唯一的区别就在于异常处理。
 

@@ -30,7 +30,7 @@ title: Unity3D游戏开发之从Unity3D项目版本控制说起
 
 * 通过Edit->Prefences->External Tools找到Revision Control Diff/Merge选项，在安装了版本控制软件后可以在这里找到相关的选项，以博主为例，博主使用的是TortoiseSVN，这里的选项是TortoiseMegre。目前Unity3D支持的版本控制软件有SourceGear DiffMerge、TKDiff、P4Megre、TortoiseMegre、WinMegre、PlasticSCM Megre。
 
-![编辑器设置](https://ws1.sinaimg.cn/large/None.jpg)      ![编辑器设置](https://ws1.sinaimg.cn/large/4c36074fly1fz68ju6tshj20ec0c4gmg.jpg)
+![编辑器设置](https://ww1.sinaimg.cn/large/None.jpg)      ![编辑器设置](https://ww1.sinaimg.cn/large/4c36074fly1fz68ju6tshj20ec0c4gmg.jpg)
 
 
 &emsp;&emsp;好了，在完成以上准备工作后，我们就可以开始进行Unity3D项目的版本控制了，目前在Unity3D中我们主要有以下三种方式来对Unity3D项目进行版本控制：

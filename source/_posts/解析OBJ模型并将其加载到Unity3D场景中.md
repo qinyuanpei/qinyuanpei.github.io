@@ -326,6 +326,6 @@ MeshRenderer meshRenderer = go.AddComponent<MeshRenderer>();
 ```
 这里没有处理材质，所以读取出来就是这个样子的，哈哈！
 
-![最终效果，这是一个悲伤的故事](https://ws1.sinaimg.cn/large/4c36074fly1fzix9cbxdaj20kt0h6t8j.jpg)
+![最终效果，这是一个悲伤的故事](https://ww1.sinaimg.cn/large/4c36074fly1fzix9cbxdaj20kt0h6t8j.jpg)
 
 材质大家可以尝试用代码去创建一个材质，然后在给一张贴图，这个玩玩就好，哈哈！好了，今天的内容就是这样子了，希望大家喜欢，为了写这篇文章我都怀疑我是不是有拖延症啊！

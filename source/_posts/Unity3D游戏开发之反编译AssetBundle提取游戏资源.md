@@ -19,7 +19,7 @@ title: Unity3D游戏开发之反编译AssetBundle提取游戏资源
 # 漫话Unity3D的AssetBundle
 &emsp;&emsp;对于AssetBundle，其实博主是在以前的文章中是有提到的。不知道大家还记不记得，博主曾经在写游戏开发和Lua的不解之缘这个系列文章的时候，提到并且使用过AssetBundle这种技术。具体来说呢，AssetBundle在Unity3D中是一种用于资源打包盒资源动态加载的解决方法，比如我们平时玩的单机游戏容量一般都比较大，这是因为制作人员在制作游戏的时候将所有的项目资源都整合到了一起。可是如果我们用AssetBundle来做这个游戏的话，我们就可以只在发布的游戏中提供支持游戏功能的核心部分，而将游戏当中的场景、模型等资源以AssetBundle的形式打包然后放到服务器上，这样当游戏客户端处于联网的时候就可以从服务器上下载这些资源，从而实现游戏资源的动态加载，由此可见AssetBundle可以帮助我们减少游戏的容量。如果是在需要安装包的场合下，那么游戏包容量的大小无疑会为游戏加些印象分。
 
-![为什么这幅图总让我想起仙剑四里四人在即墨那晚的时光呢？](https://ws1.sinaimg.cn/large/4c36074fly1fz05d2nsnpj20rs0fn457.jpg)
+![为什么这幅图总让我想起仙剑四里四人在即墨那晚的时光呢？](https://ww1.sinaimg.cn/large/4c36074fly1fz05d2nsnpj20rs0fn457.jpg)
 
 &emsp;&emsp;比如最近《轩辕剑6外传穹之扉》这部单机游戏发布了，从各大游戏网站的评测到和一样我喜欢单机游戏的各位朋友们的亲身体验，大家一致的认为这部游戏整体表现还不错，应该考虑玩一玩。这样难免让博主有些心动，可是看到17个G的游戏容量时还是犹豫了下。DOMO小组从《轩辕剑6》就开始使用Unity3D引擎，在经历了第一部游戏的失败后，或许此次DOMO小组会将游戏优化的比较好吧。这里如果有喜欢单机游戏的朋友不妨去玩玩看，毕竟我们学习游戏开发的初衷就是做出好游戏，如果不热爱游戏又怎么能做出好游戏呢？好了，扯得有点远了，这里我们注意到一个重要的因素就是游戏容量，如果DOMO采用AeestBundle的话，游戏的容量肯定会减少很多。可是这样一来，它就不是单机游戏了嘛，对吧！
 
@@ -93,15 +93,15 @@ disunity extract C:\Users\Robin\Desktop\s049.unity3d
 ```
 &emsp;&emsp;接下来程序会在桌面上生成一个上s049的文件夹，打开文件夹一看，尼玛，竟然直接拿到了模型的网格数据(.obj)和贴图数据(.dds)以及相关的Shader。这让我突然间有点不能接受啊，马上打开Blender将网格数据导入，结果童年的林月如就出现在了我们的面前：
 
-![林月如灰模](https://ws1.sinaimg.cn/large/4c36074fly1fz01ykrzepj20l70dpwfe.jpg)
+![林月如灰模](https://ww1.sinaimg.cn/large/4c36074fly1fz01ykrzepj20l70dpwfe.jpg)
 
 &emsp;&emsp;因为博主不会在Blender中给模型贴图，所以我们到Unity3D中完成贴图，首先需要将模型导出为FBX格式。好了，将模型导入Unity3D后，将贴图赋给模型，童年的林月如就闪亮登场了，哈哈！
 
-![林月如贴图效果](https://ws1.sinaimg.cn/large/4c36074fly1fyzcuaxphej20k10h70vr.jpg)
+![林月如贴图效果](https://ww1.sinaimg.cn/large/4c36074fly1fyzcuaxphej20k10h70vr.jpg)
 
 &emsp;&emsp;好了，再来一张，不过这张没有贴图，需要大家自己来辨别这是谁啊，哈哈！
 
-![柳梦璃灰模](https://ws1.sinaimg.cn/large/4c36074fly1fyzcu53oytj20hj0fdmyd.jpg)
+![柳梦璃灰模](https://ww1.sinaimg.cn/large/4c36074fly1fyzcu53oytj20hj0fdmyd.jpg)
 
 &emsp;&emsp;通过disunity这个工具我们还能获取更多的资源，剩下的内容就由大家自己去探索吧。通过这部分的研究，我们可以总结出以下观点，希望大家在使用AsssetBundle这项技术时注意：
 * 尽量在一个AssetBundle中打包多个资源，这样做的好处是别人没法通过加载AssetBundle拿到你做好的Prefab。

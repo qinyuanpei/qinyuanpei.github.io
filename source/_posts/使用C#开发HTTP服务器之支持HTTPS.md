@@ -19,7 +19,7 @@ title: 使用C#开发HTTP服务器之支持HTTPS
 
 &emsp;&emsp;HTTPS，即Hyper Text Transfer Protocol Over Secure Socket Layer的简称，是指以安全为目标的HTTP协议。我们可以将其理解为在HTTP协议的基础上增加了安全机制，这里的安全机制是指SSL,简单来讲HTTPS协议依然采用HTTP协议，不过它在HTTP和TCP间增加了加密/身份验证层，因此在保证数据传输安全的同时，为服务器提供了身份校验机制。任何采用HTTPS协议的网站，均可通过浏览器地址栏中的“锁”标志来查看网站的认证信息，或者是通过CA机构颁发的数字证书来查询。下图展示的是HTTPS协议中客户端和服务器端通信过程：
 
-![HTTPS协议中客户端和服务器通信过程](https://ws1.sinaimg.cn/large/4c36074fly1fzix85xqd1j20i00fkwg8.jpg)
+![HTTPS协议中客户端和服务器通信过程](https://ww1.sinaimg.cn/large/4c36074fly1fzix85xqd1j20i00fkwg8.jpg)
 
 从图中我们可以看出，在HTTPS协议中客户端和服务器端分为六步：
 

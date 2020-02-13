@@ -37,7 +37,7 @@ public class MessageController
 
 接下来，我们通过浏览器访问：http://localhost:6363/Message/Echo?receiver=PayneQin，我们就会发现一件非常神奇的事情，那就是，我们并没有真的在写一个Controller，它没有继承Controller类，虽然它的名字里带着Controller的后缀，可它确实实现了一个Controller所具备的功能，因为它返回了我们期望的信息。
 
-![欢迎来到POCOController的世界](https://ws1.sinaimg.cn/large/4c36074fly1g5j4wxhvuaj20kw0c075r.jpg)
+![欢迎来到POCOController的世界](https://ww1.sinaimg.cn/large/4c36074fly1g5j4wxhvuaj20kw0c075r.jpg)
 
 可以注意到，这个Controller使用起来和普通的Controller是没有任何区别的，这正是我们想要的结果。对于.NET Core而言，一个普通的类想要成为POCOController，只需要满足以下任意一个条件：第一，继承自Microsoft.AspNetCore.Mvc.Controller类，无论是否带有Controller后缀，都可以作为POCOController。第二，不继承自Microsoft.AspNetCore.Mvc.Controller类，同时引用了Microsoft.AspNetCore.Mvc相关的程序集。在这里，博主一开始就犯了这个错误，因为博主建的是一个Web API类型的项目。
 
@@ -238,7 +238,7 @@ services.AddSwaggerGen (swagger => {
 
 可以注意到，这篇文章里实现的动态Controller和默认的ValuesController都被展示了出来，两个字，完美，我们想要的就是这个效果。
 
-![通过Swagger生成的在线Api文档](https://ws1.sinaimg.cn/large/4c36074fly1g5k84kvuzqj21hc0s03zo.jpg)
+![通过Swagger生成的在线Api文档](https://ww1.sinaimg.cn/large/4c36074fly1g5k84kvuzqj21hc0s03zo.jpg)
 
 
 

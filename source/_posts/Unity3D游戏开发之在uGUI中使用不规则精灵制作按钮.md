@@ -18,15 +18,15 @@ title: Unity3D游戏开发之在uGUI中使用不规则精灵制作按钮
 # 从用户体验说起
 &emsp;&emsp;我们都知道在现代应用程序设计中，用户体验(UX)和用户界面(UI)是两个非常重要的内容。为什么用户体验(UX)和用户界面(UI)会显得如此重要呢？这是因为从普通用户的角度来讲，用户界面(UI)是其接触到一个产品时最先看到的最直观的东西，而在这个过程中产生的直观感受就是用户体验(UX)，所以说到底这是一个产品给用户的“第一印象”。
 
-![UX和UI](https://ws1.sinaimg.cn/large/4c36074fly1fzixy1fofqj20go0ci0uv.jpg)
+![UX和UI](https://ww1.sinaimg.cn/large/4c36074fly1fzixy1fofqj20go0ci0uv.jpg)
 
 &emsp;&emsp;最近百度UE总监刘超在IXDC峰会上的演讲引起了大家的关注，抛开百度在人才选拔机制中存在的问题以及刘超本人在设计领域是否具备专业能力这两个问题，这件事情真正让大家吐槽的是什么呢？答案是用户体验。虽然IXDC并非国际级别的大型会议，但是我相信大家组织这样的活动，其本意是为了探讨交互、设计领域内的新方法和新思维，因为随着互联网行业的发展，交互和设计这个领域越来越被人们所关注，所以在这样一个场合下，当与会嘉宾都在试图向人们输出干货的时候，刘超以一个非常糟糕的“用户体验”来给大家讲什么是用户体验，这件事情起源自刘超的一个个人行为，结果牵一发而动全身，最终升级为百度继“魏则西事件”以后的又一次公关危机。
 
-![什么叫设计](https://ws1.sinaimg.cn/large/4c36074fly1fzixb7h3alj20go0aaq75.jpg)
+![什么叫设计](https://ww1.sinaimg.cn/large/4c36074fly1fzixb7h3alj20go0aaq75.jpg)
 
 &emsp;&emsp;我到底想说什么呢？我说的本质上就是用户体验的问题，在这个事件中，刘超穿着上的不得体(短裤搭配拖鞋?)、PPT制作的粗制滥造(校招时所用修改)、演讲过程的敷衍糊弄(说相声、猜谜语)等因素，让刘超在与会者心目中的地位瞬间滑落到冰点，进而引发人们对百度在交互设计领域内的能力的怀疑，联想到百度最近这些年内出现的问题，这件事情难免会被人作为指责百度这家企业价值观问题，我想这是这个事情为什么会让大家如此关注的一个原因吧。
 
-![WTF!](https://ws1.sinaimg.cn/large/4c36074fly1fzix81in93j20go0ciwik.jpg)
+![WTF!](https://ww1.sinaimg.cn/large/4c36074fly1fzix81in93j20go0ciwik.jpg)
 
 &emsp;&emsp;那么，我们说这些到底和今天的主题有什么关系呢？我想说这当然有关系啊，因为我们提出的这个问题就是一个用户体验的问题。我们知道游戏行业对美术资源高度依赖，不管是2D游戏还是3D游戏，一个项目组中前期主要的工作量其实都在美术这边，虽然不同的游戏引擎、GUI框架都为我们提供了标准的控件样式，然而在这样一个注重多样性的时代，默认样式、系统字体都会让人觉得这个产品缺乏新意，因此这种要求体现在游戏项目中就变成了，我们使用大量的图片资源来解决界面和字体的问题。
 
@@ -46,7 +46,7 @@ title: Unity3D游戏开发之在uGUI中使用不规则精灵制作按钮
 
 * 3、我怀疑宣雨松提供的这个ContainsPoint方法的正确性，因为按照我的理解修改这个方法以后，发现界面响应的情况和实际情况是有所出入的，如下图所示，在整个区域内该方法都返回false。为了排除因为我的方法而对结果产生的影响，我使用宣雨松的代码进行了测试，结论是这个方法不管进行坐标系的转换与否，它在整个区域内的返回值都是false，因此我认为这个方法是错误的，虽然从理解算法的角度来看，它应该是根据线性差值来判断点在多边形中每条边的哪一侧的。
 
-![响应区域说明](https://ws1.sinaimg.cn/large/4c36074fly1fzix19xqm8j206n06ndfv.jpg)
+![响应区域说明](https://ww1.sinaimg.cn/large/4c36074fly1fzix19xqm8j206n06ndfv.jpg)
 
 &emsp;&emsp;在评论中网友[AwayMe](http://m.manew.com/forum.php?mod=viewthread&tid=41050&highlight=uGUI%2B%E4%B8%8D%E8%A7%84%E5%88%99&mobile=2)指出可以使用多边形碰撞器的OverlapPoint方法来判断一个点是否在多边形内部，可是经过我测试，这种方式和宣雨松提供的方法有着类似地问题，无论是否对坐标系进行转换，这个方法都返回false，响应区域与上图完全一致。
 
@@ -92,7 +92,7 @@ bool ContainsPoint2(Vector2[] polyPoints,Vector2 p)
 ```
 这段代码说实话我理解的不是很透彻，而且令人费解的是实际结论和算法结论完全相反，因为按照我现在这样的设计，当cn为偶数时返回为true，此时应该表示该点再多边形外部啊，可是事实上我测试这段代码的时候，它居然是可以正常工作的，即当该方法返回true的时候我的点击确实是在多边形内部，所以这是一段可以正常工作同时让我感到费解的代码，而且当我屏蔽了cn为0的这种情况以后，现在它已经可以完美的工作了
 
-![正五边形精灵](https://ws1.sinaimg.cn/large/None.jpg)
+![正五边形精灵](https://ww1.sinaimg.cn/large/None.jpg)
 
 同样的，我们这里使用一张正五边形的精灵图片，然后编写下面的代码：
 ```
@@ -177,7 +177,7 @@ public class UnregularButtonWithCollider : MonoBehaviour,IPointerClickHandler
 ```
 我们可以发现现在它可以正常工作啦！我们必须意识到的一点是，这个方法的空间复杂度为O(n-1)，所以随着多边形顶点数目的增加，这个方法的执行效率会越来越低，如果对不规则精灵的边界没有十分苛刻的要求的话，我的建议是我们使用多边形碰撞器标记出一个相对模糊的边界即可，因为现在我们这个方法主要依靠数学计算，没有涉及到摄像机相关计算，所以宣雨松[博客](http://www.xuanyusong.com/archives/3492)中有朋友指出他的方法仅仅适用于Canvas的模式为Screen-Space Camera这种情况，而我目前这个方法对除了World Space以外都是可以使用的，我最大的疑虑来自对鼠标位置进行转化的时候是否应该使用Screen.width和Screen.height，因为我担心可能会出现屏幕适配这种需求。
 
-![演示效果1](https://ws1.sinaimg.cn/large/None.jpg)
+![演示效果1](https://ww1.sinaimg.cn/large/None.jpg)
 
 ## 精灵像素检测
 &emsp;&emsp;精灵像素检测这个方案的灵感来自Image组件，我们在MonoDevelop或者Visual Studio中通过"转到定义"这个功能可以获得Image组件的内部细节。我们发现uGUI在处理控件是否被点击的时候，主要是根据IsRaycastLocationValid这个方法的返回值来进行判断的，而这个方法用到的基本原理则是判断指定点对应像素的RGBA数值中的Alpha是否大于某个指定临界值。例如，我们知道半透明通常是指Alpha=0.5，而对一个.png格式的图片来说半透明甚至完全透明的区域理论上不应该被响应的，所以根据这个原理我们只需要设定一个透明度的临界值然后对当前鼠标位置对应的像素进行判断就可以了，因此这种方法叫做精灵像素检测。
@@ -226,7 +226,7 @@ public virtual bool IsRaycastLocationValid(Vector2 screenPoint, Camera eventCame
 ```
 从这段代码中我们可以看出，这个方法核心在第31行代码，即传入一个UV坐标返回一个RGBA数值并将其和临界值相比较。可是在此之前，我们看到在引入uGUI及其专属组件RectTransform以后，现在Unity中的坐标系转换变得更加复杂了，我个人看到这部分代码是相当凌乱的，或许我应该找时间补习下矩阵变换了吧。所以现在我们就有思路啦，我们有两种方式，第一种基于这个思路重新定制一个Image组件;第二种直接修改Image组件的eventAlphaThreshold属性。考虑到坐标系转换这里非常复杂，显然第二种方式更容易接受，为什么这里可以直接修改eventAlphaThreshold属性呢，因为它在Image组件内部和代码中的m_EventAlphaThreshold相关联，这就是这篇[文章](http://m.manew.com/forum.php?mod=viewthread&tid=45046&highlight=uGUI%2B%E4%B8%8D%E8%A7%84%E5%88%99&mobile=2)的完整解释啦！
 
-![圆形精灵图片](https://ws1.sinaimg.cn/large/None.jpg)
+![圆形精灵图片](https://ww1.sinaimg.cn/large/None.jpg)
 
 &emsp;&emsp;好了，现在我们来一个简单的测试，我们这里准备一张圆形的精灵图片(如上图)，然后编写下面的代码：
 ```
@@ -272,7 +272,7 @@ public class UnregularButtonWithPixel : MonoBehaviour,IPointerClickHandler
 ```
 这里我为了让大家在学(复)习(制)的时候更容易理解，我在Click事件的响应上，使用的是实现IPointerClickHandler接口这种方法，希望通过动态绑定这种方式添加事件响应的可以自己解决，我是不会为了满足你们的好(懒)奇(惰)而奉献出我的EventTriggerListener的代码的。好了，现在我们要做的就是为需要响应点击的不规则精灵附加该脚本，这样就可以解决不规则精灵响应的问题了。这种方法使用起来非常简单，需要注意的是：图片的类型必须是Advance且保证可读可写。因为我们在脚本中访问了像素，而简单伴随着的代价就是我们无法使用图集、该图片在内存中会复制一份，所以在项目性能上允许的情况下这种方法还是可以考虑使用的。
 
-![演示效果2](https://ws1.sinaimg.cn/large/4c36074fly1fz68k3znzij20p1061dfv.jpg)
+![演示效果2](https://ww1.sinaimg.cn/large/4c36074fly1fz68k3znzij20p1061dfv.jpg)
 
 
 # 小结

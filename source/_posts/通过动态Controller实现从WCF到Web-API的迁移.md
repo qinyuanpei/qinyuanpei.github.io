@@ -67,7 +67,7 @@ title: 通过动态Controller实现从WCF到Web API的迁移.
 
 此时，我们会发现通过Castle动态生成的代理类，同时具备了类和接口的功能。
 
-![通过Castle实现类和接口的组合功能](https://ws1.sinaimg.cn/large/4c36074fly1g4a1c3r3i8j20rz0f43yj.jpg)
+![通过Castle实现类和接口的组合功能](https://ww1.sinaimg.cn/large/4c36074fly1g4a1c3r3i8j20rz0f43yj.jpg)
 
 # 重温ASP.NET MVC原理
 
@@ -75,7 +75,7 @@ OK，通过第一个例子，我们已经达到了第一个目的。接下来，
 
 ## 一张图了解MVC 
 
-![ 一张图了解MVC](https://ws1.sinaimg.cn/large/4c36074fly1g49w0oxqkej20p50fuwfa.jpg)
+![ 一张图了解MVC](https://ww1.sinaimg.cn/large/4c36074fly1g49w0oxqkej20p50fuwfa.jpg)
 
 通常来讲，当我们在MVC中接收到一个Url请求后，这个请求会被UrlRoutingModule拦截。此时，请求的上下文HttpContext会被封装到HttpContextWrapper对象中。而根据当前请求的HttpContext，则可以提取出符合当前Url的路由对象RouteData，它会被进一步封装为RequestContext对象。接下来，从RequestContext对象中获取RouteData，它对应一个RouteHandler，是IHttpHandler的一个实现类。对于MVC而言，则对应MvcHandler。通过调用MvcHandler，对应的Controller会被反射激活，进而调用具体的Action。以上就是整个MVC请求的过程描述，可以看出最关键的两个组件是UrlRoutingModule和MvcHandler，前者的作用是解析Controller和Action名称，后者的作用则是根据Controller名称去反射调用具体的Action，大家可以通过上面的图来理解这个过程。
 
@@ -239,7 +239,7 @@ GlobalConfiguration.Configuration.Services.Replace(typeof(IHttpControllerActivat
 
 假设现在我希望调用ICalcultor接口中的Add方法，理论上它的URL应该是**http://localhost/Service/Calculator/Add**，因为截至到目前为止，所有的接口默认都是通过Get来访问的，下面是整个流程第一次跑通时的截图：
 
-![迁移后的ICalculator接口](https://ws1.sinaimg.cn/large/4c36074fly1g49z1cvrw3j20pe05njrj.jpg)
+![迁移后的ICalculator接口](https://ww1.sinaimg.cn/large/4c36074fly1g49z1cvrw3j20pe05njrj.jpg)
 
 # 接口迁移后的二三事
 
@@ -321,7 +321,7 @@ public override Task<object> ExecuteAsync(HttpControllerContext controllerContex
 
 从代码中大家大致可以猜出DynamicApiResult的结构了，它包含三个属性：Flag、Msg、Result。这是一个最常见的Web API的返回值封装，即通过Flag判断方法是否调用成功，通过Msg来返回异常信息，通过Result来返回具体的返回值。最近对接某公司的API接口的时候，发现一个非常奇葩的现象，一般没有返回值可以返回null或者空字符串，可这家公司居然返回的是**”无数据"**，你以为这是放在Msg里的吗？不，人家是放在Result里的。对此，我只能说，互联网发展到2019年了，那些年野蛮生长留下的坑却还一直都在。好了，现在我们来看看接口调用的结果，喏，这次是不是感觉顺眼多啦！
 
-![优化后的ICalculator接口返回值](https://ws1.sinaimg.cn/large/4c36074fly1g49z2ku45tj20il06dmxa.jpg)
+![优化后的ICalculator接口返回值](https://ww1.sinaimg.cn/large/4c36074fly1g49z2ku45tj20il06dmxa.jpg)
 
 # POCOController 
 
