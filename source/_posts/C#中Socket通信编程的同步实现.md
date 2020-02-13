@@ -496,9 +496,9 @@ namespace TCPLib.Test
 ```
 &emsp;&emsp;注意要先运行服务端的程序、再运行客户端的程序，不然程序会报错，嘿嘿！好了，下面是今天的效果演示图：
 
-![聊天窗口效果演示](https://ws1.sinaimg.cn/large/4c36074fly1fz01tlahhdj211y0lcgnz.jpg)
+![聊天窗口效果演示](https://ww1.sinaimg.cn/large/4c36074fly1fz01tlahhdj211y0lcgnz.jpg)
 
-![客户端下线效果演示](https://ws1.sinaimg.cn/large/4c36074fly1fyzctms5wsj211y0lc7ez.jpg)
+![客户端下线效果演示](https://ww1.sinaimg.cn/large/4c36074fly1fyzctms5wsj211y0lc7ez.jpg)
 
 # 总结
 &emsp;&emsp;今天我们基本上写出了一个可以使用的用例，不过这个例子目前还存在以下问题：

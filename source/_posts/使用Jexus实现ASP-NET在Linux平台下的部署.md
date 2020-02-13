@@ -69,7 +69,7 @@ sudo /usr/jexus/jws stop [站点名(可选，不指定时表示所有)]
 sudo /usr/jexus/jws start aspnet
 ```
 当终端中返回OK时，就表示启动成功啦，此时，我们打开浏览器，输入`http://localhost:4000` 就可以看到如下画面(这里的端口号为4000)：
-![运行在Linux上的ASP.NET](https://ws1.sinaimg.cn/large/4c36074fly1fz05dq1tcmj20m80aqjsf.jpg)
+![运行在Linux上的ASP.NET](https://ww1.sinaimg.cn/large/4c36074fly1fz05dq1tcmj20m80aqjsf.jpg)
 你就说，这算不算惊喜。我们还可以输入`http://localhost:4000/info`来验证Jexus是否配置正确，当Jexus被正确配置以后，你就会看到一个显示着“Welcome to Jexus”的页面。嗯嗯，好像是和Nginx挺像的哈！
 
 # Docker+
@@ -103,7 +103,7 @@ CMD sudo ./jws start aspnet
 docker build -t jexus-aspnet:v1.0 .
 ```
 假如这个镜像被成功构建出来，我们就可以使用这个镜像来启动网站啦。如下图所示：
-![使用Docker创建网站镜像](https://ws1.sinaimg.cn/large/4c36074fly1fz01zbucjvj20m80d5jsm.jpg)
+![使用Docker创建网站镜像](https://ww1.sinaimg.cn/large/4c36074fly1fz01zbucjvj20m80d5jsm.jpg)
 具体地，我们可以使用docke image命令来管理所有的docker镜像。这里我们启动网站：
 ```
 docker run -p 4050:4000 -t jexus-aspnet:v1.0
