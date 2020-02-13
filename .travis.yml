@@ -23,6 +23,8 @@ install:
 script:
   - hexo clean
   - git rev-parse HEAD > VERSION.txt
+  - echo v$TRAVIS_BUILD_NUMBER > BUILD_NUMBER.txt
+  - cp BUILD_NUMBER.txt ./themes/card/BUILD_NUMBER.txt
 # - python3 migrate.py 
 
 after_script:
@@ -62,7 +64,7 @@ after_script:
   - git add .
   - git commit -m "Github Pages Build (v$TRAVIS_BUILD_NUMBER)"
   - git push --force --quiet "https://${CI_TOKEN}@${GH_REF}" master:master
-  - git tag latest
+  - git tag v$TRAVIS_BUILD_NUMBER
   - git push --force --quiet "https://${CI_TOKEN}@${GH_REF}" master:master --tags
 
 addons:
