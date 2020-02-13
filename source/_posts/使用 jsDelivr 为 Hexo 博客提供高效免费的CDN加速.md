@@ -28,7 +28,7 @@ https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/js/bootstrap.js
 此时，可以注意到，[jsDelivr](http://www.jsdelivr.com/)可以把我们Github上的资源呈现出来，只要我们在Github上发布过相应的版本即可。这里的版本，可以理解为一次Release，对应Git中tag的概念，虽然Github现在引入了包管理器的概念，试图统一像npm、nuget、pip等等这样的包管理器。它提供的CDN服务有一个基本的格式：
 > https://cdn.jsdelivr.net/gh/user/repo@version/file
 
-如果大家感兴趣，可以把这里的user和repo改成自己的来体验一番。需要注意的是，这里的版本号同样可以换成Commit ID或者是分支的名称。我个人建议用tag，因为它通常携带了版本号信息，语义上要更好一点。那么，顺着这个思路，我们只要把Hexo中的资源的相对路径改为jsDelivr的CDN加速路径就好啦！为了让切换更加自如，这里我们为Hexo写一个Helper，它可以理解为Hexo中的辅助代码片段。我们在<YouTheme>/scripts/目录下新建一个plugins.js文件，这样Hexo会在渲染时自动加载这个脚本文件：
+如果大家感兴趣，可以把这里的user和repo改成自己的来体验一番。需要注意的是，这里的版本号同样可以换成Commit ID或者是分支的名称。我个人建议用tag，因为它通常携带了版本号信息，语义上要更好一点。那么，顺着这个思路，我们只要把Hexo中的资源的相对路径改为jsDelivr的CDN加速路径就好啦！为了让切换更加自如，这里我们为Hexo写一个Helper，它可以理解为Hexo中的辅助代码片段。我们在`<YouTheme>/scripts/`目录下新建一个`plugins.js`文件，这样Hexo会在渲染时自动加载这个脚本文件：
 ```JavaScript
 const source = (path, cache, ext) => {
     if (cache) {
@@ -68,3 +68,30 @@ jsdelivr:
 
 ![Github Pages速度](https://i.loli.net/2020/02/05/E3WYBRQk4DJCZr5.png)
 感觉效果还不错，Github Pages比平时要快很多，博主顺便就给Coding Pages启用了CDN加速。话说，看到这张图的时候总是感慨，如果肺炎疫情地图能像这两张图一样就好啦！面对这场无声的战役，有很多人一直在一线抗击病魔，还有很多人默默无闻地在支援武汉。或许，宅在家里的你我，什么都做不了，可即便如此，还是让我们一起来祈祷疫情快点结束吧，因为春天都要来了呢……好了，这就是这篇博客的全部内容啦，谢谢大家！
+
+# 2020/02/13 更新
+在此之前，博主提到版本号的问题，即每一次在CDN上生成的版本，怎样体现到Hexo中引用的资源上面。当时采用了一个取巧的方法，Hexo中固定版本号为latest，然后每次都推送这个tag。这样引发一个问题，每次都先去远程删除这个tag，显然这不是我期望的解决方案。最终，我采用的方案是，通过Travis CI编译部署的时候，首先导出变量`$TRAVIS_BUILD_NUMBER`到一个文本文件中，然后Hexo在生成静态页面的时侯，从这个文本文件中读取该变量的值作为版本号，这样每次编译部署的时候，我们总能获得一个新的tag，而这个tag和Hexo中引用的资源版本一致，这样就彻底解决了这个遗留问题。修改后的`plugins.js`文件内容如下：
+```JavaScript
+var fs = require('fs');
+var version = 'latest'
+fs.readFile('./BUILD_NUMBER.txt', function (error, data) {
+    if (error) {
+      console.log('load BUILD_NUMBER.txt fails, ' + error)
+    } else {
+        version = data.toString().trim();
+    }
+});
+
+const source = (path, cache, ext) => {
+    if (cache) {
+        const minFile = `${path}${ext === '.js' ? '.min' : ''}${ext}`;
+        const jsdelivrCDN = hexo.config.jsdelivr;
+        return jsdelivrCDN.enable ? `//${jsdelivrCDN.baseUrl}/gh/${jsdelivrCDN.gh_user}/${jsdelivrCDN.gh_repo}@${version}/${minFile}` : `${minFile}?v=${version}`
+    } else {
+        return path + ext
+    }
+}
+hexo.extend.helper.register('theme_js', (path, cache) => source(path, cache, '.js'))
+hexo.extend.helper.register('theme_css', (path, cache) => source(path, cache, '.css'))
+```
+修改后的`.travis.yml`文件可以在[这里](https://raw.githubusercontent.com/qinyuanpei/qinyuanpei.github.io/blog/.travis.yml)获取。
