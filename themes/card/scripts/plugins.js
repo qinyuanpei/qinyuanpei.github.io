@@ -27,7 +27,7 @@ function renderImage(src, alt = '', title = '') {
     return `<figure class="image-bubble">
                 <div class="img-lightbox">
                     <div class="overlay"></div>
-                    <img src="${src}" alt="${alt}" title="${title}">
+                    <img src="${src}" alt="${alt}" title="${title}" referrerpolicy="no-referrer">
                 </div>
                 <div class="image-caption">${title || alt}</div>
             </figure>`
