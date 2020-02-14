@@ -24,7 +24,8 @@ script:
   - hexo clean
   - git rev-parse HEAD > VERSION.txt
 # - echo v$TRAVIS_BUILD_NUMBER > BUILD_NUMBER.
-  - export TRAVIS_TAG = $(git log --format=%h -1)
+  - export TRAVIS_TAG = v1.0.$TRAVIS_BUILD_NUMBER-$(git log --format=%h -1)
+  - export TRAVIS_DATE = $(date +%Y/%m/%d %H:%M:%S)
   - echo $TRAVIS_TAG > VERSION.txt
 # - python3 migrate.py 
 
@@ -43,7 +44,7 @@ after_script:
   - git init
   - git remote add origin master https://github.com/qinyuanpei/qinyuanpe.github.io 
   - git add .
-  - git commit -m "Coding Pages Build (v$TRAVIS_BUILD_NUMBER)"
+  - git commit -m "$TRAVIS_DATE Coding Pages Build ($TRAVIS_TAG)"
   - git push --force --quiet "https://${CO_USER}:${CO_TOKEN}@${CO_REF}" master:master
   # Prepare Rebuild
   - cd ..
@@ -63,7 +64,7 @@ after_script:
   - git init 
   - git remote add origin master https://github.com/qinyuanpei/qinyuanpe.github.io
   - git add .
-  - git commit -m "Github Pages Build (v$TRAVIS_BUILD_NUMBER)"
+  - git commit -m "$TRAVIS_DATE Github Pages Build ($TRAVIS_TAG)"
   - git push --force --quiet "https://${CI_TOKEN}@${GH_REF}" master:master
 # - git tag v$TRAVIS_BUILD_NUMBER 
   - git tag $TRAVIS_TAG
