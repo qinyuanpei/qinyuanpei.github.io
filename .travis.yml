@@ -25,6 +25,7 @@ script:
   - git rev-parse HEAD > VERSION.txt
   - echo v$TRAVIS_BUILD_NUMBER > BUILD_NUMBER.
   - echo `date +%Y%m%d%H%M%S`
+  - export TRAVIS_TAG=${$(date +'%Y%m%d%H%M%S')-$(git log --format=%h -1)}
   - echo $TRAVIS_TAG
 # - python3 migrate.py 
 
