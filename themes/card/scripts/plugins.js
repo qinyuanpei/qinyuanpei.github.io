@@ -6,6 +6,7 @@ fs.readFile('./BUILD_NUMBER.txt', function (error, data) {
       console.log('load BUILD_NUMBER.txt fails, ' + error)
     } else {
         version = data.toString().trim();
+        console.log(`load version ${version} from BUILD_NUMBER.txt...`);
     }
 });
 
