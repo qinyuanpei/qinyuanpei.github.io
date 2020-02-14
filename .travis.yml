@@ -24,7 +24,7 @@ script:
   - hexo clean
   - git rev-parse HEAD > VERSION.txt
 # - echo v$TRAVIS_BUILD_NUMBER > BUILD_NUMBER.
-  - export TRAVIS_TAG=$(v1.0.$TRAVIS_BUILD_NUMBER-$(git log --format=%h -1))
+  - export TRAVIS_TAG=v1.0.$TRAVIS_BUILD_NUMBER-$(git log --format=%h -1)
   - echo $TRAVIS_TAG > VERSION.txt
 # - python3 migrate.py 
 
