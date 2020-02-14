@@ -23,7 +23,8 @@ install:
 script:
   - hexo clean
   - git rev-parse HEAD > VERSION.txt
-  - echo v$TRAVIS_BUILD_NUMBER > BUILD_NUMBER.txt
+  - echo v$TRAVIS_BUILD_NUMBER > BUILD_NUMBER.
+  - echo `date +%Y%m%d%H%M%S`
 # - python3 migrate.py 
 
 after_script:
