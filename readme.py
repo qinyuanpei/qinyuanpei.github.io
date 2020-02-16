@@ -15,7 +15,7 @@ from html.parser import HTMLParser
 from xml.dom.minidom import parse
 import xml.dom.minidom
 import yaml
-import leancloud
+# import leancloud
 
 # 时区定义
 tz = pytz.timezone('Asia/Shanghai')
@@ -33,8 +33,8 @@ headers = {
 }
 
 # LeanCloud
-leancloud.init("JbHqRp2eMrTgIwYpfERH0g79-gzGzoHsz", "VsiKvLuiBGvJL1XrAfv7siY2")
-UrlSubmit = leancloud.Object.extend('UrlSubmit')
+# leancloud.init("JbHqRp2eMrTgIwYpfERH0g79-gzGzoHsz", "VsiKvLuiBGvJL1XrAfv7siY2")
+# UrlSubmit = leancloud.Object.extend('UrlSubmit')
 
 # 文档实体结构定义
 class Post:
@@ -141,4 +141,4 @@ if(__name__ == "__main__"):
     items = sorted(loadData(sys.argv[1]),key=lambda x:x.getDate(),reverse=True)
     mkMarkdown(items)
     baiduSitemap()
-    submitSitemap()
+    # submitSitemap()
