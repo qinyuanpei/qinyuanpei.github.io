@@ -173,7 +173,7 @@ build_version:
 
 # minifier插件
 html_minifier:
-  enable: true
+  enable: false
   ignore_error: false
   silent: true
   exclude:
