@@ -175,7 +175,7 @@ build_version:
 html_minifier:
   enable: true
   ignore_error: false
-  silent: false
+  silent: true
   exclude:
 css_minifier:
   enable: true
