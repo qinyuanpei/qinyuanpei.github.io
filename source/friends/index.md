@@ -1,4 +1,5 @@
 ---
+toc: false
 title: 友人帐
 layout: post
 abbrlink: 1089846036
