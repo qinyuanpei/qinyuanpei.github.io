@@ -2,6 +2,7 @@
 toc: false
 title: 关于
 layout: post
+copyright: false
 abbrlink: 994796909
 ---
 # 关于我
