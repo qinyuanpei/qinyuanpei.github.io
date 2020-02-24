@@ -5,7 +5,7 @@ categories:
 tags:
   - Hexo
   - CDN
-  - njsDelivr
+  - jsDelivr
 abbrlink: 1417719502
 date: 2020-02-05 19:01:00
 ---
@@ -50,7 +50,7 @@ hexo.extend.helper.register('theme_css', (path, cache) => source(path, cache, '.
 <link rel="stylesheet" href="<%- url_for(theme_css('/assets/styles/style', cache)) %>">
 ```
 既然是否使用CDN加速是可配置的，我们要在_config.yml文件中添加相应的配置项：
-```yaml
+```YAML
 # jsdelivr CDN
 jsdelivr:
   enable: true

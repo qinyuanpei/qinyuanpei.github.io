@@ -27,19 +27,19 @@ Hi，各位朋友，大家好！欢迎大家关注我的博客，我的博客地
 
 安装ELK的首推Docker方式安装。关于Docker的安装、使用请大家查阅官方文档：[https://docs.docker.com/](https://docs.docker.com/)。这里我假设大家都已经掌握了Linux和Docker的使用。首先我们拉取ELK镜像：
 
-```shell
+```Shell
 docker pull sebp/elk
 ```
 
 接下来，我们利用此镜像来运行一个容器:
 
-```shell
+```Shell
 docker run -p 5601:5601 -p 9200:9200 -p 5044:5044 --name elk sebp/elk 
 ```
 
 通常情况下，完成这两个步骤以后，我们就完成了ELK安装。此时，我们可以在浏览器中输入地址：`http//localhost:9200`，这是`Elasticsearch`的默认端口。如果浏览器中返回了了类似下面的信息，则表示ELK安装成功。这里是博主获得的关于`Elasticseach`的信息：
 
-```json
+```JSON
 {
   "name" : "elk",
   "cluster_name" : "elasticsearch",
@@ -94,7 +94,7 @@ public Startup(IConfiguration configuration)
 还记得`http://localhost:9200`这个地址是什么吗？不错，这是`Elasticsearch`的默认地址，所以，这部分代码主要的作用就是告诉`Elasticsearch`，接下来的日志信息都写到`Elasticsearch`中。为了让日志的信息更丰富一点，我们这里设置最小的日志事件级别为`Verbose`。
 
 接下来，在`ConfigureServices()`方法中注册ILogger实例：
-```csharp
+```CSharp
 services.AddLogging(loggingBuilder => loggingBuilder.AddSerilog(dispose: true));
 ```
 
