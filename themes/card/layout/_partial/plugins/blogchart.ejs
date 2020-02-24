@@ -43,13 +43,13 @@
     fetch('<%- config.url %>' + '/languages.json')
         .then(function (res) {
             res.json().then(function (data) {
-                var result = handleData(data);
-                handleLanguageChart('chart4', result);
+                handleLanguageChart('chart4', data);
             });
         })
         .catch(function (err) {
             console.log('Fetch Error : %S', err);
         })
+
     function handleData(posts) {
         var tags = {};
         var yearly = {};
@@ -163,7 +163,6 @@
                 value: data.tags[key]
             });
         }
-        console.log(seriesData);
         var option = {
             title: {
                 text: '标签统计',
@@ -198,7 +197,6 @@
             }]
         };
 
-
         chart.setOption(option);
     }
 
@@ -206,54 +204,52 @@
         var chart = echarts.init(document.getElementById(el));
         var totalAmount = Object.keys(data)
             .map(function (x) {
-                return data[x] 
+                return data[x]
             })
             .reduce(function (prev, curr, idx, arr) {
                 return prev + curr;
             });
-        
-        var dataSource = [["language",'amount','score']];
-        for(let lang in Object.keys(data)){
-            dataSource.push([lang,data[lang],Math.round(data[lang]/totalAmount) * 100])
+        var scores = [];
+        var indicators = [];
+        for (let lang of Object.keys(data)) {
+            indicators.push({ text: lang, max: 100 })
+            var score = (data[lang] / totalAmount + 0.35).toFixed(2) * 100;
+            scores.push(score);
         }
-        console.log(dataSource);
+
         option = {
-            dataset: {
-                source: dataSource
+            title: {
+                text: '语言统计',
+                x: 'center'
             },
-            grid: { containLabel: true },
-            xAxis: { name: 'score' },
-            yAxis: { type: 'category' },
-            visualMap: {
-                orient: 'horizontal',
-                left: 'center',
-                min: 10,
-                max: 100,
-                text: ['熟练', '入门'],
-                // Map the score column to color
-                dimension: 0,
-                inRange: {
-                    color: ['#D7DA8B', '#E15457']
-                }
+            tooltip: {
+                trigger: 'axis',
             },
+            radar: [
+                {
+                    indicator: indicators,
+                    radius: 80,
+                    center: ['50%', '60%'],
+                },
+            ],
             series: [
                 {
-                    type: 'bar',
-                    encode: {
-                        x: 'score',
-                        y: 'language'
-                    }
+                    type: 'radar',
+                    tooltip: {
+                        trigger: 'item',
+                    },
+                    areaStyle: {},
+                    data: [
+                        {
+                            value: scores,
+                            name: '语言使用'
+                        }
+                    ]
                 }
             ]
         };
 
         chart.setOption(option);
-    }
-
-    function sum(arr) {
-        return arr.reduce(function (prev, curr, idx, arr) {
-            return prev + curr;
-        });
     }
 </script>
 <% } %>

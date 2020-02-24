@@ -25,13 +25,18 @@ def analyseLanguages(posts):
         if len(matches) > 0:
             for match in matches:
                 language = match[3:]
+                if language == "CSharp":
+                   language = 'C#'
                 if language in ['shell','json','csharp','lua','yaml','yml']:
                     print(post)
                 if language in languages.keys():
                     languages[language] = languages[language] + 1
                 else:
                     languages[language] = 1
-    return languages
+
+    #排序后取前5种语言输出        
+    languages = sorted(languages.items(), key=lambda d:d[1], reverse = True)
+    return dict(languages[:6])
 
 posts = listPosts('.\source\_posts')
 languages = analyseLanguages(posts)

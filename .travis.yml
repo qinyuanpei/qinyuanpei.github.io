@@ -34,8 +34,10 @@ after_script:
   - mv config-master.yml _config.yml
   - hexo generate
   - python3 readme.py https://blog.yuanpei.me/
+  - python3 languages.py
   - cp README.md ./public/README.md
   - cp VERSION.txt ./public/VERSION.txt
+  - cp languages.json ./public/languages.json
   #- cp albums.json ./public/albums.json
   - git config user.name "qinyuanpei"
   - git config user.email "qinyuanpei@163.com"
@@ -54,9 +56,11 @@ after_script:
   - mv config-salve.yml _config.yml
   - hexo generate
   - python3 readme.py https://qinyuanpei.github.io/
+  - python3 languages.py
   - cp README.md ./public/README.md
-  - cp albums.json ./public/albums.json
+  #- cp albums.json ./public/albums.json
   - cp VERSION.txt ./public/VERSION.txt
+  - cp languages.json ./public/languages.json
   - git config user.name "qinyuanpei"
   - git config user.email "qinyuanpei@163.com"
   - cd ./public
