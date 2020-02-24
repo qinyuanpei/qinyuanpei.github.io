@@ -1,4 +1,4 @@
-<% if(post.copyright) { %>
+<% if(post.copyright || typeof(post.copyright) == "undefined") { %>
 <blockquote class="post-copyright">
     <div class="content">
         <p><b>版权声明：</b>

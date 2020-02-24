@@ -1,4 +1,4 @@
-<% if(theme.toc && post.toc){ 
+<% if(theme.toc && (post.toc || typeof(post.toc) == "undefined") ){ 
     var topic = toc(post.content, {
             class: 'post-toc',
             list_number: theme.toc.list_number
