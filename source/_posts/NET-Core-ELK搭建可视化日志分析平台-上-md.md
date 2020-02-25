@@ -25,7 +25,7 @@ Hi，各位朋友，大家好！欢迎大家关注我的博客，我的博客地
 
 # 如何安装ELK
 
-安装ELK的首推Docker方式安装。关于Docker的安装、使用请大家查阅官方文档：[https://docs.docker.com/](https://docs.docker.com/)。这里我假设大家都已经掌握了Linux和Docker的使用。首先我们拉取ELK镜像：
+安装ELK的方式，首推以Docker方式安装。关于Docker的安装、使用请大家查阅官方文档：[https://docs.docker.com/](https://docs.docker.com/)。这里我假设大家都已经掌握了Linux和Docker的使用。首先我们拉取ELK镜像：
 
 ```Shell
 docker pull sebp/elk
