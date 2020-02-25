@@ -5,7 +5,7 @@ layout: post
 copyright: false
 abbrlink: 994796909
 ---
-![在这世界的角落](https://i.loli.net/2020/02/25/S8knQoPDYct9jHq.jpg)
+![在这世界的角落-剧照](https://i.loli.net/2020/02/25/S8knQoPDYct9jHq.jpg)
 
 # 关于我
 谢谢你，在这世界的角落，找到我。
