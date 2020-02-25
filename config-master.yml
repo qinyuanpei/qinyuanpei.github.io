@@ -178,6 +178,8 @@ html_minifier:
   enable: true
   ignore_error: false
   silent: true
+  minifyJS: true
+  minifyCSS: true
   exclude:
 css_minifier:
   enable: true
