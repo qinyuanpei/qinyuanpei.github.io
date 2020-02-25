@@ -199,29 +199,6 @@ image_minifier:
   progressive: false
   silent: false
 
-# live2d
-live2d:
-  enable: false
-  scriptFrom: local
-  pluginRootPath: assets/live2dw/
-  pluginJsPath: lib/
-  pluginModelPath: assets/
-  tagMode: false
-  log: false
-  model:
-    use: live2d-widget-model-hijiki
-  display:
-    position: left
-    width: 150
-    height: 300
-    hOffset: 10
-    vOffset:  10
-  mobile:
-    show: false
-  dialog:
-    enable: true
-    hitokoto: true
-
 # vConsole
 vConsole:
   enable: true

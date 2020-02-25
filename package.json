@@ -22,7 +22,6 @@
         "hexo-generator-search": "^2.4.0",
         "hexo-generator-sitemap": "^1.2.0",
         "hexo-generator-tag": "^1.0.0",
-        "hexo-helper-live2d": "^3.1.1",
         "hexo-offline": "^1.0.0",
         "hexo-reading-time": "^1.0.3",
         "hexo-renderer-ejs": "^1.0.0",
@@ -33,10 +32,6 @@
         "hexo-tag-aplayer": "^3.0.3",
         "hexo-tag-cloudmusic": "^1.2.2",
         "hexo-util": "^1.8.1",
-        "live2d-widget-model-hijiki": "^1.0.5",
-        "live2d-widget-model-shizuku": "^1.0.5",
-        "live2d-widget-model-tororo": "^1.0.5",
-        "live2d-widget-model-tsumiki": "^1.0.5",
         "lunr": "^2.2.0",
         "parcel-bundler": "^1.12.4"
     }
