@@ -161,8 +161,7 @@
                 return;
             }
             if (param.type == 'click') {
-                console.log(`tag ${param.data} clicked`);
-                location.href = '<%- config.url %>' + '/tags/' + param.data;
+                location.href = '<%- config.url %>' + '/tags/' + encodeURI(param.data.name);
             }
         });
         var seriesData = [];
