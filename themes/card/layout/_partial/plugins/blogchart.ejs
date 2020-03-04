@@ -155,15 +155,13 @@
 
     function handleTagsChart(el, data) {
         var maskImage = new Image();
-        var ecConfig = require('echarts/config');
         var chart = echarts.init(document.getElementById(el));
-        chart.on(ecConfig.EVENT.CLICK, function (param) {
+        chart.on('click', function (param) {
             if (typeof param.seriesIndex == 'undefined') {
                 return;
             }
             if (param.type == 'click') {
-                console.log(`tag ${param.data} clicked`);
-                location.href = '<%- config.url %>' + '/tags/' + param.data;
+                location.href = '<%- config.url %>' + '/tags/' + encodeURI(param.data.name);
             }
         });
         var seriesData = [];
