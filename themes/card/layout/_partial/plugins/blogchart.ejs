@@ -155,9 +155,8 @@
 
     function handleTagsChart(el, data) {
         var maskImage = new Image();
-        var ecConfig = require('echarts/config');
         var chart = echarts.init(document.getElementById(el));
-        chart.on(ecConfig.EVENT.CLICK, function (param) {
+        chart.on('click', function (param) {
             if (typeof param.seriesIndex == 'undefined') {
                 return;
             }
