@@ -57,7 +57,7 @@ OK，了解了PV和UV的概念后，我们来思考如何去设计一个访问�
 
 OK，现在有日志文件啦，这PV/UV到底从哪里来呢？其实，到这里已经无所谓用什么方法啦，因为你可以用ELK全家桶把给它收集了去，或是选一门你喜欢的语言用正则给它匹配出来，这都完全没有问题，无非就是一个工具选择的问题。为了简单起见，我们直接用Shell命令：
 
-```shell
+```Shell
 #统计指定页面的PV
 grep / localhost.access.log | wc -l
 grep /favicon.ico localhost.access.log | wc -l

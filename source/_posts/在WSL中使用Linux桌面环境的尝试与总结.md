@@ -24,7 +24,7 @@ sudo vim /etc/apt/sources.list
 
 接下来，我们使用下面的命令对文件内容进行替换, 或者你可以手动逐行去编辑。
 
-```shell
+```Shell
 :%s/security.ubuntu/mirrors.aliyun/g
 :%s/archive.ubuntu/mirrors.aliyun/g
 ```
@@ -37,7 +37,7 @@ sudo vim /etc/apt/sources.list
 
 完成镜像源的切换以后，我们就可以愉快地使用`apt-get update`刷一波存在感啦，话说最近看到一条微博，建议给`sudo`起一个别名`plz`或者`pls`。除了调侃以外，可能更多是想把冰冷的命令行变得充满人情味吧。Windows下安装`VcXsrv`大家都轻车熟路啦，这个不再过多的说明。下面，我们来安装以下Ubuntu桌面环境：
 
-```shell
+```Shell
 echo "y"|sudo apt-get install ubuntu-desktop unity compizconfig-settings-manager
 sudo dpkg-reconfigure dbus && service dbus restart
 ```

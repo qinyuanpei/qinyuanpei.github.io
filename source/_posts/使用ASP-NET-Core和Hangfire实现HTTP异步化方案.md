@@ -75,7 +75,7 @@ BackgroundJob.ContinueWith(
 
 Hangfire除了这种偏函数式风格的用法以外，同样提供了泛型版本的用法，简而言之，泛型版本是自带依赖注入的版本。众所周知，稍微复杂点的功能，常常会依赖多个服务，比如后台任务常常需要给相关人员发邮件或者是消息，此时，Job的实现就会依赖MailService和MessageService。Hangfire内置了基于Autofac的IoC容器，因此，当我们使用泛型版本时，它可以自动地从容器中Resolve相应的类型出来。事实上，我们可以通过重写JobActivator来实现自己的依赖注入，譬如博主就喜欢Castle。下面是一个简单的例子：
 
-```csharp
+```CSharp
 //Define a class depends on IDbContext & IEmailService
 public class EmailSender
 {
@@ -99,7 +99,7 @@ BackgroundJob.Enqueue<EmailSender>(x => x.Send("Joe", "Hello!"));
 
 OK，在对Hangfire有了一个初步的了解以后，我们再回到本文的题目，我们希望实现一个基于HTTP方式调用的HttpJob。因为我们不希望任务调度和具体任务放在一起，我们项目上采用Quartz来开发后台任务，它要求我们实现一个特定接口IbaseJob，最终任务调度时会通过反射来创建Job，就在刚刚过去的这周里，测试同事向我反馈了一个Bug，而罪魁祸首居然是因为某个DLL没有分发，所以，我希望实现一个基于HTTP方式调用的HttpJob，这既是为了将任务调度和具体任务分离，同时为了满足这篇文章开头描述的场景，得益于Hnagfire良好的扩展性，我们提供了一组Web API，代码如下：
 
-```csharp
+```CSharp
 /// <summary>
 /// 添加一个任务到队列并立即执行
 /// </summary>
@@ -193,7 +193,7 @@ public IActionResult HealthCheck () {
 
 你可以注意到，这里用到其实还是四种后台任务，在此基础上增加了删除Job和触发Job的接口，尤其是触发Job执行的接口，可以弥补Quartz的不足，很多时候，我们希望别人调了接口后触发后台任务，甚至希望在编写Job的过程中使用依赖注入，因为种种原因，实施起来总感觉有点碍手碍脚。这里我们定义了一个HttpJobExecutor的类，顾名思义，它是执行Http请求的一个类，说来惭愧，我写作这篇博客时，是一边看文档一边写代码的，所以，等我实现了这里的HttpJobExecutor的时候，我忽然发现文档中关于依赖注入的内容，简直相见恨晚啊。这里直接给出它的实现，我要再一次安利RestSharp这个库，比HttpWebRequest、HttpClient这两套官方的API要好用许多，可还是有人喜欢一遍又一遍地封装啊，话说自从我们把WCF换成Web API后，看着相关同事在Git上的折腾历史，果然还是回到了写Http Client的老路上来，话说在纠结是手写代理还是动态代理的时候，Retrofit了解下啊！
 
-```csharp  
+```CSharp  
 [HttpJobFilter]
 public static void DoRequest (HttpJobDescriptor jobDestriptor) {
     var client = new RestClient (jobDestriptor.HttpUrl);
@@ -223,7 +223,7 @@ public static void DoRequest (HttpJobDescriptor jobDestriptor) {
 
 在执行Job的过程中，我们可能会希望记录Job执行过程中的日志。这个时候，Hangfire强大的扩展性再次我们提供了这种可能性。注意到在HttpJobExecutor类上有一个 [HttpJobFilter]的标记，显然这是由Hangfire提供的一个过滤器，博主在这个过滤器中对Job的ID、状态等做了记录，因为在整个项目中博主已经配置了Serilog作为Hangfire的LogProvider，所以，我们可以在过滤器中使用Serilog来记录日志，不过博主个人感觉这个Filtre稍显鸡肋，这里还是给出代码片段吧！
 
-```csharp
+```CSharp
 public class HttpJobFilter : JobFilterAttribute, IApplyStateFilter {
     private static readonly ILog Logger = LogProvider.GetCurrentClassLogger ();
 
