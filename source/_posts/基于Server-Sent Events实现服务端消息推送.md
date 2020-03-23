@@ -25,7 +25,7 @@ title: 基于Server-Sent Events实现服务端消息推送
 
 下面我们来看看SSE是如何通信的，因为它是一个单工通道的协议，所以协议定义的都是在服务端完成的，我们就从服务端开始吧！协议规定，服务器向客户端发送的消息，必须是UTF-8编码的，并且提供如下的HTTP头部信息：
 
-```shell
+```Shell
 Content-Type: text/event-stream
 Cache-Control: no-cache
 Connection: keep-alive

@@ -30,7 +30,7 @@ title: Redis缓存技术学习系列之Lua脚本
 
   熟悉JavsScript的朋友应该会更熟悉这个方法，因为Eval在JavaScript是个神奇的存在，它可以执行任何合法的JavaScript代码，我和我的同事就曾经在一个项目中写过两层嵌套的Eval方法，显然这是为了实现某种奇怪的需求。那么在Redis中有EVAL和EVALSHA两个命令可以使用，这两个命令是从Redis2.6.0版本开始的，通过内置的Lua解释器来实现对脚本求值。EVAL命令的基本格式如下：
 
-```shell
+```Shell
 EVAL script numkeys key [key ...] arg [arg ...]
 ```
 
@@ -66,7 +66,7 @@ EVAL  "return {KEYS[1]..ARGV[2] ,KEYS[2]..ARGV[1] }" 2 ab cd ab cd
 
   好了，下面我们来介绍第二类和Lua脚本相关的API，相比Eval给人云里雾里的感觉，Script系列的命令处处洋溢着规范命名的美好气息，我们通过这些命令的名字基本上就可以知道它是做什么事情的，这告诉我们平时写代码的时候如何去写出优雅的代码。我们通过下面一组命令来了解Script系列命令的具体用法：
 
-```shell
+```Shell
 /* 载入一个脚本到缓存中 */
 SCRIPT LOAD "return 'Hello Redis'" 
 /* Redis返回该脚本的指纹信息 */
@@ -91,7 +91,7 @@ SCRIPT EXISTS "e509eb0869056563287758d23146eb00e0518da5"
 
   首先，我们来定义一个简单的Lua脚本文件**script01.lua**，该脚本将对集合中的元素进行求和：
 
-```lua
+```Lua
 local sum = 0;
 local key = KEYS[1]
 local length = redis.call("LLEN",key)

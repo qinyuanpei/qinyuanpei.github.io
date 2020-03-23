@@ -36,7 +36,7 @@ title: 基于Travis CI实现 Hexo 在 Github 和 Coding 的同步部署
 
 &emsp;&emsp;好了，现在有了Token，就意味着 Travis CI 有权限向 Coding 推送或者拉取内容了，那么怎么让它工作起来呢？我们记得 Travis CI 有一个叫做 .travis.yml 的配置文件对吧？这里我们需要简单修改下这个文件，让 Travis CI 在生成静态页面以后同时推送静态页面到 Coding。修改后的关键配置如下，我已经写好了详细注释，关于这个文件配置可以参考[这里](https://docs.travis-ci.com/)，这里不再详细说明：
 
-```yml
+```YAML
 after_script:
   - cd ./public
   - git init
