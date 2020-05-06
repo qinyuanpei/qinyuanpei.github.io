@@ -1,4 +1,4 @@
----
+- ---
 toc: true
 title: 通过EF/Dapper扩展实现数据库审计功能
 categories:
@@ -28,7 +28,8 @@ public class AuditDbContextBase : DbContext, IAuditStorage
     public virtual Task BeforeSaveChanges() { }
     public virtual Task AfterSaveChanges() { }
 
-    public override async Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default)
+    public override async Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess,
+         CancellationToken cancellationToken = default)
     {
         await BeforeSaveChanges();
         var result = await base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
@@ -52,7 +53,8 @@ public virtual Task BeforeSaveChanges()
     _auditEntries = new List<AuditEntry>();
     foreach (var entityEntry in ChangeTracker.Entries())
     {
-        if (entityEntry.State == EntityState.Detached || entityEntry.State == EntityState.Unchanged)
+        if (entityEntry.State == EntityState.Detached 
+            || entityEntry.State == EntityState.Unchanged)
             continue;
         if (entityEntry.Entity.GetType() == typeof(AuditLog))
             continue;
@@ -101,7 +103,8 @@ private void SetValuesCollection(List<PropertyEntry> properties)
                 NewValues[propertyName] = property.CurrentValue;
             break;
             case OperationType.Updated:
-                if (_auditConfig.IsIgnoreSameValue && property.OriginalValue.ToString() == property.CurrentValue.ToString())
+                if (_auditConfig.IsIgnoreSameValue 
+                    && property.OriginalValue.ToString() == property.CurrentValue.ToString())
                     continue;
                 OldValues[propertyName] = property.OriginalValue;
                 NewValues[propertyName] = property.CurrentValue;
@@ -194,7 +197,48 @@ public interface  IRepository
 接下来，我们就可以在拦截器中实现数据审计功能，因为Dapper本身没有ChangeTracker，所以，我们必须要在先从数据库中查出来OldValue，所以，实际效率应该并不会特别高，这里权当做为大家扩展思路吧！
 
 ```CSharp
-//Hello
+public class AuditLogInterceptor : IInterceptor
+{
+    public void Intercept(IInvocation invocation)
+    {
+        var repository = invocation.Proxy as IRepository;
+        var entityType = GetEntityType(invocation);
+        var tableName = GetTableName(entityType);
+        var tableIdProperty = entityType.GetProperty("Id");
+        var auditLogAttrs = invocation.Method.GetCustomAttributes(typeof(AuditLogAttribute), false);
+        if (auditLogAttrs == null || auditLogAttrs.Length == 0 || entityType == typeof(AuditLog))
+        {
+            invocation.Proceed();
+            return;
+        }
+
+        var auditLogAttr = (auditLogAttrs as AuditLogAttribute[])[0];
+        var auditLogs = new List<AuditLog>();
+        switch (auditLogAttr.OperationType)
+        {
+            case Domain.OperationType.Created:
+                auditLogs = GetAddedAuditLogs(invocation, tableName);
+            break;
+            case Domain.OperationType.Updated:
+                auditLogs = GetUpdatedAuditLogs(invocation, tableName, entityType, 
+                    tableIdProperty, repository);
+            break;
+            case Domain.OperationType.Deleted:
+                auditLogs = GetDeletedAuditLogs(invocation, tableName);
+            break;
+        }
+            
+        invocation.Proceed();
+        repository.Insert<AuditLog>(auditLogs.ToArray());
+    }
+}
+```
+同样地，这里需要需要使用`Autofac`将其注册到IoC容器中：
+```CSharp
+builder.RegisterType<DapperRepository>().As<IRepository>()
+    .InterceptedBy(typeof(AuditLogInterceptor))
+    .EnableInterfaceInterceptors();
+builder.RegisterType<AuditLogInterceptor>();
 ```
 
 # 思路延伸：领域事件
@@ -238,3 +282,4 @@ public interface IEventDispatcher
 所以，你现在问我怎么样做数据同步好，我一定会说，通过事件来处理。因为这样，每一条数据的新增、更新、删除，都可以事件的形式发布出去，而关心这些数据的下游系统，则只需要订阅这些事件，该干嘛好嘛，何乐而不为呢？搞什么中间表，打什么标记，用数据库一遍遍地实现消息队列有意思吗？同样地，你会意识到，仓储模式，哪怕ORM换成Dapper，我们一样可以去发布这些事件，增量同步自然是要比全量同步优雅而且高效的。最重要的是，程序员再不需要到处找地方埋点了，你看我博客更新频率这么低，不就是因为这些事情浪费了时间吗(逃？因为，全量 + 实时同步就是一个非常愚蠢的决定。
 
 # 本文小结
+本文分别针对`EF Core`和`Dapper`实现了数据库审计的功能。对于前者，主要是通过重写DbContext的`SaveChanges()`方法来实现，而`EF`及`EF Core`中的`ChangeTracker`则提供了一种获取数据库表记录变化前后值的能力。而对于后者，主要是实现了`Dapper`的仓储模式，在此基础上结合`Castle`的动态代理功能，对仓储接口进行拦截，以此实现审计日志的记录功能。整体来看，后者对代码的侵入性要更小一点，理论上我们可以实现`EF`或`EF Core`的仓储模式，这样两者在实现上会更接近一点，当然，更直接的方案是去拦截`SaveChanges()`方法，这和我们使用继承的目的是一样的，由于Dapper本身没有`ChangeTracker`，所以，在处理`Update()`相关的仓储接口时，都需要先查询一次数据库，这一点是这个方案里最大的短板。而顺着这个方案扩展下去，我们同样可以挖掘出一点`DDD`里`领域事件`的意味，这就变得很有意思了，不是吗？这篇博客就先写到这里吧……
