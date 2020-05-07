@@ -19,13 +19,14 @@
         <link rel="canonical" href="<%- (theme.canonical + url_for(page.path)).replace(/index\.html$/, '') %>">
     <% } %>
     <!--Google AdSense-->
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <script data-ad-client="ca-pub-8485009880440519" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <!-- <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
     <script>
     (adsbygoogle = window.adsbygoogle || []).push({
     google_ad_client: "ca-pub-8485009880440519",
     enable_page_level_ads: true
     });
-    </script>
+    </script> -->
     <%
         var title = page.title;
         if (is_archive()){
