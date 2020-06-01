@@ -60,7 +60,7 @@ public static void UseWebSocketPush(this IApplicationBuilder app)
 
 ![为什么需要消息队列](https://ww1.sinaimg.cn/large/4c36074fly1fz05kt1cubj20j0091t8s.jpg)
 
-&emsp;&emsp;那么，有朋友要问啦，就算你要用消息队列，那博主你为什么不用RibbitMQ，再不济可以考虑微软自带的MQ啊，为什么要用Redis做一个MQ呢？就算你坚持要用Redis做MQ，为什么不考虑用的Redis的发布-订阅(**Pub-Sub**)呢？对于第一个问题，你可以理解为我穷或者懒(**穷个什么鬼啊，你特么就是懒_(:з」∠)_**)。我就是懒得去搞RabbitMQ，谁让我电脑C盘都快爆炸了呢，自从我把玩了几次**Docker for Windows**以后，而且我们项目上还真有不被允许用MQ的情况。所以，基于以上原因，我选择了Redis。
+&emsp;&emsp;那么，有朋友要问啦，就算你要用消息队列，那博主你为什么不用RabbitMQ，再不济可以考虑微软自带的MQ啊，为什么要用Redis做一个MQ呢？就算你坚持要用Redis做MQ，为什么不考虑用的Redis的发布-订阅(**Pub-Sub**)呢？对于第一个问题，你可以理解为我穷或者懒(**穷个什么鬼啊，你特么就是懒_(:з」∠)_**)。我就是懒得去搞RabbitMQ，谁让我电脑C盘都快爆炸了呢，自从我把玩了几次**Docker for Windows**以后，而且我们项目上还真有不被允许用MQ的情况。所以，基于以上原因，我选择了Redis。
 
 ![Redis中的Pub-Sub](https://ww1.sinaimg.cn/large/4c36074fly1fz05edd27tj209l06njre.jpg)
 
