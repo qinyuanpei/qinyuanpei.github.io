@@ -156,15 +156,10 @@ githubEmojis:
   inject: true
 
 # 文章推荐
-# recommended_posts:
-#   server: https://api.truelaurel.com #后端推荐服务器地址
-#   timeoutInMillis: 10000 #服务时长，超过此时长，则使用离线推荐模式
-#   internalLinks: 3 #内部文章数量
-#   externalLinks: 1 #外部文章数量
-#   fixedNumber: false
-#   autoDisplay: true  #自动在文章底部显示推荐文章
-#   excludePattern: []
-#   titleHtml: <h1>你可能感兴趣</h1> #自定义标题
+recommended_posts:
+  enable: true
+  limit: 5
+  title: 推荐阅读
 
 # 构建版本
 build_version: 

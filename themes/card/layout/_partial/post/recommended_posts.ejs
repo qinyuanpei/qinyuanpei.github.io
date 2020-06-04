@@ -1,5 +1,5 @@
 <%
-    function recommended_posts(page, site) {
+    function recommended_posts(page, site, limit = 5) {
         page.tags = page.tags || []
         if (page.tags.length == 0) return [];
         let pageTags = page.tags.map(x=>x.name);
@@ -9,13 +9,13 @@
         let relatedPosts = pageTags.map(x=>sitePosts.filter(y=>y.tags.indexOf(x)!=-1 && y.title != page.title)).reduce((prev,next)=>{
             return prev.concat(next);
         },[]);
-        return Array.from(new Set(relatedPosts));
-    } 
+        return Array.from(new Set(relatedPosts)).slice(0, limit);
+    }
 %>
-<% var post_list = recommended_posts(page, site) %>
-<% if(post_list.length > 0) { %>
+<% var post_list = recommended_posts(page, site, config.recommended_posts.limit) %>
+<% if(post_list.length > 0 && config.recommended_posts.enable) { %>
 <div class="recommended_posts">
-    <h1>推荐阅读</h1>
+    <h1><%= config.recommended_posts.title %></h1>
     <ul>
         <% post_list.forEach(function(link) { %>
         <li><a href="<%= link.permalink %>"><%= link.title %></a></li>
