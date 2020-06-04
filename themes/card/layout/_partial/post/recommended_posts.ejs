@@ -6,9 +6,9 @@
         let sitePosts = site.posts.toArray().map(x=> {
             return {tags:x.tags.toArray().map(y=>y.name), title:x.title, permalink:x.permalink}
         });
-        let relatedPosts = pageTags.map(x=>sitePosts.filter(y=>y.tags.indexOf(x)!=-1)).reduce((prev,next)=>{
+        let relatedPosts = pageTags.map(x=>sitePosts.filter(y=>y.tags.indexOf(x)!=-1 && y.title != page.title)).reduce((prev,next)=>{
             return prev.concat(next);
-        },[])
+        },[]);
         return Array.from(new Set(relatedPosts));
     } 
 %>
