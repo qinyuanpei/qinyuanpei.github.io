@@ -1,11 +1,25 @@
+<%
+    function recommended_posts(page, site) {
+        page.tags = page.tags || []
+        if (page.tags.length == 0) return [];
+        let pageTags = page.tags.map(x=>x.name);
+        let sitePosts = site.posts.toArray().map(x=> {
+            return {tags:x.tags.toArray().map(y=>y.name), title:x.title, permalink:x.permalink}
+        });
+        let relatedPosts = pageTags.map(x=>sitePosts.filter(y=>y.tags.indexOf(x)!=-1)).reduce((prev,next)=>{
+            return prev.concat(next);
+        },[])
+        return Array.from(new Set(relatedPosts));
+    } 
+%>
 <% var post_list = recommended_posts(page, site) %>
 <% if(post_list.length > 0) { %>
-    <div class="recommended_posts">
-        <h1><%= __('recommended_posts') %></h1>
-        <ul>
-            <% post_list.forEach(function(link) { %>
-                <li><a href="<%= link.permalink %>"><%= link.title %></a></li>
-            <% }) %>
-        </ul>
-    </div>
-<% } %> 
+<div class="recommended_posts">
+    <h1>推荐阅读</h1>
+    <ul>
+        <% post_list.forEach(function(link) { %>
+        <li><a href="<%= link.permalink %>"><%= link.title %></a></li>
+        <% }) %>
+    </ul>
+</div>
+<% } %>

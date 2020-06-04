@@ -14,6 +14,7 @@
             <div class="post-content" id="post-content" itemprop="postContent">
                 <%- post.content %>
                 <%- partial('plugins/blogchart',{ post: post }) %>
+                <%- partial('post/recommended_posts') %>
             </div>
             <%- partial('post/copyright',{ post: post }) %>
             <%- partial('post/reward-btn') %>
