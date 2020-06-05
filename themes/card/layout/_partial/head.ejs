@@ -43,6 +43,7 @@
             title = (theme.tags_title || '标签') + ': ' + page.tag;
         }
 
+        page.tags = page.tags || [];
         var pageTags = page.tags.map(x=>x.name);
         if (config.keywords){
             pageTags = pageTags.concat(config.keywords.split(','))
