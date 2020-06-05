@@ -4,7 +4,7 @@
 <script src="https://sdk.jinrishici.com/v2/browser/jinrishici.js" charset="utf-8"></script>
 <script>
    jinrishici.load(function(result) {
-      document.querySelector('#subtitle').innerText = `${result.data.content}-${result.data.origin.dynasty}-${result.data.origin.author}`;
+      document.querySelector('#subtitle').innerText = `${result.data.content} - [${result.data.origin.dynasty}] - ${result.data.origin.author}`;
       document.querySelector('#jinrishici-sentence').innerText = result.data.content;
   });
 </script>
