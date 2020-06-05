@@ -3,7 +3,8 @@ abbrlink: 2805694118
 categories:
 - 数据分析
 date: 2018-02-24 12:50:52
-description: 今天这篇文章会基于 Python 对微信好友进行数据分析，这里选择的维度主要有：性别、头像、签名、位置，主要采用图表和词云两种形式来呈现结果，其中，对文本类信息会采用词频分析和情感分析两种方法
+description: 今天这篇文章会基于 Python 对微信好友进行数据分析，这里选择的维度主要有：性别、头像、签名、位置，主要采用图表和词云两种形式来呈现结果，其中，对文本类信息会采用词频分析和情感分析两种方法;这里我们会在当前目录新建一个HeadImages目录，用以存储所有好友的头像，然后我们这里会用到一个名为FaceApi类，这个类由腾讯优图的SDK封装而来，这里分别调用了[人脸检测](http://youtu.qq.com/#/develop/api-face-analysis-detect)和[图像标签识别](http://youtu.qq.com/#/develop/api-image-tag)两个API接口，前者会统计"使用人脸头像"和"不使用人脸头像"的好友各自的数目，后者会累加每个头像中提取出来的标签;plt.title(u'%s的微信好友签名信息情感分析'
+  % friends[0]['NickName'])
 tags:
 - Python
 - Wechat

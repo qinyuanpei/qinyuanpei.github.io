@@ -3,7 +3,7 @@ abbrlink: 3521618732
 categories:
 - 开发工具
 date: 2017-10-21 22:57:55
-description: TravisCI提供了主流编程语言如C#、Java、JavaScript、Ruby、PHP、Node.js等的支持，相比Jenkins而言，它是一个轻量级的持续集成平台，它会在每次提交代码后，根据配置文件来创建一个虚拟机，并执行用户定义的Build任务，这个虚拟机提供版本控制(**Git**)、项目构建(**Node.js**)等，在此前提下，我们下面着手Hexo的自动化部署
+description: TravisCI提供了主流编程语言如C#、Java、JavaScript、Ruby、PHP、Node.js等的支持，相比Jenkins而言，它是一个轻量级的持续集成平台，它会在每次提交代码后，根据配置文件来创建一个虚拟机，并执行用户定义的Build任务，这个虚拟机提供版本控制(**Git**)、项目构建(**Node.js**)等，在此前提下，我们下面着手Hexo的自动化部署;现在我们在本地提交代码到blog分支，就会触发TravisCI执行Build任务，在这里Build任务是从blog分支拉取博客内容及主题，通过npm安装依赖的nodejs模块，最终Hexo生成的静态页面会被推送到master分支，这样就完成了整个自动化构建的流程;其次，持续集成可以将开发和部署分离，所以我在任何一台计算机上撰写博客，都可以通过TravisCI实现编译和部署，对Hexo这种静态博客而言，部署其实就是推送页面到Github而已，整体难度并没有太高
 tags:
 - Hexo
 - Travis

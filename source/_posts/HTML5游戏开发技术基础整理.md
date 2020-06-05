@@ -3,7 +3,7 @@ abbrlink: 2038378679
 categories:
 - 读书笔记
 date: 2015-03-08 19:14:44
-description: '## JavaScript中的面向对象编程'
+description: '## JavaScript中的面向对象编程;如果直接使用JavaScript代码;### 在JavaScript中函数(function)就是就是一个类(class)'
 tags:
 - 游戏
 - HTML5

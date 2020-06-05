@@ -3,7 +3,8 @@ abbrlink: 1940333895
 categories:
 - 读书笔记
 date: 2015-02-03 16:06:31
-description: '*  数据类型：在Lua中支持6种数据类型，即数字(number)、字符串(string)、函数(function)、表(table)、用户数据(userdata)、空值(nil)'
+description: '*  数据类型：在Lua中支持6种数据类型，即数字(number)、字符串(string)、函数(function)、表(table)、用户数据(userdata)、空值(nil);#include
+  "lua.h";print("This is a function declared in Lua")'
 tags:
 - Lua
 - 脚本语言

@@ -1,16 +1,18 @@
 ---
-toc: true
-title: WebApiClient中动态路由的实现与使用
-categories:
-  - 编程语言
-tags:
-  - RESTful
-  - Retrofit
-  - WebApi
-copyright: true
 abbrlink: 2488769283
+categories:
+- 编程语言
+copyright: true
 date: 2020-04-02 10:26:53
+description: 博主曾经在「[声明式RESTful客户端WebApiClient在项目中的应用](https://blog.yuanpei.me/posts/380519286/)」这篇博客中，介绍过.NET平台下的“Retrofit”——[WebApiClient](https://github.com/dotnetcore/WebApiClient)，它是一种声明式的RESTful客户端，通过动态代理来生成Http调用过程代码，而调用方只需要定义一个接口，并使用相关“注解”对接口进行修饰即可，类似的实现还有[Refit](https://github.com/reactiveui/refit)，是一种比HttpWebRequest、HttpClient和RestSharp更为优雅的接口调用方式;是的，你猜对了，实际运作过程中，测试环境和正式环境不单单会使用不同的域名，可能还会使用不同的路由，虽然，理论上两个环境的程序应该完全一样，应该使用相同的路由;在今天这篇博客中，我想聊聊WebApiClient中动态路由的实现与使用
+tags:
+- RESTful
+- Retrofit
+- WebApi
+title: WebApiClient中动态路由的实现与使用
+toc: true
 ---
+
 博主曾经在「[声明式RESTful客户端WebApiClient在项目中的应用](https://blog.yuanpei.me/posts/380519286/)」这篇博客中，介绍过.NET平台下的“Retrofit”——[WebApiClient](https://github.com/dotnetcore/WebApiClient)，它是一种声明式的RESTful客户端，通过动态代理来生成Http调用过程代码，而调用方只需要定义一个接口，并使用相关“注解”对接口进行修饰即可，类似的实现还有[Refit](https://github.com/reactiveui/refit)，是一种比HttpWebRequest、HttpClient和RestSharp更为优雅的接口调用方式。在今天这篇博客中，我想聊聊WebApiClient中动态路由的实现与使用。
 
 一个典型的WebApiClient使用流程如下，首先定义一个接口，并使用“注解”对接口进行修饰：

@@ -3,7 +3,8 @@ abbrlink: 305484621
 categories:
 - 编程语言
 date: 2015-12-05 12:01:02
-description: 我们使用扩展方法无非是因为它在逻辑层需要这样的功能，所以我们没有必要去改变抽象层的逻辑，因为这样会“污染”整个代码
+description: 我们使用扩展方法无非是因为它在逻辑层需要这样的功能，所以我们没有必要去改变抽象层的逻辑，因为这样会“污染”整个代码;/// <param
+  name="str">4、第一个参数必须使用this关键字指定要使用扩展方法的类型</param>;为了解决这个问题，我们可以扩展出三个方法SetPositionX、SetPositionY、SetPositionZ来分别为x、y、z三个坐标分量进行赋值，我们继续在SomeClass这个类中添加方法：
 tags:
 - CSharp
 - 扩展方法

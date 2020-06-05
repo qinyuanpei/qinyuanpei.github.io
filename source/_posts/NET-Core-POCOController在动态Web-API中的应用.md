@@ -5,7 +5,8 @@ categories:
 date: 2019-08-01 16:44:59
 description: POCOController是ASP.NET Core中提供的一个新特性，按照约定大于配置的原则，在ASP.NET Core项目中，所有带有Controller后缀的类，或者是使用了[Controller]标记的类，即使它没有像模板中一样继承Controller类，ASP.NET
   Core依然会将其识别为Controller，并拥有和普通Controller一样的功能，说到这里，你是不是有点兴奋了呢，因为我们在ASP.NET里花了大力气去做类似的事情，因为ASP.NET里一个普通的类是没有办法成为Controller的，即使通过Castle的Dynamic
-  Proxy黑科技，我们依然需要去Hack整个MVC框架创建、筛选Controller和Action的过程
+  Proxy黑科技，我们依然需要去Hack整个MVC框架创建、筛选Controller和Action的过程;所以，我们希望在提供默认路由的基础上，使用者可以自由配置路由风格，所以，我们需要通过这个接口来构造路由信息，值得一提的是，我们可以在这个过程中设置ApiExplorer是否可见，为接口参数设置合适的绑定模型等等，所以，我们会使用HttpGet/HttpPost等来标记接口的调用方式，使用Route来标记用户自定义的路由信息，使用FromBody/FromQuery等来标记参数的绑定信息，有了这些配合Swagger简直是无往不胜，并非是开发人员不愿意写文档，而是因为文档的更新速度往往赶不上需求的变化速度，一旦文档落后于实际业务，这样的文档实际是没有意义的，我真的讨厌所有人都来找你问接口的地址、参数这些东西，如果你写完了一个Service，写好对应的方法注释，然后你就有了一个可用的Web
+  API，和一个可用的在线文档，何乐而不为呢;这篇博客延续了上一篇博客中关于动态Controller的设想，而借助于.NET Core框架提供的良好特性，它以一种更为简洁的方式被实现了，核心的内容有两个点，其一是ControllerFeatureProvider，它能决定MVC会不会把一个普通的类当做控制器
 tags:
 - .NET Core
 - Dynamic WebApi

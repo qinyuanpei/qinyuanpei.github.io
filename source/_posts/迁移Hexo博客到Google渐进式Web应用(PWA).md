@@ -4,7 +4,8 @@ categories:
 - 独立博客
 date: 2017-10-24 23:13:41
 description: 现在，我们基本了解了PWA的概念以及实现PWA的关键技术，我们现在考虑将Hexo博客改造成一个PWA应用，我们这里不打算考虑消息推送的相关问题，所以对Hexo这样一个静态博客生成器而言，我们可以做的实际上只有两件事情，即通过Web
-  App Manifest让它更像一个Native应用，通过ServiceWorker为它提供离线缓存的特性
+  App Manifest让它更像一个Native应用，通过ServiceWorker为它提供离线缓存的特性;我们知道传统Web应用有两个关键问题无法解决，即**需要从网络实时加载内容而带来的网络延迟**和**依赖浏览器入口而带来的用户体验**，从某种意义上而言，渐进式应用的出现有望让这些问题得到解决，首先，渐进式应用可以显著加快应用加载速度，其提供的离线缓存机制可以让应用在离线环境下继续使用，关键技术为Service
+  Worker和Cache Storage;按照[官方文档](https://developer.mozilla.org/zh-CN/docs/Web/API/Service_Worker_API)中的定义，ServiceWorker同WebWorker一样，是一段JavaScript脚本，作为一个后台独立线程运行，其运行环境与普通的JavaScript不同，因此不直接参与Web交互行为，从某种意义上来说，ServiceWorker的出现，正是为了弥补Web应用天生所不具备的离线使用、消息推送、后台自动更新等特性，我们这里来看一个使用ServiceWorker缓存文件已达到离线使用的目的的例子：
 tags:
 - Hexo
 - PWA

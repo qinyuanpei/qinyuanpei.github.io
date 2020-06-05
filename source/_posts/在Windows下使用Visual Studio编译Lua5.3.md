@@ -3,7 +3,7 @@ abbrlink: 3642630198
 categories:
 - 编程语言
 date: 2015-04-16 14:50:35
-description: '```Lua'
+description: '```Lua;* 编译项目会得到一个Luac.exe文件，这就是我们编译得到的Lua解释器;* 在同一个解决方案下继续创建VC++项目，项目命名为Lua，项目类型为控制台应用程序、需设置预编译头'
 tags:
 - Lua
 - 编译

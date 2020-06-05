@@ -3,7 +3,8 @@ abbrlink: 815861661
 categories:
 - 开发工具
 date: 2018-05-20 14:00:03
-description: 所以，在这今天这篇文章里，你将看到：**如何使用Jexus实现ASP.NET在Linux平台下的部署**
+description: 所以，在这今天这篇文章里，你将看到：**如何使用Jexus实现ASP.NET在Linux平台下的部署**;综合考虑这些因素，我们决定采用[Jexus](https://www.jexus.org/)来将ASP.NET项目部署到Linux平台;Jexus是由[宇内流云](http://www.cnblogs.com/yunei)开发的一款Linux平台上的高性能Web服务器，它是一个可以免费使用、不开源的项目，最大的特色是可以支持ASP.NET、ASP.NET
+  Core、PHP
 tags:
 - Jexus
 - Docker

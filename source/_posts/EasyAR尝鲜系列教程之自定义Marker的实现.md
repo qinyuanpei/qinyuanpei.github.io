@@ -3,7 +3,7 @@ abbrlink: 1156673678
 categories:
 - Unity3D
 date: 2015-11-03 10:23:14
-description: 如果我们希望把它放在一个自定义的文件夹中，如StreamingAssets/ziying目录下，则需要将ziying的image属性值改为ziying/ziying.jpg，以此类推
+description: 如果我们希望把它放在一个自定义的文件夹中，如StreamingAssets/ziying目录下，则需要将ziying的image属性值改为ziying/ziying.jpg，以此类推;[EasyAR基本流程示意图](https://ww1.sinaimg.cn/large/4c36074fly1fzix180mu7j20g0057dft.jpg);我们可以注意到idback这张图片和mousepad这张图片相比增加了两个属性，即uid和size
 tags:
 - 增强现实
 - AR

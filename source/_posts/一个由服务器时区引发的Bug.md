@@ -3,7 +3,8 @@ abbrlink: 172426938
 categories:
 - 编程语言
 date: 2018-06-05 11:03:57
-description: 博主有一个Python[脚本](https://github.com/qinyuanpei/BlogScripts/blob/master/HexoBlog.py)运行在TravisCI的服务器上，而TravisCI来自一家法国的技术公司，因此在不指定时区的情况下，会默认使用TravisCI服务器上的时间，这并不是我想要的结果，所以，我们需要pytz来解决这个问题，至于这里为什么我们使用的是上海而不是北京，这是因为中国横跨5个时区，在国内大家习惯使用北京时间，而在国外这些时区数据没有做及时更新，所以这算是一个关于时区的历史遗留问题吧
+description: 博主有一个Python[脚本](https://github.com/qinyuanpei/BlogScripts/blob/master/HexoBlog.py)运行在TravisCI的服务器上，而TravisCI来自一家法国的技术公司，因此在不指定时区的情况下，会默认使用TravisCI服务器上的时间，这并不是我想要的结果，所以，我们需要pytz来解决这个问题，至于这里为什么我们使用的是上海而不是北京，这是因为中国横跨5个时区，在国内大家习惯使用北京时间，而在国外这些时区数据没有做及时更新，所以这算是一个关于时区的历史遗留问题吧;*
+  Time类型仅存储时间，不存储日期，需要7个字节的存储空间，默认格式为hh:mm:ss.nnnnnnn，可以注意到默认的秒分量小数部分为7位，建议使用字符串或者SysDateTime()这两种方式赋值，不建议使用GetDate()，因为该方法返回值为DateTime类型，其时间部分的精度没有Time类型的经度高;简单来说，在Python中我们只需要给定时区，即可将本地时间转化为指定时区对应的UTC时间，这里我们使用的是Python中的pytz这个库，如果你打开这个库的安装目录，就会发现其实它有大量时区相关的数据组成，如果我们直接调用pytz.timezone()就可以获得所有的时区信息
 tags:
 - 时区
 - 时间

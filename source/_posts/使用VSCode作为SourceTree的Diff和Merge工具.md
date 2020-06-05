@@ -3,7 +3,7 @@ abbrlink: 3222622531
 categories:
 - 开发工具
 date: 2018-09-30 08:43:44
-description: 既然，作为Git可视化工具的SourceTree可以使用VSCode作为Diff和Merge的工具，那么，我们干脆一鼓作气，将VSCode作为Git默认的Diff和Merge的工具吧
+description: 既然，作为Git可视化工具的SourceTree可以使用VSCode作为Diff和Merge的工具，那么，我们干脆一鼓作气，将VSCode作为Git默认的Diff和Merge的工具吧;现在，使用SourceTree的时候，周围同事大部分都习惯GUI操作，所以，就想能不能把SourceTree和VSCode结合着来用，因为我发现SourceTree可以支持外部的Diff和Merge工具;然后，我们在SourceTree里做如下配置，这里我们直接让VSCode作为我们的Diff和Merge工具，具体参数如图所示：
 tags:
 - Git
 - VSCode

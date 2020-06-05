@@ -4,7 +4,10 @@ categories:
 - 独立博客
 date: 2018-02-23 09:32:45
 description: 我意识到我的博客配置了 [hexo-generator-json-content](https://github.com/alexbruno/hexo-generator-json-content)
-  插件，这个插件最初的目的是为博客提供离线的搜索能力，该插件会在博客的根目录里生成一个**content.json**文件，而这个文件中含有我们想要的一切信息，因此我们的思路转变为解析这个文件，人生苦短啊，我果断选择了我最喜欢的Python，这里我们会提取出所有的文章信息，按照日期由近到远排序后生成列表
+  插件，这个插件最初的目的是为博客提供离线的搜索能力，该插件会在博客的根目录里生成一个**content.json**文件，而这个文件中含有我们想要的一切信息，因此我们的思路转变为解析这个文件，人生苦短啊，我果断选择了我最喜欢的Python，这里我们会提取出所有的文章信息，按照日期由近到远排序后生成列表;现在我们更新博客时的流程将发生变化，首先通过
+  **hexo generate 或 hexo g**命令生成博客，这样Hexo会为我们生成 ** content.json**，然后我们执行这段Python脚本，就可以生成REAMD.md文件，这里我们将这个文件推送到blog分支;关于博客采用
+  [TravisCI](https://www.travis-ci.org/)  提供持续集成(CI)服务相关内容，可以参考 [持续集成在Hexo自动化部署上的实践](https://qinyuanpei.github.io/posts/3521618732/)
+  这篇文章
 tags:
 - Python
 - Github

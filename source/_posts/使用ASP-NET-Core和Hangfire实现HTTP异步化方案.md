@@ -3,7 +3,10 @@ abbrlink: 1071063696
 categories:
 - 编程语言
 date: 2019-07-04 08:56:28
-description: 而**Recurring jobs**和**Continuations**则是周期性任务，任务在入队后可以按照固定的时间间隔去执行，周期性任务都是支持CRON表达式的，**Continuations**类似于Task中的ContinueWith()方法，可以对多个任务进行组合，我们现在的项目中开发了大量基于Quartz的Job，可当你试图把这些Job相互组合起来的时候，你就会觉得相当尴尬，因为后台任务做所的事情往往都是大同小异的
+description: 而**Recurring jobs**和**Continuations**则是周期性任务，任务在入队后可以按照固定的时间间隔去执行，周期性任务都是支持CRON表达式的，**Continuations**类似于Task中的ContinueWith()方法，可以对多个任务进行组合，我们现在的项目中开发了大量基于Quartz的Job，可当你试图把这些Job相互组合起来的时候，你就会觉得相当尴尬，因为后台任务做所的事情往往都是大同小异的;return
+  new JsonResult (new { Flag = true, Message = $"Job:#{jobId}-{jobDescriptor.JobName}已加入队列"
+  });return new JsonResult (new { Flag = true, Message = $"Job:#{jobId}-{jobDescriptor.JobName}已加入队列"
+  })
 tags:
 - .NET Core
 - Hangfire

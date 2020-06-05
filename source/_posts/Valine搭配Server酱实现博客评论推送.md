@@ -1,14 +1,16 @@
 ---
-title: Valine搭配Server酱实现博客评论推送
-categories:
-  - 独立博客
-tags:
-  - Valine
-  - Server酱
-  - 评论
 abbrlink: 369095810
+categories:
+- 独立博客
 date: 2019-11-06 18:15:14
+description: 所以，说白了我们就是想利用它这个“云引擎”来调用Server酱的接口，幸运的是，LeanCloud提供的Hooks目前是支持Nodejs的，所以，到这里思路就非常清晰了，我们给`Comment`这张表加一个`AfterSave`类型的Hooks，在保存完以后调用Server酱接口推送评论信息即可;[Valine](https://valine.js.org/)是一个基于[LeanCloud](https://leancloud.cn)的评论系统，在很长的一段时间里，一直作为多说、[Gitalk](https://gitalk.github.io/)、[Gitment](https://github.com/imsun/gitment)等等的一个替代品，博主所使用的评论系统实际上就是Valine，虽然独立博客的整体活跃度无法媲美专业博客，可还是想在这纷扰的世界里有自己的一方天地啊;Valine本身是利用LeanCloud的数据存储SDK来实现评论的读写的，所以，它相对于“多说”这种第三方的服务，在数据安全性上更有保障一点，虽然“多说”在关闭评论服务以前，提供了导出JSON格式评论信息的功能
+tags:
+- Valine
+- Server酱
+- 评论
+title: Valine搭配Server酱实现博客评论推送
 ---
+
 [Valine](https://valine.js.org/)是一个基于[LeanCloud](https://leancloud.cn)的评论系统，在很长的一段时间里，一直作为多说、[Gitalk](https://gitalk.github.io/)、[Gitment](https://github.com/imsun/gitment)等等的一个替代品，博主所使用的评论系统实际上就是Valine，虽然独立博客的整体活跃度无法媲美专业博客，可还是想在这纷扰的世界里有自己的一方天地啊。多说评论的关闭，某种意义上来说，是很多90后站长们关于互联网的集体记忆，因为从博主搭建第一个WordPress博客的时候，多说就一直作为首选的评论系统而存在。那个时候通过多说就能接入主流的社交媒体，对于一个还不大会编写Web应用的博主来说，此刻想来实在是有种时过境迁的感觉。所以，Valine作为一个相当优秀的评论系统，凭借着简洁大方的界面和开箱即用的优势，在这个时间点进入人们的视野，我们就不难理解，为什么它会成为博客作者们的“新宠”。
 
 Valine本身是利用LeanCloud的数据存储SDK来实现评论的读写的，所以，它相对于“多说”这种第三方的服务，在数据安全性上更有保障一点，虽然“多说”在关闭评论服务以前，提供了导出JSON格式评论信息的功能。可话说回来，以国内这种“敏感”的网络环境，其实没有一家云服务提供商敢打这样的包票，像阿里云、LeanCloud、七牛云存储这些服务，都曾经出现过宕机或者封杀域名的事情，所以，趁着数据还在自己手上，尽可能地做好备份工作吧！Valine本身并没有提供评论推送的功能，我还是挺怀念过去“多说”推送评论到邮箱的功能。虽然[Valine-Admin](https://github.com/DesertsP/Valine-Admin)这个项目提供了类似的功能，但我感觉使用起来并不顺手，尤其是配置邮箱的时候，国内像QQ、163这些都非常麻烦，遇到一两个废弃的手机号，你就会发现短信验证码，是件多么尴尬而繁琐的事情，如同扫码使用的共享电话一般魔幻。

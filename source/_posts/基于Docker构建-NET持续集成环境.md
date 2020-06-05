@@ -5,7 +5,9 @@ categories:
 date: 2018-06-12 17:53:59
 description: RUN sudo mono ./sonar-scanner/SonarQube.Scanner.MSBuild.exe begin /k:"Sonar-HttpServer"
   /d:sonar.organization="qinyuanpei-github" /d:sonar.host.url="https://sonarcloud.io"
-  /d:sonar.login="db795a28468dc7c12805b330afed53d362fdd2d9"
+  /d:sonar.login="db795a28468dc7c12805b330afed53d362fdd2d9";对于单元测试，微软提供的MSTest功能相对薄弱，关键是严重依赖Visual
+  Studio，一旦我们想要移植到Linux平台下，就会发现阻力重重，所以在平时开发中，我更建议大家去使用NUnit或者XUnit，它们比MSTest功能强大，可以直接通过Nuget安装，同时自带TestRunner，这是一个控制台程序，我们直接通过Mono调用它，并把单元测试项目生成的动态链接库作为参数传递给它即可;RUN
+  sudo mono ./sonar-scanner/SonarQube.Scanner.MSBuild.exe end /d:sonar.login="db795a28468dc7c12805b330afed53d362fdd2d9"
 tags:
 - .NET
 - Docker

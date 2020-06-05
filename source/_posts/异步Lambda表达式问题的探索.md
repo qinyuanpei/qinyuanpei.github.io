@@ -4,7 +4,8 @@ categories:
 - 编程语言
 date: 2017-04-15 21:10:47
 description: async void方法引发异常时，因为它没有Task对象来放置异常，因此它的异常SynchronizationContext上引发，而且因为[AsyncVoidMethodBuilder](http://msdn.microsoft.com/en-us/library/system.runtime.compilerservices.asyncvoidmethodbuilder.aspx)内部并没有使用TaskScheduler，因此对于async
-  void方法来说，线程池中未捕获的异常将会一直向上抛并最终导致程序异常终止，虽然我们可以在AppDomain.UnhandledException这个事件中捕捉到这些"未处理的异常"，但这并不能阻止程序异常终止，通过我们可以通过注册这个事件来记录异常日志，以帮助我们快速定位问题
+  void方法来说，线程池中未捕获的异常将会一直向上抛并最终导致程序异常终止，虽然我们可以在AppDomain.UnhandledException这个事件中捕捉到这些"未处理的异常"，但这并不能阻止程序异常终止，通过我们可以通过注册这个事件来记录异常日志，以帮助我们快速定位问题;好了，现在我们回到这篇文章开始的问题，我们现在知道async
+  Task和async Task<T>引发的异常，都不会是程序立即终止，除非我们显式地去await一个Task对象会引发异常，可是对async void来讲，一旦它引发异常，常规的try-catch时无法捕捉到异常的，这种"未处理的异常"会一直向上抛并最终导致程序异常终止;我们注意到这里声明了两个Action，即两个没有返回值的委托类型，它们的不同点在于前者使用了async/await这两个关键字，而后者则是一个普通的同步方法，那么这两者生成的IL代码是否有区别呢
 tags:
 - Lambda
 - 异步

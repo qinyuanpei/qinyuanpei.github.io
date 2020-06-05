@@ -5,7 +5,12 @@ categories:
 date: 2018-02-27 10:45:04
 description: 我的想法是以 [Github](https://github.com/qinyuanpei/qinyuanpei.github.io) 作为代码的主仓库，其上面的
   **blog** 分支存放博客的源代码， **master** 分支存放博客的静态页面，在此基础上，我们同时推送静态页面到 Github 和 Coding 的代码仓库，这样就可以实现两个平台的同步部署，这里的部署自然是指由
-  Travis 完成的自动化部署
+  Travis 完成的自动化部署;其原理是Github为 [Travis CI](https://www.travis-ci.org/) 分配一个token，当我们向
+  Github 推送新的代码以后，Travis 就会从代码仓库中拉取代码，并通过 [npm](https://www.npmjs.com/) 安装依赖生成静态页面，我们将这些静态页面推送到
+  master 分支，即可完成对Hexo的部署操作;各位朋友，大家好，我是Payne，欢迎大家关注我的博客，我的博客地址是 [https://qinyuanpei.github.io](https://qinyuanpei.github.io)
+  .在曾经的一篇博客：[《持续集成在Hexo自动化部署上的实践》](https://qinyuanpei.github.io/posts/3521618732/)中，我为大家分享了在线持续集成服务  [Travis
+  CI](https://www.travis-ci.org/) 的相关内容，在这篇文章中我们通过  [Travis CI](https://www.travis-ci.org/)
+  为 Hexo 提供了自动部署的支持
 tags:
 - CI
 - Hexo

@@ -3,7 +3,9 @@ abbrlink: 887585917
 categories:
 - 游戏开发
 date: 2015-08-20 08:57:10
-description: 因为我们这里要做的是一个游戏存档的方案设计，因为考虑到存档数据的安全性，我们可以考虑采用相关的加密/解密算法来实现对序列化后的明文数据进行加密，这样可以从一定程度上保证游戏存档数据的安全性
+description: 因为我们这里要做的是一个游戏存档的方案设计，因为考虑到存档数据的安全性，我们可以考虑采用相关的加密/解密算法来实现对序列化后的明文数据进行加密，这样可以从一定程度上保证游戏存档数据的安全性;public
+  static void SetData(string fileName,object pObject);public static object GetData(string
+  fileName,Type pType)
 tags:
 - 游戏开发
 - JSON

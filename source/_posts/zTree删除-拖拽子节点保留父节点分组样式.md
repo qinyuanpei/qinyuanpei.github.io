@@ -3,7 +3,7 @@ abbrlink: 1397717193
 categories:
 - 前端开发
 date: 2019-04-12 12:37:10
-description: var treeNode = zTree[i]
+description: var treeNode = zTree[i];= null) {;var parentNode = treeNode.getParentNode()
 tags:
 - JavaScript
 - zTree

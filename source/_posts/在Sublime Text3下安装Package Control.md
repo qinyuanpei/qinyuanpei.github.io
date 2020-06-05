@@ -4,7 +4,9 @@ categories:
 - 开发工具
 comment: true
 date: 2015-04-17 12:54:41
-description: open(os.path.join(ipp, pf), 'wb').write(urllib.request.urlopen( 'http://sublime.wbond.net/'
+description: open(os.path.join(ipp, pf), 'wb').write(urllib.request.urlopen( 'http://sublime.wbond.net/';open(
+  os.path.join( ipp, pf), 'wb' ).write( urllib2.urlopen( 'http://sublime.wbond.net/';ipp
+  = sublime.installed_packages_path()
 tags:
 - Sublime
 - 编辑器

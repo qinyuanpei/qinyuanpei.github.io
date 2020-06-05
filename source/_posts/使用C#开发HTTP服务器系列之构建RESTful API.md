@@ -3,7 +3,10 @@ abbrlink: 3637847962
 categories:
 - 编程语言
 date: 2016-06-11 15:01:35
-description: 在REST中表现形式作为我们对资源请求的一个结果的呈现，通过对HTTP协议的学习我们已经知道，服务器会给客户端返回什么形式的信息，这一点取决于服务器响应报文中相关头部字段，而对REST来讲，它通常会采用XML或者JSON来告诉请求者请求的结果，因为JSON相比XML所含的冗余信息较少，所以目前更加倾向于或者说流行使用JSON作为请求结果的表现形式
+description: 在REST中表现形式作为我们对资源请求的一个结果的呈现，通过对HTTP协议的学习我们已经知道，服务器会给客户端返回什么形式的信息，这一点取决于服务器响应报文中相关头部字段，而对REST来讲，它通常会采用XML或者JSON来告诉请求者请求的结果，因为JSON相比XML所含的冗余信息较少，所以目前更加倾向于或者说流行使用JSON作为请求结果的表现形式;除此之外，我们注意到REST基于HTTP协议，所以HTTP协议中的状态码对它来讲同样适用，例如最常用的200表示成功、500表示服务器内部错误、404表示无法找到请求资源等等;首先，REST即REpresentational
+  State Transfer，通常被翻译为“表述性状态传输”或者“表述性状态转移”，它最早出自Roy Fielding的《Archltectural Styles
+  and the Design of Network-based Software Arcltechures》这篇论文，作者曾经参与HTTP协议和Apache Web
+  Server的设计，所以REST实际上是一个和HTTP协议联系非常紧密的一种设计思想
 tags:
 - HTTP
 - 服务器

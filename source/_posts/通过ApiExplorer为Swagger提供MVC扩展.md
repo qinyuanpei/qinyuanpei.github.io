@@ -3,7 +3,7 @@ abbrlink: 4116164325
 categories:
 - 编程语言
 date: 2019-08-06 23:02:5
-description: 这个接口位于`System.Web.Http.Description`命名空间下，而显然这是WebApi相关的命名空间，所以，对于一般的WebApi项目，因为微软已经帮我们实现了默认的ApiExplorer，所以，Swagger可以识别出项目中的Controller及其Action，并通过XML注释文档进一步填充接口相关的描述信息
+description: 这个接口位于`System.Web.Http.Description`命名空间下，而显然这是WebApi相关的命名空间，所以，对于一般的WebApi项目，因为微软已经帮我们实现了默认的ApiExplorer，所以，Swagger可以识别出项目中的Controller及其Action，并通过XML注释文档进一步填充接口相关的描述信息;我们的想法是通过反射取出所有的MVC控制器及其Action，然后组织出这些接口的描述信息，再将它们添加到默认的IApiExplorer实现中去，这样MVC和WebApi都可以被Swagger识别，为此，我们继承默认的ApiExplorer，并实现我们自定义的`MvcApiExplorer`：;一旦想到这一层，我们就会明白，为什么Swagger不支持MVC项目，因为MVC里压根就没有实现IApiExplorer接口啊
 tags:
 - Swagger
 - MVC

@@ -1,14 +1,17 @@
 ---
-title: C#中Socket通信编程的异步实现
-categories:
-  - 编程语言
-tags:
-  - Socket
-  - 异步
-  - 通信
 abbrlink: 2041685704
+categories:
+- 编程语言
 date: 2015-03-22 09:37:04
+description: 相信大家还记得我们在《C#中Socket通信编程的同步实现》这篇文章中使用多线程来实现简单聊天的案例吧，在这个案例中我们需要开启两个线程来不断监听客户端的连接和客户端的消息，这样的效率肯定是很低的;if
+  (socket == null || message == string.Empty) return;在Socket的异步编程中，服务端不需要为一个客户端单独创建一个线程来维护其连接，可是这样带来的一个问题就是博主不知道该如何实现一个多客户端的异步编程的实例
+tags:
+- Socket
+- 异步
+- 通信
+title: C#中Socket通信编程的异步实现
 ---
+
 &emsp;&emsp;本文将在C#中Socket同步通信的基础上，分析和研究Socket异步编程的实现方法，目的是深入了解Socket编程的基本原理，增强对网络游戏开发相关内容的认识。
 
 <!--more-->

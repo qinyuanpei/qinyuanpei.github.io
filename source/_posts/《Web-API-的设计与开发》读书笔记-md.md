@@ -3,7 +3,7 @@ abbrlink: 3677280829
 categories:
 - 读书笔记
 date: 2019-05-28 12:00:53
-description: '- 指使用符合RPC风格的XML或JSON + HTTP接口的系统(不使用SOAP)'
+description: '- 指使用符合RPC风格的XML或JSON + HTTP接口的系统(不使用SOAP);- 使用HTTP;# 查询参数和路径的使用区别'
 tags:
 - Web API
 - RSETful

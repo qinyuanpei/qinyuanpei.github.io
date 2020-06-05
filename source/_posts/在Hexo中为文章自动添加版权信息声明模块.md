@@ -3,7 +3,8 @@ abbrlink: 2950334112
 categories:
 - 独立博客
 date: 2015-11-15 13:12:22
-description: 大家可以看到这里就是一段HTML代码，因为我们要引入的这个模板和article.ejs在同一个页面中，所以我们可以直接在这里调用item这个变量，而item这个变量里是封装了当前文章的标题和链接的，因此我们可以顺利成章的构造这样一段HTML代码，因为博主不会写CSS样式，所以使用了一个默认的代码样式来完成这个工作，如果大家懂CSS，请自行发挥你的创意将它做得更好
+description: 大家可以看到这里就是一段HTML代码，因为我们要引入的这个模板和article.ejs在同一个页面中，所以我们可以直接在这里调用item这个变量，而item这个变量里是封装了当前文章的标题和链接的，因此我们可以顺利成章的构造这样一段HTML代码，因为博主不会写CSS样式，所以使用了一个默认的代码样式来完成这个工作，如果大家懂CSS，请自行发挥你的创意将它做得更好;<div
+  class="article-content">;<div class="article-content">
 tags:
 - Hexo
 - 版权

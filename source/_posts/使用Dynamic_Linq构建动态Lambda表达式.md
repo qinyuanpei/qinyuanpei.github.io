@@ -1,16 +1,21 @@
 ---
-toc: true
-title: 使用Dynamic Linq构建动态Lambda表达式
-categories:
-  - 编程语言
-tags:
-  - Linq
-  - Lambda
-  - 表达式树
-copyright: true
 abbrlink: 118272597
+categories:
+- 编程语言
+copyright: true
 date: 2020-05-08 12:27:11
+description: var propertyParam = Expression.Property (parameter, condition.Field);searchParameters.Query.Add(new
+  Condition() { Field = "StringValue", Op = Operation.Contains, Value = "山", OrGroup
+  = "StringValue" });searchParameters.Query.Add(new Condition<Foo>() { Field = x =>
+  x.StringValue, Op = Operation.Contains, Value = "有朋", OrGroup = "StringValue" })
+tags:
+- Linq
+- Lambda
+- 表达式树
+title: 使用Dynamic Linq构建动态Lambda表达式
+toc: true
 ---
+
 相信大家都有这样一种感觉，`Linq`和`Lambda`是.NET中一以贯之的存在，从最早的Linq to Object到Linq to SQL，再到EF/EF Core甚至如今的.NET Core，我们可以看到`Lambda`表达式的身影出现地越来越频繁。虽然Linq to Object和Linq to SQL，分别是以`IEnumerable<T>`和`IQueryable <T>`为基础来实现的。我个人以为，`Lambda`呢，其实就是匿名委托的“变种”，而`Linq`则是对`Lambda`的进一步封装。在`System.Linq.Expressions`命名空间下，提供大量关于表达式树的API，而我们都知道，这些表达式树最终都会被编译为委托。所以，动态创建Lambda表达式，实际上就是指从一个字符串生成对应委托的过程，而一旦这个委托被生成，可以直接传递给Where()方法作为参数，显然，它可以对源数据进行过滤，这正是我们想要的结果。
 
 # 事出有因

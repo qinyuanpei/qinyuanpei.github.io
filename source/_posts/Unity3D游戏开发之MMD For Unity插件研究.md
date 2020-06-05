@@ -3,7 +3,7 @@ abbrlink: 4088452183
 categories:
 - 单机游戏
 date: 2015-04-19 23:31:30
-description: '* 1、通过PMD Loader打开加载PMD文件的窗口，建议这里将ShaderType设置为Default，因为如果使用MMD的Shader的话，待会转换出来的模型可能会存在找不到材质的问题'
+description: '* 1、通过PMD Loader打开加载PMD文件的窗口，建议这里将ShaderType设置为Default，因为如果使用MMD的Shader的话，待会转换出来的模型可能会存在找不到材质的问题;该软件最初希望能够将3D建模软件完成的VOCALOID的初音未来等角色模型制作成可以随着音乐跳舞的动画，因此称为MMD;从这样一个过程我们了解到，制作MMD还是需要一定的技术门槛的，因为并不是每一个人都能够完成模型的绑骨、动画这些任务的'
 tags:
 - Unity3D
 - 单机游戏

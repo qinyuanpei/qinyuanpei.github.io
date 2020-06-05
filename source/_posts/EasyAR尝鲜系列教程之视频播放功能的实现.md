@@ -3,7 +3,8 @@ abbrlink: 316230277
 categories:
 - Unity3D
 date: 2015-12-09 08:40:22
-description: 这个增强ImageTarget是指在ImageTarget的基础上融入VideoPlayerBehaviour的功能，因为按照官方的示例来考虑，这两部分功能是独立的，博主希望让大家在制作识别图的时候完全忘记区别ImageTarget和VideoTarget，这样我们可以更为专注地制作识别图，因为视频组件就只是设置参数这一件事情，完全可以一次性搞定，所以我们首先来定义一个VideoTargetBaseBehaviour类，一起来看代码：
+description: 这个增强ImageTarget是指在ImageTarget的基础上融入VideoPlayerBehaviour的功能，因为按照官方的示例来考虑，这两部分功能是独立的，博主希望让大家在制作识别图的时候完全忘记区别ImageTarget和VideoTarget，这样我们可以更为专注地制作识别图，因为视频组件就只是设置参数这一件事情，完全可以一次性搞定，所以我们首先来定义一个VideoTargetBaseBehaviour类，一起来看代码：;博主这里不太理解EasyAR为什么不采用MovieTexture或者Unity3D中针对视频播放提供的相关插件，因为VideoTarget本质上就是把三维模型换成了可以播放的视频而已，所以大家在前面文章的基础上创建一个ImageTarget然后再其下面放置一个附加了VideoPlayerBehaviour的的子物体就可以了;public
+  void ShowObjects(Transform trans)
 tags:
 - 增强现实
 - EasyAR

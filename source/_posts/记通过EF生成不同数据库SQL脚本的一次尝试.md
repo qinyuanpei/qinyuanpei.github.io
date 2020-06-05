@@ -4,7 +4,7 @@ categories:
 - 编程语言
 date: 2018-09-17 09:42:23
 description: 好了，顺着这个思路，我们就会想到在ORM中添加拦截器或者是日志的方式，来获得由ORM生成的SQL语句，这里我们以Entity Framework(以下简称EF)为例，这是.NET中最常见的ORM，因为目前官方的Web开发框架有ASP.NET和ASP.NET
-  Core两个版本，所以这里我们分别以ASP.NET和ASP.NET Core为例来说明具体的实现过程，相应地，我们分别使用了EF6和EF Core 作为各自的ORM
+  Core两个版本，所以这里我们分别以ASP.NET和ASP.NET Core为例来说明具体的实现过程，相应地，我们分别使用了EF6和EF Core 作为各自的ORM;我们说过，ILoggerProvider接口决定在什么情况下应该提供什么样的Logger，我们注意到它提供了一个CreateLogger()的方法，它会根据categoryName来返回不同的Logger，而参数categoryName实际上等价与nameof(FooController)，所以，到这里我们就会明白，为什么这里要判断categoryName了，它实际上起一个过滤的作用，因为我们只需要SQL相关的日志，它和SQLGenLogger中的state相对应，我们已经说过，这是博主试出来的;这篇文章主要介绍如何利用EF来生成不同数据库的SQL脚本，对EF6来说，需要继承DbCommandInterecptor类编写拦截器
 tags:
 - EF
 - .NET Core

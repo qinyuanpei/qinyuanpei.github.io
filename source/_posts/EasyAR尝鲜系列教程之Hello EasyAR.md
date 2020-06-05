@@ -3,7 +3,7 @@ abbrlink: 3120185261
 categories:
 - Unity3D
 date: 2015-10-30 09:44:18
-description: 从今天起博主将为大家带来EasyAR尝鲜系列教程，本教程适用的对象是增强现实应用开发者和Unity3D游戏开发者，在阅读本教程前请确保具备增强现实应用开发及Unity3D游戏开发的相关基础知识
+description: 从今天起博主将为大家带来EasyAR尝鲜系列教程，本教程适用的对象是增强现实应用开发者和Unity3D游戏开发者，在阅读本教程前请确保具备增强现实应用开发及Unity3D游戏开发的相关基础知识;在本节及后续内容中，博主将以国产增强现实引擎EasyAR为主要开发平台来带领大家一起走进增强现实应用开发的世界，希望大家能够喜欢;[增强现实概念图](https://ww1.sinaimg.cn/large/4c36074fly1fziy7k2yssj20m80b4tad.jpg)
 tags:
 - 增强现实
 - AR

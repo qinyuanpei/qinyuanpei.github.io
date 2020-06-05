@@ -3,7 +3,8 @@ abbrlink: 582264328
 categories:
 - 游戏开发
 date: 2015-07-09 09:47:06
-description: '* 三、在使用InsertValues方法时请参考SQLite中字段类型与C#中数据类型的对应关系，博主目前测试了int类型和string类型都没有什么问题，更多类型的数据请大家自行测试然后告诉博主测试的结果，如果大家有兴趣扩展这个辅助类的话可以自行去扩展哦，嘿嘿'
+description: '* 三、在使用InsertValues方法时请参考SQLite中字段类型与C#中数据类型的对应关系，博主目前测试了int类型和string类型都没有什么问题，更多类型的数据请大家自行测试然后告诉博主测试的结果，如果大家有兴趣扩展这个辅助类的话可以自行去扩展哦，嘿嘿;int
+  fieldCount=ReadFullTable(tableName).FieldCount;在Unity3D中使用的SQLite以Mono.Data.Sqlite.dll即动态链接库的形式给出，因此我们需要将这个文件放置在项目目录下的Plugins文件夹中，此外我们需要System.Data.dll或者Mono.Data.dll这两个文件添加到Plugins目录中，因为我们需要的部分数据相关的API或者类都定义在这两个文件当中，这些文件可以从[这里](http://pan.baidu.com/s/1sjLZyrj)直接下载'
 tags:
 - Unity3D
 - SQLite

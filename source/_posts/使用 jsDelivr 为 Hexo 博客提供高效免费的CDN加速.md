@@ -1,14 +1,16 @@
 ---
-title: 使用 jsDelivr 为 Hexo 博客提供高效免费的CDN加速
-categories:
-  - 独立博客
-tags:
-  - Hexo
-  - CDN
-  - jsDelivr
 abbrlink: 1417719502
+categories:
+- 独立博客
 date: 2020-02-05 19:01:00
+description: '> https://cdn.jsdelivr.net/gh/user/repo@version/file;[jsDelivr提供的CDN加速资源](https://i.loli.net/2020/02/05/HtmhUdsSRLW4Q9A.png);https://cdn.jsdelivr.net/npm/jquery@3.2.1/dist/jquery.min.js'
+tags:
+- Hexo
+- CDN
+- jsDelivr
+title: 使用 jsDelivr 为 Hexo 博客提供高效免费的CDN加速
 ---
+
 最近给博客做了升级，从3.x升级到了4.x，主要是在官网看到了关于静态页面生成效率提升的内容。众所周知，Hexo在文章数目增加以后会越来越慢。博主大概是从14年年底开始使用Hexo这个静态博客的，截止到目前一共有176篇博客，其中的“慢”可想而知，中间甚至动过使用Hugo和VuePress的念头，所以，听说有性能方面的提升，还是决定第一时间来试试。整个升级过程挺顺利的，唯一遇到的问题是关于外部链接检测方面的，具体可以参考[这里](https://github.com/hexojs/hexo/issues/4107)。今天，博主主要想和大家分享下关于如何使用[jsDelivr](http://www.jsdelivr.com/)来为博客提供免费、高效的CDN服务，希望对大家有所帮助。
 
 [jsDelivr](http://www.jsdelivr.com/)是一个免费、快速和可信赖的CDN加速服务，官网上声称它每个月可以支撑680亿次的请求。博主是在去年年底的时候，偶然了解到这个服务的存在，这次趁着疫情肆虐的间隙，终于把这个服务集成到了博客中。更重要的是，这个服务在Github上是[开源](https://github.com/jsdelivr/jsdelivr)的。目前，它提供了针对[npm](https://www.npmjs.com/)、[Github](https://github.com)和[WordPress](https://cn.wordpress.org)的加速服务，只需要一行代码就可以获得加速效果，以常用的jQuery和Bootstrap为例：

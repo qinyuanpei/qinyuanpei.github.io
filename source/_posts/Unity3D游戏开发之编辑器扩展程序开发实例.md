@@ -3,7 +3,8 @@ abbrlink: 70687890
 categories:
 - 游戏开发
 date: 2015-03-31 00:53:22
-description: 开发Unity3D编辑器扩展程序的命名空间主要是UnityEditor，在该命名空间下常用的类有EditorGUI、EditorGUILayout、EditorWindow(可能还有其它的类，不过到目前为止博主就用过这些，如果有其它的类，欢迎大家来补充啊)
+description: 开发Unity3D编辑器扩展程序的命名空间主要是UnityEditor，在该命名空间下常用的类有EditorGUI、EditorGUILayout、EditorWindow(可能还有其它的类，不过到目前为止博主就用过这些，如果有其它的类，欢迎大家来补充啊);当我们在场景中选择好物体后，只要填好预设物体的名称、tag、Layer就可以直接生成Prefab了，不过这里有个问题，因为生成Prefab必须要传入一个GameObject，因此如果直接选择项目资源文件夹里的内容可能会报错，因为你选择的不是一个GameObject;*
+  在Unity3D中我们可以通过TextureImporter、ModelImporter、AudioImporter、MovieImporter等来分别向Unity3D中导入贴图、模型、音频、视频等等，经过设置后最终通过AssetDatabase.ImportAsset()来将其添加到项目中热完全，最后需要使用AssetDatabase.Refresh()方法来刷新本地资源，使导入的资源生效
 tags:
 - Unity3D
 - 编辑器

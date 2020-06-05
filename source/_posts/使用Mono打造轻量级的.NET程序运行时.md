@@ -3,7 +3,8 @@ abbrlink: 907824546
 categories:
 - 编程语言
 date: 2016-03-25 12:47:58
-description: 我们将编译好的程序命名为Launcher.exe，放置我们前面定义的Mono运行时目录结构的根目录下，这个文件将作为启动文件暴露给用户，当用户点击这个程序后就可以打开主文件Main.exe
+description: 我们将编译好的程序命名为Launcher.exe，放置我们前面定义的Mono运行时目录结构的根目录下，这个文件将作为启动文件暴露给用户，当用户点击这个程序后就可以打开主文件Main.exe;因为Mono和.NET都可以执行IL代码，所以我用Mono来作为.NET程序的运行时是一个顺理成章的想法;本文通过Mono实现了一个轻量级的.NET程序运行环境，从某种程度上来说，它间接地实现了.NET程序脱离.NET
+  Framework运行
 tags:
 - .NET
 - Mono

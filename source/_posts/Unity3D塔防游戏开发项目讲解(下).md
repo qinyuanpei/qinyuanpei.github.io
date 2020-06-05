@@ -3,7 +3,8 @@ abbrlink: 1176959868
 categories:
 - 游戏开发
 date: 2015-01-21 13:50:48
-description: //Debug.Log("敌人" + _enemy.transform.name + "未进入攻击范围,距离为:" + mDis)
+description: //Debug.Log("敌人" + _enemy.transform.name + "未进入攻击范围,距离为:" + mDis);//Debug.Log("敌人"
+  + _enemy.transform.name + "已进入攻击范围,距离为:" + mDis);好了，现在我们来说说敌人的血条吧，我们知道当怪物沿着寻路路径向我方阵地发起攻击的时候，我方防守单位会自动地对敌人进行防御性攻击，那么此时血条就可以显示敌人的实时血量，从而方便玩家根据战场的情况来调整兵力部署情况
 tags:
 - 游戏开发
 - Unity3D

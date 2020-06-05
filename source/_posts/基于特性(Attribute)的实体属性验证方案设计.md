@@ -3,7 +3,7 @@ abbrlink: 3873710624
 categories:
 - 编程语言
 date: 2017-08-21 14:25:41
-description: 在这个例子中，bookstore节点由两个book节点组成，而每个book节点则由title、author、year和price四个节点组成，显然这些节点描述的是一种结构化的数据，而这些数据同时附加了相关描述性的信息，例如book节点有category信息，title节点有lang信息
+description: 在这个例子中，bookstore节点由两个book节点组成，而每个book节点则由title、author、year和price四个节点组成，显然这些节点描述的是一种结构化的数据，而这些数据同时附加了相关描述性的信息，例如book节点有category信息，title节点有lang信息;显然，一个实体结构中将包含若干个不同的属性，所以在对一个实体结构进行验证的时候，会通过反射遍历每一个属性上的ValidationAttribute并调用其Validate()方法，所以最终返回给调用者的应该是由一组ValidationResult组成的集合，为此我们设计了ValidationResultCollection这个类，该类实现了ICollection接口，在此基础上我们增加了一个Success属性，当集合中所有ValidationResult的Success属性为true时，该属性为true反之为false;所有校验相关的Attribute都派生自ValidationAttribute这个父类，其核心方法是Validate()方法，该方法被声明为一个虚方法，因此所有的子类都必须对这个方法进行重写，它将返回一个叫做ValidationResult的结构，这是一个非常简单的数据结构，它仅仅包含Success和Message两个属性，前者表示当前校验是否成功，后者表示验证失败时的错误信息
 tags:
 - C#
 - 校验
