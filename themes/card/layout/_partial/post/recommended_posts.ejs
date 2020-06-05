@@ -1,15 +1,23 @@
 <%
+    function shuffle(a) {
+        for (let i = a.length; i; i--) {
+            let j = Math.floor(Math.random() * i);
+            [a[i - 1], a[j]] = [a[j], a[i - 1]];
+        }
+        return a;
+    }
+
     function recommended_posts(page, site, limit = 5) {
         page.tags = page.tags || []
         if (page.tags.length == 0) return [];
         let pageTags = page.tags.map(x=>x.name);
         let sitePosts = site.posts.toArray().map(x=> {
-            return {tags:x.tags.toArray().map(y=>y.name), title:x.title, permalink:x.permalink, data:x.date}
+            return {tags:x.tags.toArray().map(y=>y.name), title:x.title, permalink:x.permalink, date:x.date}
         });
         let relatedPosts = pageTags.map(x=>sitePosts.filter(y=>(y.tags.indexOf(x)!=-1 && y.title != page.title) || y.date.format('MM/DD') === page.date.format('MM/DD'))).reduce((prev,next)=>{
             return prev.concat(next);
         },[]);
-        return Array.from(new Set(relatedPosts)).slice(0, limit);
+        return shuffle(Array.from(new Set(relatedPosts))).slice(0, limit);
     }
 %>
 <% var post_list = recommended_posts(page, site, config.recommended_posts.limit) %>
