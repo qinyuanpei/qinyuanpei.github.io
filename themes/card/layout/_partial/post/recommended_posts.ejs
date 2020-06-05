@@ -14,11 +14,14 @@
         let sitePosts = site.posts.toArray().map(x=> {
             return {tags:x.tags.toArray().map(y=>y.name), title:x.title, permalink:x.permalink, date:x.date}
         });
-        let relatedPosts = pageTags.map(x=>sitePosts.filter(y=>(y.tags.indexOf(x)!=-1 && y.title != page.title) || y.date.format('MM/DD') === page.date.format('MM/DD'))).reduce((prev,next)=>{
+        let relatedPosts = pageTags.map(x=>sitePosts.filter(y=>y.title != page.title  && (y.tags.indexOf(x) != -1 || y.date.format('MM/DD') == page.date.format('MM/DD')))).reduce((prev,next)=>{
             return prev.concat(next);
         },[]);
+        console.log(relatedPosts);
         return shuffle(Array.from(new Set(relatedPosts))).slice(0, limit);
     }
+
+
 %>
 <% var post_list = recommended_posts(page, site, config.recommended_posts.limit) %>
 <% if(post_list.length > 0 && config.recommended_posts.enable) { %>
