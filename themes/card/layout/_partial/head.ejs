@@ -42,6 +42,12 @@
         } else if (is_tag()){
             title = (theme.tags_title || '标签') + ': ' + page.tag;
         }
+
+        var pageTags = page.tags.toArray().map(x=>x.name);
+        if (config.keywords){
+            pageTags = pageTags.concat(config.keywords.split(','))
+        }
+        var keywords = pageTags.join(',')
     %>
     <title>
         <% if (title){ %><%= title %> - <% } %><%= config.title %><% if (config.subtitle && is_home()){ %> - <%= config.subtitle %><% } %>
@@ -50,7 +56,8 @@
     <% if(theme.color){ %>
         <meta name="theme-color" content="<%=theme.color%>">
     <% } %>
-    <meta name="keywords" content="<%= config.keywords %>">
+
+    <meta name="keywords" content="<%= keywords %>">
     <% if (page.description){ %>
         <meta name="description" content="<%= page.description %>">
     <% }else if (config.description){ %>
