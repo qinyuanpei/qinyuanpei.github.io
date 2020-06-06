@@ -1,0 +1,16 @@
+name: LightHouse Audit
+on: push
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Audit Blog
+      uses: jakejarvis/lighthouse-action@master
+      with:
+        url: 'https://blog.yuanpei.me'
+    - name: Upload Report
+      uses: actions/upload-artifact@master
+      with:
+        name: report
+        path: './report'
