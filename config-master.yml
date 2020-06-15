@@ -209,3 +209,10 @@ jsdelivr:
   gh_repo: qinyuanpei.github.io
   baseUrl: cdn.jsdelivr.net
 
+offline:
+  runtimeCaching:
+    - urlPattern: /*
+      handler: cacheFirst
+      options:
+        origin: cdn.jsdelivr.net
+
