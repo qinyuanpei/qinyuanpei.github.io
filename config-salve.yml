@@ -211,4 +211,14 @@ offline:
       handler: cacheFirst
       options:
         origin: cdn.jsdelivr.net
+  runtimeCaching:
+    - urlPattern: /*
+      handler: cacheFirst
+      options:
+        origin: cdn.bootcss.com
+  runtimeCaching:
+    - urlPattern: /*
+      handler: cacheFirst
+      options:
+        origin: cdnjs.cloudflare.com      
 
