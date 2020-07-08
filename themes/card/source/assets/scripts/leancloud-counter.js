@@ -138,7 +138,7 @@ function VisitorCounter() {
      * 返回页面UV 
      **/
     this.pageUV = function () {
-        var url = location.href;
+        var url = location.href.replace(location.search,'');
         var title = document.title;
         var ipInfo = JSON.parse(localStorage.getItem('ipInfo'));
         var where = { page_url: url, visitor_ip: ipInfo.ip };
