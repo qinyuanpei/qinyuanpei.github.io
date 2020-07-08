@@ -103,7 +103,7 @@ function VisitorCounter() {
      * 返回页面PV 
      **/
     this.pagePV = function () {
-        var url = location.href;
+        var url = location.href.replace(location.search,'');
         var title = document.title;
         var where = { page_url: url };
         var self = this;
