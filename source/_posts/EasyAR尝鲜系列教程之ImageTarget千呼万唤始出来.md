@@ -15,14 +15,14 @@ title: EasyAR尝鲜系列教程之ImageTarget千呼万唤始出来
 
 <!--more-->
 
-#EasyAR SDK的结构
+# EasyAR SDK的结构
 &emsp;&emsp;将EasyAR SDK导入Unity3D后会在项目的Assets根目录下生成EasyAR和Plugins两个文件夹。其中EasyAR文件夹中提供了开发AR应用相关的标准接口、材质、Shader和Prefab，Plugins文件夹中提供了针对各个平台的插件。好了，下面我们来介绍EasyAR SDK中提供的标准接口：
 * ARBuilder: 该类提供了EasyAR初始化的相关方法，我们在编写EasyAR配置类的时候会用到这个类，这是一个可以直接使用的类。
 * ImageTargetBehaviour: 该类是一个抽象类，我们需要对其进行override，可以将这个类理解为ImageTarget生命周期相关的一个类，在实际使用中需要配合ITargetEventHandle这个接口来使用。
 * VideoPlayerBaseBehaviour: 该类是一个组件，我们可以使用这个组件来播放视频。其原理和ImageTarget类似，所不同的地方是ImageTarget在识别成功后会显示一个模型，而这里则是使用一个隐藏的物体来播放视频，VideoPlayerBaseBehaviour负责控制视频的播放、暂停等工作。
 * ITargetEventHandle: 这是一个接口，通过该接口可以捕捉到识别过程中的OnTargetFound、OnTargetLost、OnTargetLoad和OnTargetUnload四个事件，对于一个基本的AR应用来说，我们通常需要关注的是OnTargetFound、OnTargetLost这两个方法。
 
-#构建第一个ImageTarget项目
+# 构建第一个ImageTarget项目
 &emsp;&emsp;好了，在了解了EasyAR中常用的标准接口以后，我们下面来着手构建第一个ImageTarget项目，和我们第一次接触EasyAR不同，这次我们会编写些简单地代码，打开场景填入应用程序密钥(Key)然后运行它，这种方式在这里会显得略LOW。
 ##EasyAR的初始化
 &emsp;&emsp;首先我们在Assets/EasyAR/Prefabs目录下找到EasyAR这个预制体，然后将其拖放到场景中，这样我们就创建了基本的EasyAR应用场景，接下来我们要做的事情就是在这个场景中填入各种各样的识别物。为了让EasyAR正常工作，我们首先要编写一个初始化EasyAR的脚本：
@@ -55,7 +55,7 @@ public class EasyARConfig : MonoBehaviour
 ```
 我确信这个类简单到彻底，它需要开发者在编辑器中填入KEY然后再Awake方法中完成对EasyAR的初始化，就是这样简单，我们这里将这个脚本附加到EasyAR这个物体上去，这样我们就完成了引擎的初始化工作，下面我们就可以专注于AR内容的产生了。
 
-##制作一个ImageTarget
+## 制作一个ImageTarget
 &emsp;&emsp;接下来我们在Assets/EasyAR/Prefabs目录中找到ImageTarget这个预制体，将其拖放到场景中，确保它在摄像机的视野范围内。我们注意到默认情况下它附加了一个ImageTargetBehaviour脚本，我们在前面已经说过，这个类是一个抽象类，抽象类通常是不做任何事情的，因此我们需要继承这个类来编写一个具体类，我们将这个具体类命名为CustomImageTargetBehaviour。下面给出它的代码实现：
 
 ```
@@ -144,13 +144,13 @@ public class CustomImageTargetBehaviour :ImageTargetBehaviour,ITargetEventHandle
 
 ![两个ImageTarget及其对应Maker](https://ww1.sinaimg.cn/large/4c36074fly1fz68j2ap8rj20fa09wacy.jpg)
 
-##走向成功的关键步骤
+## 走向成功的关键步骤
 1、在EasyAR物体的EasyARConfig组件中填入从官网申请的KEY。
 2、在BuildSetting中填写KEY对应的AppID。
 3、安装SDK中附带的VC++2015运行库。
 4、如要编译Android版本，请确保安装Java环境和Android SDK
 更多的问题请自行到官方文档中对照寻找解决办法。
 
-#截图展示
+# 截图展示
 
 ![截图展示]()
