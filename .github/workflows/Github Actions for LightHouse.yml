@@ -1,4 +1,4 @@
-name: LightHouse Audit
+name: Github Actions for LightHouse
 on: push
 
 jobs:

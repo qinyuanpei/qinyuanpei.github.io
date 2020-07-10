@@ -141,4 +141,4 @@ if(__name__ == "__main__"):
     items = sorted(loadData(sys.argv[1]),key=lambda x:x.getDate(),reverse=True)
     mkMarkdown(items)
     baiduSitemap()
-    # submitSitemap()
+    submitSitemap()
