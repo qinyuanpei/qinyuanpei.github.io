@@ -14,32 +14,31 @@ from xml.dom.minidom import parse
 import xml.dom.minidom
 import yaml
 
-baseUrl = "http://data.zz.baidu.com/urls?site=https://blog.yuanpei.me&token=RDl7DmfXeoWMVvWP"
-querystring = {"site":"","token":"RDl7DmfXeoWMVvWP"}
+querystring = {"site": "blog.yuanpei.me", "token": "RDl7DmfXeoWMVvWP"}
 headers = {
     'User-Agent': "curl/7.12.1",
     'Content-Type': "text/plain",
 }
 
-def submitSitemap():
-    with open('_config.yml', 'rt', encoding='utf-8') as f:
-        conf = yaml.load(f)
-        session = requests.session()
-        if(conf['image_version'] == "master"):
-            DOMTree = xml.dom.minidom.parse('./public/baidusitemap.xml')
-            root = DOMTree.documentElement
-            urls = root.getElementsByTagName("url")
-            for url in urls:
-                loc = url.getElementsByTagName("loc")[0]
-                payload = loc.childNodes[0].data
-                response = session.request("POST", baseUrl, data=payload, headers=headers,)
-                print(response.text)
-                data = json.loads(response.text)
-                if(data['success'] == 1):
-                    print('提交地址:{payload},至百度成功'.format(payload=payload))
-                time.sleep(5)
 
+def submitSitemap(baseUrl):
+    session = requests.session()
+    response = session.get(baseUrl + '/baidusitemap.xml')
+    with open('baidusitemap.xml','w',encoding='utf-8') as sitemap:
+        sitemap.write(response.text);
+    DOMTree = xml.dom.minidom.parse('./baidusitemap.xml')
+    root = DOMTree.documentElement
+    urls = root.getElementsByTagName("url")
+    for url in urls:
+        loc = url.getElementsByTagName("loc")[0]
+        payload = loc.childNodes[0].data
+        response = session.request("POST", 'http://data.zz.baidu.com/urls', data=payload, headers=headers, params=querystring)
+        print(response.text)
+        data = json.loads(response.text)
+        if(data['success'] == 1):
+            print('提交地址:{payload},至百度成功'.format(payload=payload))
+        time.sleep(5)
 
 
 if(__name__ == "__main__"):
-    submitSitemap()
+    submitSitemap(sys.argv[1])
