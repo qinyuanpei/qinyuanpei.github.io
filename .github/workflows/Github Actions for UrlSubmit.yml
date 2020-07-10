@@ -18,8 +18,8 @@ jobs:
           architecture: 'x64'
       - name: Install Requirements
         run: |
-          - python3 -m pip install pip -U
-          - python3 -m pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple
-          - python3 -m pip install -r requirements.txt
+          - python -m pip install --upgrade pip
+          - pip install flake8 pytest
+          - if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
       - name: Submit Url
-        run: python3 urlSubmit.py
+        run: python urlSubmit.py https://blog.yuanpei.me
