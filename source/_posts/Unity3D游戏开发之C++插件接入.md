@@ -20,8 +20,10 @@ title: Unity3D游戏开发之C++插件接入
 &emsp;&emsp;Unity3D主要使用C#进行开发，所以为Unity3D编写插件本质上就是让C#调用C++代码。目前主要有C++ CLR和C++ Native两种实现方法，其中C++ CLR可以理解为运行在.Net CLR即公共语言运行库上的C++代码，这种代码是托管的C++代码，目前并没有被C++标准承认，因为它更像是C++和C#两种语言的混合代码，这种代码的优势是可以像普通的.NET库一样被C#调用，考虑到Unity3D建立在和.Net类似的Mono上，因此这种方式应该是我们的最佳实践方案；C++ Native则是指传统的C++ 动态链接库，通过DllImport在C#中进行包装后在C#中进行调用，相对地这种方式调用的是非托管的C++代码，这种方式相信接触过Windows开发的朋友应该不会感到陌生啦，它是一种更为普遍的方法，例如我们要接入苹果官方SDK的时候，需要对Object C的代码进行封装后交给C#去调用，而这里使用的方法就是DllImport了。
 
 &emsp;&emsp;好了，下面我们来看看两种方式各自是如何实现的吧！这里博主使用的开发环境是Windows 8.1 32bit 和 Visual Studio 2012，Unity3D的版本为4.6版本。
-#C++ CLR
-##创建一个C++ CLR类库项目
+
+# C++ CLR
+
+## 创建一个C++ CLR类库项目
 &emsp;&emsp;首先我们按照下图中的步骤创建一个C++ CLR项目：
 
 ![截图是件讨厌的事情，虽然懒惰的人们都喜欢](https://ww1.sinaimg.cn/large/4c36074fly1fzix18bmvyj20qi0gwdgh.jpg)
@@ -86,7 +88,7 @@ using CLR4Unity;
 
 如果你对.NET熟悉到足以无视这里的一切，请闭上眼接着往下看，哈哈！
 
-##在C#中添加引用及方法调用
+## 在C#中添加引用及方法调用
 &emsp;&emsp;接下来我们在Unity3D中创建一个脚本PluginTest.cs，然后在OnGUI方法增加下列代码。可是你要以为这些代码就应该写在OnGUI方法中，抱歉请你先去了解MonoBehaviour这个类。什么？添加了这些代码报错？没有using的请自行面壁：
 ```
 //调用C++ CLR中的方法
@@ -97,8 +99,8 @@ if(GUILayout.Button("调用C++ CLR中的方法", GUILayout.Height (30)))
 	Debug.Log("调用C++ CLR中的方法Square(5):" + ExampleClass.Square(5));
 }
 ```
-#C++ Native
-##创建一个C++动态链接库项目
+# C++ Native
+## 创建一个C++动态链接库项目
 &emsp;&emsp;首先我们按照下图中的步骤来创建一个C++ Win32项目：
 
 ![不要问我从哪里来](https://ww1.sinaimg.cn/large/None.jpg)
@@ -153,7 +155,7 @@ extern "C" __declspec(dllexport) int Square(int a)
 ```
 和C++ CLR类似，我们使用标准的C++语言来实现同样的功能。注意到rand()这个函数是C++标准库里的内容，所以我们在文件开头增加了对stdlib.h这个头文件的引用。这里需要注意的一点是：**所有希望使用DllImport引入C#的C++方法都应该在方法声明中增加__declspec(dllexport)关键字，除非它在.def文件中对这些方法进行显示声明**。关于.def文件的相关定义大家可以到MSDN上检索，这些都是属于C++编译器的内容，这里不再详细说了。
 
-##在C#中使用DllImport封装方法
+## 在C#中使用DllImport封装方法
 
 &emsp;&emsp;将编译好的Native4Unity.dll复制到Plugins目录中后，下面我们要做的事情就是在C#里对这些方法进行封装或者说是声明：
 
