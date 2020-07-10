@@ -3,7 +3,7 @@ name: 'Github Actions for UrlSubmit'
 on:
   push:
   schedule:
-    - cron: '0 0 12 ? * WED '
+    - cron: '0 23 * * 6'
 
 jobs:
   bot:
