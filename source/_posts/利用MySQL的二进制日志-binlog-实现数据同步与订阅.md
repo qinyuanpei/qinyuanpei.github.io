@@ -58,7 +58,7 @@ service mysql restart
 ```Shell
 service mysqld restart
 ```
-通常，我们可以通过下面的命令来获取Binlog的当前状态，请注意，该命令必须要在主库上执行：
+通常，我们可以通过下面的命令来获取Binlog的当前状态，请注意，**该命令必须要在主库上执行**：
 ```Shell
 SHOW MASTER STATUS
 ```
