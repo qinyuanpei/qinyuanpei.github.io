@@ -81,7 +81,7 @@ SHOW BINLOG EVENTS IN 'MYSQL-BIN.000388' FROM 135586062
 
 # 业内主流方案
 如果你觉得通过第一节的内容，可以非常容易地实现Binlog的解析，那么，我觉得你并没有想清楚Binlog处理过程中的难点在哪里？首先，每次读取Binlog，必须要知道对应的日志文件和位置，而如果在新的Binlog 产生前，没有处理完原来的Binlog，就必须要记录对应的日志文件和位置，而且经过博主本人测试，Binlog无法直接给查询语句追加过滤条件，来达到筛选某些数据库、表以及事件的目的，而且日志文件的格式会因为模式的不同而不同，最主要的一点是，直接在主库上读取Binlog会给数据库带来访问压力，所以，主流的方案，是让客户端伪装成“从库”，关于一点，我们可以配合下面的图片来理解。
-![11345047-d7cfb695f8c96241.png](https://i.loli.net/2020/07/20/N8A24sEK1RnjBdv.png)
+![MySQL主从复制原理](https://i.loli.net/2020/07/20/N8A24sEK1RnjBdv.png)
 可以注意到，完成主从复制需要一个Relaylog + 两个线程，即，主库产生的Binlog，首先由从库的I/O线程进行读取，这一步会产生Relaylog，顾名思义，这是一个处在中间状态的中继日志，而中继日志最终会交由从库的SQL线程来处理，所以，这是从库执行SQL语句的阶段，整个过程是异步化的操作，所以，不会对主库产生太大的压力。如果我们直接读取主库的Binlog，实际上是把所有压力都转移到主库，不仅需要负责“读”，还需要复杂“写”。主流的方案，目前比较推荐的是阿里的[Canal](https://github.com/alibaba/canal)、Zendesk的[Maxwell](http://maxwells-daemon.io/)、以及来自社区的[Python-Mysql-Replication](https://github.com/noplay/python-mysql-replication)，下面是一个简单的对比，方便大家做技术选型。
 
 |   | Cancal  | Maxwell  | Python-Mysql-Rplication |
