@@ -206,6 +206,9 @@ jsdelivr:
   baseUrl: cdn.jsdelivr.net
 
 offline:
+  maximumFileSizeToCacheInBytes: 10485760
+  staticFileGlobs:
+    - public/**/*.{js,html,css,png,jpg,jpeg,gif,svg,json,xml,svg,ttf,woff,eot,woff2,eot,otf}
   runtimeCaching:
     - urlPattern: /*
       handler: cacheFirst
