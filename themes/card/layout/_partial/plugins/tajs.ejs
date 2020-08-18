@@ -1,8 +1,8 @@
-<% if (theme.tajs){ %>
+<% if (theme.tajs.enable){ %>
 <!-- Tencent Speed -->
 <script>var _speedMark = new Date()</script>
 <!-- End Tencent Speed -->
 <!-- Tencent Analysis -->
-<script async src="//tajs.qq.com/stats?sId=<%- theme.tajs %>"></script>
+<script async src="//tajs.qq.com/stats?sId=<%- theme.tajs.tid %>"></script>
 <!-- End Tencent Analysis -->
 <% } %>
