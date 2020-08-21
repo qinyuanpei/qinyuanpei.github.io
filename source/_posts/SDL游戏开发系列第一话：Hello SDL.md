@@ -16,7 +16,7 @@ title: SDL游戏开发系列第一话：Hello SDL
 
 <!--more-->
 
-###什么是SDL
+# 什么是SDL
 &emsp;&emsp;[SDL](http://www.libsdl.org/)（Simple DirectMedia Layer）是一套开放源代码的跨平台多媒体开发库，使用C语言写成。SDL提供了数种控制图像、声音、输出入的函数，让开发者只要用相同或是相似的代码就可以开发出跨多个平台如Linux、Windows、Mac OS X等的应用软件。目前SDL可用于游戏、模拟器、媒体播放器等多媒体应用领域的开发，SDL最为著名的案例是曾赢得Linux组游戏开发大奖的游戏[《文明：权利的召唤》](https://en.wikipedia.org/wiki/Civilization:_Call_to_Power)。或许大家对这个游戏会感到陌生吧，可是如果我提到一个Linux下经典单机游戏《仙剑奇侠传》的开源实现[SDLPal](http://sdlpal.codeplex.com/)相信大家就没有不知道的了吧？这款经典的单机游戏所以能够移植到Linux平台下就是因为使用SDL。好了，在对SDL有了大概的认识后，我们来看看SDL有哪些值得我们去研究的优良特性吧！
 *  SDL提供了从图像、视频、音频、事件、线程、计时器的API，功能特别强大。
 *  SDL具有良好的跨平台性能，支持Windows、Linux及Android和IOS，是开发跨平台多媒体应用的神兵利器。
@@ -25,7 +25,7 @@ title: SDL游戏开发系列第一话：Hello SDL
 *  SDL支持C++、C#、Java、 Lisp、Lua、Objective C、Pascal、Perl、 PHP、Python、Ruby等近20种编程语言。
 *  SDL是GNU LGPL 2开源协议下发布的开源软件，该协议允许用户将SDL以动态链接库的形式免费地用于商业游戏软件的开发。
 
-###SDL的下载、安装和配置
+# SDL的下载、安装和配置
 &emsp;&emsp;SDL开发相关的资源都可以从[http://www.libsdl.org/](http://www.libsdl.org/)来获取。目前SDL存在1.2和2.0两个版本，从效率上来说SDL2.0支持硬件加速效率较SDL1.2有了较好的提升，从稳定性上来讲SDL2.0尚处于发展阶段，因此可能其中的Bug较SDL1.2可能会多些。博主这里选择的SDL2.0，下面是相关的下载链接：
 * SDL源代码——[下载](http://www.libsdl.org/release/SDL2-2.0.3.zip)
 * SDL二进制库——[Win_x86](http://www.libsdl.org/release/SDL2-2.0.3-win32-x86.zip)、[Win_x64](http://www.libsdl.org/release/SDL2-2.0.3-win32-x64.zip)、[Mac](http://www.libsdl.org/release/SDL2-2.0.3.dmg)
@@ -38,7 +38,7 @@ title: SDL游戏开发系列第一话：Hello SDL
 * 4、将【配置属性】->【链接器】->【系统】->【子系统】设置为窗口 (/SUBSYSTEM:WINDOWS)
 * 5、将SDL2.dll复制到项目的Debug目录中
 
-###SDL游戏开发的基本流程
+# SDL游戏开发的基本流程
 &emsp;&emsp;SDL游戏开发的一般流程是：
 *  1、使用SDL_Init()方法对SDL进行初始化。其中该初始化方法的参数类型为int类型，可以从SDL_INIT_HAPTIC、SDL_INIT_AUDIO、SDL_INIT_VIDEO、SDL_INIT_TIMER、SDL_INIT_JOYSTICK、
 SDL_INIT_EVERYTHING、SDL_INIT_NOPARACHUTE七个类型中选择，分别表示力反馈子系统、音频子系统、视频子系统、计时器子系统、摇杆子系统、全部和忽略致命信号。
@@ -46,7 +46,7 @@ SDL_INIT_EVERYTHING、SDL_INIT_NOPARACHUTE七个类型中选择，分别表示�
 *  3、在SDL窗口创建成功后使用SDL_CreateRenderer()方法创建一个SDL渲染器（SDL_Renderer）。其中SDL渲染器有SDL_RENDERER_SOFTWARE、SDL_RENDERER_ACCELERATED、SDL_RENDERER_PRESENTVSYNC、SDL_RENDERER_TARGETTEXTURE四种类型分别表示软件渲染、硬件加速、屏幕同步刷新渲染和支持渲染纹理。
 *  4、使用SDL_RenderClear()方法清空SDL渲染器、使用SDL_RenderPresent()方法将渲染的结果显示出来
 
-###工程示例
+# 工程示例
 &emsp;&emsp;下面以一个简单的示例来向大家演示SDL游戏开发的一般流程：
 ```C++
 /* 添加对SDL的引用*/
