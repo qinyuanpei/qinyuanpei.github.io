@@ -15,14 +15,14 @@ title: 《Cg Programming in Unity》读书笔记
 
 <!--more-->
 
-#Unity3D中的Shader概述
+# Unity3D中的Shader概述
 &emsp;&emsp;为Unity3D编写Sahder代码相对OpenGL和DirectX要简单。Unity3D没有刻意地区分Cg语言和HLSL语言，因为这两者是非常相似的，这意味着使用HLSL编写的代码可以直接在Cg中使用，更为深入地探索HLSL和Cg的渊源你会戏剧性地发现Cg是Microsoft和NVIDIA联手推出并试图从硬件和软件上和GLSL相抗衡的一种产物。
 
 &emsp;&emsp;其中[Cg](http://http.developer.nvidia.com/Cg/Cg_language.html)是[Nvidia](http://http.developer.nvidia.com/CgTutorial/cg_tutorial_chapter01.html)提供的一种Shader编写语言，HLSL是DirectX提供的一种Shader编写语言，这意味着大部分的Cg代码同样可以被HLSL支持。Unity3D中使用的Shader编写语言是ShaderLab，其本质是对Cg进行了封装，因此在Unity3D中编写Shader本质上在给DirectX或者OpenGL写Shader，因为我猜测在引擎内部存在HLSL和GLSL的相互转换使得Unity3D能够在不同的平台都有较好的图形表现。
 
 &emsp;&emsp;Unity3D中Shader程序的编写可以参考[这里](http://unity3d.com/support/documentation/Components/SL-Reference.html)。我们知道计算机图形学的中渲染管线一般可以分为两种类型，即固定功能渲染管线和可编程渲染管线。因此从这个角度来看，Unity3D中主要有三种着色器，即固定功能着色器（Fixed Function Shader）、表面着色器（Surface Shader）和 顶点着色器&片段着色器 （Vertex Shader & Fragment Shader）。
 
-#Unity3D中Shader的基本结构
+# Unity3D中Shader的基本结构
 &emsp;&emsp;首先，Unity3D中Shader的基本结构是：
 ```
 Shader 
@@ -44,7 +44,7 @@ Shader
 ```
 对这个结构我们的理解是，Shader代码首先是一些属性定义，用来指定这段代码将有哪些输入。接下来是一个或者多个的子着色器，在实际运行中，哪一个子着色器被使用是由运行的平台所决定的。子着色器是代码的主体，每一个子着色器中包含一个或者多个的Pass。在计算着色时，平台先选择最优先可以使用的着色器，然后依次运行其中的Pass，然后得到输出的结果。最后指定一个Fallback，用来处理所有SubShader都不能运行的情况称为回滚。下面来分别介绍Shader基本结构中的各个部分：
 
-##Shader中的Properties
+## Shader中的Properties
 Properties是由多条标签组成的Shader属性定义，这些属性能够在Unity3D中的编辑器中显示出来，以此来确定这段Shader代码由哪些输入。常见的标签定义有：
 ```
 name("display name", Range(min, max)) = number
@@ -76,7 +76,7 @@ name("display name", Vector) =(number,number,number,number)
 ```
 定义一个在编辑器中可通过输入框修改的Vector4属性
 
-##Shader中的SubShader
+## Shader中的SubShader
 &emsp;&emsp;SubShader，即子着色器。子着色器是代码的主体，每一个子着色器中包含一个或者多个的Pass。在计算着色时，平台先选择最优先可以使用的着色器，然后依次运行其中的Pass，然后得到输出的结果。子着色器的基本结构是：
 ```
 Subshader
@@ -91,7 +91,7 @@ Subshader
     }
 }
 ```
-####Tags标签
+### Tags标签
 在这里子着色器使用Tags标签来告诉渲染引擎期望何时和如何渲染对象，其语法是：
 ```
 Tags { "TagName1" = "Value1" "TagName2" = "Value2" }
@@ -116,7 +116,7 @@ Tags { "IgnoreProjector" ="True" }
 ```
 表示忽略投影标签，其值为True表示忽略投影反之表示受投影影响。
 
-####Pass通道
+### Pass通道
 Pass通道块控制被渲染的对象的几何体。其结构定义如下：
 ```
 Pass 
@@ -129,7 +129,7 @@ Pass
     [TextureSetup] 
 }
 ```
-#####名称与标签
+### 名称与标签
 在通道中可以定义其名称和任意数目的标签，通过使用tags来告诉渲染引擎在什么时候该如何渲染他们所期望的效果，其语法和Tags标签完全相同，即采用键值对来定义标签的名称和其对应的值。常用的标签有：
 ```
 Tags { "LightMode" = "Always" }
@@ -146,7 +146,7 @@ Tags { "LightMode" = "Always" }
 * ShadowCaster使物体投射阴影。
 * ShadowCollector为正向渲染对象的路径，将对象的阴影收集到屏幕空间缓冲区中。
 
-#####渲染设置
+#### 渲染设置
 渲染设置设定显示硬件的各种状态，常用的命令如下：
 ```
 Material 
@@ -225,16 +225,17 @@ ColorMaterial AmbientAndDiffuse | Emission
 ```
 当计算顶点光照时使用每顶点的颜色
 
-#####纹理设置
+#### 纹理设置
 纹理设置的作用是在完成渲染设定后指定一定数目的纹理及其混合模式：
 ```
 SetTexture [texture property]{ [Combineoptions] }
 ```
 
 
-##Shader中的Fallback
+## Shader中的Fallback
 Fallback就像switch-case结构中的default，其作用是定义当处理所有SubShader都不能运行时采取的一个补救方案，这个主要是为了解决不同的显卡对Shader支持的差异问题。
-#Unity3D中Shader的语法
+
+# Unity3D中Shader的语法
 Unity3D中Shader的语法主要针对Cg代码而言，Cg代码是可编程着色器和表面着色器中的核心内容，Cg代码从CGPROGRAM开始到ENDCG结束
 
-#Unity3D中的三种着色器
+# Unity3D中的三种着色器
