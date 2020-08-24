@@ -9,7 +9,7 @@ tags:
   - .NET Core
 copyright: true
 abbrlink: 2414960312
-date: 2020-08-22 16:37:23
+date: 2020-08-15 16:37:23
 ---
 在此前的博客中，博主参考 [eShopOnContainers](https://github.com/dotnet-architecture/eShopOnContainers) 实现了一个基于RabbitMQ的事件总线(EventBus)。在这个项目中，它提供了一个持久化连接的类`DefaultRabbitMQPersistentConnection`，主要解决了RabbitMQ在连接断开后自动重连的问题，可实际上我们都知道，RabbitMQ提供的连接数是有一个上限的，如果频繁地使用短连接的方式，即通过`ConnectionFactory`的`CreateConnection()`方法来创建一个连接，从本质上讲，一个`Connection`对象就是一个TCP连接，而`Channel`则是每个`Connection`对象下有限的虚拟连接，注意“有限”这个限定词，这意味着`Channel`和`Connection`一样，都不能毫无节制的创建下去。此时，官方推荐的做法有两种：(1)：一个`Connection`对应多个`Channel`同时保证每个`Channel`线程独占；(2)：创建一个`Connection`池同时定期清除无效连接。这里的第二种做法，显然就是我们今天要说的对象池(Object Pool)啦，我们将从这里拉开这篇博客的帷幕。
 
