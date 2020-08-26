@@ -186,8 +186,8 @@ reading_time:
 # 动态定义title
 title_change: 
   enable: true
-  normal: 但盼风雨来，能留你在此
-  leave: 即使天无雨，我亦留此地
+  normal: 但盼风雨来，能留你在此。
+  leave: 即使天无雨，我亦留此地。
 
 # 设置为 true 发布后将使用 unpkg cdn 最新的主题样式
 # 如果想让你的自定义样式生效，把此项设为 false

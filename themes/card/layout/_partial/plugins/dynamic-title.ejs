@@ -1,15 +1,25 @@
 <% if (theme.title_change.enable) { %>
 <script>
+titleArray = [];
+function scrollTitle() {
+    if (titleArray.length == 0) return;
+    titleArray.push(titleArray[0]);
+	titleArray.shift();
+	document.title = titleArray.join("");
+}
+setInterval(scrollTitle, 500);
 (function() {
     var OriginTitile = document.title, titleTime;
     document.addEventListener('visibilitychange', function() {
         if (document.hidden) {
-            document.title = '<%- theme.title_change.leave %>';
+            titleArray = '<%- theme.title_change.leave %>'.split('');
             clearTimeout(titleTime);
         } else {
             document.title = '<%- theme.title_change.normal %>';
+            titleArray = '<%- theme.title_change.normal %>'.split('');
             titleTime = setTimeout(function() {
                 document.title = OriginTitile;
+                titleArray = [];
             },2000);
         }
     });
