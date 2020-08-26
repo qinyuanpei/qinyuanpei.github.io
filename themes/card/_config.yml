@@ -184,7 +184,8 @@ reading_time:
   display: min. #显示文本标识
 
 # 动态定义title
-title_change: true
+title_change: 
+  enable: true
   normal: 但盼风雨来，能留你在此
   leave: 即使天无雨，我亦留此地
 
