@@ -14,7 +14,7 @@ date: 2020-07-31 12:01:14
 终于到这个系列的最后一篇，在前两篇博客中，我们分别了介绍了**Binlog**的概念和事件总线(**EventBus**)的实现，在完成前面这将近好几千字的铺垫以后，我们终于可以进入正题，即通过EventBus发布Binlog，再通过编写对应的EventHandler来订阅这些Binlog，这样就实现了我们“最初的梦想”。坦白说，这个过程实在有一点漫长，庆幸的是，它终于还是来了。
 
 # Binlog读取与解析
-首先，我们通过 [Python-Mysql-Replication](https://github.com/noplay/python-mysql-replication) 这个项目来读取Binlog，直接通过`pip install mysql-replication`安装即可。接下来，我们编写一个简单的脚本文件：
+首先，我们通过 [Python-Mysql-Replication](https://github.com/noplay/python-mysql-replication) 这个项目来读取Binlog，直接通过`pip install mysql-replication`安装即可。接下来，我们编写一个简单的脚本文件，这再次印证那句名言——人生苦短，我用Python：
 ``` Python
 def readBinLog():
     stream = BinLogStreamReader(
