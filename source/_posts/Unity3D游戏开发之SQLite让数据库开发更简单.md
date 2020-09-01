@@ -16,9 +16,10 @@ title: Unity3D游戏开发之SQLite让数据库开发更简单
 
 <!--more-->
 
-##一、什么是SQLite？
+# 一、什么是SQLite？
 &emsp;&emsp;[SQLite](http://www.sqlite.org/)是一款轻型的数据库，是遵守ACID的关系型数据库管理系统，它包含在一个相对小的C库中，以嵌入式作为它的设计目标，它占用资源非常的低，因此适合在嵌入式设备如Android、Ruby on Rails等中使用。它能够支持Windows/Linux/Unix等等主流的操作系统，同时能够跟和C、C++、Ruby、Python、C#、PHP、Java等编程语言相结合。SQLite是一个以文件形式存在的关系型数据库，尽管无法实现分布式和横向扩展，可是作为一个轻量级的嵌入式数据库，它不需要系统提供服务支持，通过SDK直接操作文件避免了对数据库维护的相关事务，从这个角度来讲它是一个出色的数据库。
-##二、为什么要选择SQLite
+
+# 二、为什么要选择SQLite
 &emsp;&emsp;好了，在了解了SQLite后，我们来了解下SQLite有哪些让我们心动的特性，或者说我们为什么要选择SQLite，因为在这个世界上我们有太多的数据库可以选择，诸如Oracle、MySQL、SQLServer、DB2、NoSQL、MongoDB等等：
 
 >*  ACID事务
@@ -35,7 +36,7 @@ title: Unity3D游戏开发之SQLite让数据库开发更简单
 * 源码完全的开源, 你可以用于任何用途, 包括出售它
 * 支持多种开发语言，C, C++, PHP, Perl, Java, C#,Python, Ruby等
 
-##三、Unity3D中的SQLite
+# 三、Unity3D中的SQLite
 &emsp;&emsp;在Unity3D中使用SQLite，我们首先要明白这样一件事情，即我们这里的使用的SQLite并非是通常意义上的SQLite.NET,而是经过移植后的Mono.Data.Sqlite。因为Unity3D基于Mono，因此使用移植后的Mono.Data.Sqlite能够减少我们的项目在不同平台上出现各种各样的问题。在Unity3D中使用的SQLite以Mono.Data.Sqlite.dll即动态链接库的形式给出，因此我们需要将这个文件放置在项目目录下的Plugins文件夹中，此外我们需要System.Data.dll或者Mono.Data.dll这两个文件添加到Plugins目录中，因为我们需要的部分数据相关的API或者类都定义在这两个文件当中，这些文件可以从[这里](http://pan.baidu.com/s/1sjLZyrj)直接下载。
 
 >PS：博主注意到在网上有使用Mono.Data.SQLiteClient.dll这个库实现在Unity3D操作SQLite数据库的相关文章，博主大概看了下，感觉和使用Mono.Data.Sqlite.dll这个库大同小异，大家喜欢哪个就用哪个吧！哈哈！博主在开源社区找到一个版本库，据说可以同时支持.NET和Mono，如果大家感兴趣欢迎大家去测试啊，哈哈!
