@@ -206,7 +206,7 @@ services.AddSingleton<ObjectPool<IModel>>(serviceProvider =>
 ```CSharp
 var channel = _channelPool.Get();
 try {  //在这里做点什么吧  }
-finaly
+finally
 {
   //好借好还，再借不难
   _channelPool.Return(channel);
