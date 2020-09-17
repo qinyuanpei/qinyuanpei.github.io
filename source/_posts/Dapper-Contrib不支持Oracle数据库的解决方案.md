@@ -169,7 +169,7 @@ connection = new OracleConnection(ConnectionStrings.Default);
 connection.UseSqlAdapter(new OracleSqlAdapter());
 ```
 
-此时，我们发现，我们解决了 Insert() 的问题，但随之而来的，Get()、GetAll()、Delete()、Update() 这一系列和主键相关的方法，都因为 `Dapper.Contrib` 中的主键设计而出现了问题，而这就是我们接下来要讲的主键Id参数化问题。
+此时，我们发现，我们解决了 Insert() 的问题，但随之而来的，Get()、Delete()、Update() 这一系列和主键相关的方法，都因为 `Dapper.Contrib` 中的主键设计而出现了问题，而这就是我们接下来要讲的主键Id参数化问题。
 
 ## 主键Id参数化问题
 当我谈起这个问题的时候，我对于 `Dapper.Contrib` 中支持自增ID的坚持是怀疑的，因为在分布式盛行的今天，有大量的分布式ID生成方案供我们选择，比如基于 `Redis` 的号段策略，基于雪花算法的ID生成等等。大家会注意到我实现的 OracleSqlAdapter 在实现 Insert() 方法的时候简化了大量代码，这是因为我真的不知道，怎么从 Oracle 中获取一个新生成的ID，尤其是这个ID居然还要依赖一个我听都没有听说过的“序列”，而之所以要在 ISqlAdapter 中实现 Insert() 方法，最根本的原因就是，各个数据库对于自增ID的实现是不一样的，比如 MySQL 中使用的是 `SCOPE_IDENTITY()`，而 MSSQL 中使用的则是 `SCOPE_IDENTITY()` ，就因为这一点点差异，我们就必须要去折腾一遍，可以说， Dapper.Contrib 不支持 Oracle 的一个重要原因，就是在 Oracle 下实现自增ID太麻烦了。
