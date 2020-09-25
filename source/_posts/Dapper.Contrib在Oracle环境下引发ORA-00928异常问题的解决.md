@@ -147,18 +147,18 @@ public class OracleSqlAdapter : ISqlAdapter
 ```CSharp
  public static class SqlAdapterrExtensions
  {
-        public static void UseSqlAdapter<TSqlAdapter>(this IDbConnection connection, TSqlAdapter sqlAdapter)
-            where TSqlAdapter : ISqlAdapter, new()
-        {
-            var adapters = (Dictionary<string, ISqlAdapter>)
-                    typeof(SqlMapperExtensions)
-                    .GetField("AdapterDictionary", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static)
-                    ?.GetValue(null);
+    public static void UseSqlAdapter<TSqlAdapter>(this IDbConnection connection, TSqlAdapter sqlAdapter)
+        where TSqlAdapter : ISqlAdapter, new()
+    {
+        var adapters = (Dictionary<string, ISqlAdapter>)
+            typeof(SqlMapperExtensions)
+            .GetField("AdapterDictionary", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static)
+            ?.GetValue(null);
 
-            var connectionType = connection.GetType().Name.ToLower();
-            if (adapters != null && !adapters.ContainsKey(connectionType))
-                adapters?.Add(connectionType, sqlAdapter);
-        }
+        var connectionType = connection.GetType().Name.ToLower();
+        if (adapters != null && !adapters.ContainsKey(connectionType))
+            adapters?.Add(connectionType, sqlAdapter);
+    }
 }
 ```
 
