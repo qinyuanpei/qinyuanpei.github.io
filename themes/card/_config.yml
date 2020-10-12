@@ -21,13 +21,13 @@ menu:
     text: 分类
     url: /categories
   bookmark:
-    text: 读书
+    text: 书单
     url: /books
   film:
-    text: 电影
+    text: 影单
     url: /movies
   code:
-    text: 作品
+    text: 实验室
     url: /works
   # link:
   #   text: 相册
