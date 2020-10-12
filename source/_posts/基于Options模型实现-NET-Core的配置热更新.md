@@ -250,7 +250,7 @@ ChangeToken.OnChange(
     }
 );
 ```
-所以，真相只有一个，真正帮助我们实现配置热更新的，其实是`IChangeToken`这个接口，我们只需要把这样一个实例传入到`ChangeToken.OnChange()`方法中，就可以在特定的时机触发这个回调函数，而显然，对于大多数的`IConfigurationProvider`接口而言，这个回调函数其实就是`Load()`方法，关于微软提供的`ChangeToken`j静态类的实现，大家如果有兴趣去了解的话，可以参考这里：[https://github.com/dotnet/extensions/blob/release/3.1/src/Primitives/src/ChangeToken.cs](https://github.com/dotnet/extensions/blob/release/3.1/src/Primitives/src/ChangeToken.cs)。话说回来，我们说`IOptionsSnapshot<T>`和`IOptionsMonitor<T>`是响应式的，当配置发生改变的时候，它们对应的值会跟着改变，从某种意义上来说，是因为`IChangeToken`提供了这样一个可以监听变化的的能力，试想一下，我们只需要给每一个`IConfigurationProvider`对应的`IChangeToken`注册相同的回调函数，那么，当某一个`IConfigurationProvider`需要重新加载的时候，我们就可以针对这个`IConfigurationProvider`里对应的键值对进行处理。事实上，微软官方在实现`IConfigurationRoot`的时候，的确就是这样做的：
+所以，真相只有一个，真正帮助我们实现配置热更新的，其实是`IChangeToken`这个接口，我们只需要把这样一个实例传入到`ChangeToken.OnChange()`方法中，就可以在特定的时机触发这个回调函数，而显然，对于大多数的`IConfigurationProvider`接口而言，这个回调函数其实就是`Load()`方法，关于微软提供的`ChangeToken`静态类的实现，大家如果有兴趣去了解的话，可以参考这里：[https://github.com/dotnet/extensions/blob/release/3.1/src/Primitives/src/ChangeToken.cs](https://github.com/dotnet/extensions/blob/release/3.1/src/Primitives/src/ChangeToken.cs)。话说回来，我们说`IOptionsSnapshot<T>`和`IOptionsMonitor<T>`是响应式的，当配置发生改变的时候，它们对应的值会跟着改变，从某种意义上来说，是因为`IChangeToken`提供了这样一个可以监听变化的的能力，试想一下，我们只需要给每一个`IConfigurationProvider`对应的`IChangeToken`注册相同的回调函数，那么，当某一个`IConfigurationProvider`需要重新加载的时候，我们就可以针对这个`IConfigurationProvider`里对应的键值对进行处理。事实上，微软官方在实现`IConfigurationRoot`的时候，的确就是这样做的：
 ```CSharp
 public class ConfigurationRoot : IConfigurationRoot
 {
