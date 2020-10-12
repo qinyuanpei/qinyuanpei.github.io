@@ -33,7 +33,7 @@ menu:
   #   text: 相册
   #   url: /albums
   circle:
-    text: 关于
+    text: 关于我
     url: /about
 
 
