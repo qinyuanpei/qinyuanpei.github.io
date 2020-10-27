@@ -215,7 +215,7 @@ offline:
     - public/**/*.{js,html,css,png,jpg,jpeg,gif,svg,json,xml,svg,ttf,woff,eot,woff2,eot,otf}
   runtimeCaching:
     - urlPattern: /*
-      handler: cacheFirst
+      handler: networkFirst
       options:
         origin: cdn.jsdelivr.net
     - urlPattern: /*
