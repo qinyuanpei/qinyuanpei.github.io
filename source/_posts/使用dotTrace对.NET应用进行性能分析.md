@@ -1,6 +1,6 @@
 ---
 toc: true
-title: 使用 dotTrace 对 .NET 应用进行性能分析
+title: 使用 dotTrace 对 .NET 应用进行性能分析与优化
 categories:
   - 编程语言
 tags:
