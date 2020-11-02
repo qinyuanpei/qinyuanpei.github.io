@@ -24,6 +24,7 @@
     <div id="chart2" class="child"></div>
     <div id="chart3" class="child"></div>
     <div id="chart4" class="child"></div>
+    <div id="chart5" class="child"></div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/4.2.1/echarts.min.js"></script>
 <script src="<%- url_for(theme_js('assets/scripts/echarts-wordcloud', cache)) %>" async></script>
@@ -45,6 +46,14 @@
         .then(function (res) {
             res.json().then(function (data) {
                 handleLanguageChart('chart4', data);
+                //等爬虫写好以后再换掉即可
+                handleLeetCodeChart('chart5', new {
+                    categories:{
+                        "简单(41/525)": 41,
+                        "简单(14/951)": 14,
+                        "困难(0/378)": 0
+                    }
+                })
             });
         })
         .catch(function (err) {
@@ -256,6 +265,43 @@
                     ]
                 }
             ]
+        };
+
+        chart.setOption(option);
+    }
+
+    function handleLeetCodeChart(el, data) {
+        var chart = echarts.init(document.getElementById(el));
+        var seriesData = []
+        for (var key in data.categories) {
+            seriesData.push({
+                name: key,
+                value: data.categories[key]
+            });
+        }
+        var option = {
+            title: {
+                text: '力扣统计',
+                x: 'center'
+            },
+            tooltip: {
+                trigger: 'item',
+                formatter: "{a} <br/>{b} : {c} ({d}%)"
+            },
+            series: [{
+                name: '分类',
+                type: 'pie',
+                radius: '50%',
+                center: ['50%', '50%'],
+                data: seriesData,
+                itemStyle: {
+                    emphasis: {
+                        shadowBlur: 10,
+                        shadowOffsetX: 0,
+                        shadowColor: 'rgba(0, 0, 0, 0.5)'
+                    }
+                }
+            }]
         };
 
         chart.setOption(option);
