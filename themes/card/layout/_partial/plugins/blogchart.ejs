@@ -47,11 +47,12 @@
             res.json().then(function (data) {
                 handleLanguageChart('chart4', data);
                 //等爬虫写好以后再换掉即可
-                handleLeetCodeChart('chart5', new {
+                handleLeetCodeChart('chart5', {
                     categories:{
-                        "简单(41/525)": 41,
-                        "简单(14/951)": 14,
-                        "困难(0/378)": 0
+                        "Easy(41/525)": 41,
+                        "Medium(14/951)": 14,
+                        "Difficult(0/378)": 0,
+                        "Todo" : 1799
                     }
                 })
             });
