@@ -4,11 +4,11 @@ import re
 import json
 import requests
 
-url = 'https://www.shanbay.com/api/v1/checkin/user/32365612/'
+url = 'https://www.shanbay.com/api/v1/checkin/user/32365612/?page={page}'
 
 # 扇贝打卡
-def analyseCheckin():
-    resp = requests.get(url)
+def analyseCheckin(page):
+    resp = requests.get(url.format(page=page))
     obj = json.loads(resp.content)
     if obj['status_code'] == 0:
         checkins = obj['data']
@@ -23,8 +23,13 @@ def analyseCheckin():
         return records
     return []
 
-
-checkins = analyseCheckin()
+page = 1
+checkins = []
+pageData = analyseCheckin(page)
+while len(pageData) > 0:
+    checkins.extend(pageData)
+    page += 1
+    pageData = analyseCheckin(page)
 if len(checkins) > 0:
     with open('shanbay.json','wt',encoding='utf-8') as f:
         f.write(json.dumps(checkins))
