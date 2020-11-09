@@ -9,6 +9,7 @@ url = 'https://www.shanbay.com/api/v1/checkin/user/32365612/?page={page}'
 # 扇贝打卡
 def analyseCheckin(page):
     resp = requests.get(url.format(page=page))
+    print(resp.content)
     obj = json.loads(resp.content)
     if obj['status_code'] == 0:
         checkins = obj['data']
