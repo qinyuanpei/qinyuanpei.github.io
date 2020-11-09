@@ -25,6 +25,7 @@
     <div id="chart3" class="child"></div>
     <div id="chart4" class="child"></div>
     <div id="chart5" class="child"></div>
+    <div id="chart6" class="child"></div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/4.2.1/echarts.min.js"></script>
 <script src="<%- url_for(theme_js('assets/scripts/echarts-wordcloud', cache)) %>" async></script>
@@ -60,7 +61,22 @@
         .catch(function (err) {
             console.log('Fetch Error : %S', err);
         })
-
+    
+        fetch('<%- config.url %>' + '/shanbay.json')
+        .then(function (res) {
+            res.json().then(function (data) {
+                data.sort(function(a, b){
+                    var date_a = new Date(a.checkin_date);
+                    var date_b = new Date(b.checkin_date);
+                    return date_a - date_b;
+                })
+                handleShanbayChart('chart6', data);
+            });
+        })
+        .catch(function (err) {
+            console.log('Fetch Error : %S', err);
+        })
+    
     function handleData(posts) {
         var tags = {};
         var yearly = {};
@@ -303,6 +319,51 @@
                     }
                 }
             }]
+        };
+
+        chart.setOption(option);
+    }
+
+    function handleShanbayChart(el, data) {
+        var chart = echarts.init(document.getElementById(el));
+        var seriesData = []
+        seriesData.push({
+            name: "单词数目",
+            type: "line",
+            data: data.map(x => x.words.num_today)
+        });
+        seriesData.push({
+            name: "学习时长",
+            type: "line",
+            data: data.map(x => x.words.used_time)
+        });
+
+        option = {
+            title: {
+                text: '扇贝打卡',
+                x: 'center'
+            },
+            tooltip: {
+                trigger: 'axis'
+            },
+            xAxis: {
+                type: 'category',
+                boundaryGap: false,
+                data: data.map(x => x.checkin_date)
+            },
+            yAxis : [{
+                type: 'value',
+                min: 0,
+                max: 100,
+                interval: 25,
+            },
+            {
+                type: 'value',
+                min: 0,
+                max: 20,
+                interval: 5
+            }],
+            series: seriesData
         };
 
         chart.setOption(option);
