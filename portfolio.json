@@ -2,7 +2,7 @@
     "items": [
         {
             "title": "基于百度地图 + WebGL的海量覆盖物交互案例",
-            "date": "2020.10",
+            "date": "2020.09",
             "cover": "https://cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@v1.0.822.908f192/assets/images/portfolios/portfolio-bmap-gl.png",
             "subTitle": "",
             "description": "基于WebGL的大量覆盖物交互案例，采用百度地图JavaScript API GL开发，经测试可支持8000到10000左右的点同屏展示",
