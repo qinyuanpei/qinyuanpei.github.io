@@ -1,11 +1,11 @@
 //const { version, name } = require('../package.json');
 var fs = require('fs');
-var version = 'latest'
+var version = 'master'
 fs.readFile('./BUILD_NUMBER.txt', function (error, data) {
     if (error) {
       console.log('load BUILD_NUMBER.txt fails, ' + error)
     } else {
-        version = data.toString().trim();
+        //version = data.toString().trim();
         console.log(`load version ${version} from BUILD_NUMBER.txt...`);
     }
 });
