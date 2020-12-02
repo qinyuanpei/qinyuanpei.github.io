@@ -27,6 +27,19 @@
             ]
         },
         {
+            "title": "访客信息&地理可视化",
+            "date": "2020.03",
+            "cover": "https://cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/images/portfolios/portfolio-visitor-map-visualization.png",
+            "subTitle": "",
+            "description": "访客信息&地理可视化，基于AntV的L7，访客数据来自个人博客：https://blog.yuanpei.me/",
+            "link": "https://qinyuanpei.github.io/VisitorMapV/",
+            "tags": [
+                "Vue",
+                "AntV L7",
+                "可视化"
+            ]
+        },
+        {
             "title": "LeanCloud-Counter",
             "date": "2019.09",
             "cover": "https://cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/images/portfolios/portfolio-leancloud-counter.png",
