@@ -325,7 +325,7 @@ def analyse_exps_salary(industry=None):
 ```
 一切都会向着我们期待的方向发展吗？我们拭目以待：
 
-![job_analyse-07.png](https://i.loli.net/2020/12/05/XOUBgy2AJqHRQWs.png)
+![西安市求职招聘工作经验与薪资关系分析](https://i.loli.net/2020/12/05/XOUBgy2AJqHRQWs.png)
 
 可以发现，整体上，经验越丰富，薪资待遇会越高。前提是你真的收获了经验，而不是在岁月的蹉跎里单单收获了皱纹和沧桑。这是我们每个人都应该去反思的一个问题，如果一切的经验都有过时的那一天，至少你真的拥有过它们，就像爱情这种东西一样。
 
