@@ -1,8 +1,9 @@
-import os
+﻿import os
 import sys
 import re
 import json
 import requests
+import datetime
 
 url = 'https://www.shanbay.com/api/v1/checkin/user/32365612/?page={page}'
 
@@ -23,6 +24,10 @@ def analyseCheckin(page):
             records.append(record)
         return records
     return []
+
+def calculateDate(months):
+    pass
+    
 
 page = 1
 checkins = []
