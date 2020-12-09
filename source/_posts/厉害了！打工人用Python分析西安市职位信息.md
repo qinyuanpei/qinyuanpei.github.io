@@ -44,7 +44,7 @@ def extractCity(self, cityName=None):
                 return json_data['zpData']['locationCity']['code']
 ```
 接下来，我们可以编写`searchJobs()`方法来实现职位的检索：
-```
+```Python
 def searchJobs(self, cityName, query, page=1):
     cityCode = self.extractCity(cityName)
     if (cityCode  != None):
@@ -73,7 +73,7 @@ def searchJobs(self, cityName, query, page=1):
 
 ## 智联招聘
 智联招聘相对于Boss直聘要简单一点，通过抓包分析，我们可以找到这样一个地址：`https://fe-api.zhaopin.com/c/i/sou?at={at}&_v={v}&x-zp-page-request-id={x-zp-page-request-id}&x-zp-client-id={v}&MmEwMD={MmEwMD}`。通过这个接口可以直接获得JSON格式的数据，可想要构造这几个参数出来，实在是有一点困难，因为它遇到和Boss直聘一样的问题，基本都需要一定的逆向功底，而如果尝试去解析DOM，你会发现它的前端使用了Vue.js，换句话说，这个网站是由前端完成渲染的，这意味着，如果我直接访问`https://sou.zhaopin.com/?jl=854`这个地址，是无法拿到可以解析的DOM结构的，这就多少会有一点尴尬。所以，实际上博主最后没有实现智联招聘的爬虫，因为在这上面投入太多的精力，实在有一点得不偿失。这里简单说一下思路，基本上我们需要以`POST`方式调用这个接口，然后在Body中写入下面的结构：
-```
+```JSON
 {"pageSize":"30","cityId":854,"workExperience":"-1","companyType":"-1","employmentType":"-1","jobWelfareTag":"-1","kt":"3","at":"20673d42d62d48c38add329318fb9e2c","rt":"84a950e77e054854b4d2f9d90826d063","_v":"0.97312845","userCode":662040894,"eventScenario":"pcSearchedSouIndex","cvNumber":"JM620408945R90500002000"}
 ```
 这里依然要解决Cookie的问题，它这个Cookie简直不能更恶心，因为参数实在是太多了：
@@ -248,7 +248,7 @@ def analyse_industry_salary():
 
 ## 学历与薪资关系分析
 通常大家都认为，学历越高，薪资就会越高，那么，这个是否符合实际情况呢，我们一起来看一下：
-```
+```Python
 def analyse_eduInfo_salary(industry=None):
     filtered = list(filter(lambda x:x['avgSalary'] != 0, jobs))
     if (industry != None):
