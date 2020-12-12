@@ -70,6 +70,7 @@
         <link rel="manifest" href="<%- theme.pwa.manifest %>">
     <% } %>
     <link rel="stylesheet" href="<%- url_for(theme_css('/assets/styles/style', cache)) %>">
+    <script src="<%- url_for(theme_js('assets/scripts/instantclick', cache)) %>"></script>
     <script>window.lazyScripts=[]</script>
     <!-- custom head -->
     <% if (site.data.head) { %>
