@@ -32,10 +32,13 @@ def calculateDate(months):
 page = 1
 checkins = []
 pageData = analyseCheckin(page)
+today = datetime.datetime.today()
+begin = today - datetime.timedelta(days = 90)
 while len(pageData) > 0:
     checkins.extend(pageData)
     page += 1
     pageData = analyseCheckin(page)
+checkins = list(filter(lambda x:datetime.datetime.strptime(x['checkin_date'] ,'%Y-%m-%d') > begin, checkins))
 if len(checkins) > 0:
     with open('shanbay.json','wt',encoding='utf-8') as f:
         f.write(json.dumps(checkins))
