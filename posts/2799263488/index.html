@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+    
+<script async defer data-domain="blog.yuanpei.me" src="https://plausible.io/js/plausible.js"></script>
+    
+    <meta charset="utf-8">
+    <!-- HTTP 1.1 -->  
+    <meta http-equiv="pragma" content="no-cache">  
+    <!-- HTTP 1.0 -->  
+    <meta http-equiv="cache-control" content="no-cache">
+    <!-- 微博图床防盗链 --> 
+    <!-- <meta name="referrer" content="no-referrer"/> -->
+    <!--Google站点验证-->
+    
+    <!--百度站点验证-->
+    
+    
+    <!--Google AdSense-->
+    
+    <!--Bing站点验证-->
+    <meta name="msvalidate.01" content="713A48A3FE17D4841C292A6B3942EB4C" />
+    
+    <title>
+        Unity3D游戏开发之反编译AssetBundle提取游戏资源 - 一个人的孤落时辰
+    </title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+        <meta name="theme-color" content="#3F51B5">
+    
+
+    <meta name="keywords" content="Unity3D,游戏开发,AssetBundle,资源提取,秦元培,技术博客,生活随笔,个人博客">
+    
+        <meta name="description" content="具体来说呢，AssetBundle在Unity3D中是一种用于资源打包盒资源动态加载的解决方法，比如我们平时玩的单机游戏容量一般都比较大，这是因为制作人员在制作游戏的时候将所有的项目资源都整合到了一起;第五个参数是平台的选择，因为Unity3D是一个跨平台的游戏引擎，而各个平台现在的情况又不尽相同，因此现在Unity3D采取的方案是各个平台只能使用自己平台对应的AssetBundle，这一点希望大家在使用的时候注意啊;这是一个简单的导出AssetBundle资源包的方法，它有两个参数，第一个参数表示是一个枚举类型，定义为ExportType，取Single时表示打包一个特定的激活物体，比如说一个模型、一个场景等等">
+    
+    <meta name="description" content="具体来说呢，AssetBundle在Unity3D中是一种用于资源打包盒资源动态加载的解决方法，比如我们平时玩的单机游戏容量一般都比较大，这是因为制作人员在制作游戏的时候将所有的项目资源都整合到了一起;第五个参数是平台的选择，因为Unity3D是一个跨平台的游戏引擎，而各个平台现在的情况又不尽相同，因此现在Unity3D采取的方案是各个平台只能使用自己平台对应的AssetBundle，这一点希望大">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Unity3D游戏开发之反编译AssetBundle提取游戏资源">
+<meta property="og:url" content="https://qinyuanpei.github.io/posts/2799263488/index.html">
+<meta property="og:site_name" content="一个人的孤落时辰">
+<meta property="og:description" content="具体来说呢，AssetBundle在Unity3D中是一种用于资源打包盒资源动态加载的解决方法，比如我们平时玩的单机游戏容量一般都比较大，这是因为制作人员在制作游戏的时候将所有的项目资源都整合到了一起;第五个参数是平台的选择，因为Unity3D是一个跨平台的游戏引擎，而各个平台现在的情况又不尽相同，因此现在Unity3D采取的方案是各个平台只能使用自己平台对应的AssetBundle，这一点希望大">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://ww1.sinaimg.cn/large/4c36074fly1fz05d2nsnpj20rs0fn457.jpg">
+<meta property="og:image" content="https://ww1.sinaimg.cn/large/4c36074fly1fz01ykrzepj20l70dpwfe.jpg">
+<meta property="og:image" content="https://ww1.sinaimg.cn/large/4c36074fly1fyzcuaxphej20k10h70vr.jpg">
+<meta property="og:image" content="https://ww1.sinaimg.cn/large/4c36074fly1fyzcu53oytj20hj0fdmyd.jpg">
+<meta property="article:published_time" content="2015-04-02T20:37:52.000Z">
+<meta property="article:modified_time" content="2020-12-17T17:34:17.757Z">
+<meta property="article:author" content="飞鸿踏雪">
+<meta property="article:tag" content="Unity3D">
+<meta property="article:tag" content="游戏开发">
+<meta property="article:tag" content="AssetBundle">
+<meta property="article:tag" content="资源提取">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://ww1.sinaimg.cn/large/4c36074fly1fz05d2nsnpj20rs0fn457.jpg">
+    
+        <link rel="alternate" type="application/atom+xml" title="一个人的孤落时辰" href="/atom.xml">
+    
+    <link rel="shortcut icon" href="/assets/images/favicon.ico">
+    
+        <link rel="manifest" href="/manifest.json">
+    
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master//assets/styles/style.css">
+    <script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/instantclick.min.js"></script>
+    <script>window.lazyScripts=[]</script>
+    <!-- custom head -->
+    
+
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu" class="hide" >
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap" style="background-image:url(/assets/images/brand.jpg)">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/assets/images/avatar.jpg" alt="avatar">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">飞鸿踏雪</h5>
+          <a href="mailto:qinyuanpei@163.com" title="qinyuanpei@163.com" class="mail">qinyuanpei@163.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/"  >
+                <i class="icon icon-lg icon-home"></i>
+                主页
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives"  >
+                <i class="icon icon-lg icon-archives"></i>
+                归档
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags"  >
+                <i class="icon icon-lg icon-tags"></i>
+                标签
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/categories"  >
+                <i class="icon icon-lg icon-th-list"></i>
+                分类
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/books"  >
+                <i class="icon icon-lg icon-bookmark"></i>
+                书单
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/movies"  >
+                <i class="icon icon-lg icon-film"></i>
+                影单
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/works"  >
+                <i class="icon icon-lg icon-code"></i>
+                实验室
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/about"  >
+                <i class="icon icon-lg icon-circle"></i>
+                关于我
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+            <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">Unity3D游戏开发之反编译AssetBundle提取游戏资源</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off"
+                placeholder="输入感兴趣的关键字">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+        <a href="https://github.com/qinyuanpei/qinyuanpei.github.io" target="_blank" rel="noopener" class="header-icon waves-effect waves-circle waves-light" id="menuGithub">
+            <i class="icon icon-lg icon-code-fork"></i>
+        </a>
+    </div>
+</header>
+<header class="content-header post-header">
+    <div class="container fade-scale">
+        <h1 class="title">Unity3D游戏开发之反编译AssetBundle提取游戏资源</h1>
+        <h5 class="subtitle" id="subtitle">
+            
+            <time datetime="2015-04-02T20:37:52.000Z" itemprop="datePublished" class="page-time">
+  2015-04-02
+</time>
+
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91/">游戏开发</a></li></ul>
+
+            
+        </h5>
+    </div>
+    
+
+</header>
+
+<div class="container body-wrap">
+    
+    <aside class="post-widget">
+        <nav class="post-toc-wrap" id="post-toc">
+            <h4>目录</h4>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#漫话Unity3D的AssetBundle"><span class="post-toc-number">1.</span> <span class="post-toc-text">漫话Unity3D的AssetBundle</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#使用Assetbundle打包"><span class="post-toc-number">1.1.</span> <span class="post-toc-text">使用Assetbundle打包</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#加载AssetBundle"><span class="post-toc-number">1.2.</span> <span class="post-toc-text">加载AssetBundle</span></a></li></ol></li></ol>
+        </nav>
+    </aside>
+    
+    <article id="post-Unity3D游戏开发之反编译AssetBundle提取游戏资源" class="post-article article-type-post fade" itemprop="blogPost">
+
+        <div class="post-card">
+            <h1 class="post-card-title">
+                Unity3D游戏开发之反编译AssetBundle提取游戏资源
+            </h1>
+            <div class="post-meta">
+                <time class="post-time" title="2015-04-02 20:37:52" datetime="2015-04-02T20:37:52.000Z"  itemprop="datePublished">2015-04-02</time>
+
+                
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91/">游戏开发</a></li></ul>
+
+
+
+                
+<span id="lc_counter_container_page_pv" title="文章总阅读量" data-page-url="" data-page-title="Unity3D游戏开发之反编译AssetBundle提取游戏资源">
+    <i class="icon icon-eye icon-pr"></i><span id="lc_counter_value_page_pv"></span>
+</span>
+
+
+
+
+
+                
+    <span>
+        <i class="icon icon-clock-o"></i>
+        20 min.
+    </span>
+    
+            </div>
+            <div class="post-content" id="post-content" itemprop="postContent">
+                <p>&emsp;&emsp;各位朋友，大家好，欢迎大家关注我的博客，我是秦元培，我的博客地址是<a href="http://www.qinyuanpei.com" target="_blank" rel="noopener">http://www.qinyuanpei.com</a>。今天我们来说说通过反编译Unity3D的AssetBundle来提取游戏资源，博主写这篇文章的目的并非是要教大家如何去破解一款基于Unity3D引擎开发的游戏，而是想通过今天这篇文章来告诉大家如何在开发Unity3D游戏的过程中保护自己的游戏资源。</p>
+<a id="more"></a>
+
+<h1 id="漫话Unity3D的AssetBundle"><a href="#漫话Unity3D的AssetBundle" class="headerlink" title="漫话Unity3D的AssetBundle"></a>漫话Unity3D的AssetBundle</h1><p>&emsp;&emsp;对于AssetBundle，其实博主是在以前的文章中是有提到的。不知道大家还记不记得，博主曾经在写游戏开发和Lua的不解之缘这个系列文章的时候，提到并且使用过AssetBundle这种技术。具体来说呢，AssetBundle在Unity3D中是一种用于资源打包盒资源动态加载的解决方法，比如我们平时玩的单机游戏容量一般都比较大，这是因为制作人员在制作游戏的时候将所有的项目资源都整合到了一起。可是如果我们用AssetBundle来做这个游戏的话，我们就可以只在发布的游戏中提供支持游戏功能的核心部分，而将游戏当中的场景、模型等资源以AssetBundle的形式打包然后放到服务器上，这样当游戏客户端处于联网的时候就可以从服务器上下载这些资源，从而实现游戏资源的动态加载，由此可见AssetBundle可以帮助我们减少游戏的容量。如果是在需要安装包的场合下，那么游戏包容量的大小无疑会为游戏加些印象分。</p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="https://ww1.sinaimg.cn/large/4c36074fly1fz05d2nsnpj20rs0fn457.jpg" alt="为什么这幅图总让我想起仙剑四里四人在即墨那晚的时光呢？" title="" referrerpolicy="no-referrer">
+                </div>
+                <div class="image-caption">为什么这幅图总让我想起仙剑四里四人在即墨那晚的时光呢？</div>
+            </figure>
+
+<p>&emsp;&emsp;比如最近《轩辕剑6外传穹之扉》这部单机游戏发布了，从各大游戏网站的评测到和一样我喜欢单机游戏的各位朋友们的亲身体验，大家一致的认为这部游戏整体表现还不错，应该考虑玩一玩。这样难免让博主有些心动，可是看到17个G的游戏容量时还是犹豫了下。DOMO小组从《轩辕剑6》就开始使用Unity3D引擎，在经历了第一部游戏的失败后，或许此次DOMO小组会将游戏优化的比较好吧。这里如果有喜欢单机游戏的朋友不妨去玩玩看，毕竟我们学习游戏开发的初衷就是做出好游戏，如果不热爱游戏又怎么能做出好游戏呢？好了，扯得有点远了，这里我们注意到一个重要的因素就是游戏容量，如果DOMO采用AeestBundle的话，游戏的容量肯定会减少很多。可是这样一来，它就不是单机游戏了嘛，对吧！</p>
+<p>&emsp;&emsp;在Unity3D中AssetBundle是专业版中的一个功能，在免费版的Unity3D中是无法使用这个功能的，不知道在Unity5中这个功能是不是划分到了个人版中。好了，下面我们来看看如何使用AssetBundle。我们主要从使用AssetBundle打包和加载AssetBundle这两个方面来说：</p>
+<h2 id="使用Assetbundle打包"><a href="#使用Assetbundle打包" class="headerlink" title="使用Assetbundle打包"></a>使用Assetbundle打包</h2><p>&emsp;&emsp;使用AssetBundle打包主要通过BuildPipeline.BuildAssetBundle()这个方法来实现，该方法原型为：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">bool BuildAssetBundle (Object mainAsset,Object[] assets,string pathName, BuildAssetBundleOptions </span><br><span class="line">optionsBuildAssetBundleOptions.CollectDependencies | BuildAssetBundleOptions.CompleteAssets,</span><br><span class="line">BuildTarget targetPlatform&#x3D; BuildTarget.WebPlayer)</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;在这个方法中，第一个参数是一个Object类型，表示一个激活的物体;第二个参数是一个Object[]类型，表示所有选中的物体;第三个参数是一个string类型，表示要导出的资源包的路径，资源包的扩展名可以是assetbundle或者unity3d;第四个参数表示的是打包选项，默认是完全打包和依赖打包。这里重点解释下这两个概念，完全打包是指所有资源都参与打包，比如说一个模型带有贴图和动画，那么打包模型的时候贴图和动画都会被作为资源打包。而依赖打包是相对于Prefab来说的，比如说PrefabA中引用了PrefabB这个对象，那么打包的时候这两个对象都会被打包，并且它们之间的这种依赖关系会在打包后继续保持；第五个参数是平台的选择，因为Unity3D是一个跨平台的游戏引擎，而各个平台现在的情况又不尽相同，因此现在Unity3D采取的方案是各个平台只能使用自己平台对应的AssetBundle，这一点希望大家在使用的时候注意啊。好了，现在我们来看一个简单的例子：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F;&#x2F; &lt;summary&gt;</span><br><span class="line">&#x2F;&#x2F;&#x2F; 输出AssetBundle</span><br><span class="line">&#x2F;&#x2F;&#x2F; &lt;&#x2F;summary&gt;</span><br><span class="line">&#x2F;&#x2F;&#x2F; &lt;param name&#x3D;&quot;type&quot;&gt;平台类型&lt;&#x2F;param&gt;</span><br><span class="line">static void ExportToAssetBundle(ExportType type,BuildTarget target)</span><br><span class="line">&#123;</span><br><span class="line">    &#x2F;&#x2F;获取存储路径</span><br><span class="line">    string savePath&#x3D;EditorUtility.SaveFilePanel(&quot;输出为AssetBundle&quot;,&quot;&quot;,&quot;New Resource&quot;,&quot;unity3d&quot;);</span><br><span class="line">    if(savePath&#x3D;&#x3D;string.Empty) return;</span><br><span class="line">    &#x2F;&#x2F;获取选中的对象</span><br><span class="line">    Object[] selection&#x3D;Selection.GetFiltered(typeof(Object),SelectionMode.DeepAssets);</span><br><span class="line">    if(selection.Length&#x3D;&#x3D;0) return;</span><br><span class="line">    &#x2F;&#x2F;打包</span><br><span class="line">    if(type&#x3D;&#x3D;ExportType.All)&#123;</span><br><span class="line">      BuildPipeline.BuildAssetBundle(null,selection,savePath,BuildAssetBundleOptions.CollectDependencies,target);</span><br><span class="line">    &#125;else&#123;</span><br><span class="line">        BuildPipeline.BuildAssetBundle(obj,null,savePath,BuildAssetBundleOptions.CollectDependencies,target);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;这是一个简单的导出AssetBundle资源包的方法，它有两个参数，第一个参数表示是一个枚举类型，定义为ExportType，取Single时表示打包一个特定的激活物体，比如说一个模型、一个场景等等;取All时表示打包所有选中的物体，比如一个场景。第二个参数表示打包的平台，这个不用多说了。因为博主的免费版的Unity3D不支持AssetBundle，所以这里没法给大家演示了，具体效果请自行测试，有问题的话给博主留言就是了。</p>
+<h2 id="加载AssetBundle"><a href="#加载AssetBundle" class="headerlink" title="加载AssetBundle"></a>加载AssetBundle</h2><p>&emsp;&emsp;加载AssetBundle是一个从网络中下载资源的过程，因此需要使用Unity3D的WWW功能，这是一个简单的网络协议的封装，可以像浏览器一样访问某个URL地址或者是本地地址，访问WEB地址需要使用HTTP协议，访问本地地址需要使用File协议。我们来看一个具体的例子：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F;&#x2F; &lt;summary&gt;</span><br><span class="line">&#x2F;&#x2F;&#x2F; 加载一个unity3d格式的文件</span><br><span class="line">&#x2F;&#x2F;&#x2F; WEB地址——http:&#x2F;&#x2F;server.com&#x2F;xxx.unity3d</span><br><span class="line">&#x2F;&#x2F;&#x2F; 本地地址——file:&#x2F;&#x2F;.unity3d文件的绝对路径</span><br><span class="line">&#x2F;&#x2F;&#x2F; &lt;&#x2F;summary&gt;</span><br><span class="line">IEnumerator LoadUnity3DFile(string url)</span><br><span class="line">&#123;</span><br><span class="line">    WWW www&#x3D;new WWW(url);</span><br><span class="line">    yield return www;</span><br><span class="line">    if(www.error!&#x3D;null)&#123;</span><br><span class="line">        Debug.Log(www.error);</span><br><span class="line">    &#125;else&#123;</span><br><span class="line">       AssetBundle bundle&#x3D;www.assetBundle;</span><br><span class="line">      Instantiate(bundle.mainAsset,Vector3.zero,Quaternion.identity);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;在这里我们直接使用bundle.assetBundle获取了全部的资源，如果只需要获取资源中的一部分，则只需要通过bundle.Load()方法就可以了，这里需要传入资源的名称。当我们使用完资源后可以通过bundle.Unload()方法来卸载资源，达到释放内存的目的。</p>
+<p>#从反编译《新仙剑OL》看AssetBundle打包<br>&emsp;&emsp;好了，下面我们以《新仙剑OL》这款游戏的AssetBundle的反编译来探索下在使用AssetBundle打包应该注意哪些问题。《新仙剑OL》这款游戏呢，是采用Unity3D引擎开发的一款横跨客户端游戏和网页游戏的网络游戏，游戏以《仙剑奇侠传》初代游戏剧情为主，玩家将第三人称视角再次跟随主人公展开一段荡气回肠的感人故事。这款游戏总体来说还不错吧，因为毕竟是网游，我们不能用单机游戏的视角去评价，具体的原因大家都是知道的。</p>
+<p>&emsp;&emsp;好了，为什么我们要选择这款游戏呢？</p>
+<ul>
+<li>第一，这款游戏的客户端只有30余M,体积小适合拿来研究(这就是AssetBundle的好处啊)* 第二，博主是一位仙剑玩家，一直希望有一天《仙剑奇侠传1》能够用3D技术重现，这个游戏满足了博主的好奇心</li>
+<li>第三，网络上已经有朋友对这个游戏的打包进行了研究，这里感谢网友朋友提供部分.unity3d文件及相关文件。</li>
+</ul>
+<p>&emsp;&emsp;我们选择的解包工具是一款叫做<a href="https://github.com/ata4/disunity" target="_blank" rel="noopener">disunity</a>的命令行工具，经过博主的尝试，这个工具真心强悍啊，可以解开.unity3d文件和.assets文件，可以拿到的数据形式有贴图、声音、模型等。具体的情况大家可以在稍后看到。</p>
+<p>&emsp;&emsp;首先我们找到《新仙剑OL》的安装目录，然后我们就能发现一个叫做assetbundles的文件夹，这是怕大家不知道吗？这太明显了吧！我们打开文件夹会发现Charachers、NPC、Scene等等文件夹，继续往下找我们发现了好多的.unity3d文件，不过这些文件都是以.unity3d然后跟些随机字符串的形式存在的。根据网友朋友们的提示，这些文件就是.unity3d文件，不过游戏制作组为了干扰我们故意接了下随机字符在后面(呵呵，还有比这更弱的加密方式吗？)。博主看到这里的第一感觉就是想先用加载AssetBundle的方式来看看能不能将这些AssetBundle读取出来，因此果断改了文件扩展名，然后开始在Unity3D中读取，结果程序报错看来是我们想的简单了啊。没办法的办法，强行解包吧！在命令行中输入：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">disunity extract C:\Users\Robin\Desktop\s049.unity3d</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;接下来程序会在桌面上生成一个上s049的文件夹，打开文件夹一看，尼玛，竟然直接拿到了模型的网格数据(.obj)和贴图数据(.dds)以及相关的Shader。这让我突然间有点不能接受啊，马上打开Blender将网格数据导入，结果童年的林月如就出现在了我们的面前：</p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="https://ww1.sinaimg.cn/large/4c36074fly1fz01ykrzepj20l70dpwfe.jpg" alt="林月如灰模" title="" referrerpolicy="no-referrer">
+                </div>
+                <div class="image-caption">林月如灰模</div>
+            </figure>
+
+<p>&emsp;&emsp;因为博主不会在Blender中给模型贴图，所以我们到Unity3D中完成贴图，首先需要将模型导出为FBX格式。好了，将模型导入Unity3D后，将贴图赋给模型，童年的林月如就闪亮登场了，哈哈！</p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="https://ww1.sinaimg.cn/large/4c36074fly1fyzcuaxphej20k10h70vr.jpg" alt="林月如贴图效果" title="" referrerpolicy="no-referrer">
+                </div>
+                <div class="image-caption">林月如贴图效果</div>
+            </figure>
+
+<p>&emsp;&emsp;好了，再来一张，不过这张没有贴图，需要大家自己来辨别这是谁啊，哈哈！</p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="https://ww1.sinaimg.cn/large/4c36074fly1fyzcu53oytj20hj0fdmyd.jpg" alt="柳梦璃灰模" title="" referrerpolicy="no-referrer">
+                </div>
+                <div class="image-caption">柳梦璃灰模</div>
+            </figure>
+
+<p>&emsp;&emsp;通过disunity这个工具我们还能获取更多的资源，剩下的内容就由大家自己去探索吧。通过这部分的研究，我们可以总结出以下观点，希望大家在使用AsssetBundle这项技术时注意：</p>
+<ul>
+<li>尽量在一个AssetBundle中打包多个资源，这样做的好处是别人没法通过加载AssetBundle拿到你做好的Prefab。</li>
+<li>尽量将一个预制件分割成不同的部分分别存放，这样做的好处是即使别人拿到了你的预制件却是不完整的。</li>
+<li>尽量利用动态脚本来加载场景而不是将整个场景打包，即使将整个场景打包，要把贴图和模型分开放置(因此如此，我虽然拿到了游戏的场景贴图，可是没有用啊)</li>
+<li>尽量利用加密的方法来隐藏本地的AssetBundle或者使用不易察觉的存储位置作为AssetBundle的存储位置，不要用明文数据进行存储。</li>
+</ul>
+<p>&emsp;&emsp;好了，今天的内容就是这样了，希望大家喜欢，AssetBundle打包是一个值得去深入研究的问题，今天博主提出的这些观点不过是对《新仙剑OL》这个游戏的打包提出de一些看法，如果大家有不同的看法，欢迎一起来交流！</p>
+
+                
+                
+
+
+<div class="recommended_posts">
+    <h1>推荐阅读</h1>
+    <ul>
+        
+        <li><a href="https://qinyuanpei.github.io/posts/1190622881/">Unity3D游戏开发之在uGUI中使用不规则精灵制作按钮</a></li>
+        
+        <li><a href="https://qinyuanpei.github.io/posts/1320325685/">Unity3D游戏开发之从Unity3D项目版本控制说起</a></li>
+        
+        <li><a href="https://qinyuanpei.github.io/posts/1467630055/">Unity3D游戏开发之使用AssetBundle和Xml实现场景的动态加载</a></li>
+        
+        <li><a href="https://qinyuanpei.github.io/posts/1118169753/">《仙剑奇侠传六》游戏感言</a></li>
+        
+        <li><a href="https://qinyuanpei.github.io/posts/426338252/">使用Love2D引擎开发贪吃蛇游戏</a></li>
+        
+    </ul>
+</div>
+
+            </div>
+            
+<blockquote class="post-copyright">
+    <div class="content">
+        <p><b>版权声明：</b>
+        <a href="https://qinyuanpei.github.io/posts/2799263488/" rel="external">Unity3D游戏开发之反编译AssetBundle提取游戏资源</a>
+        ，由&nbsp;<a href="/about" target="_blank" rel="external">飞鸿踏雪</a>&nbsp;
+        首次发表于&nbsp;<a href="/" target="_blank" rel="external">一个人的孤落时辰</a>&nbsp;
+        ，本文地址为：<a href="https://qinyuanpei.github.io/posts/2799263488/" target="_blank" rel="external">https://qinyuanpei.github.io/posts/2799263488/</a>
+        ，转载请注明<b>作者</b>和<b>出处</b>。</p>
+    </div>
+    <footer>
+        <a href="https://qinyuanpei.github.io">
+            <img src="/assets/images/avatar.jpg" alt="飞鸿踏雪">
+            飞鸿踏雪
+        </a>
+    </footer>
+</blockquote>
+
+
+            
+<div class="page-reward">
+    <a id="rewardBtn" href="javascript:;" class="page-reward-btn waves-effect waves-circle waves-light">赏</a>
+</div>
+
+
+            <div class="post-footer">
+                
+	<ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/AssetBundle/" rel="tag">AssetBundle</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Unity3D/" rel="tag">Unity3D</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91/" rel="tag">游戏开发</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E8%B5%84%E6%BA%90%E6%8F%90%E5%8F%96/" rel="tag">资源提取</a></li></ul>
+
+                
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://qinyuanpei.github.io/posts/2799263488/&title=《Unity3D游戏开发之反编译AssetBundle提取游戏资源》 — 一个人的孤落时辰&pic=https://qinyuanpei.github.ioassets/images/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://qinyuanpei.github.io/posts/2799263488/&title=《Unity3D游戏开发之反编译AssetBundle提取游戏资源》 — 一个人的孤落时辰&source=&emsp;&emsp;各位朋友，大家好，欢迎大家关注我的博客，我是秦元培，我的博客地址是http://www.qinyuanpei.com。今天我们来说..." data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://qinyuanpei.github.io/posts/2799263488/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Unity3D游戏开发之反编译AssetBundle提取游戏资源》 — 一个人的孤落时辰&url=https://qinyuanpei.github.io/posts/2799263488/&via=https://qinyuanpei.github.io" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://qinyuanpei.github.io/posts/2799263488/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
+            </div>
+        </div>
+
+        
+<nav class="post-nav flex-row flex-justify-between">
+  
+    <div class="waves-block waves-effect prev">
+      <a href="/posts/1082185388/" id="post-prev" class="post-nav-link">
+        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
+        <h4 class="title">Unity3D游戏开发之使用disunity提取Unity3D游戏资源</h4>
+      </a>
+    </div>
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/posts/70687890/" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h4 class="title">Unity3D游戏开发之编辑器扩展程序开发实例</h4>
+      </a>
+    </div>
+  
+</nav>
+
+
+        
+    <div id="comment"></div>
+<script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+<script src='//unpkg.com/valine/dist/Valine.min.js'></script>
+<script type="text/javascript">
+new Valine({
+    el: '#comment' ,
+    notify: false, 
+    verify: true, 
+    appId: 'JbHqRp2eMrTgIwYpfERH0g79-gzGzoHsz',
+    appKey: 'VsiKvLuiBGvJL1XrAfv7siY2',
+    placeholder: '云中谁寄锦书来，雁字回时，月满西楼。&#10;Tips：如果希望收到我的评论回复，请至少留下你的邮箱哦:)',
+    path:'https://qinyuanpei.github.io/posts/2799263488/', 
+    avatar:'identicon',
+});
+</script>
+
+
+
+
+    </article>
+    
+<div id="reward" class="page-modal reward-lay">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <h3 class="reward-title">
+        <i class="icon icon-quote-left"></i>
+        赠人玫瑰，手有余香
+        <i class="icon icon-quote-right"></i>
+    </h3>
+    <div class="reward-content">
+        
+        <div class="reward-code">
+            <img id="rewardCode" src="/assets/images/wechat.png" alt="打赏二维码">
+        </div>
+        
+        <label class="reward-toggle">
+            <input id="rewardToggle" type="checkbox" class="reward-toggle-check"
+                data-wechat="/assets/images/wechat.png" data-alipay="/assets/images/alipay.jpg">
+            <div class="reward-toggle-ctrol">
+                <span class="reward-toggle-item wechat">微信</span>
+                <span class="reward-toggle-label"></span>
+                <span class="reward-toggle-item alipay">支付宝</span>
+            </div>
+        </label>
+        
+    </div>
+</div>
+
+
+</div>
+
+        <footer class="footer">
+    <div class="top">
+        
+   <p>
+      <span id="lc_counter_container_site_uv">
+         <i class="icon icon-user"></i><span id="lc_counter_value_site_uv"></span>
+      </span>
+      <span id="lc_counter_container_site_pv">
+         <i class="icon icon-eye"></i><span id="lc_counter_value_site_pv"></span>
+      </span>
+  </p>
+
+
+        <p>
+   <a id="jinrishici-sentence" href="https://www.jinrishici.com/" target="_blank" rel="noopener">加载中</a>
+</p>
+<script src="https://sdk.jinrishici.com/v2/browser/jinrishici.js" charset="utf-8"></script>
+<script>
+   jinrishici.load(function(result) {
+      document.querySelector('#subtitle').innerText = result.data.content;
+      document.querySelector('#jinrishici-sentence').innerText = result.data.content;
+  });
+</script>
+            <!--Todo: 考虑重构为插件 -->
+            <p>
+                
+                    <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+                
+                <span>
+                    <a href="https://github.com/qinyuanpei" target="_blank" rel="license noopener" title="Github">
+                        <i class="icon icon-lg icon-github"></i>
+                    </a>
+                </span>
+                <span>
+                    <a href="https://weibo.com/1278609231/profile" target="_blank" rel="license noopener" title="微博">
+                        <i class="icon icon-lg icon-weibo"></i>
+                    </a>
+                </span>
+                <span>
+                    <a href="https://www.douban.com/people/60029335/" target="_blank" rel="license noopener" title="豆瓣">
+                        <i class="icon icon-lg icon-douban"></i>
+                    </a>
+                </span>
+                <span>
+                    <a href="https://www.zhihu.com/people/qinyuanpei" target="_blank" rel="license noopener" title="知乎">
+                        <i class="icon icon-lg icon-zhihu-square"></i>
+                    </a>
+                </span>
+                <span>
+                    <a href="https://blog.csdn.net/qinyuanpei" target="_blank" rel="license noopener" title="CSDN">
+                        <i class="icon icon-lg">C</i>
+                    </a>
+                </span>
+                <span>
+                    <a href="https://music.163.com/#/user/home?id=47002864" target="_blank" rel="license noopener" title="网易音乐">
+                        <i class="icon icon-lg icon-wangyiyunyinyue"></i>
+                    </a>
+                </span>
+            </p>
+        
+    </div>
+    <div class="bottom">
+        <p><span>飞鸿踏雪 &copy; 2014 - 2020</span><br>
+            
+                
+                Powered by <a href="http://hexo.io/" target="_blank">Hexo</a> & Theme by <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a><br>
+                
+                
+                    <p>Hosted by <a href="https://pages.github.com" target="_blank" rel="noopener" style="font-weight: bold">Github Pages</a></p>
+                
+        </p>
+    </div>
+</footer>
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span
+        class="icon icon-lg icon-chevron-up"></span></a>
+
+    
+
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://qinyuanpei.github.io/posts/2799263488/&title=《Unity3D游戏开发之反编译AssetBundle提取游戏资源》 — 一个人的孤落时辰&pic=https://qinyuanpei.github.ioassets/images/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://qinyuanpei.github.io/posts/2799263488/&title=《Unity3D游戏开发之反编译AssetBundle提取游戏资源》 — 一个人的孤落时辰&source=&emsp;&emsp;各位朋友，大家好，欢迎大家关注我的博客，我是秦元培，我的博客地址是http://www.qinyuanpei.com。今天我们来说..." data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://qinyuanpei.github.io/posts/2799263488/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Unity3D游戏开发之反编译AssetBundle提取游戏资源》 — 一个人的孤落时辰&url=https://qinyuanpei.github.io/posts/2799263488/&via=https://qinyuanpei.github.io" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://qinyuanpei.github.io/posts/2799263488/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="//api.qrserver.com/v1/create-qr-code/?data=https://qinyuanpei.github.io/posts/2799263488/" alt="微信分享二维码">
+</div>
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.6/waves.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/4.2.1/echarts.min.js"></script>
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/echarts-wordcloud.min.js" async></script>
+<script>
+    var BLOG = { ROOT: '/', SHARE: true, REWARD: true };
+
+
+</script>
+
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/main.min.js"></script>
+
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/search.min.js" async></script>
+
+
+
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/heart.min.js" async></script>
+
+
+
+
+
+
+
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/leancloud-counter.min.js"></script>
+<script>
+        (function () {
+            var appId = 'JbHqRp2eMrTgIwYpfERH0g79-gzGzoHsz';
+            var appKey = 'VsiKvLuiBGvJL1XrAfv7siY2';
+            new VisitorCounter().init({
+                appId: appId,       //应用ID, 必输
+                appKey: appKey,      //应用Key, 必输
+                region: '华北',      //华东,华北,国际, 默认华东
+                domain: '',      //自定义域名
+                collectIP: true, //是否收集IP及位置信息, 默认开启
+                collectUA: true  //是否收集UserAgent, 默认开启
+            });
+        })();
+</script>
+
+
+
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/vconsole.min.js"></script>
+<script type="text/javascript">
+    //当地址中存在debug=true时，实例化vConsole
+    if (location.href.indexOf('debug=true') > -1) {
+        var vConsole = new VConsole();
+    }
+</script>
+
+
+    <script>
+    //国内用户自动重定向Coding Pages镜像
+    // var ipInfo = JSON.parse(localStorage.getItem('ipInfo'));
+    // if (ipInfo.country_code == 'CN') {
+    //     location.href = location.href.replace('qinyuanpei.github.io', 'blog.yuanpei.me');
+    // }
+    </script>
+
+
+<script>
+titleArray = [];
+function scrollTitle() {
+    if (titleArray.length == 0) return;
+    titleArray.push(titleArray[0]);
+	titleArray.shift();
+	document.title = titleArray.join("");
+}
+setInterval(scrollTitle, 500);
+(function() {
+    var OriginTitile = document.title, titleTime;
+    document.addEventListener('visibilitychange', function() {
+        if (document.hidden) {
+            titleArray = '即使天无雨，我亦留此地。'.split('');
+            clearTimeout(titleTime);
+        } else {
+            document.title = '但盼风雨来，能留你在此。';
+            titleArray = '但盼风雨来，能留你在此。'.split('');
+            titleTime = setTimeout(function() {
+                document.title = OriginTitile;
+                titleArray = [];
+            },2000);
+        }
+    });
+})();
+</script>
+
+
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/ribbon.min.js"></script>
+</body>
+</html>
