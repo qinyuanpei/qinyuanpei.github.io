@@ -68,6 +68,8 @@ after_script:
   - cp languages.json ./public/languages.json
   - cp monitoror.json ./public/monitoror.json
   - cp shanbay.json ./public/shanbay.json
+  - rm ./public/sitemap.xml
+  - rm ./public/baidusitemap.xml
   - git config user.name "qinyuanpei"
   - git config user.email "qinyuanpei@163.com"
   - cd ./public

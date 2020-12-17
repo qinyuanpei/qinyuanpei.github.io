@@ -1,7 +1,11 @@
 <head>
-    <%- partial('plugins/google-analytics') %>
+    <% if (config.image_version == 'master'){ %>
+        <%- partial('plugins/google-analytics') %>
+    <% } %>
     <%- partial('plugins/tajs') %>
-    <%- partial('plugins/baidu') %>
+    <% if (config.image_version == 'master'){ %>
+        <%- partial('plugins/baidu') %>
+    <% } %>
     <meta charset="utf-8">
     <!-- HTTP 1.1 -->  
     <meta http-equiv="pragma" content="no-cache">  
@@ -10,16 +14,18 @@
     <!-- 微博图床防盗链 --> 
     <!-- <meta name="referrer" content="no-referrer"/> -->
     <!--Google站点验证-->
-    <% if(theme.google_site_verification){ %>
+    <% if(theme.google_site_verification && config.image_version == 'master'){ %>
         <meta name="google-site-verification" content="<%- theme.google_site_verification%>">
     <% } %>
-    <!--Google站点验证-->
-    <meta name="baidu-site-verification" content="c50FGqYOSh" />
+    <!--百度站点验证-->
+    <% if (config.image_version == 'master'){ %>
+        <meta name="baidu-site-verification" content="c50FGqYOSh" />
+    <% } %>
     <% if(theme.canonical){ %>
         <link rel="canonical" href="<%- (theme.canonical + url_for(page.path)).replace(/index\.html$/, '') %>">
     <% } %>
     <!--Google AdSense-->
-    <% if(theme.google_adsense) { %>
+    <% if(theme.google_adsense && config.image_version == 'master') { %>
         <script data-ad-client="ca-pub-8485009880440519" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
     <% } %>
     <!--Bing站点验证-->

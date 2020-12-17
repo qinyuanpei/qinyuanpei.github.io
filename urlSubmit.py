@@ -6,13 +6,11 @@ import json
 import pytz
 import datetime
 import requests
-from PIL import Image
 from lxml import etree
 from itertools import groupby
 from html.parser import HTMLParser
 from xml.dom.minidom import parse
 import xml.dom.minidom
-import yaml
 
 querystring = {"site": "blog.yuanpei.me", "token": "RDl7DmfXeoWMVvWP"}
 headers = {
