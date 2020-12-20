@@ -52,6 +52,13 @@
             pageTags = pageTags.concat(config.keywords.split(','))
         }
         var keywords = pageTags.join(',')
+
+        page.description = page.description | '';
+        if (is_post()) {
+            if (site.data.summaries[page.abbrlink] != null) {
+                page.description = site.data.summaries[page.abbrlink].descs;
+            }
+        }
     %>
     <title>
         <% if (title){ %><%= title %> - <% } %><%= config.title %><% if (config.subtitle && is_home()){ %> - <%= config.subtitle %><% } %>
