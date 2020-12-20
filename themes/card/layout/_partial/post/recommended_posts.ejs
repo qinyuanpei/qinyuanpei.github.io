@@ -17,6 +17,9 @@
         let relatedPosts = pageTags.map(x=>sitePosts.filter(y=>y.title != page.title  && (y.tags.indexOf(x) != -1 || y.date.format('MM/DD') == page.date.format('MM/DD')))).reduce((prev,next)=>{
             return prev.concat(next);
         },[]);
+        if (relatedPosts.length == 0) {
+            return shuffle(site.posts.toArray()).slice(0, limit);
+        }
         return shuffle(Array.from(new Set(relatedPosts))).slice(0, limit);
     }
 
