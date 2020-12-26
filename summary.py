@@ -11,26 +11,35 @@ baseDir = os.path.abspath('.')
 blogDir = os.path.join(baseDir,'source\_posts')
 dataDir = os.path.join(baseDir,'source\_data')
 blogFiles = os.listdir(blogDir)
+summaryFile = os.path.join(dataDir, 'summaries.json')
 
 
 def extract_tags(text, top=5):
    tr4w = TextRank4Keyword()
-   tr4w.analyze(text, lower=True)
+   tr4w.analyze(text, lower=False)
    key_words = tr4w.get_keywords(top)
    print(jieba.analyse.textrank(text, topK=20, withWeight=False, allowPOS=('ns', 'n', 'vn', 'v')))
    return [(item.word,item.weight) for item in key_words]
 
 def extract_summaries(text, top=5):
     tr4s = TextRank4Sentence()
-    tr4s.analyze(text=text, lower=True, source='all_filters')
+    tr4s.analyze(text=text, lower=False, source='all_filters')
     return [item.sentence for item in tr4s.get_key_sentences(5)]
 
+# 载入摘要信息
 summaries = {}
+if (os.path.exists(summaryFile)):
+    with open(summaryFile, 'rt', encoding='utf-8') as fp:
+        summaries = json.load(fp)
+
 for blogFile in blogFiles:
     with open(os.path.join(blogDir,blogFile),'r+', encoding='utf-8') as f:
+        print('Analysing-->' + blogFile)
         post = frontmatter.loads(f.read())
         summary = {}
         abbrlink = post['abbrlink']
+        if (str(abbrlink) in dict(summaries).keys()):
+            continue
         tags = extract_tags(post.content)
         descs = extract_summaries(post.content)
         if len(descs) == 0:
@@ -45,7 +54,7 @@ for blogFile in blogFiles:
         summaries[abbrlink] = summary
         print(summary)
         
-with open(os.path.join(dataDir, 'summaries.json'), 'wt', encoding='utf-8') as fp:
+with open(summaryFile, 'wt', encoding='utf-8') as fp:
     json.dump(summaries, fp)   
 
 
