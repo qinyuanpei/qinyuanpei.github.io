@@ -1,4 +1,4 @@
----
+﻿---
 abbrlink: 183718218
 categories:
 - 游戏开发
@@ -9,6 +9,7 @@ tags:
 - 游戏
 - 图形
 - 引擎
+- 教程
 title: SDL游戏开发系列第一话：Hello SDL
 ---
 

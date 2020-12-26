@@ -1,4 +1,4 @@
----
+﻿---
 abbrlink: 116795088
 categories:
 - 编程语言
@@ -9,8 +9,9 @@ description: POCOController是ASP.NET Core中提供的一个新特性，按照�
   API，和一个可用的在线文档，何乐而不为呢;这篇博客延续了上一篇博客中关于动态Controller的设想，而借助于.NET Core框架提供的良好特性，它以一种更为简洁的方式被实现了，核心的内容有两个点，其一是ControllerFeatureProvider，它能决定MVC会不会把一个普通的类当做控制器
 tags:
 - .NET Core
-- Dynamic WebApi
-- POCOController
+- API
+- Web
+- 技巧
 title: .NET Core POCOController在动态Web API中的应用
 ---
 

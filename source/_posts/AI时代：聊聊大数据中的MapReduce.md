@@ -9,6 +9,7 @@ tags:
 - AI
 - MapReduce
 - FP
+- 大数据
 title: AI时代：聊聊大数据中的MapReduce
 ---
 

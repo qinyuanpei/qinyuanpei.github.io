@@ -1,4 +1,4 @@
----
+﻿---
 abbrlink: 316230277
 categories:
 - Unity3D
@@ -9,6 +9,7 @@ tags:
 - 增强现实
 - EasyAR
 - Unity3D
+- 教程
 title: EasyAR尝鲜系列教程之视频播放功能的实现
 ---
 

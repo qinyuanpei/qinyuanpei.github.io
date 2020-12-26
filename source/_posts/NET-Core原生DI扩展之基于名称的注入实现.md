@@ -1,4 +1,4 @@
----
+﻿---
 toc: true
 title: .NET Core原生DI扩展之基于名称的注入实现
 categories:
@@ -7,6 +7,7 @@ tags:
   - DI
   - 依赖注入
   - .NET Core
+  - 技巧
 copyright: true
 abbrlink: 1734098504
 date: 2020-06-10 13:08:03

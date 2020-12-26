@@ -1,4 +1,4 @@
----
+﻿---
 abbrlink: 2041685704
 categories:
 - 编程语言
@@ -9,6 +9,7 @@ tags:
 - Socket
 - 异步
 - 通信
+- 编程
 title: C#中Socket通信编程的异步实现
 ---
 

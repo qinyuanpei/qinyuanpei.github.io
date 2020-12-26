@@ -1,4 +1,4 @@
----
+﻿---
 abbrlink: 3687594958
 categories:
 - 编程语言
@@ -9,6 +9,7 @@ tags:
 - .NET Core
 - ELK
 - 日志
+- 监控
 title: .NET Core + ELK搭建可视化日志分析平台(上)
 ---
 

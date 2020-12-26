@@ -1,4 +1,4 @@
----
+﻿---
 abbrlink: 2038378679
 categories:
 - 读书笔记
@@ -8,6 +8,7 @@ tags:
 - 游戏
 - HTML5
 - 技术
+- 笔记
 title: HTML5游戏开发技术基础整理
 ---
 

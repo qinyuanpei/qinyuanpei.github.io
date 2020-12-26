@@ -1,4 +1,4 @@
----
+﻿---
 toc: true
 title: .NET Core中对象池(Object Pool)的使用
 categories:
@@ -7,6 +7,7 @@ tags:
   - 对象池
   - 设计模式
   - .NET Core
+  - 技巧
 copyright: true
 abbrlink: 2414960312
 date: 2020-08-15 16:37:23

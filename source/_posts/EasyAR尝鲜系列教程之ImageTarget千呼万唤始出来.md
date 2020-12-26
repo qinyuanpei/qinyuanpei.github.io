@@ -1,4 +1,4 @@
----
+﻿---
 abbrlink: 3736599391
 categories:
 - Unity3D
@@ -8,6 +8,7 @@ tags:
 - 增强现实
 - EasyAR
 - AR
+- 教程
 title: EasyAR尝鲜系列教程之ImageTarget千呼万唤始出来
 ---
 

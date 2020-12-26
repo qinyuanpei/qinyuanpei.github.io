@@ -8,6 +8,7 @@ tags:
 - 跨平台
 - Mono
 - .NET
+- Linux
 title: 使用Mono让.NET程序跨平台运行
 ---
 

@@ -1,4 +1,4 @@
----
+﻿---
 abbrlink: 1444577573
 categories:
 - 数据存储
@@ -8,6 +8,7 @@ tags:
 - Redis
 - 缓存
 - 设计模式
+- 笔记
 title: Redis缓存技术学习系列之发布订阅
 ---
 

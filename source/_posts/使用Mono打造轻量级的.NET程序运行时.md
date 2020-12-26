@@ -9,6 +9,7 @@ tags:
 - .NET
 - Mono
 - 跨平台
+- Linux
 title: 使用Mono打造轻量级的.NET程序运行时
 ---
 

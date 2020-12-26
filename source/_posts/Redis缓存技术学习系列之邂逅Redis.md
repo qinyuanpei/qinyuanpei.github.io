@@ -1,4 +1,4 @@
----
+﻿---
 abbrlink: 3032366281
 categories:
 - 数据存储
@@ -8,6 +8,7 @@ tags:
 - Redis
 - 缓存
 - 数据库
+- 笔记
 title: Redis缓存技术学习系列之邂逅Redis
 ---
 

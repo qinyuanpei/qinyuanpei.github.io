@@ -1,4 +1,4 @@
----
+﻿---
 abbrlink: 1156673678
 categories:
 - Unity3D
@@ -8,6 +8,7 @@ tags:
 - 增强现实
 - AR
 - Unity3D
+- 教程
 title: EasyAR尝鲜系列教程之自定义Marker的实现
 ---
 

@@ -1,4 +1,4 @@
----
+﻿---
 toc: true
 title: .NET Core原生DI扩展之属性注入实现
 categories:
@@ -7,6 +7,7 @@ tags:
   - DI
   - 依赖注入
   - .NET Core
+  - 技巧
 copyright: true
 abbrlink: 1658310834
 date: 2020-06-20 13:10:31
