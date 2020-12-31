@@ -37,7 +37,10 @@ for blogFile in blogFiles:
         print('Analysing-->' + blogFile)
         post = frontmatter.loads(f.read())
         summary = {}
-        abbrlink = post['abbrlink']
+        try:
+            abbrlink = post['abbrlink']
+        except:
+            continue
         if (str(abbrlink) in dict(summaries).keys()):
             continue
         tags = extract_tags(post.content)
