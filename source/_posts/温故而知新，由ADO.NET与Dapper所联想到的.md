@@ -102,7 +102,7 @@ public class DynamicRow : DynamicObject
        _record.GetOrdinal(field) > 0 ? _record[field] : null;
 }
 ```
-对于`DynamicObject`这个类型而言，里面最重要的两个方法其实是`TryGetMember()`和`TrySetMember()`，因为这决定了这个动态对象的读和写两个操作。因为我们这里不需要反向地去操作数据库，所以，我们只需要关注`TryGetMember()`即可，一旦实现这个方法，我们就可以使用类似`foo.bar`这种形式访问字段，而提供一个所引起，则是为了提供类似`foo["bar"]`的访问方式，这一点同样是为了像Dapper看齐，无非是Dapper的DynamicRow本来就是一个字典！
+对于`DynamicObject`这个类型而言，里面最重要的两个方法其实是`TryGetMember()`和`TrySetMember()`，因为这决定了这个动态对象的读和写两个操作。因为我们这里不需要反向地去操作数据库，所以，我们只需要关注`TryGetMember()`即可，一旦实现这个方法，我们就可以使用类似`foo.bar`这种形式访问字段，而提供一个索引器，则是为了提供类似`foo["bar"]`的访问方式，这一点同样是为了像Dapper看齐，无非是Dapper的DynamicRow本来就是一个字典！
 
 现在，我们来着手实现一个简化版的Dapper，给`IDbConnection`这个接口扩展出`Query<T>()`和`Execute()`两个方法，我们注意到`Query<T>()`需要用到`DbDataReader`或者`DbDataAdapter`其一，对于`DbDataAdapter`而言，它的实现完全由具体的子类决定，所以，对于`IDbConnection`接口而言，它完全不知道对应的子类是什么，此时，我们只能通过判断`IDbConnection`的类型来返回对应的DbDataAdapter。读过我之前[博客](https://blog.yuanpei.me/posts/3086300103/)的朋友，应该对Dapper里的数据库类型的字典有印象，不好意思，这里历史要再次上演啦！
 
