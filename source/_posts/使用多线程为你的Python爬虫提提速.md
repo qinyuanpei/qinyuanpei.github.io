@@ -104,7 +104,7 @@ def downloadByThreadPool(self, poolSize=3):
 
 ## ThreadPoolExecutor
 
-对于[ThreadPoolExecutor](https://docs.python.org/zh-cn/3/library/concurrent.futures.html#concurrent.futures.ThreadPoolExecutor)，相信不用我多说什么，你就能知道它是做什么的吧，这就是博主反复提及的命名规范的问题。简而言之，Python 在 `concurrent.futures`中为我们提供了 [ThreadPoolExecutor](https://docs.python.org/zh-cn/3/library/concurrent.futures.html#concurrent.futures.ThreadPoolExecutor) 和 [ProcessPoolExecutor](https://docs.python.org/zh-cn/3/library/concurrent.futures.html#concurrent.futures.ProcessPoolExecutor) 两个高级接口，它们都继承自同一个抽象类`Executor`，它可以让我们在线程池或者进程池中异步地执行回调函数，属于官方提供的标准的“线程池”和“进程池”模块，下面，我们来一起看看具体的使用方法：
+对于[ThreadPoolExecutor](https://docs.python.org/zh-cn/3/library/concurrent.futures.html#concurrent.futures.ThreadPoolExecutor)，相信不用我多说什么，你就能知道它是做什么的吧，这就是博主反复提及的命名规范的问题。简而言之，Python 在 `concurrent.futures`中为我们提供了 [ThreadPoolExecutor](https://docs.python.org/zh-cn/3/library/concurrent.futures.html#concurrent.futures.ThreadPoolExecutor) 和 [ProcessPoolExecutor](https://docs.python.org/zh-cn/3/library/concurrent.futures.html#concurrent.futures.ProcessPoolExecutor) 两个高级接口，它们都继承自同一个抽象类`Executor`，它可以让我们在线程池或者进程池中异步地执行回调函数，属于官方提供的标准的“**线程池**”和“**进程池**”模块，下面，我们来一起看看具体的使用方法：
 
 ```Python
 # 使用ThreadPoolExecutor下载
@@ -243,8 +243,10 @@ async def main():
     task2 = asyncio.get_event_loop().(say_after('Hello', 2))
     await task1
     await task2
+
+asyncio.get_event_loop().run_until_complete(main())
 ```
-这是因为 Python 中的协程、任务 和 Future 都是可等待对象，故而，凡有 **async** 处皆可 **await** ，果然，主流编程语言的最终走向是如此的一致啊，回头想想 .NET 中 Thread 、 ThreadPool 、 Task 的进化历程，是不是有种“天下大势，分久必合”的感觉呢？
+这是因为 Python 中的协程、任务 和 Future 都是可等待对象，故而，凡有 **async** 处皆可 **await** ，果然，主流编程语言的最终走向是如此的一致啊，回头想想 .NET 中 Thread 、 ThreadPool 、 Task 的进化历程，是不是有种“**天下大势，分久必合**”的感觉呢？
 
 ## requests
 
