@@ -36,7 +36,7 @@ after_script:
   - python3 readme.py https://blog.yuanpei.me/
   - python3 languages.py
   - python3 shanbay.py
-  - python3 urlSubmit.py https://blog.yuanpei.me/
+  #- python3 urlSubmit.py https://blog.yuanpei.me/
   - cp README.md ./public/README.md
   - cp VERSION.txt ./public/VERSION.txt
   - cp languages.json ./public/languages.json
