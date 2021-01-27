@@ -12,7 +12,8 @@ notifications:
 
 install:
   - npm install
-  - sudo apt-get install python3 -y
+  - sudo add-apt-repository ppa:jonathonf/python-3.7
+  - sudo apt-get install python3.7 -y
   - sudo apt-get install python3-pip -y
   - sudo python3 -m pip install pip -U
   - sudo python3 -m pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple
