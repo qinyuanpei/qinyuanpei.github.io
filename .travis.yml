@@ -20,6 +20,7 @@ install:
   - sudo rm /usr/bin/python
   - sudo ln -s /usr/bin/python3.6 /usr/bin/python
   - sudo pip3 install pip -U
+  - python -v
   - sudo pip3 config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple
   - sudo pip3 install setuptools==33.1.1 -i https://pypi.tuna.tsinghua.edu.cn/simplehttps://pypi.tuna.tsinghua.edu.cn/simple
   - sudo pip3 install leancloud -i https://pypi.tuna.tsinghua.edu.cn/simplehttps://pypi.tuna.tsinghua.edu.cn/simple
