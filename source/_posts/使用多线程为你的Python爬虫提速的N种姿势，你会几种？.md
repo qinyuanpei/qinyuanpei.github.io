@@ -1,6 +1,6 @@
 ---
 toc: true
-title: 使用多线程为你的Python爬虫提提速
+title: 使用多线程为你的Python爬虫提速的N种姿势，你会几种？
 categories:
   - 数据分析
 tags:
