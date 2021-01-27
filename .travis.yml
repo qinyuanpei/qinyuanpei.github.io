@@ -17,6 +17,9 @@ install:
   - sudo apt-get update 
   - sudo apt-get install python3.6 -y
   - sudo apt-get install python3-pip -y
+  - sudo rm /usr/bin/python
+  - sudo -s
+  - ln -s /usr/bin/python3.6 /usr/bin/python
   - sudo pip3 install pip -U
   - sudo pip3 config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple
   - sudo pip3 install setuptools==33.1.1 -i https://pypi.tuna.tsinghua.edu.cn/simplehttps://pypi.tuna.tsinghua.edu.cn/simple
