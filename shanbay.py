@@ -33,7 +33,7 @@ page = 1
 checkins = []
 pageData = analyseCheckin(page)
 today = datetime.datetime.today()
-begin = today - datetime.timedelta(days = 90)
+begin = today - datetime.timedelta(days = 15)
 while len(pageData) > 0:
     checkins.extend(pageData)
     page += 1

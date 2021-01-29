@@ -32,7 +32,6 @@ headers = {
     'Content-Type': "text/plain",
 }
 
-# LeanCloud
 # leancloud.init("JbHqRp2eMrTgIwYpfERH0g79-gzGzoHsz", "VsiKvLuiBGvJL1XrAfv7siY2")
 # UrlSubmit = leancloud.Object.extend('UrlSubmit')
 
@@ -109,11 +108,13 @@ def baiduSitemap():
             with open('.public/baidusitemap.xml', 'wt',encoding='utf-8') as fi:
                 fi.write(DOMTree.toprettyxml())
 
+# 提交地址
 def submitSitemap():
     with open('_config.yml', 'rt', encoding='utf-8') as f:
         conf = yaml.load(f)
         session = requests.session()
         if(conf['image_version'] == "master"):
+
             DOMTree = xml.dom.minidom.parse('./public/baidusitemap.xml')
             root = DOMTree.documentElement
             urls = root.getElementsByTagName("url")
@@ -121,21 +122,36 @@ def submitSitemap():
                 loc = url.getElementsByTagName("loc")[0]
                 payload = loc.childNodes[0].data
                 print(payload)
-                query = UrlSubmit.query
-                query.equal_to('url', payload) 
-                query_list = query.find()
-                if len(query_list) == 0:
+                if not querySubmitHistory(url) == 0:
                     response = session.request("POST", baseUrl, data=payload, headers=headers,)
                     print(response.text)
                     data = json.loads(response.text)
                     if(data['success'] == 1):
                         print('提交地址:{payload},至百度成功'.format(payload=payload))
-                        submit = UrlSubmit()
-                        submit.set('url', payload)
-                        submit.save()
+                        createSubmitHistory(url)
                     time.sleep(5)
 
+# 查询提交记录
+def querySubmitHistory(url):
+    if not os.path.exists('urlSubmit.json'):
+        return False
+    else:
+        with open('urlSubmit.json', 'rt', encoding='utf-8') as fp:
+            histories = json.load(fp)
+            if url in histories:
+                return True
+            else:
+                return False
 
+# 创建提交记录
+def createSubmitHistory(url):
+    histories = []
+    if os.path.exists('urlSubmit.json'):
+        with open('urlSubmit.json', 'rt', encoding='utf-8') as fp:
+            histories = json.load(fp)
+    histories.append(url)
+    with open('urlSubmit.json', 'wt', encoding='utf-8') as fp:
+        json.dump(histories, fp)
 
 if(__name__ == "__main__"):
     items = sorted(loadData(sys.argv[1]),key=lambda x:x.getDate(),reverse=True)
