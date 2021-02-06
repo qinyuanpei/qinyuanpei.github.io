@@ -340,7 +340,7 @@ public static class RedisConfigurationExtensions
 }
 ```
 现在，我们改一下入口类`Program.cs`，因为在这个阶段依赖注入是无法使用的，所以，看起来有一点难受，从命名就可以看出来，内部使用了`Hash`这种结构，理论上每个客户端应该使用不同的Key来进行缓存，应该使用不同的Channel来接收配置更新的通知：
-```
+```CSharp
 public static IHostBuilder CreateHostBuilder(string[] args) =>
     Host.CreateDefaultBuilder(args)
         .ConfigureAppConfiguration(configurationBuilder =>
