@@ -1,6 +1,19 @@
 {
     "items": [
         {
+            "title": "半泽直树原著小说人物关系抽取",
+            "date": "2020.12",
+            "cover": "https://cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/images/portfolios/portfolio-graph-relation.png",
+            "subTitle": "",
+            "description": "基于共现理论提取《半泽直树》原著小说人物关系，技术栈为Python，辅助工具为Gephi",
+            "link": "https://github.com/qinyuanpei/graph-relation",
+            "tags": [
+                "NLP",
+                "半泽直树",
+                "NER"
+            ]
+        },
+        {
             "title": "WebGL交互案例(Demo)",
             "date": "2020.09",
             "cover": "https://cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/images/portfolios/portfolio-bmap-gl.png",
