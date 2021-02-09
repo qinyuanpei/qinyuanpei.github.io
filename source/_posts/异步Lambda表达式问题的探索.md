@@ -20,7 +20,7 @@ title: 异步Lambda表达式问题的探索
   好了，现在回到这个问题本身，问题产生的根源来自ICommand接口，而我们都知道该接口主要承担命令绑定作用。通过ICommand接口的定义我们可以知道，ICommand接口的Execute方法是一个同步方法，因此常规的做法如RelayCommand或者DelegateCommand，基本上都是传入一个Action来指向一个具体方法，最终ICommand接口中的Execute方法执行的实际上是这个具体方法。截止到目前为止，这个策略在主流的场景下都实施得非常好，可是我们在引入Task、async/await这些新的概念以后，我们突然发现ICommand接口存在一个亟待解决的问题，即它缺乏一个支持异步机制的Execute方法，显然这是一个历史遗留问题。
   
   我开始关注这个问题是当我在同事John和Charles的项目中看到类似下面的代码，事实上他们都是非常优秀的高级工程师，在对这个问题理解和探讨的过程中，我要特别感谢他们愿意分享他们的想法。我们一起来看看下面的代码：
-```
+```csharp
 public RelayCommand RunCommand
 {
   get
@@ -37,7 +37,7 @@ public RelayCommand RunCommand
 
   在这里我更感兴趣的一个问题是，.NET框架中的委托、匿名方法、Lambda表达式和Task是不同时期.NET的产物，那么我们在这里使用一个async关键字来修饰一个匿名方法，编译器在处理它的时候到底会怎么做呢？因为我们知道委托会被编译成一个包装类，那么现在在这篇文章中的提到的这个问题背景下，它会有什么不同呢？我们一起来看下面的代码：
 
-```
+```csharp
 static void Main(string[] args)
 {
   Action action1 = async () => await DoWorkAsync();

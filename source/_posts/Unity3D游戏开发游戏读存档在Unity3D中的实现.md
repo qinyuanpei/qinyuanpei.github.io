@@ -28,7 +28,7 @@ title: Unity3D游戏开发游戏读/存档在Unity3D中的实现
 
 ##一、JSON的序列化和反序列化
 &emsp;&emsp;这里我使用的是Newtonsoft.Json这个类库，相信大家都是知道的了！因此，序列化和反序列化特别简单。
-```C#
+```csharp
 /// <summary>
 	/// 将一个对象序列化为字符串
 	/// </summary>

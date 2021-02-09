@@ -21,7 +21,7 @@ title: Unity3D游戏开发之快速打造流行的关卡系统
 
 ##  1、定义关卡
 &emsp;&emsp;首先我们来定义一个关卡的基本结构：
-```C#
+```csharp
 public class Level
 {
 	/// <summary>
@@ -44,7 +44,7 @@ public class Level
 
 ##  2、定义关卡配置文件
 &emsp;&emsp;从关卡的基本结构Level可以定义出如下的配置文件，这里使用Xml作为配置文件的存储形式：
-```C#
+```xml
 <?xml version="1.0" encoding="utf-8"?>
 <levels>
   <level id="0" name="level0" unlock="1" />
@@ -63,7 +63,7 @@ public class Level
 
 ## 3、编写一个维护关卡的类
 &emsp;&emsp;这里直接给出代码，因为从严格的意义上来说，这段代码并非我们此刻关注的重点，可能这让大家感到难以适应，因为文章明明就是在教我们实现一个关卡系统，可是此刻博主却说这部分不重要了，请大家稍安勿躁，因为这里有比代码更为深刻的东西。
-```C#
+```csharp
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
@@ -171,7 +171,7 @@ public static class LevelSystem
 如果本地(指游戏外部)存在配置文件则直接读取配置文件，否则使用Resources.Load()方法加载Resources目录下的配置文件，并在本地创建一个配置文件的副本。这样做的目的是为了方便对配置文件进行修改，因为Resources目录下的配置文件在导出游戏后是没有路径的，我们没有办法用常规的访问文件的方式来读取这个文件，这个时候我们就用到Application.persistentDataPath这个路径，因为我们在本地创建了副本，所以只要读取副本文件就可以对其进行读取和修改了。那么，接下来，我们来写一个Main文件作为项目的入口文件吧！
 
 ## 4、编写入口文件
-```C#
+```csharp
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
@@ -230,7 +230,7 @@ public class Main : MonoBehaviour
 }
 ```
 &emsp;&emsp;在这段脚本中，我们首先加载了关卡信息，然后将关卡信息和界面元素实现绑定，从而实现一个简单的关卡选择界面，并人为地解锁了第二个关卡。好吧，如果这是一个正式游戏的配置关卡配置文件，相信大家都知道怎么免费玩解锁的关卡了吧，哈哈！当然，我不推荐大家这样做，因为作为一个程序员，当你全身心地投入到一个项目中的时候，你就会明白完成一款软件或者游戏需要投入多少精力，所以大家尽量还是不要想破解或者盗版这些这些事情，毕竟作为开发者可能他的出发点是想做出来一个让大家都喜欢的产品，可是更现实的问题是开发者一样要生活，所以请善待他们吧。好了，言归正传，这里的UI都是基于UGUI实现的，不要问我为什么不用NGUI，因为我就是喜欢UGUI！我们知道我们需要为每个关卡的UI元素绑定一个响应的事件，因此我们需要为其编写一个LevelEvent的脚本：
-```C#
+```csharp
 using UnityEngine;
 using System.Collections;
 using UnityEngine.UI;

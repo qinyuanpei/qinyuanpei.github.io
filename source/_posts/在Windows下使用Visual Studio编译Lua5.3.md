@@ -22,13 +22,13 @@ title: 在Windows下使用Visual Studio编译Lua5.3
 
 &emsp;&emsp;因此，对于Lua源代码的编译主要就是编译Lua链接库、Lua解释器和Lua编译器
 
-#编译Lua链接库
+# 编译Lua链接库
 * 使用Visual Studio创建一个VC++项目，项目命名为Lua53，项目类型为静态库、不设置预编译头。
 * 删除Visual Studio自动创建的.cpp文件及其对应的.h文件。
 * 将下载的Lua代码解压，将src目录下的全部文件拷贝到项目中，然后删除lua.c、luac.c和lua.hpp这三个文件。
 * 编译项目会得到一个Lua53.lib的文件，这就是我们编译得到的Lua链接库。
 
-#编译Lua解释器
+# 编译Lua解释器
 &emsp;&emsp;我们知道Lua解释器是一个可以直接运行Lua代码的可执行文件，因此
 * 在同一个解决方案下继续创建VC++项目，项目命名为Lua，项目类型为控制台应用程序、需设置预编译头。
 * 删除Visual Studio自动创建的.cpp文件及其对应的.h文件。
@@ -50,7 +50,7 @@ io.write(string.format("This Lua is %s and now is %s \n",_VERSION,os.date()))
 >Hello I get a powerful program language called Lua
 >This Lua is Lua5.3 and now is 04/16/15 16:06:43
 
-#编译Lua编译器
+# 编译Lua编译器
 &emsp;&emsp;和Lua类似地，
 * 在同一个解决方案下继续创建VC++项目，项目命名为Lua，项目类型为控制台应用程序、需设置预编译头。
 * 删除Visual Studio自动创建的.cpp文件及其对应的.h文件。
@@ -66,6 +66,6 @@ D:\Program Files\Lua\build;
 
 &emsp;&emsp;好了，今天的内容就是这样了。
 
-#链接
+# 链接
 * [本文编译的Lua](http://pan.baidu.com/s/1hqs1fX6)
 * [官方编译的Lua](http://joedf.users.sourceforge.net/luabuilds/)

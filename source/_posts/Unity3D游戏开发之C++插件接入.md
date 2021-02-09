@@ -30,7 +30,7 @@ title: Unity3D游戏开发之C++插件接入
 
 请注意.Net版本问题，重要的事情说三遍，不认真看这里的人出现问题就不要到我这里来评论了，我最讨厌连文章都没有看明白就来和你纠缠不清的人，谢谢。创建好项目后请打开项目属性窗口设置【公共语言运行时支持】节点的值为【安全 MSIL 公共语言运行时支持(/clr:safe)】好了，下面我们找到CLR4Unity.h文件，添加ExampleClass声明：
 
-```
+```csharp
 /// <summary>
 /// 一个简单的托管C++示例类
 /// </summary>
@@ -79,7 +79,7 @@ public  ref  class ExampleClass
 ```
 
 显然我们这里定义了三个简单的方法，注意到第一个方法Random依赖于System.Rnadom类，而在托管的C++中是使用gcnew来代替new这个关键字的，所以请尽情感受C#和C++的混搭语法风格吧！这样我们就可以编译得到CLR4Unity.dll这个类库，将这个文件复制到Unity3D项目中的Plugins目录下下，然后将其加入项目引用列表。如果你以为引用就是：
-```
+```csharp
 using CLR4Unity;
 ```
 呵呵，我严重怀疑你对.Net的熟悉程度。你没有添加对CLR4Unity.dll的引用，你到底在using什么啊？
@@ -90,7 +90,7 @@ using CLR4Unity;
 
 ## 在C#中添加引用及方法调用
 &emsp;&emsp;接下来我们在Unity3D中创建一个脚本PluginTest.cs，然后在OnGUI方法增加下列代码。可是你要以为这些代码就应该写在OnGUI方法中，抱歉请你先去了解MonoBehaviour这个类。什么？添加了这些代码报错？没有using的请自行面壁：
-```
+```csharp
 //调用C++ CLR中的方法
 if(GUILayout.Button("调用C++ CLR中的方法", GUILayout.Height (30))) 
 {
@@ -109,7 +109,7 @@ if(GUILayout.Button("调用C++ CLR中的方法", GUILayout.Height (30)))
 
 好了，接下来我们找到Native4Unity.cpp写入下列代码：
 
-```
+```cpp
 // Native4Unity.cpp : 定义 DLL 应用程序的导出函数。
 //
 
@@ -159,7 +159,7 @@ extern "C" __declspec(dllexport) int Square(int a)
 
 &emsp;&emsp;将编译好的Native4Unity.dll复制到Plugins目录中后，下面我们要做的事情就是在C#里对这些方法进行封装或者说是声明：
 
-```
+```csharp
  [DllImport("Native4Unity")]
  private extern static int Random(int min, int max);
 
@@ -172,7 +172,7 @@ extern "C" __declspec(dllexport) int Square(int a)
 
 然后就是简单地调用啦：
 
-```
+```csharp
 //调用C++ Native中的方法
 if(GUILayout.Button("调用C++ Native中的方法", GUILayout.Height (30))) 
 {

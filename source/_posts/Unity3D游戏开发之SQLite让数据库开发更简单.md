@@ -49,7 +49,7 @@ title: Unity3D游戏开发之SQLite让数据库开发更简单
 >* 在完成各种数据库操作后及时关闭数据库连接，解除对数据库的连接和引用。
 
 &emsp;&emsp;SQLite作为一款优秀的数据库，在为其编写数据库相关代码时同样遵循这样的流程，考虑到对数据库的增加、删除、更新、读取四种操作具有类似性和统一性，因此在动手写Unity3D脚本前，首先让我们来编写一个SQLite的辅助类SQLiteHelper.cs。该类代码定义如下：
-```C#
+```csharp
 using UnityEngine;
 using System.Collections;
 using Mono.Data.Sqlite;
@@ -286,7 +286,7 @@ Android平台：URL=file:Application.persistentDataPath/数据库名称.db(我�
 * 三、在使用InsertValues方法时请参考SQLite中字段类型与C#中数据类型的对应关系，博主目前测试了int类型和string类型都没有什么问题，更多类型的数据请大家自行测试然后告诉博主测试的结果，如果大家有兴趣扩展这个辅助类的话可以自行去扩展哦，嘿嘿！
 
 &emsp;&emsp;好了，千呼万唤始出来的时候到了，下面我们以一个实例来完成今天的项目讲解，因为我们已经定义好了SQLite的辅助类，因此我们可以快速地编写出下面的脚本代码：
-```C#
+```csharp
 using UnityEngine;
 using System.Collections;
 using System.IO;
@@ -368,7 +368,7 @@ public class SQLiteDemo : MonoBehaviour
 &emsp;&emsp;好了，今天的内容就是这样了，为了写这篇文章花了三个晚上准备，希望大家喜欢啊！如果大家觉得这篇文章有用，请继续关注我的博客，我是秦元培，我的博客地址是[http://blog.csdn.net/qinyuanpei](http://blog.csdn.net/qinyuanpei)。
 
 &emsp;&emsp;**2015年11月3日更新内容如下**：不同平台上的数据库存储路径
-```
+```csharp
         //各平台下数据库存储的绝对路径(通用)
         //PC：sql = new SQLiteHelper("data source=" + Application.dataPath + "/sqlite4unity.db");
         //Mac：sql = new SQLiteHelper("data source=" + Application.dataPath + "/sqlite4unity.db");
