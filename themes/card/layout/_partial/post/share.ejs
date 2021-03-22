@@ -41,11 +41,13 @@
           <i class="icon icon-google-plus"></i>
         </a>
       </li>
+      <% if (is_post()) { %>
       <li>
-        <a class="google share-sns" target="_blank" onClick="show_yp()" data-title=" 分享海报">
+        <a class="google share-sns" target="_blank" onClick="show_yp()" data-title=" 生成海报">
           <i class="icon icon-file-image-o"></i>
         </a>
       </li>
+      <% } %>
     </ul>
  </div>
 

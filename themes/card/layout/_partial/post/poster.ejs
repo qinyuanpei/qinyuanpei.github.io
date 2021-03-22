@@ -1,4 +1,4 @@
-<script type="text/javascript" src="http://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+﻿<script type="text/javascript" src="http://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
 <script src="<%- url_for(theme_js('assets/scripts/yoniu', cache)) %>"></script>
 <style type='text/css'>
 	body.active-yp {
@@ -160,7 +160,7 @@
         </div>
     </div>
     <div class="yp-btns">
-        <span id="yp-load-yp" onClick="load_yp()">长按保存图片</span>
+        <span id="yp-load-yp" onClick="load_yp()">生成海报</span>
         <span><a id="yp-download"></a></span>
         <span id="yp-close" onClick="close_yp()">×</span>
     </div>
@@ -184,9 +184,10 @@
         document.getElementById("yp-hide").style.visibility = "hidden";
     }
     function load_yp(){
-        document.getElementById('yp-img').onload = function () {
+        document.getElementById('yp-load-yp').textContent = '海报生成中...';
+        setTimeout(function() {
             h2c_();
-        }
+        },2000);
 
     }
 </script>
