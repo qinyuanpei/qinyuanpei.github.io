@@ -43,5 +43,11 @@
 		  uInt8Array[i] = raw.charCodeAt(i);
 		}
 
-		return new Blob([uInt8Array], {type: contentType});
+		try {
+			var blob = new Blob([uInt8Array], {type: contentType});
+			return blob;
+		}
+		catch(e){
+			console.log(e)
+		}
 	}
