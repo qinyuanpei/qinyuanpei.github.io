@@ -73,7 +73,7 @@ public class DynamicModelCacheKeyFactory : IModelCacheKeyFactory
 }
 ```
 
-为了配合`DynamicModelCacheKeyFactory`的使用，我们还需要定义用于分表的`ShardingContext`，它继承自`DbContext`，我们为其扩展了`ShardingSuffix`属性，并通过注入的`IShardingPolicyProvider`接口来获取一个分表后缀。比如，我们有`Order`表，经过拆分后获得`Order_01`、`Order_02`这样的子表，所以，这个分表后缀其实就是01、02。没错，我们还是要去修改`ToTable()`方法中的表名，不同的是，这里的表名是动态的。注意到，`Create()`方法返回的是一个元祖，所以，不同的`ShardingSuffix`会产生不同的映射关系。
+为了配合`DynamicModelCacheKeyFactory`的使用，我们还需要定义用于分表的`ShardingContext`，它继承自`DbContext`，我们为其扩展了`ShardingSuffix`属性，并通过注入的`IShardingPolicyProvider`接口来获取一个分表后缀。比如，我们有`Order`表，经过拆分后获得`Order_01`、`Order_02`这样的子表，所以，这个分表后缀其实就是01、02。没错，我们还是要去修改`ToTable()`方法中的表名，不同的是，这里的表名是动态的。注意到，`Create()`方法返回的是一个元组，所以，不同的`ShardingSuffix`会产生不同的映射关系。
 
 ```csharp
 public class ShardingContext : DbContext
@@ -312,3 +312,5 @@ Console.WriteLine(_mulitiTenancyContext.Artist.ToQueryString());
 # 本文小结
 
 这篇博客主要探讨了 EF 在分库、分表及多租户架构上实施的可能性。分库、分表的目的是为了提高数据库的查询性能，在这个过程中，我们可以考虑**范围**、**Hash**和**配置**三种路由策略，它们各自有自己的优缺点，需要使用者结合业务场景去衡量。虽然分库、分表在面对百万级别以上的数据时，不失为一种提高性能的方案，可世间万物都是双刃剑，它同样带来了一系列新的问题，譬如**跨库写带来的分布式事务问题，跨库读带来的Join、Count()、排序、分页等问题，数据迁移问题**等等，而如果希望通过Hash(Id)来进行拆分，还需要解决**全局Id唯一的问题**。所以说，这是一个没有标准答案的问题，需要使用者自己去进行取舍。多租户架构、读写分离均可以看作是特殊的分库场景，`EF Core` 中新增的`HasQueryFilter()`方法则帮助我们解决了单数据库的多租户架构问题。好了，以上就是这篇博客的全部内容啦，如果大家对文中的观点有建议或者意见，欢迎大家在评论区留言，谢谢！
+
+附本文源代码：[https://github.com/Regularly-Archive/2021/tree/master/EF.Sharding](https://github.com/Regularly-Archive/2021/tree/master/EF.Sharding)
