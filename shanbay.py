@@ -19,8 +19,9 @@ def analyseCheckin(page):
             record = {}
             record['checkin_date'] = checkin['checkin_date']
             record['checkin_number'] = checkin['num_checkin_days']
-            record['words'] = checkin['stats']['bdc']
-            record['listen'] = checkin['stats']['listen']
+            record['words'] = checkin['stats'].get('abc', {'num_today': 0, 'used_time': 0})
+            record['listen'] = checkin['stats'].get('listen', {'num_today': 0, 'used_time': 0})
+            record['speak'] = checkin['stats'].get('speak', {'num_today': 0, 'used_time': 0})
             records.append(record)
         return records
     return []
