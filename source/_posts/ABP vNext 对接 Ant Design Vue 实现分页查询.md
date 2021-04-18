@@ -17,6 +17,7 @@ date: 2021-04-07 21:07:47
 # ABP vNext中的分页查询
 
 OK，当大家接触过 ABP vNext 以后，就会了解到这样一件事情，即，ABP vNext 中默认提供的分页查询接口，在大多数情况下，通常都会是下面这样的风格。这里以角色查询的接口为例，它对应的请求地址是：`/api/identity/roles?SkipCount=0&MaxResultCount=10`。此时，我们可以注意到，返回的数据结构中含有`totalCount`和`items`两个属性。其中，`totalCount`表示记录的总数目，`items`表示当前页对应的记录。
+
 ```json
 {
   "totalCount": 2,
@@ -42,8 +43,36 @@ OK，当大家接触过 ABP vNext 以后，就会了解到这样一件事情，�
   ]
 }
 ```
-事实上，ABP vNext 中自带的分页查询，主要是通过`SkipCount`和`MaxResultCount`两个参数来实现。假设`MaxResultCount`，即分页大小为`m`，则第`n`页对应的`SkipCount`应该为`(n-1) * m`。如果大家对于`LINQ`非常熟悉的话，应该可以自然而然地联想到`Skip()`和`Take()`两个方法，这是一个非常自然的联想，因为 ABP vNext 就是这样实现分页查询的。
 
+事实上，ABP vNext 中自带的分页查询，主要是通过`SkipCount`和`MaxResultCount`两个参数来实现。假设`MaxResultCount`，即分页大小为`m`，则第`n`页对应的`SkipCount`应该为`(n-1) * m`。如果大家对于`LINQ`非常熟悉的话，应该可以自然而然地联想到`Skip()`和`Take()`两个方法，这是一个非常自然的联想，因为 ABP vNext 就是这样实现分页查询的。这里以博主的“**数据字典**”分页查询接口为例：
+
+```csharp
+public async Task<PagedResultDto<DataDictionaryQueryDto>> GetCategories(
+    GetDataDictionaryRequestInput input
+)
+{
+  var totalCount = (await _dataDictRepository.GetQueryableAsync())
+    .WhereIf(!string.IsNullOrEmpty(input.Name), x => x.Name.Contains(input.Name) || x.Name == input.Name)
+    .WhereIf(!string.IsNullOrEmpty(input.Description), x => x.Description.Contains(input.Description) || x.Description == input.Description)
+    .Count();
+
+  var items = (await _dataDictRepository.GetQueryableAsync())
+    .WhereIf(!string.IsNullOrEmpty(input.Name), x => x.Name.Contains(input.Name) || x.Name == input.Name)
+    .WhereIf(!string.IsNullOrEmpty(input.Description), x => x.Description.Contains(input.Description) || x.Description == input.Description)
+    .Skip(input.SkipCount)
+    .Take(input.MaxResultCount)
+    .ToList();
+
+    return new PagedResultDto<DataDictionaryQueryDto>()
+    {
+      TotalCount = totalCount,
+      Items = ObjectMapper.Map<List<DataDictionary>, List<DataDictionaryQueryDto>>(items)
+    };
+}
+```
+
+可以注意到，在 ABP vNext 中我们只需要构造好`TotalCount`和`Items`这两个属性即可。
+ 
 # STable组件中的分页查询
 
 接下来，在 Ant Design Vue 的 Pro 版本中，我们使用`STable`组件来展示列表类的数据，关于这个组件的使用方法，大家可以参考 [官方文档](https://github.com/vueComponent/ant-design-vue-pro/blob/master/src/components/Table/README.md)。按照最小化可行产品(**MVP**)的理念，一个最简单的`STable`组件的使用，如下面所示：
@@ -147,6 +176,7 @@ export function transformAbpListQuery (query) {
     skipCount: (query.pageNo - 1) * query.pageSize,
     sorting: '',
     filter: ''
+    ...query
   }
 
   if (typeof (query.sortField) !== 'undefined' && query.sortField !== null) {
