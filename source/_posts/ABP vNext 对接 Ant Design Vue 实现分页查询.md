@@ -175,7 +175,7 @@ export function transformAbpListQuery (query) {
     maxResultCount: query.pageSize,
     skipCount: (query.pageNo - 1) * query.pageSize,
     sorting: '',
-    filter: ''
+    filter: '',
     ...query
   }
 
