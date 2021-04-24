@@ -9,14 +9,14 @@ function scrollTitle() {
 }
 setInterval(scrollTitle, 500);
 (function() {
-    var OriginTitile = document.title, titleTime;
+    var originTitile = document.title, titleTime;
     document.addEventListener('visibilitychange', function() {
         if (document.hidden) {
-            titleArray = '<%- theme.title_change.leave %>'.split('');
+            titleArray = originTitile.split('');
             clearTimeout(titleTime);
         } else {
-            document.title = '<%- theme.title_change.normal %>';
-            titleArray = '<%- theme.title_change.normal %>'.split('');
+            document.title = originTitile;
+            titleArray = originTitile.split('');
             titleTime = setTimeout(function() {
                 document.title = OriginTitile;
                 titleArray = [];
