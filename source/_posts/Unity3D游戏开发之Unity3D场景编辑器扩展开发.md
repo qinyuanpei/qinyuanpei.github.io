@@ -1,4 +1,4 @@
----
+﻿---
 abbrlink: 3019914405
 categories:
 - 游戏开发
@@ -125,7 +125,7 @@ public class ExtendTransform : Editor
 ![扩展后的Transform](https://ww1.sinaimg.cn/large/None.jpg)
 
 好了，现在我们点击场景中默认的相机MainCamera可以发现默认的Transform会变成具有重置功能的扩展型Transform。下面我们来介绍这段程序中较为重要的核心内容：
-##Unity3D中的可序列化对象
+## Unity3D中的可序列化对象
 &emsp;&emsp;通常我们所说的序列化是指将一个对象的实例转化为字符串的过程，而在Unity3D中可序列化对象更像是一种智能对象，它可以将脚本中的属性显示在Inspector窗口中，当场景发生变化时这些属性值将自动被更新。例如我们可以定义这样一个简单的脚本：
 ```
 /// <summary>
@@ -156,7 +156,7 @@ public class ExampleScript : MonoBehaviour
 
 ![Unity3D中的可序列化对象](https://ww1.sinaimg.cn/large/None.jpg)
 
-##Editor基类中的属性和方法
+## Editor基类中的属性和方法
 &emsp;&emsp;Editor基类中有两个重要的属性，即target和serializedObject。target表示当前受检查的物体我们可以通过它获得当前物体；而serializedObject表示当前物体的全部可序列化信息，我们可以通过它获得指定的序列化字段及其数值。Editor基类中重要的方法有：
 * OnInspectorGUI():该方法可对Inspector窗口面板进行扩展或者重写，比如我们可以通过DrawDefaultInspector()方法来绘制默认Inspector窗口面板然后在此基础上使用GUILayout或者EditorGUILayout等辅助类进行自定义的绘制。在这个示例中我们对整个面板进行了重写，值得注意的是为了让Inspector窗口面板正常工作，如果要重绘该窗口请确保对该方法进行覆盖。
 * OnSceneGUI():该方法可对场景视图进行绘制，在实际的使用中可以配合Handles类和Event类来进行网格编辑、地形绘制或高级Gizmos等方面的工作。在本文的第二个示例中，我们将利用这一特性来编写一个用于NPC寻路的路径节点编辑工具。
