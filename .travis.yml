@@ -54,7 +54,7 @@ after_script:
   - git remote add origin master https://github.com/qinyuanpei/qinyuanpe.github.io 
   - git add .
   - git commit -m "Coding Pages Build ($TRAVIS_TAG)"
-  - git push --force --quiet "https://${CO_USER}:${CO_TOKEN}@${CO_REF}" master:master
+  - git push --force --quiet "https://${CI_TOKEN}@${GO_REF}" master:master
   # Prepare Rebuild
   - cd ..
   - rm -rf ./public
@@ -82,7 +82,6 @@ after_script:
   - git add .
   - git commit -m "Github Pages Build ($TRAVIS_TAG)"
   - git push --force --quiet "https://${CI_TOKEN}@${GH_REF}" master:master
-# - git tag v$TRAVIS_BUILD_NUMBER 
   - git tag $TRAVIS_TAG
   - git push --force --quiet "https://${CI_TOKEN}@${GH_REF}" master:master --tags
 
@@ -99,6 +98,6 @@ env:
    # Github Pages
    - GH_REF: github.com/qinyuanpei/qinyuanpei.github.io.git
    # Coding Pages
-   - CO_REF: e.coding.net/qinyuanpei/qinyuanpei.coding.me.git
+   - CO_REF: github.com/qinyuanpei/blog.yuanpei.me.git
    
    
