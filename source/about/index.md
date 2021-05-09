@@ -29,6 +29,6 @@ abbrlink: 994796909
 
 {% meting "1443173907" "netease" "song" "autoplay" "mutex:false" "listmaxheight:340px" "preload:none" "theme:#ad7a86"%}
 
-本博客使用 [Hexo](https://hexo.io) 驱动，在 [Github Pages](https://pages.github.com) 与 [Coding Pages](https://coding.net/help/doc/pages/creating-pages.html) 双线部署，由 [Travis CI](https://travis-ci.org/) 和 [Github Actions](https://github.com/actions/starter-workflows) 提供持续集成服务，由 [不蒜子](http://busuanzi.ibruce.info/) 和 [LeanCloud](https://leancloud.cn/) 提供访客统计服务，由 [Valine](https://valine.js.org/) 提供评论服务，由 [jsDelivr](https://www.jsdelivr.com/) 提供 CDN加速服务。如需订阅本博客，可以通过 [RSS](https://blog.yuanpei.me/atom.xml) 或者在 [Github](https://github.com/) 上 Watch [本项目](https://github.com/qinyuanpei/qinyuanpei.github.io)，如需联系本人，请在博客中留言(**注意留下你的邮箱**) 或者发送邮件至：qinyuanpei@163.com
+本博客使用 [Hexo](https://hexo.io) 驱动，在 [Github Pages](https://pages.github.com) 与 [Vercel](https://vercel.com/) 双线部署，由 [Travis CI](https://travis-ci.org/) 和 [Github Actions](https://github.com/actions/starter-workflows) 提供持续集成服务，由 [不蒜子](http://busuanzi.ibruce.info/) 和 [LeanCloud](https://leancloud.cn/) 提供访客统计服务，由 [Valine](https://valine.js.org/) 提供评论服务，由 [jsDelivr](https://www.jsdelivr.com/) 提供 CDN加速服务。如需订阅本博客，可以通过 [RSS](https://blog.yuanpei.me/atom.xml) 或者在 [Github](https://github.com/) 上 Watch [本项目](https://github.com/qinyuanpei/qinyuanpei.github.io)，如需联系本人，请在博客中留言(**注意留下你的邮箱**) 或者发送邮件至：qinyuanpei@163.com
 
 ****
