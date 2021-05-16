@@ -20,7 +20,7 @@ install:
   - sudo rm /usr/bin/python
   - sudo ln -s /usr/bin/python3.6 /usr/bin/python
   - sudo -H python -m pip install -U pip
-  - sudo -H python -m pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple
+  - sudo -H python -m pip config set global.index-url http://pypi.douban.com/simple/
   - sudo -H python -m pip install setuptools==33.1.1 
   - sudo -H python -m pip install leancloud 
   - sudo -H python -m pip install --default-timeout=500 -r requirements.txt
