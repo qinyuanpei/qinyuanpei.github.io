@@ -4,7 +4,6 @@ pytz==2017.3
 lxml==4.2.4
 requests==2.22.0
 setuptools
-leancloud
 pyyaml
 
 
