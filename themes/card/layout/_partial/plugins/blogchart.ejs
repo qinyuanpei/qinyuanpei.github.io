@@ -328,14 +328,9 @@
         var chart = echarts.init(document.getElementById(el));
         var seriesData = []
         seriesData.push({
-            name: "单词数目",
-            type: "line",
-            data: data.map(x => x.words.num_today)
-        });
-        seriesData.push({
             name: "学习时长",
             type: "line",
-            data: data.map(x => x.words.used_time)
+            data: data.map(x => x.words.used_time + x.listen.used_time + x.speak.listen.used_time)
         });
 
         option = {
@@ -352,12 +347,6 @@
                 data: data.map(x => x.checkin_date)
             },
             yAxis : [{
-                type: 'value',
-                min: 0,
-                max: 100,
-                interval: 25,
-            },
-            {
                 type: 'value',
                 min: 0,
                 max: 20,
