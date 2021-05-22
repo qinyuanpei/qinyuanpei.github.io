@@ -161,10 +161,10 @@ public class ExampleScript : MonoBehaviour
 * OnInspectorGUI():该方法可对Inspector窗口面板进行扩展或者重写，比如我们可以通过DrawDefaultInspector()方法来绘制默认Inspector窗口面板然后在此基础上使用GUILayout或者EditorGUILayout等辅助类进行自定义的绘制。在这个示例中我们对整个面板进行了重写，值得注意的是为了让Inspector窗口面板正常工作，如果要重绘该窗口请确保对该方法进行覆盖。
 * OnSceneGUI():该方法可对场景视图进行绘制，在实际的使用中可以配合Handles类和Event类来进行网格编辑、地形绘制或高级Gizmos等方面的工作。在本文的第二个示例中，我们将利用这一特性来编写一个用于NPC寻路的路径节点编辑工具。
 
-##对第一个示例的总结
+## 对第一个示例的总结
 &emsp;&emsp;在第一个示例中，可以注意到我们使用了FindProperty()方法来获取一个可序列化物体的属性(字段)，然后我们在EditorGUILayout.PropertyField()方法来绘制了各种属性框，这种方式可以实现属性的自动更新。注意到DrawRotate()方法与DrawPositin()及DrawScale()方法在实现方式上略有不同，这是因为Transform组件的Rotation属性是一个Quaternion即四元数的结构，四元数是利用x、y、z、w四个数值来表示物体的三维旋转，这不仅和我们平时习惯的欧拉角相违背而且更为关键的是貌似目前我还没有发现可以直接绘制四元数的API接口，如果有的话希望大家可以告诉我，所以这里我们用了变通的一种方法，即通过Transform的eulerAngles来实现，但是这种方式绘制的属性框大小和EditorGUILayout.PropertyField()方法绘制的属性框大小并不一致，同时我们需要自己去完成属性值的更新。好了，暂时先总结到这里更多的细节大家可以通过代码来了解。
 
-#创建一个NPC寻路节点编辑工具
+# 创建一个NPC寻路节点编辑工具
 &emsp;&emsp;创建这样一个工具的想法来自我实际的工作体验，当我Unity3D中使用的Tween动画库从iTween变成Dotween后，我在使用Dotween的过程中一直没有找到类似于iTweenPath的路径节点编辑工具。作为一个有节操的程序员，去寻找破解版的Dotween Pro这样的事情我是能不干就不干啦，因为我觉得自己有能力做这样一个类似的小工具，所以在一边准备这篇文章的时候，一边开始设计这样一个路径节点编辑工具。相信经过第一个示例的铺垫和相关知识的储备，大家都了解了这些内容，所以这里直接给出代码啦，因为实在是没有多少内容，嘿嘿：
 ```
 using UnityEngine;
