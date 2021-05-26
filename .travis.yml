@@ -34,7 +34,7 @@ script:
 # - python3 migrate.py 
 
 after_script:
-  - echo 'Build Master Repository(Coding Pages)'
+  - echo 'Build Master Repository(Vercel)'
   - rm _config.yml
   - mv config-master.yml _config.yml
   - hexo generate
