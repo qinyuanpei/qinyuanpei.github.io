@@ -5,7 +5,7 @@ categories:
   - 数据分析
 tags:
   - Python
-  - NPL
+  - NLP
   - 半泽直树
   - Gephi
   - ECharts
