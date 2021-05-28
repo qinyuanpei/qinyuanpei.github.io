@@ -1,0 +1,876 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+    
+<script async defer data-domain="blog.yuanpei.me" src="https://plausible.io/js/plausible.js"></script>
+    
+    <meta charset="utf-8">
+    <!-- HTTP 1.1 -->  
+    <meta http-equiv="pragma" content="no-cache">  
+    <!-- HTTP 1.0 -->  
+    <meta http-equiv="cache-control" content="no-cache">
+    <!-- 微博图床防盗链 --> 
+    <!-- <meta name="referrer" content="no-referrer"/> -->
+    <!--Google站点验证-->
+    
+    <!--百度站点验证-->
+    
+    
+    <!--Google AdSense-->
+    
+    <!--Bing站点验证-->
+    <meta name="msvalidate.01" content="713A48A3FE17D4841C292A6B3942EB4C" />
+    
+    <title>
+        C#中的扩展方法学习总结 | 一个人的孤落时辰
+    </title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+        <meta name="theme-color" content="#3F51B5">
+    
+
+    <meta name="keywords" content="CSharp,扩展方法,Unity3D,技巧,秦元培,技术博客,生活随笔,个人博客,NET,Python,数据挖掘,数据分析,NLP">
+    
+        <meta name="description" content="我们使用扩展方法无非是因为它在逻辑层需要这样的功能，所以我们没有必要去改变抽象层的逻辑，因为这样会“污染”整个代码;/// &lt;param name=&#34;str&#34;&gt;4、第一个参数必须使用this关键字指定要使用扩展方法的类型&lt;/param&gt;;为了解决这个问题，我们可以扩展出三个方法SetPositionX、SetPositionY、SetPositionZ来分别为x、y、z三个坐标分量进行赋值，我们继续在SomeClass这个类中添加方法：;更为重要的一点是，它采用扩展方法这种实现方式，使得我们在调用这些API接口的时候难以感觉到我们是在使用一个插件，更像是在使用Unity3D的原生函数，所以当我们使用DOTween + uGUI 这样的组合的时候，内心会感到无比的舒畅，一切都像是水到渠成一般;C#中的扩展方法实现起来是相对来说比较简单的，例如我们做在Unity3D游戏开发的时候，可能会用到DOTween这个插件">
+    
+    <meta name="description" content="我们使用扩展方法无非是因为它在逻辑层需要这样的功能，所以我们没有必要去改变抽象层的逻辑，因为这样会“污染”整个代码;&#x2F;&#x2F;&#x2F; 4、第一个参数必须使用this关键字指定要使用扩展方法的类型;为了解决这个问题，我们可以扩展出三个方法SetPositionX、SetPositionY、SetPositionZ来分别为x、y、z三个坐标分量进行赋值，我们继续在SomeClass这个类中添加方法：;更为重要的">
+<meta property="og:type" content="article">
+<meta property="og:title" content="C#中的扩展方法学习总结">
+<meta property="og:url" content="https://qinyuanpei.github.io/posts/305484621/index.html">
+<meta property="og:site_name" content="一个人的孤落时辰">
+<meta property="og:description" content="我们使用扩展方法无非是因为它在逻辑层需要这样的功能，所以我们没有必要去改变抽象层的逻辑，因为这样会“污染”整个代码;&#x2F;&#x2F;&#x2F; 4、第一个参数必须使用this关键字指定要使用扩展方法的类型;为了解决这个问题，我们可以扩展出三个方法SetPositionX、SetPositionY、SetPositionZ来分别为x、y、z三个坐标分量进行赋值，我们继续在SomeClass这个类中添加方法：;更为重要的">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2015-12-05T12:01:02.000Z">
+<meta property="article:modified_time" content="2021-05-28T02:26:21.793Z">
+<meta property="article:author" content="飞鸿踏雪">
+<meta property="article:tag" content="CSharp">
+<meta property="article:tag" content="扩展方法">
+<meta property="article:tag" content="Unity3D">
+<meta property="article:tag" content="技巧">
+<meta name="twitter:card" content="summary">
+    
+        <link rel="alternate" type="application/atom+xml" title="一个人的孤落时辰" href="/atom.xml">
+    
+    <link rel="shortcut icon" href="/assets/images/favicon.ico">
+    
+        <link rel="manifest" href="/manifest.json">
+    
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master//assets/styles/style.css">
+    <script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/instantclick.min.js"></script>
+    <script>window.lazyScripts=[]</script>
+    <!-- custom head -->
+    
+
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu" class="hide" >
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap" style="background-image:url(/assets/images/brand.jpg)">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/assets/images/avatar.jpg" alt="avatar">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">飞鸿踏雪</h5>
+          <a href="mailto:qinyuanpei@163.com" title="qinyuanpei@163.com" class="mail">qinyuanpei@163.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/"  >
+                <i class="icon icon-lg icon-home"></i>
+                主页
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives"  >
+                <i class="icon icon-lg icon-archives"></i>
+                归档
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags"  >
+                <i class="icon icon-lg icon-tags"></i>
+                标签
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/categories"  >
+                <i class="icon icon-lg icon-th-list"></i>
+                分类
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/books"  >
+                <i class="icon icon-lg icon-bookmark"></i>
+                书单
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/movies"  >
+                <i class="icon icon-lg icon-film"></i>
+                影单
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/works"  >
+                <i class="icon icon-lg icon-code"></i>
+                实验室
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/about"  >
+                <i class="icon icon-lg icon-circle"></i>
+                关于我
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+            <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">C#中的扩展方法学习总结</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off"
+                placeholder="输入感兴趣的关键字">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+        <a href="https://github.com/qinyuanpei/qinyuanpei.github.io" target="_blank" rel="noopener" class="header-icon waves-effect waves-circle waves-light" id="menuGithub">
+            <i class="icon icon-lg icon-code-fork"></i>
+        </a>
+    </div>
+</header>
+<header class="content-header post-header">
+    <div class="container fade-scale">
+        <h1 class="title">C#中的扩展方法学习总结</h1>
+        <h5 class="subtitle" id="subtitle">
+            
+            <time datetime="2015-12-05T12:01:02.000Z" itemprop="datePublished" class="page-time">
+  2015-12-05
+</time>
+
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/">编程语言</a></li></ul>
+
+            
+        </h5>
+    </div>
+    
+
+</header>
+
+<div class="container body-wrap">
+    
+    <aside class="post-widget">
+        <nav class="post-toc-wrap" id="post-toc">
+            <h4>目录</h4>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#什么是扩展方法？"><span class="post-toc-number">1.</span> <span class="post-toc-text">什么是扩展方法？</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#扩展方法有哪些特点？"><span class="post-toc-number">2.</span> <span class="post-toc-text">扩展方法有哪些特点？</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#使用扩展方法的利弊"><span class="post-toc-number">3.</span> <span class="post-toc-text">使用扩展方法的利弊</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#小结"><span class="post-toc-number">4.</span> <span class="post-toc-text">小结</span></a></li></ol>
+        </nav>
+    </aside>
+    
+    <article id="post-C#中的扩展方法学习总结" class="post-article article-type-post fade" itemprop="blogPost">
+
+        <div class="post-card">
+            <h1 class="post-card-title">
+                C#中的扩展方法学习总结
+            </h1>
+            <div class="post-meta">
+                <time class="post-time" title="2015-12-05 12:01:02" datetime="2015-12-05T12:01:02.000Z"  itemprop="datePublished">2015-12-05</time>
+
+                
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/">编程语言</a></li></ul>
+
+
+
+                
+<span id="lc_counter_container_page_pv" title="文章总阅读量" data-page-url="" data-page-title="C#中的扩展方法学习总结">
+    <i class="icon icon-eye icon-pr"></i><span id="lc_counter_value_page_pv"></span>
+</span>
+
+
+
+
+
+                
+    <span>
+        <i class="icon icon-clock-o"></i>
+        16 min.
+    </span>
+    
+            </div>
+            <div class="post-content" id="post-content" itemprop="postContent">
+                <p>&emsp;&emsp;各位朋友大家好，我是秦元培，欢迎大家关注我的博客。最近偶然接触到了C#中的扩展方法，觉得这个语法特性是一个不错的特性，因此决定在这里系统地对C#中的扩展方法相关内容进行下总结和整理，因为博主觉得学习这件事情本身就是一个积累的过程，所以博主有时候会对现在的线上培训和视频教程这种“在线教育”感到反感。试想《射雕英雄传》中江南七怪远赴大漠传授郭靖武艺苦历十八载，何以难及全真教丹阳子马钰传授内功两年的积累？这里固然有郭靖愚笨木讷的天性和江南七怪武功低微的因素，可是在博主看来更重要的是强调了一个积累。想郭靖一生受益自全真教的玄门内功终成一代“为国为民”的侠之大者，则我辈需更加努力方可在这世间行走奔波。</p>
+<a id="more"></a>
+
+<h1 id="什么是扩展方法？"><a href="#什么是扩展方法？" class="headerlink" title="什么是扩展方法？"></a>什么是扩展方法？</h1><p>&emsp;&emsp;扩展方法从字面上理解是指扩展的方法，而对应到面向对象编程这个格局中则是指为一个类提供的扩展方法。按照我们通常的理解，我们首先需要获得某个类的源代码，然后在这个类代码中增加成员方法，这样就可以达到为一个类提供扩展方法的目的。可是不幸地是，这种方法在没有源代码的情况下就无法奏效了，而且我们人为地去改变源代码有可能会破坏整个代码的稳定性。那么有没有一种方法能在不改变源代码的前提下为某个类提供扩展方法呢？这就是我们今天要说的扩展方法，所以我们可以将扩展方法理解为在不改变源代码的前提下向外部提供扩展方法的一种方式。C#中的扩展方法实现起来是相对来说比较简单的，例如我们做在Unity3D游戏开发的时候，可能会用到DOTween这个插件。这个插件是iTween的作者重新编写一个动画插件，效率上比iTween有较大的提升。更为重要的一点是，它采用扩展方法这种实现方式，使得我们在调用这些API接口的时候难以感觉到我们是在使用一个插件，更像是在使用Unity3D的原生函数，所以当我们使用DOTween + uGUI 这样的组合的时候，内心会感到无比的舒畅，一切都像是水到渠成一般。</p>
+<h1 id="扩展方法有哪些特点？"><a href="#扩展方法有哪些特点？" class="headerlink" title="扩展方法有哪些特点？"></a>扩展方法有哪些特点？</h1><p>&emsp;&emsp;扩展方法在实现上和普通的面向对象编程是一样的，换句话说，我们只需要定义一个类，然后在里面添加并实现相应的方法即可。但是这里需要注意的地方有三点，第一，实现扩展方法的类必须是静态类且类的名称和实现扩展方法的类无关；第二、实现扩展方法的类方法必须是静态方法；第三、实现扩展方法的类方法的第一个参数必须是使用this关键字指明要实现扩展方法的类。例如，我们知道将一个合法字符串类型转换为整型，可以使用int.parse()方法，假如我们希望为string类型扩展一个ToInt方法应该怎么办呢？我们一起来看下面的这段代码：</p>
+<figure class="highlight cs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;summary&gt;</span></span></span><br><span class="line"><span class="comment"><span class="doctag">///</span> 1、定义一个静态类</span></span><br><span class="line"><span class="comment"><span class="doctag">///</span> 2、静态类的名称和要实现扩展方法的具体类无关</span></span><br><span class="line"><span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;/summary&gt;</span></span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">class</span> <span class="title">SomeClass</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;summary&gt;</span></span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> 3、实现一个具体的静态方法</span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;/summary&gt;</span></span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;param name="str"&gt;</span>4、第一个参数必须使用this关键字指定要使用扩展方法的类型<span class="doctag">&lt;/param&gt;</span></span></span><br><span class="line">    <span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;returns&gt;</span><span class="doctag">&lt;/returns&gt;</span></span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">int</span> <span class="title">ToInt</span>(<span class="params"><span class="keyword">this</span> <span class="keyword">string</span> str</span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">int</span>.Parse(str);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>需要注意的是C#支持扩展方法是从.NET3.5版本开始，所以在编写扩展方法的时候请确保你的.NET版本是否满足这一要求。提到版本问题，有很多朋友尤其是从Unity5.0以后开始学习Unity3D的朋友，常常会在我的博客中留言提到我的代码无法在新环境下运行等等类似地问题，我觉得这个世界上更新速度最快的当属IT技术了，大家使用新版本没有问题，可是有时候因为技术发展中的历史遗留问题例如Python2.7和Python3、Unity4.X和Unity5.X，这个时候可能出现版本不兼容的问题，这个时候如果网络上的资源没有及时更新，建议大家还是及时查看官方的最新文档，因为在博主看来网络上的书籍或者相关文章都是用来参考的，古话说：尽信书不如无书，只有客观、冷静地判断知识的正确与否，我们方能学到真正有用的知识。</p>
+<p>&emsp;&emsp;好了，现在我们编写完这个扩展方法以后，就可以像下面这样使用扩展方法了：</p>
+<figure class="highlight reasonml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">string</span> str = <span class="string">"1234"</span>;</span><br><span class="line"><span class="built_in">int</span> <span class="keyword">val</span> = str.<span class="constructor">ToInt()</span>;</span><br></pre></td></tr></table></figure>
+<p>这个示例向大家展示了如何编写一个无参数的扩展方法，那么当我们需要在扩展方法中传入参数的时候该怎么做呢？我们只需要在第一个参数后继续加入参数的声明就好了。例如我们在Unity3D中常常需要给一个3D物体设置坐标，通常我们可以通过下面的代码来实现：</p>
+<figure class="highlight angelscript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">transform.position = new Vector3(<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>);</span><br></pre></td></tr></table></figure>
+<p>这个代码到目前为止是比较简洁的，可是我们知道在Unity3D中除了position属性以外还有localPosition属性，如果我们的代码中再涉及坐标计算的话，我相信这个代码一定会变得非常的长。更有甚者，有时候我们只想改变三维坐标中的一个维度，可是我们必须给transform.position一个三维坐标，毫无意外地此时的代码会变得更长。为了解决这个问题，我们可以扩展出三个方法SetPositionX、SetPositionY、SetPositionZ来分别为x、y、z三个坐标分量进行赋值，我们继续在SomeClass这个类中添加方法：</p>
+<figure class="highlight reasonml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/// &lt;summary&gt;</span></span><br><span class="line"><span class="comment">/// 设置Tranform的X坐标</span></span><br><span class="line"><span class="comment">/// &lt;/summary&gt;</span></span><br><span class="line"><span class="comment">/// &lt;param name="tran"&gt;当前Transform&lt;/param&gt;</span></span><br><span class="line"><span class="comment">/// &lt;param name="x"&gt;X坐标&lt;/param&gt;</span></span><br><span class="line">public static void <span class="constructor">SetPositionX(<span class="params">this</span> Transform <span class="params">tran</span>, <span class="params">float</span> <span class="params">x</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">    tran.position = <span class="keyword">new</span> <span class="constructor">Vector3(<span class="params">x</span>, <span class="params">tran</span>.<span class="params">position</span>.<span class="params">y</span>, <span class="params">tran</span>.<span class="params">position</span>.<span class="params">z</span>)</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/// &lt;summary&gt;</span></span><br><span class="line"><span class="comment">/// 设置Tranform的Y坐标</span></span><br><span class="line"><span class="comment">/// &lt;/summary&gt;</span></span><br><span class="line"><span class="comment">/// &lt;param name="tran"&gt;当前Transform&lt;/param&gt;</span></span><br><span class="line"><span class="comment">/// &lt;param name="x"&gt;Y坐标&lt;/param&gt;</span></span><br><span class="line">public static void <span class="constructor">SetPositionY(<span class="params">this</span> Transform <span class="params">tran</span>, <span class="params">float</span> <span class="params">y</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">    tran.position = <span class="keyword">new</span> <span class="constructor">Vector3(<span class="params">tran</span>.<span class="params">position</span>.<span class="params">x</span>, <span class="params">y</span>, <span class="params">tran</span>.<span class="params">position</span>.<span class="params">z</span>)</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/// &lt;summary&gt;</span></span><br><span class="line"><span class="comment">/// 设置Tranform的Z坐标</span></span><br><span class="line"><span class="comment">/// &lt;/summary&gt;</span></span><br><span class="line"><span class="comment">/// &lt;param name="tran"&gt;当前Transform&lt;/param&gt;</span></span><br><span class="line"><span class="comment">/// &lt;param name="x"&gt;Z坐标&lt;/param&gt;</span></span><br><span class="line">public static void <span class="constructor">SetPositionZ(<span class="params">this</span> Transform <span class="params">tran</span>, <span class="params">float</span> <span class="params">z</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">    tran.position = <span class="keyword">new</span> <span class="constructor">Vector3(<span class="params">tran</span>.<span class="params">position</span>.<span class="params">x</span>, <span class="params">tran</span>.<span class="params">position</span>.<span class="params">y</span>, <span class="params">z</span>)</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>同样的，我们现在可以直接为一个三维物体的坐标进行赋值：</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-tag">transform</span><span class="selector-class">.SetPositionX</span>(1<span class="selector-class">.0f</span>);</span><br><span class="line"><span class="selector-tag">transform</span><span class="selector-class">.SetPositionY</span>(1<span class="selector-class">.0f</span>);</span><br><span class="line"><span class="selector-tag">transform</span><span class="selector-class">.SetPositionZ</span>(1<span class="selector-class">.0f</span>);</span><br></pre></td></tr></table></figure>
+<h1 id="使用扩展方法的利弊"><a href="#使用扩展方法的利弊" class="headerlink" title="使用扩展方法的利弊"></a>使用扩展方法的利弊</h1><p>&emsp;&emsp;扩展方法使用起来得心应手，所以我们这里来讨论下使用扩展方法的利弊。好处当然是自由而任性地使用扩展方法对类进行扩展，而且扩展方法在Visual Studio中的智能提示会以蓝色向下箭头进行标识。扩展方法的坏处则是要看设计扩展方法的人能否较好的驾驭这个特性啦，其实所有的技术都是一样的，我常常在游戏群里听到人鄙视Unity3D引擎，以UnReal Engine4为游戏引擎世界里的泰山北斗，我承认UE4的画面效果好，可是能真正用好这个引擎的人有多少呢？扩展方法在使用的时候应该遵守就近原则，即是在最小的范围内使用扩展方法，对具体类而非抽象类实现扩展方法。我们使用扩展方法无非是因为它在逻辑层需要这样的功能，所以我们没有必要去改变抽象层的逻辑，因为这样会“污染”整个代码。举一个简单的例子，我们知道.NET中的基类是object，如果我们对这个类进行扩展，毫无疑问它会影响所有继承自object的类，这样就会造成“污染”，显然是不可取的。</p>
+<h1 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h1><ul>
+<li>在C#中实现扩展方法的类必须是静态类且类的名称和实现扩展方法的类无关</li>
+<li>实现扩展方法的类方法必须是静态方法</li>
+<li>实现扩展方法的类方法的第一个参数必须是使用this关键字指明要实现扩展方法的类</li>
+<li>实现扩展方法应遵守就近原则，在最小的范围内使用扩展方法以避免造成“污染”</li>
+</ul>
+
+                
+
+                
+
+
+<div class="recommended_posts">
+    <h1>推荐阅读</h1>
+    <ul>
+        
+        <li><a href="https://qinyuanpei.github.io/posts/906436376/">当Unity3D游戏开发遇上Excel</a></li>
+        
+        <li><a href="https://qinyuanpei.github.io/posts/3247093203/">使用多线程为你的Python爬虫提速的N种姿势，你会几种？</a></li>
+        
+        <li><a href="https://qinyuanpei.github.io/posts/1156673678/">EasyAR尝鲜系列教程之自定义Marker的实现</a></li>
+        
+        <li><a href="https://qinyuanpei.github.io/posts/2414960312/">.NET Core中对象池(Object Pool)的使用</a></li>
+        
+        <li><a href="https://qinyuanpei.github.io/posts/3918433482/">从 C# 1.0 到 C# 9.0，历代 C# 语言特性一览</a></li>
+        
+    </ul>
+</div>
+
+            </div>
+            
+<blockquote class="post-copyright">
+    <div class="content">
+        <p><b>版权声明：</b>
+        <a href="https://qinyuanpei.github.io/posts/305484621/" rel="external">C#中的扩展方法学习总结</a>
+        ，由&nbsp;<a href="/about" target="_blank" rel="external">飞鸿踏雪</a>&nbsp;
+        首次发表于&nbsp;<a href="/" target="_blank" rel="external">一个人的孤落时辰</a>&nbsp;
+        ，本文地址为：<a href="https://qinyuanpei.github.io/posts/305484621/" target="_blank" rel="external">https://qinyuanpei.github.io/posts/305484621/</a>
+        ，转载请注明<b>作者</b>和<b>出处</b>。</p>
+    </div>
+    <footer>
+        <a href="https://qinyuanpei.github.io">
+            <img src="/assets/images/avatar.jpg" alt="飞鸿踏雪">
+            飞鸿踏雪
+        </a>
+    </footer>
+</blockquote>
+
+
+            
+<div class="page-reward">
+    <a id="rewardBtn" href="javascript:;" class="page-reward-btn waves-effect waves-circle waves-light">赏</a>
+</div>
+
+
+            <div class="post-footer">
+                
+	<ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/CSharp/" rel="tag">CSharp</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Unity3D/" rel="tag">Unity3D</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%89%A9%E5%B1%95%E6%96%B9%E6%B3%95/" rel="tag">扩展方法</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%8A%80%E5%B7%A7/" rel="tag">技巧</a></li></ul>
+
+                
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://qinyuanpei.github.io/posts/305484621/&title=《C#中的扩展方法学习总结》 — 一个人的孤落时辰&pic=https://qinyuanpei.github.ioassets/images/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://qinyuanpei.github.io/posts/305484621/&title=《C#中的扩展方法学习总结》 — 一个人的孤落时辰&source=&emsp;&emsp;各位朋友大家好，我是秦元培，欢迎大家关注我的博客。最近偶然接触到了C#中的扩展方法，觉得这个语法特性是一个不错的特性，因此决定在这..." data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://qinyuanpei.github.io/posts/305484621/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《C#中的扩展方法学习总结》 — 一个人的孤落时辰&url=https://qinyuanpei.github.io/posts/305484621/&via=https://qinyuanpei.github.io" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://qinyuanpei.github.io/posts/305484621/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+      
+      <li>
+        <a class="google share-sns" target="_blank" onClick="show_yp()" data-title=" 生成海报">
+          <i class="icon icon-file-image-o"></i>
+        </a>
+      </li>
+      
+    </ul>
+ </div>
+
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
+            </div>
+        </div>
+
+        
+<nav class="post-nav flex-row flex-justify-between">
+  
+    <div class="waves-block waves-effect prev">
+      <a href="/posts/3736599391/" id="post-prev" class="post-nav-link">
+        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
+        <h4 class="title">EasyAR尝鲜系列教程之ImageTarget千呼万唤始出来</h4>
+      </a>
+    </div>
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/posts/1394521917/" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h4 class="title">青黄未接的2015</h4>
+      </a>
+    </div>
+  
+</nav>
+
+
+        
+    <div id="comment"></div>
+<script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+<script src='//unpkg.com/valine/dist/Valine.min.js'></script>
+<script type="text/javascript">
+new Valine({
+    el: '#comment' ,
+    notify: false, 
+    verify: true, 
+    appId: 'JbHqRp2eMrTgIwYpfERH0g79-gzGzoHsz',
+    appKey: 'VsiKvLuiBGvJL1XrAfv7siY2',
+    placeholder: '云中谁寄锦书来，雁字回时，月满西楼。&#10;Tips：如果希望收到我的评论回复，请至少留下你的邮箱哦:)',
+    path:'https://qinyuanpei.github.io/posts/305484621/', 
+    avatar:'identicon',
+    requiredFields: ['nick','mail']
+});
+</script>
+
+
+
+
+    </article>
+    
+<div id="reward" class="page-modal reward-lay">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <h3 class="reward-title">
+        <i class="icon icon-quote-left"></i>
+        赠人玫瑰，手有余香
+        <i class="icon icon-quote-right"></i>
+    </h3>
+    <div class="reward-content">
+        
+        <div class="reward-code">
+            <img id="rewardCode" src="/assets/images/wechat.png" alt="打赏二维码">
+        </div>
+        
+        <label class="reward-toggle">
+            <input id="rewardToggle" type="checkbox" class="reward-toggle-check"
+                data-wechat="/assets/images/wechat.png" data-alipay="/assets/images/alipay.jpg">
+            <div class="reward-toggle-ctrol">
+                <span class="reward-toggle-item wechat">微信</span>
+                <span class="reward-toggle-label"></span>
+                <span class="reward-toggle-item alipay">支付宝</span>
+            </div>
+        </label>
+        
+    </div>
+</div>
+
+
+    <script type="text/javascript" src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/yoniu.min.js"></script>
+<style type='text/css'>
+	body.active-yp {
+		overflow: hidden;
+	}
+	.yp-fc-btn{
+		display: flex;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		align-items: center;
+		justify-content: space-between;
+		font-size: 13px;
+	}
+	.yp-fc-btn span{
+		cursor: pointer;
+		padding: 2px 10px;
+		color: #4b4b4b;
+		border: #4b4b4b 1px solid;
+		border-radius:5px;
+	}
+	#yp-hide{
+		position: fixed;
+		display: flex;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		justify-content: center;
+		flex-direction: column;
+		left:0;
+		top:0;
+		right:0;
+		bottom:0;
+		background-color:rgba(0,0,0,.5);
+		z-index: 99999;
+		visibility: hidden;
+	}
+	#yoniu-poster{
+		box-sizing: border-box;
+		width: 350px;
+		height: 467.2px;
+		background-color: #fff;
+		margin: 0 auto;
+		padding: 0;
+		line-height: 1.6;
+		text-align:justify;
+	}
+	
+	.yp-img {
+		min-height: 240px;
+		position: relative;
+		display: flex;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		justify-content: flex-end;
+		flex-direction: column;
+		background-position: 50% 50%;
+		background-size: cover;
+		overflow:hidden;
+	}
+	.yp-img>div{
+		padding: 10px 20px;
+	}
+	.yp-name{
+		display: block;
+		color: #fff;
+		font-size: 20px;
+		font-weight: 600;
+		text-shadow: #4b4b4b 0.1em 0.1em 0.2em;
+		margin-top: 10px;
+	}
+	.yp-sort{
+		padding: 3px 10px;
+		font-size: 12px;
+		color: #fff;
+		background: #2e2e2e;
+	}
+	.yp-des{
+		color: #2e2e2e;
+		font-size: 14px;
+		margin: 20px;
+		height: 67.2px;
+	}
+	.yp-qcode{
+		display: flex;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		justify-content: space-between;
+		align-items: center;
+		margin: 10px;
+		padding: 10px 20px;
+		background: #f5f5f5;
+		color: #818181;
+		border-radius: 10px;
+	}
+	.yp-tips{
+		display: flex;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		justify-content: space-between;
+		align-items: center;
+		color: #ccc;
+		margin: 0 10px 10px;
+		font-size: 10px;
+		letter-spacing: 1.5px;
+	}
+	.yp-btns{
+		display: flex;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		align-items: stretch;
+		justify-content: center;
+		width:350px;
+		margin: 0 auto;
+	}
+	.yp-btns>span{
+		display: flex;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		align-items: center;
+		justify-content: center;
+		font-size: 14px;
+		padding: 10px 15px;
+		background:rgba(0,0,0,.2);
+		color: #f5f5f5;
+		cursor: pointer;
+	}
+	.yp-btns>span>a{
+		color: #f5f5f5;
+	}
+	.yp-btns>span>a:hover{
+		text-decoration:none;
+	}
+	#yp-close{
+		font-size: 18px;
+		font-weight: 600;
+	}
+</style>
+<div id="yp-hide">
+    <div id="yoniu-poster">
+        <div class="yp-img" id="yp-img">
+            <div>
+                <span class="yp-sort">编程语言</span>
+                <span class="yp-name">C#中的扩展方法学习总结</span>
+            </div>
+        </div>
+        <div class="yp-des">    
+            
+                &emsp;&emsp;各位朋友大家好，我是秦元培，欢迎大家关注我的博客。最近偶然接触到了C#中的扩展方法，觉得这个语法特性是一个不错的特性，因...
+            
+        </div>
+        <div class="yp-qcode">
+            <span>扫描二维码阅读原文</span>
+            <img id="yp-qcode" width="64px" src="//api.qrserver.com/v1/create-qr-code/?data=https://qinyuanpei.github.io/posts/305484621/">
+        </div>
+        <div class="yp-tips">
+            <span>一个人的孤落时辰</span>
+            <span><time class="post-time" title="2015-12-05 12:01:02" datetime="2015-12-05T12:01:02.000Z"  itemprop="datePublished">2015-12-05</time>
+</span>
+        </div>
+    </div>
+    <div class="yp-btns">
+        <span id="yp-load-yp" onClick="load_yp()">生成海报</span>
+        <span><a id="yp-download"></a></span>
+        <span id="yp-close" onClick="close_yp()">×</span>
+    </div>
+</div>
+<script type="text/javascript">
+    function show_yp(){
+        window.scrollTo(0, 0);
+        document.body.setAttribute("class","active-yp");
+        let cover = document.getElementsByTagName('img')[1];
+        if (cover != null && typeof(cover) != 'undefined') {
+            document.getElementById('yp-img').style.backgroundImage = `url(${cover.src})`;
+        } else {
+            document.getElementById('yp-img').style.backgroundColor = '#d7dbf0';
+        }
+        document.getElementById("yp-hide").style.visibility = "visible";
+    }
+    function close_yp(){
+        var domClass = document.body.getAttribute("class");
+        domClass = domClass.replace("active-yp","");
+        document.body.setAttribute("class",domClass);
+        document.getElementById("yp-hide").style.visibility = "hidden";
+    }
+    function load_yp(){
+        document.getElementById('yp-load-yp').textContent = '海报生成中...';
+        setTimeout(function() {
+            h2c_();
+        },2000);
+
+    }
+</script>
+
+</div>
+
+        <footer class="footer">
+    <div class="top">
+        
+   <p>
+      <span id="lc_counter_container_site_uv">
+         <i class="icon icon-user"></i><span id="lc_counter_value_site_uv"></span>
+      </span>
+      <span id="lc_counter_container_site_pv">
+         <i class="icon icon-eye"></i><span id="lc_counter_value_site_pv"></span>
+      </span>
+  </p>
+
+
+        <p>
+   <a id="jinrishici-sentence" href="https://www.jinrishici.com/" target="_blank" rel="noopener">加载中</a>
+</p>
+<script src="https://sdk.jinrishici.com/v2/browser/jinrishici.js" charset="utf-8"></script>
+<script>
+   jinrishici.load(function(result) {
+      document.querySelector('#subtitle').innerText = result.data.content;
+      document.querySelector('#jinrishici-sentence').innerText = result.data.content;
+  });
+</script>
+            <!--Todo: 考虑重构为插件 -->
+            <p>
+                
+                    <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+                
+                <span>
+                    <a href="https://github.com/qinyuanpei" target="_blank" rel="license noopener" title="Github">
+                        <i class="icon icon-lg icon-github"></i>
+                    </a>
+                </span>
+                <span>
+                    <a href="https://weibo.com/1278609231/profile" target="_blank" rel="license noopener" title="微博">
+                        <i class="icon icon-lg icon-weibo"></i>
+                    </a>
+                </span>
+                <span>
+                    <a href="https://www.douban.com/people/60029335/" target="_blank" rel="license noopener" title="豆瓣">
+                        <i class="icon icon-lg icon-douban"></i>
+                    </a>
+                </span>
+                <span>
+                    <a href="https://www.zhihu.com/people/qinyuanpei" target="_blank" rel="license noopener" title="知乎">
+                        <i class="icon icon-lg icon-zhihu-square"></i>
+                    </a>
+                </span>
+                <span>
+                    <a href="https://blog.csdn.net/qinyuanpei" target="_blank" rel="license noopener" title="CSDN">
+                        <i class="icon icon-lg">C</i>
+                    </a>
+                </span>
+                <span>
+                    <a href="https://music.163.com/#/user/home?id=47002864" target="_blank" rel="license noopener" title="网易音乐">
+                        <i class="icon icon-lg icon-wangyiyunyinyue"></i>
+                    </a>
+                </span>
+            </p>
+        
+    </div>
+    <div class="bottom">
+        <p><span>飞鸿踏雪 &copy; 2014 - 2021</span><br>
+            
+                
+                Powered by <a href="http://hexo.io/" target="_blank">Hexo</a> & Theme by <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a><br>
+                
+                
+                    <p>Hosted by <a href="https://pages.github.com" target="_blank" rel="noopener" style="font-weight: bold">Github Pages</a></p>
+                
+        </p>
+    </div>
+</footer>
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span
+        class="icon icon-lg icon-chevron-up"></span></a>
+
+    
+
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://qinyuanpei.github.io/posts/305484621/&title=《C#中的扩展方法学习总结》 — 一个人的孤落时辰&pic=https://qinyuanpei.github.ioassets/images/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://qinyuanpei.github.io/posts/305484621/&title=《C#中的扩展方法学习总结》 — 一个人的孤落时辰&source=&emsp;&emsp;各位朋友大家好，我是秦元培，欢迎大家关注我的博客。最近偶然接触到了C#中的扩展方法，觉得这个语法特性是一个不错的特性，因此决定在这..." data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://qinyuanpei.github.io/posts/305484621/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《C#中的扩展方法学习总结》 — 一个人的孤落时辰&url=https://qinyuanpei.github.io/posts/305484621/&via=https://qinyuanpei.github.io" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://qinyuanpei.github.io/posts/305484621/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+      
+      <li>
+        <a class="google share-sns" target="_blank" onClick="show_yp()" data-title=" 生成海报">
+          <i class="icon icon-file-image-o"></i>
+        </a>
+      </li>
+      
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="//api.qrserver.com/v1/create-qr-code/?data=https://qinyuanpei.github.io/posts/305484621/" alt="微信分享二维码">
+</div>
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.6/waves.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/4.2.1/echarts.min.js"></script>
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/echarts-wordcloud.min.js" async></script>
+<script>
+    var BLOG = { ROOT: '/', SHARE: true, REWARD: true };
+
+
+</script>
+
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/main.min.js"></script>
+
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/search.min.js" async></script>
+
+
+
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/heart.min.js" async></script>
+
+
+
+
+
+
+
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/leancloud-counter.min.js"></script>
+<script>
+        (function () {
+            var appId = 'JbHqRp2eMrTgIwYpfERH0g79-gzGzoHsz';
+            var appKey = 'VsiKvLuiBGvJL1XrAfv7siY2';
+            new VisitorCounter().init({
+                appId: appId,       //应用ID, 必输
+                appKey: appKey,      //应用Key, 必输
+                region: '华北',      //华东,华北,国际, 默认华东
+                domain: '',      //自定义域名
+                collectIP: true, //是否收集IP及位置信息, 默认开启
+                collectUA: true  //是否收集UserAgent, 默认开启
+            });
+        })();
+</script>
+
+
+
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/vconsole.min.js"></script>
+<script type="text/javascript">
+    //当地址中存在debug=true时，实例化vConsole
+    if (location.href.indexOf('debug=true') > -1) {
+        var vConsole = new VConsole();
+    }
+</script>
+
+
+    <script>
+    //国内用户自动重定向Coding Pages镜像
+    // var ipInfo = JSON.parse(localStorage.getItem('ipInfo'));
+    // if (ipInfo.country_code == 'CN') {
+    //     location.href = location.href.replace('qinyuanpei.github.io', 'blog.yuanpei.me');
+    // }
+    </script>
+
+
+<script>
+titleArray = [];
+function scrollTitle() {
+    if (titleArray.length == 0) return;
+    titleArray.push(titleArray[0]);
+	titleArray.shift();
+	document.title = titleArray.join("");
+}
+setInterval(scrollTitle, 500);
+(function() {
+    var originTitile = document.title, titleTime;
+    document.addEventListener('visibilitychange', function() {
+        if (document.hidden) {
+            titleArray = originTitile.split('');
+            clearTimeout(titleTime);
+        } else {
+            document.title = originTitile;
+            titleArray = originTitile.split('');
+            titleTime = setTimeout(function() {
+                document.title = originTitile;
+                titleArray = [];
+            },2000);
+        }
+    });
+})();
+</script>
+
+
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/ribbon.min.js"></script>
+</body>
+</html>

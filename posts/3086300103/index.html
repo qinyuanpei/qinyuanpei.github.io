@@ -1,0 +1,892 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+    
+<script async defer data-domain="blog.yuanpei.me" src="https://plausible.io/js/plausible.js"></script>
+    
+    <meta charset="utf-8">
+    <!-- HTTP 1.1 -->  
+    <meta http-equiv="pragma" content="no-cache">  
+    <!-- HTTP 1.0 -->  
+    <meta http-equiv="cache-control" content="no-cache">
+    <!-- 微博图床防盗链 --> 
+    <!-- <meta name="referrer" content="no-referrer"/> -->
+    <!--Google站点验证-->
+    
+    <!--百度站点验证-->
+    
+    
+    <!--Google AdSense-->
+    
+    <!--Bing站点验证-->
+    <meta name="msvalidate.01" content="713A48A3FE17D4841C292A6B3942EB4C" />
+    
+    <title>
+        Dapper.Contrib在Oracle环境下引发ORA-00928异常问题的解决 | 一个人的孤落时辰
+    </title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+        <meta name="theme-color" content="#3F51B5">
+    
+
+    <meta name="keywords" content="Dapper,ORM,数据库,源码,秦元培,技术博客,生活随笔,个人博客,NET,Python,数据挖掘,数据分析,NLP">
+    
+        <meta name="description" content="另一方面，既然Id在每个数据库的实现都不一样，那么，作为Id本身应该考虑放到 `ISqlAdapter` 接口中由使用者来实现啊，可偏偏 ISqlAdapter 里只定义了一个 Insert() 方法，所以，就算我们实现了 OracleSqlAdapter ，一样无法解决 Insert() 方法以外的其它方法在 Oracle 下面的问题，正因为如此，默认的 @ 符号在 Oracle 环境下下没有被完全替换掉，这就需要修改 Dapper.Contrib 的底层代码，这真的是一个不好的设计，因为使用者完全没有办法通过重写来覆盖某些默认行为，我们一起来看看，需要修改哪些地方：;因为不同的数据库在实现自增ID时的机制不同，Oracle 甚至需要引入序列这个概念，这种差异化，增加了 Dapper 各个扩展库维护的工作量，这是官方一直不愿意实现 OracleSqlAdapter 的原因，其次， Dapper.Contrib 底层设计不合理，除了Insert() 方法以外，其它依赖主键的方法都没有提供扩展接口，导致使用者只能通过修改底层代码的方式解决问题，这严重违反开闭原则;大家会注意到我实现的 OracleSqlAdapter 在实现 Insert() 方法的时候简化了大量代码，这是因为我真的不知道，怎么从 Oracle 中获取一个新生成的ID，尤其是这个ID居然还要依赖一个我听都没有听说过的“序列”，而之所以要在 ISqlAdapter 中实现 Insert() 方法，最根本的原因就是，各个数据库对于自增ID的实现是不一样的，比如 MySQL 中使用的是 `SCOPE_IDENTITY()`，而 MSSQL 中使用的则是 `SCOPE_IDENTITY()` ，就因为这一点点差异，我们就必须要去折腾一遍，可以说， Dapper.Contrib 不支持 Oracle 的一个重要原因，就是在 Oracle 下实现自增ID太麻烦了;本文分析了 Dapper.Contrib 这个扩展库，在搭配 Oracle 数据库使用时遇到 ORA-XXXXX 系列错误的原因及相应地处理方法，这个问题的表象是 Dapper.Contrib 没有实现 OracleSqlAdapter ，而更深层的原因，实际上是 Dapper.Contrib 选择支持自增ID而带来的 SQL 标准差异化问题;众所周知，`Dapper` 的核心其实就是一个 SqlMapper ，它提供的 Query() 和 Execute() 接口本身都是附加在 `IDbConnection` 接口上的扩展方法，所以，最基础的 `Dapper` 用法其实是伴随着 SQL 语句和以匿名对象为主的参数化查询，这可以说是 Dapper 的核心，而 `Dapper.Contrib` 在这个基础上提供了 Get()、Insert()、Delete() 和 Update() 等等常见的 CRUD 方法，这些方法都针对的是单主键的表，让 `Dapper`有了一点 ORM 的感觉，可惜的是 `Dapper.Contrib` 的实现是不完整的，主要是指下面两个方面，即：第一，官方未能提供 Oracle 版本的 `ISqlAdapter`">
+    
+    <meta name="description" content="另一方面，既然Id在每个数据库的实现都不一样，那么，作为Id本身应该考虑放到 &#96;ISqlAdapter&#96; 接口中由使用者来实现啊，可偏偏 ISqlAdapter 里只定义了一个 Insert() 方法，所以，就算我们实现了 OracleSqlAdapter ，一样无法解决 Insert() 方法以外的其它方法在 Oracle 下面的问题，正因为如此，默认的 @ 符号在 Oracle 环境下下没有被">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Dapper.Contrib在Oracle环境下引发ORA-00928异常问题的解决">
+<meta property="og:url" content="https://qinyuanpei.github.io/posts/3086300103/index.html">
+<meta property="og:site_name" content="一个人的孤落时辰">
+<meta property="og:description" content="另一方面，既然Id在每个数据库的实现都不一样，那么，作为Id本身应该考虑放到 &#96;ISqlAdapter&#96; 接口中由使用者来实现啊，可偏偏 ISqlAdapter 里只定义了一个 Insert() 方法，所以，就算我们实现了 OracleSqlAdapter ，一样无法解决 Insert() 方法以外的其它方法在 Oracle 下面的问题，正因为如此，默认的 @ 符号在 Oracle 环境下下没有被">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-09-05T14:28:20.000Z">
+<meta property="article:modified_time" content="2021-05-28T02:26:21.793Z">
+<meta property="article:author" content="飞鸿踏雪">
+<meta property="article:tag" content="Dapper">
+<meta property="article:tag" content="ORM">
+<meta property="article:tag" content="数据库">
+<meta property="article:tag" content="源码">
+<meta name="twitter:card" content="summary">
+    
+        <link rel="alternate" type="application/atom+xml" title="一个人的孤落时辰" href="/atom.xml">
+    
+    <link rel="shortcut icon" href="/assets/images/favicon.ico">
+    
+        <link rel="manifest" href="/manifest.json">
+    
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master//assets/styles/style.css">
+    <script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/instantclick.min.js"></script>
+    <script>window.lazyScripts=[]</script>
+    <!-- custom head -->
+    
+
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu" class="hide" >
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap" style="background-image:url(/assets/images/brand.jpg)">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/assets/images/avatar.jpg" alt="avatar">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">飞鸿踏雪</h5>
+          <a href="mailto:qinyuanpei@163.com" title="qinyuanpei@163.com" class="mail">qinyuanpei@163.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/"  >
+                <i class="icon icon-lg icon-home"></i>
+                主页
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives"  >
+                <i class="icon icon-lg icon-archives"></i>
+                归档
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags"  >
+                <i class="icon icon-lg icon-tags"></i>
+                标签
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/categories"  >
+                <i class="icon icon-lg icon-th-list"></i>
+                分类
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/books"  >
+                <i class="icon icon-lg icon-bookmark"></i>
+                书单
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/movies"  >
+                <i class="icon icon-lg icon-film"></i>
+                影单
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/works"  >
+                <i class="icon icon-lg icon-code"></i>
+                实验室
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/about"  >
+                <i class="icon icon-lg icon-circle"></i>
+                关于我
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+            <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">Dapper.Contrib在Oracle环境下引发ORA-00928异常问题的解决</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off"
+                placeholder="输入感兴趣的关键字">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+        <a href="https://github.com/qinyuanpei/qinyuanpei.github.io" target="_blank" rel="noopener" class="header-icon waves-effect waves-circle waves-light" id="menuGithub">
+            <i class="icon icon-lg icon-code-fork"></i>
+        </a>
+    </div>
+</header>
+<header class="content-header post-header">
+    <div class="container fade-scale">
+        <h1 class="title">Dapper.Contrib在Oracle环境下引发ORA-00928异常问题的解决</h1>
+        <h5 class="subtitle" id="subtitle">
+            
+            <time datetime="2020-09-05T14:28:20.000Z" itemprop="datePublished" class="page-time">
+  2020-09-05
+</time>
+
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/%E6%95%B0%E6%8D%AE%E5%AD%98%E5%82%A8/">数据存储</a></li></ul>
+
+            
+        </h5>
+    </div>
+    
+
+</header>
+
+<div class="container body-wrap">
+    
+    <aside class="post-widget">
+        <nav class="post-toc-wrap" id="post-toc">
+            <h4>目录</h4>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#问题回顾"><span class="post-toc-number">1.</span> <span class="post-toc-text">问题回顾</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#原因分析"><span class="post-toc-number">2.</span> <span class="post-toc-text">原因分析</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#Oracle版本的ISqlAdapter"><span class="post-toc-number">2.1.</span> <span class="post-toc-text">Oracle版本的ISqlAdapter</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#主键Id参数化问题"><span class="post-toc-number">2.2.</span> <span class="post-toc-text">主键Id参数化问题</span></a></li></ol></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#相关思考"><span class="post-toc-number">3.</span> <span class="post-toc-text">相关思考</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#本文小结"><span class="post-toc-number">4.</span> <span class="post-toc-text">本文小结</span></a></li></ol>
+        </nav>
+    </aside>
+    
+    <article id="post-Dapper.Contrib在Oracle环境下引发ORA-00928异常问题的解决" class="post-article article-type-post fade" itemprop="blogPost">
+
+        <div class="post-card">
+            <h1 class="post-card-title">
+                Dapper.Contrib在Oracle环境下引发ORA-00928异常问题的解决
+            </h1>
+            <div class="post-meta">
+                <time class="post-time" title="2020-09-05 14:28:20" datetime="2020-09-05T14:28:20.000Z"  itemprop="datePublished">2020-09-05</time>
+
+                
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/%E6%95%B0%E6%8D%AE%E5%AD%98%E5%82%A8/">数据存储</a></li></ul>
+
+
+
+                
+<span id="lc_counter_container_page_pv" title="文章总阅读量" data-page-url="" data-page-title="Dapper.Contrib在Oracle环境下引发ORA-00928异常问题的解决">
+    <i class="icon icon-eye icon-pr"></i><span id="lc_counter_value_page_pv"></span>
+</span>
+
+
+
+
+
+                
+    <span>
+        <i class="icon icon-clock-o"></i>
+        27 min.
+    </span>
+    
+            </div>
+            <div class="post-content" id="post-content" itemprop="postContent">
+                <p>话说最近这两周里，被迫官宣<strong>996</strong>的生活实在是无趣，在两周时间里安排三周的工作量，倘若用丞相的口吻来说，那便是: <strong>我从未见过有如此厚颜无耻之人</strong>。无法为工作的紧急程度排出优先级，这便是身为肉食者们的<strong>鄙</strong>。古人云：<strong>肉食者鄙，未能远谋</strong>，诚不欺我也。一味地追求快速迭代，“屎”山越滚越高没有人在乎；一味地追求功能叠加，技术债务越来越多没有人在乎。所以，本着“多一事不如少一事”的原则，直接通过 Dapper 写 SQL 语句一样没有问题，因为被压榨完以后的时间只能写这个。在今天的这篇博客里，我想和大家分享的是，<code>Dapper.Contrib</code>在操作 Oracle 数据库时引发 <strong>ORA-00928: 缺失 SELECT 关键字</strong> 这一错误背后的根本原因，以及 Dapper 作为一个轻量级 ORM 在设计上做出的取舍。</p>
+<h1 id="问题回顾"><a href="#问题回顾" class="headerlink" title="问题回顾"></a>问题回顾</h1><p>在使用 <code>Dapper.Contrib</code> 操作 Oracle 数据库的时候，通过 Insert() 方法来插入一个实体对象，此时，会引发 <strong>ORA-00928: 缺失 SELECT 关键字</strong> 这种典型的 Oracle 数据库错误，对于经常使用 Dapper 的博主而言，对于 <code>@</code> 还是 <code>:</code> 这种无聊的语法还是有一点经验的，在尝试手写 SQL 语句后，发现使用 Dapper 提供的 <code>Execute()</code> 扩展方法一点问题都没有，初步判定应该是 <code>Dapper.Contrib</code> 这个扩展库的问题，在翻阅 <code>Dapper</code> 的源代码以后，终于找到了问题的根源所在，所以，下面请跟随博主的目光，来一起解读解读 <code>Dapper.Contrib</code> 这个扩展库，相信你看完以后就会明白，为什么这里会被 Oracle 数据库摆上一道，以及为什么它至今都不考虑合并 Oracle 数据库相关的PR。</p>
+<h1 id="原因分析"><a href="#原因分析" class="headerlink" title="原因分析"></a>原因分析</h1><p>众所周知，<code>Dapper</code> 的核心其实就是一个 SqlMapper ，它提供的 Query() 和 Execute() 接口本身都是附加在 <code>IDbConnection</code> 接口上的扩展方法，所以，最基础的 <code>Dapper</code> 用法其实是伴随着 SQL 语句和以匿名对象为主的参数化查询，这可以说是 Dapper 的核心，而 <code>Dapper.Contrib</code> 在这个基础上提供了 Get()、Insert()、Delete() 和 Update() 等等常见的 CRUD 方法，这些方法都针对的是单主键的表，让 <code>Dapper</code>有了一点 ORM 的感觉，可惜的是 <code>Dapper.Contrib</code> 的实现是不完整的，主要是指下面两个方面，即：第一，官方未能提供 Oracle 版本的 <code>ISqlAdapter</code>。第二，兼容不同数据库自增ID的实现，让官方在处理Id的参数化查询时束手束脚，对 <code>ISqlAdapter</code> 的设计并不全面。</p>
+<h2 id="Oracle版本的ISqlAdapter"><a href="#Oracle版本的ISqlAdapter" class="headerlink" title="Oracle版本的ISqlAdapter"></a>Oracle版本的ISqlAdapter</h2><p>首先，第一个结论，<code>Dapper.Contrib</code> 没有实现 Oracle 版本的 <code>ISqlAdapter</code> 。关于这个接口，我们可以在 <code>SqlMapperExtensions</code> 这个类中找到定义，而 <code>Dapper.Contrib</code> 内部实际上是维护了一个字典 <code>AdapterDictionary</code> ，在 <code>SqlMapperExtensions.cs</code> 文件的第 62 行 ~ 第 73 行，我们可以注意到，其内部提供了6种 <code>ISqlAdapter</code> 的实现，且默认为 <code>SqlServerAdapter</code> ：</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">readonly</span> ISqlAdapter DefaultAdapter = <span class="keyword">new</span> SqlServerAdapter();</span><br><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">readonly</span> Dictionary&lt;<span class="keyword">string</span>, ISqlAdapter&gt; AdapterDictionary</span><br><span class="line">    = <span class="keyword">new</span> Dictionary&lt;<span class="keyword">string</span>, ISqlAdapter&gt;(<span class="number">6</span>)</span><br><span class="line">      &#123;</span><br><span class="line">          [<span class="meta"><span class="meta-string">"sqlconnection"</span></span>] = <span class="keyword">new</span> SqlServerAdapter(),</span><br><span class="line">          [<span class="meta"><span class="meta-string">"sqlceconnection"</span></span>] = <span class="keyword">new</span> SqlCeServerAdapter(),</span><br><span class="line">          [<span class="meta"><span class="meta-string">"npgsqlconnection"</span></span>] = <span class="keyword">new</span> PostgresAdapter(),</span><br><span class="line">          [<span class="meta"><span class="meta-string">"sqliteconnection"</span></span>] = <span class="keyword">new</span> SQLiteAdapter(),</span><br><span class="line">          [<span class="meta"><span class="meta-string">"mysqlconnection"</span></span>] = <span class="keyword">new</span> MySqlAdapter(),</span><br><span class="line">          [<span class="meta"><span class="meta-string">"fbconnection"</span></span>] = <span class="keyword">new</span> FbAdapter()</span><br><span class="line">    &#125;;</span><br></pre></td></tr></table></figure>
+
+<p>一个自然而然的问题是，这个 <code>ISqlAdapter</code> 接口是做什么的呢？为什么说 <code>Dapper.Contrib</code> 没有实现 Oracle 版本的 ISqlAdapter 呢？如果我们看一下 <code>ISqlAdapter</code> 的定义，就可以了解到其作用是告诉 Dapper ，应该怎么样处理数据库里的自增ID、怎么样表示 <code>Column = Value</code> 这样的结构，以及怎么样处理列名：</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">partial</span> <span class="keyword">interface</span> <span class="title">ISqlAdapter</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="function"><span class="keyword">int</span> <span class="title">Insert</span>(<span class="params">IDbConnection connection, IDbTransaction transaction, </span></span></span><br><span class="line"><span class="function"><span class="params">        <span class="keyword">int</span>? commandTimeout, <span class="keyword">string</span> tableName, <span class="keyword">string</span> columnList, </span></span></span><br><span class="line"><span class="function"><span class="params">        <span class="keyword">string</span> parameterList, IEnumerable&lt;PropertyInfo&gt; keyProperties, </span></span></span><br><span class="line"><span class="function"><span class="params">        <span class="keyword">object</span> entityToInsert</span></span></span><br><span class="line"><span class="function"><span class="params">    </span>)</span>;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">AppendColumnName</span>(<span class="params">StringBuilder sb, <span class="keyword">string</span> columnName</span>)</span>;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">AppendColumnNameEqualsValue</span>(<span class="params">StringBuilder sb, <span class="keyword">string</span> columnName</span>)</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这里以 <code>MySqlAdapter</code> 的实现为例：</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">partial</span> <span class="keyword">class</span> <span class="title">MySqlAdapter</span> : <span class="title">ISqlAdapter</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">Insert</span>(<span class="params">IDbConnection connection, IDbTransaction transaction, </span></span></span><br><span class="line"><span class="function"><span class="params">        <span class="keyword">int</span>? commandTimeout, <span class="keyword">string</span> tableName, <span class="keyword">string</span> columnList, </span></span></span><br><span class="line"><span class="function"><span class="params">        <span class="keyword">string</span> parameterList, IEnumerable&lt;PropertyInfo&gt; keyProperties, </span></span></span><br><span class="line"><span class="function"><span class="params">        <span class="keyword">object</span> entityToInsert</span></span></span><br><span class="line"><span class="function"><span class="params">    </span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        <span class="keyword">var</span> cmd = <span class="string">$"insert into <span class="subst">&#123;tableName&#125;</span> (<span class="subst">&#123;columnList&#125;</span>) values (<span class="subst">&#123;parameterList&#125;</span>)"</span>;</span><br><span class="line">        connection.Execute(cmd, entityToInsert, transaction, commandTimeout);</span><br><span class="line">        <span class="keyword">var</span> r = connection.Query(<span class="string">"Select LAST_INSERT_ID() id"</span>, transaction: transaction, commandTimeout: commandTimeout);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">var</span> id = r.First().id;</span><br><span class="line">        <span class="keyword">if</span> (id == <span class="literal">null</span>) <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">var</span> propertyInfos = keyProperties <span class="keyword">as</span> PropertyInfo[] ?? keyProperties.ToArray();</span><br><span class="line">        <span class="keyword">if</span> (propertyInfos.Length == <span class="number">0</span>) <span class="keyword">return</span> Convert.ToInt32(id);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">var</span> idp = propertyInfos[<span class="number">0</span>];</span><br><span class="line">        idp.SetValue(entityToInsert, Convert.ChangeType(id, idp.PropertyType), <span class="literal">null</span>);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> Convert.ToInt32(id);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">AppendColumnName</span>(<span class="params">StringBuilder sb, <span class="keyword">string</span> columnName</span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        sb.AppendFormat(<span class="string">"`&#123;0&#125;`"</span>, columnName);</span><br><span class="line">    ｝</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">AppendColumnNameEqualsValue</span>(<span class="params">StringBuilder sb, <span class="keyword">string</span> columnName</span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        sb.AppendFormat(<span class="string">"`&#123;0&#125;` = @&#123;1&#125;"</span>, columnName, columnName);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>相信看到这里的时候，大家会和我一样感到失望，因为 Dapper 的底层依然是在拼 SQL ，尤其是看到 <code>AppendColumnNameEqualsValue()</code> 这个方法的时候，会有一种恍然大明白的感觉，因为 @ 这个符号对于 Dapper 的参数化查询而言，实在是熟悉得不能再熟悉了。我们都知道为 Dapper 写 SQL 语句的时候，要对 Oracle 区别对待，因为这个奇葩非要用 <code>:</code> 这个奇怪的符号。回到我们一开始的问题，为啥 <code>Dapper.Contrib</code> 在 Oracle 环境下会提示 <code>ORA-XXXXX</code> 这种鬼都看不明白的错误，因为它在处理 SQL 的语句的时候依然使用的是 <code>@</code> 这个符号。这又是为什么呢？因为当指定的 <code>IDbConnection</code> 在 <code>AdapterDictionary</code> 中不存在的时候，它会使用默认的 <code>SqlServerAdapter</code> ，显然，全世界只有 Oracle 这个奇葩会用 <code>:</code> 这个奇怪的符号。我们不是在调用 Insert() 方法的时候提示这个错误吗？那么 <code>Dapper.Contrib</code> 是怎么实现 <code>Insert()</code> 方法的呢？这个部分实现主要在第 352 行 ~ 第 360 行：</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> adapter = GetFormatter(connection);</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">var</span> i = <span class="number">0</span>; i &lt; allPropertiesExceptKeyAndComputed.Count; i++)</span><br><span class="line"> &#123;</span><br><span class="line">    <span class="keyword">var</span> property = allPropertiesExceptKeyAndComputed[i];</span><br><span class="line">    adapter.AppendColumnName(sbColumnList, property.Name);  <span class="comment">//fix for issue #336</span></span><br><span class="line">    <span class="keyword">if</span> (i &lt; allPropertiesExceptKeyAndComputed.Count - <span class="number">1</span>)</span><br><span class="line">       sbColumnList.Append(<span class="string">", "</span>);</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
+
+<p>显然，这部分是按照属性名去组织 <code>columnList</code> 和 <code>parameterList</code> 的过程，对于 Oracle ，永远是充满吐槽的，比如不加双引号则强制大写的设定，这意味着如果你的表名或者字段名是区分大小写的话，在 Oracle 这里都要加上双引号，这对 <code>Dapper.Contrib</code> 有什么影响呢？原本我们只需要给实体添加<code>[Table]</code>标签即可，而现在你不得不考虑带上反斜杠转义，甚至当你需要为 <code>DBeaver</code> 下载一个JDBC的驱动的时候，甲骨文这家公司居然要强制你去注册，对于一个习惯像<code>·.NET Core</code>、<code>GCC</code>、<code>Python</code>、<code>Lua</code> 和 <code>Node</code> 这样开箱即用的人来说，这就像强迫你注册一大堆真实信息，然后发现 API 接口完全无法匹配你的需求一样痛苦。关于 <code>GetFormatter()</code> 方法，它和我们猜想的完全一致：</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">static</span> ISqlAdapter <span class="title">GetFormatter</span>(<span class="params">IDbConnection connection</span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">   <span class="keyword">var</span> name = GetDatabaseType?.Invoke(connection).ToLower() ?? connection.GetType().Name.ToLower();</span><br><span class="line">   <span class="keyword">return</span> AdapterDictionary.TryGetValue(name, <span class="keyword">out</span> <span class="keyword">var</span> adapter) ? adapter : DefaultAdapter;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>好了，在明白了以上种种因果关系以后，我们现在来考虑如何解决 Oracle 的问题。按照人类最直观的思维，既然它没有实现 Oracle 版本的 <code>ISqlAdapter</code> ，我自己实现一个不就好啦：</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">OracleSqlAdapter</span> : <span class="title">ISqlAdapter</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">AppendColumnName</span>(<span class="params">StringBuilder sb, <span class="keyword">string</span> columnName</span>)</span></span><br><span class="line"><span class="function"></span>   &#123;</span><br><span class="line">        sb.AppendFormat(<span class="string">"&#123;0&#125;"</span>, columnName);</span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line">   <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">AppendColumnNameEqualsValue</span>(<span class="params">StringBuilder sb, <span class="keyword">string</span> columnName</span>)</span></span><br><span class="line"><span class="function"></span>   &#123;</span><br><span class="line">        sb.AppendFormat(<span class="string">"&#123;0&#125; = :&#123;1&#125;"</span>, columnName, columnName);</span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line">   <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">Insert</span>(<span class="params">IDbConnection connection, IDbTransaction transaction, <span class="keyword">int</span>? commandTimeout, <span class="keyword">string</span> tableName, </span></span></span><br><span class="line"><span class="function"><span class="params">            <span class="keyword">string</span> columnList, <span class="keyword">string</span> parameterList, IEnumerable&lt;PropertyInfo&gt; keyProperties, <span class="keyword">object</span> entityToInsert</span>)</span></span><br><span class="line"><span class="function"></span>   &#123;</span><br><span class="line">        <span class="keyword">var</span> sql = <span class="string">$"insert into <span class="subst">&#123;tableName&#125;</span> (<span class="subst">&#123;columnList&#125;</span>) values (<span class="subst">&#123;parameterList&#125;</span>)"</span>;</span><br><span class="line">        <span class="keyword">return</span> connection.Execute(sql, entityToInsert, transaction, commandTimeout);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Task&lt;<span class="keyword">int</span>&gt; <span class="title">InsertAsync</span>(<span class="params">IDbConnection connection, IDbTransaction transaction, <span class="keyword">int</span>? commandTimeout, <span class="keyword">string</span> tableName, </span></span></span><br><span class="line"><span class="function"><span class="params">            <span class="keyword">string</span> columnList, <span class="keyword">string</span> parameterList, IEnumerable&lt;PropertyInfo&gt; keyProperties, <span class="keyword">object</span> entityToInsert</span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">         <span class="keyword">var</span> sql = <span class="string">$"insert into <span class="subst">&#123;tableName&#125;</span> (<span class="subst">&#123;columnList&#125;</span>) values (<span class="subst">&#123;parameterList&#125;</span>)"</span>;</span><br><span class="line">         <span class="keyword">return</span> connection.ExecuteAsync(sql, entityToInsert, transaction, commandTimeout);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>坦白说， <code>Dapper.Contrib</code> 这种纯静态类的设计，完全就不给别人留扩展的口子，为此，扩展方法 + 反射搞一个突破口：</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"> <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">class</span> <span class="title">SqlAdapterrExtensions</span></span><br><span class="line"> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> UseSqlAdapter&lt;TSqlAdapter&gt;(<span class="keyword">this</span> IDbConnection connection, TSqlAdapter sqlAdapter)</span><br><span class="line">        <span class="keyword">where</span> TSqlAdapter : ISqlAdapter, <span class="keyword">new</span>()</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">var</span> adapters = (Dictionary&lt;<span class="keyword">string</span>, ISqlAdapter&gt;)</span><br><span class="line">            <span class="keyword">typeof</span>(SqlMapperExtensions)</span><br><span class="line">            .GetField(<span class="string">"AdapterDictionary"</span>, BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static)</span><br><span class="line">            ?.GetValue(<span class="literal">null</span>);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">var</span> connectionType = connection.GetType().Name.ToLower();</span><br><span class="line">        <span class="keyword">if</span> (adapters != <span class="literal">null</span> &amp;&amp; !adapters.ContainsKey(connectionType))</span><br><span class="line">            adapters?.Add(connectionType, sqlAdapter);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这样，我们不但可以满足眼下，还可以着眼未来，虽然未来有时候挺遥远，但梦想还是要有的，开闭原则，我做到了！改进后，我们这样处理即可：</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">connection = <span class="keyword">new</span> OracleConnection(ConnectionStrings.Default);</span><br><span class="line">connection.UseSqlAdapter(<span class="keyword">new</span> OracleSqlAdapter());</span><br></pre></td></tr></table></figure>
+
+<p>此时，我们发现，我们解决了 Insert() 的问题，但随之而来的，Get()、Delete()、Update() 这一系列和主键相关的方法，都因为 <code>Dapper.Contrib</code> 中的主键设计而出现了问题，而这就是我们接下来要讲的主键Id参数化问题。</p>
+<h2 id="主键Id参数化问题"><a href="#主键Id参数化问题" class="headerlink" title="主键Id参数化问题"></a>主键Id参数化问题</h2><p>当我谈起这个问题的时候，我对于 <code>Dapper.Contrib</code> 中支持自增ID的坚持是怀疑的，因为在分布式盛行的今天，有大量的分布式ID生成方案供我们选择，比如基于 <code>Redis</code> 的号段策略，基于雪花算法的ID生成等等。大家会注意到我实现的 OracleSqlAdapter 在实现 Insert() 方法的时候简化了大量代码，这是因为我真的不知道，怎么从 Oracle 中获取一个新生成的ID，尤其是这个ID居然还要依赖一个我听都没有听说过的“序列”，而之所以要在 ISqlAdapter 中实现 Insert() 方法，最根本的原因就是，各个数据库对于自增ID的实现是不一样的，比如 MySQL 中使用的是 <code>SCOPE_IDENTITY()</code>，而 MSSQL 中使用的则是 <code>SCOPE_IDENTITY()</code> ，就因为这一点点差异，我们就必须要去折腾一遍，可以说， Dapper.Contrib 不支持 Oracle 的一个重要原因，就是在 Oracle 下实现自增ID太麻烦了。</p>
+<p>既然大家都不用自增ID了，为什么还要在一个通用的ORM里折腾这个呢？说实话，我真担心有一天自增ID会溢出，谁让每个数据库里的上限都不一样呢？另一方面，既然Id在每个数据库的实现都不一样，那么，作为Id本身应该考虑放到 <code>ISqlAdapter</code> 接口中由使用者来实现啊，可偏偏 ISqlAdapter 里只定义了一个 Insert() 方法，所以，就算我们实现了 OracleSqlAdapter ，一样无法解决 Insert() 方法以外的其它方法在 Oracle 下面的问题，正因为如此，默认的 @ 符号在 Oracle 环境下下没有被完全替换掉，这就需要修改 Dapper.Contrib 的底层代码，这真的是一个不好的设计，因为使用者完全没有办法通过重写来覆盖某些默认行为，我们一起来看看，需要修改哪些地方：</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> T Get&lt;T&gt;(<span class="keyword">this</span> IDbConnection connection, <span class="keyword">dynamic</span> id, </span><br><span class="line">IDbTransaction transaction = <span class="literal">null</span>, <span class="keyword">int</span>? commandTimeout = <span class="literal">null</span>) <span class="keyword">where</span> T : <span class="keyword">class</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">var</span> type = <span class="keyword">typeof</span>(T);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (!GetQueries.TryGetValue(type.TypeHandle, <span class="keyword">out</span> <span class="keyword">string</span> sql))</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">var</span> key = GetSingleKey&lt;T&gt;(<span class="keyword">nameof</span>(Get));</span><br><span class="line">        <span class="keyword">var</span> name = GetTableName(type);</span><br><span class="line"></span><br><span class="line">        <span class="comment">//第一个坏事儿的地方，为什么不用AppendColumnName()方法?</span></span><br><span class="line">        sql = <span class="string">$"select * from <span class="subst">&#123;name&#125;</span> where <span class="subst">&#123;key.Name&#125;</span> = @id"</span>;</span><br><span class="line">        GetQueries[type.TypeHandle] = sql;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">var</span> dynParams = <span class="keyword">new</span> DynamicParameters();</span><br><span class="line">    <span class="comment">//第二个坏事的地方，什么不用AppendColumnName()方法??</span></span><br><span class="line">    dynParams.Add(<span class="string">"@id"</span>, id);</span><br><span class="line"></span><br><span class="line">    <span class="comment">//以下代码已省略</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">long</span> Insert&lt;T&gt;(<span class="keyword">this</span> IDbConnection connection, T entityToInsert,</span><br><span class="line">IDbTransaction transaction = <span class="literal">null</span>, <span class="keyword">int</span>? commandTimeout = <span class="literal">null</span>) <span class="keyword">where</span> T : <span class="keyword">class</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">//以上代码已省略</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">var</span> sbParameterList = <span class="keyword">new</span> StringBuilder(<span class="literal">null</span>);</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">var</span> i = <span class="number">0</span>; i &lt; allPropertiesExceptKeyAndComputed.Count; i++)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="comment">//第三个坏事的地方，什么不用AppendColumnName()方法???</span></span><br><span class="line">        <span class="keyword">var</span> property = allPropertiesExceptKeyAndComputed[i];</span><br><span class="line">        sbParameterList.AppendFormat(<span class="string">"@&#123;0&#125;"</span>, property.Name);</span><br><span class="line">        <span class="keyword">if</span> (i &lt; allPropertiesExceptKeyAndComputed.Count - <span class="number">1</span>)</span><br><span class="line">            sbParameterList.Append(<span class="string">", "</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//以下代码已省略</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>其实，仔细阅读 Update() 和 Delete() 两个方法的实现，就会发现它们都非常完美地避开了这一点，就是不知道为什么只有两个方法采用了不同地方式去拼接 SQL ，当然，这里我们会意识到有个列名的问题，尤其是在需要区分大小写的情况下，为此，我们可能需要去定义一个 ColumnAttribute，还能说什么呢？请和我大声地吐槽：<strong>垃圾 Oracle ！</strong>你看，就为了这一点点差异，我们不得不去额外写一点代码，所以，喊了很多年的去IOE，我表示举双手赞成。</p>
+<p>事实上，社区里已经有类似的PR，可因为改动的范围比较大，官方至今都没有考虑过将其合并到主干分支上，所以，这个问题一直没有解决，这是一个悲伤的故事。</p>
+<h1 id="相关思考"><a href="#相关思考" class="headerlink" title="相关思考"></a>相关思考</h1><p>在阅读 Dapper 源码的同时，我查阅了一个和 Dapper.Contrib 类似的项目：DapperExtension，我发现这个项目目前处在“荒废”的状态，因为它遇到了相同的问题，即 SQL 这门看起来统一实则相当不统一的语言，因为每一个数据库厂商几乎都在给标准“添砖加瓦“，就以自增ID为例，MySQL、MSSQL、Oracle 居然是三种不同的实现方式，尤其是 Oracle 这个奇葩，居然还需要定义一个序列来解决这个问题，这个奇葩给数据库加注释都那么另类，这带来的问题是什么？Dapper.Contrib 无力去实现 Oracle 的自增ID而放弃了 Oracle ，所以，即使社区里提交了PR，因为实现方式有点脏，官方一直没有合并到主干上去。</p>
+<p>再回过头来看 Dapper.Contrib 支持自增ID的举动，总会觉得有点不合时宜，因为不同数据库自增ID的上限不一样不说，现在都普遍在分布式的环境中，数据库的自增ID其实是非常鸡肋的功能，而实际应用中常常会用 <code>Redis</code> 、雪花算法等来实现分布式ID，所以，当你回顾历史发展的趋势的时候，就会感慨有标准化的东西该多好，并不是说这个世界不需要多样性，显然这是一个标准约束性不强的领域，看起来大家都实现了SQL，无一例外地都夹藏了私货，对于商业行为而言，这无可厚非；可对于这个世界而言，这无疑增加了工作量。</p>
+<p>有时候，当一个行业没有什么标准的时候，到底是突破勇气去率先制定标准，还是放弃自我去迎合各种不成文的规则，对于企业而言，是战略上的一种选择；而对于个人而言，其实是人生的一种选择。当彼时青春年少的人们，竞相以标新立异为荣的时候，如果想到有一天，终究要活成千篇一律的人生，为了生活而选择跪着的时候，内心又会有什么不一样的举动呢？</p>
+<h1 id="本文小结"><a href="#本文小结" class="headerlink" title="本文小结"></a>本文小结</h1><p>本文分析了 Dapper.Contrib 这个扩展库，在搭配 Oracle 数据库使用时遇到 ORA-XXXXX 系列错误的原因及相应地处理方法，这个问题的表象是 Dapper.Contrib 没有实现 OracleSqlAdapter ，而更深层的原因，实际上是 Dapper.Contrib 选择支持自增ID而带来的 SQL 标准差异化问题。因为不同的数据库在实现自增ID时的机制不同，Oracle 甚至需要引入序列这个概念，这种差异化，增加了 Dapper 各个扩展库维护的工作量，这是官方一直不愿意实现 OracleSqlAdapter 的原因，其次， Dapper.Contrib 底层设计不合理，除了Insert() 方法以外，其它依赖主键的方法都没有提供扩展接口，导致使用者只能通过修改底层代码的方式解决问题，这严重违反开闭原则。好了，这是一篇利用996闲暇(可能是指做梦)写的一篇博客，如果文章中有什么不周到的地方，欢迎大家在博客下面给我留言，谢谢，晚安！</p>
+
+                
+
+                
+
+
+<div class="recommended_posts">
+    <h1>推荐阅读</h1>
+    <ul>
+        
+        <li><a href="https://qinyuanpei.github.io/posts/3411909634/">一道 HashSet 面试题引发的蝴蝶效应</a></li>
+        
+        <li><a href="https://qinyuanpei.github.io/posts/18417412/">源代码探案系列之 .NET Core 并发限制中间件 ConcurrencyLimiter</a></li>
+        
+        <li><a href="https://qinyuanpei.github.io/posts/2463121881/">漫谈前端进化史之从Form表单到文件上传</a></li>
+        
+        <li><a href="https://qinyuanpei.github.io/posts/1289244227/">通过EF/Dapper扩展实现数据库审计功能</a></li>
+        
+        <li><a href="https://qinyuanpei.github.io/posts/3032366281/">Redis缓存技术学习系列之邂逅Redis</a></li>
+        
+    </ul>
+</div>
+
+            </div>
+            
+<blockquote class="post-copyright">
+    <div class="content">
+        <p><b>版权声明：</b>
+        <a href="https://qinyuanpei.github.io/posts/3086300103/" rel="external">Dapper.Contrib在Oracle环境下引发ORA-00928异常问题的解决</a>
+        ，由&nbsp;<a href="/about" target="_blank" rel="external">飞鸿踏雪</a>&nbsp;
+        首次发表于&nbsp;<a href="/" target="_blank" rel="external">一个人的孤落时辰</a>&nbsp;
+        ，本文地址为：<a href="https://qinyuanpei.github.io/posts/3086300103/" target="_blank" rel="external">https://qinyuanpei.github.io/posts/3086300103/</a>
+        ，转载请注明<b>作者</b>和<b>出处</b>。</p>
+    </div>
+    <footer>
+        <a href="https://qinyuanpei.github.io">
+            <img src="/assets/images/avatar.jpg" alt="飞鸿踏雪">
+            飞鸿踏雪
+        </a>
+    </footer>
+</blockquote>
+
+
+            
+<div class="page-reward">
+    <a id="rewardBtn" href="javascript:;" class="page-reward-btn waves-effect waves-circle waves-light">赏</a>
+</div>
+
+
+            <div class="post-footer">
+                
+	<ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Dapper/" rel="tag">Dapper</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ORM/" rel="tag">ORM</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" rel="tag">数据库</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%BA%90%E7%A0%81/" rel="tag">源码</a></li></ul>
+
+                
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://qinyuanpei.github.io/posts/3086300103/&title=《Dapper.Contrib在Oracle环境下引发ORA-00928异常问题的解决》 — 一个人的孤落时辰&pic=https://qinyuanpei.github.ioassets/images/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://qinyuanpei.github.io/posts/3086300103/&title=《Dapper.Contrib在Oracle环境下引发ORA-00928异常问题的解决》 — 一个人的孤落时辰&source=一个人的孤落时辰 | 纵有疾风起，人生不言弃 | 隐约雷鸣，阴霾天空，即使天无雨，我亦留此地。" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://qinyuanpei.github.io/posts/3086300103/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Dapper.Contrib在Oracle环境下引发ORA-00928异常问题的解决》 — 一个人的孤落时辰&url=https://qinyuanpei.github.io/posts/3086300103/&via=https://qinyuanpei.github.io" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://qinyuanpei.github.io/posts/3086300103/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+      
+      <li>
+        <a class="google share-sns" target="_blank" onClick="show_yp()" data-title=" 生成海报">
+          <i class="icon icon-file-image-o"></i>
+        </a>
+      </li>
+      
+    </ul>
+ </div>
+
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
+            </div>
+        </div>
+
+        
+<nav class="post-nav flex-row flex-justify-between">
+  
+    <div class="waves-block waves-effect prev">
+      <a href="/posts/835719605/" id="post-prev" class="post-nav-link">
+        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
+        <h4 class="title">基于选项模式实现.NET Core的配置热更新</h4>
+      </a>
+    </div>
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/posts/2414960312/" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h4 class="title">.NET Core中对象池(Object Pool)的使用</h4>
+      </a>
+    </div>
+  
+</nav>
+
+
+        
+    <div id="comment"></div>
+<script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+<script src='//unpkg.com/valine/dist/Valine.min.js'></script>
+<script type="text/javascript">
+new Valine({
+    el: '#comment' ,
+    notify: false, 
+    verify: true, 
+    appId: 'JbHqRp2eMrTgIwYpfERH0g79-gzGzoHsz',
+    appKey: 'VsiKvLuiBGvJL1XrAfv7siY2',
+    placeholder: '云中谁寄锦书来，雁字回时，月满西楼。&#10;Tips：如果希望收到我的评论回复，请至少留下你的邮箱哦:)',
+    path:'https://qinyuanpei.github.io/posts/3086300103/', 
+    avatar:'identicon',
+    requiredFields: ['nick','mail']
+});
+</script>
+
+
+
+
+    </article>
+    
+<div id="reward" class="page-modal reward-lay">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <h3 class="reward-title">
+        <i class="icon icon-quote-left"></i>
+        赠人玫瑰，手有余香
+        <i class="icon icon-quote-right"></i>
+    </h3>
+    <div class="reward-content">
+        
+        <div class="reward-code">
+            <img id="rewardCode" src="/assets/images/wechat.png" alt="打赏二维码">
+        </div>
+        
+        <label class="reward-toggle">
+            <input id="rewardToggle" type="checkbox" class="reward-toggle-check"
+                data-wechat="/assets/images/wechat.png" data-alipay="/assets/images/alipay.jpg">
+            <div class="reward-toggle-ctrol">
+                <span class="reward-toggle-item wechat">微信</span>
+                <span class="reward-toggle-label"></span>
+                <span class="reward-toggle-item alipay">支付宝</span>
+            </div>
+        </label>
+        
+    </div>
+</div>
+
+
+    <script type="text/javascript" src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/yoniu.min.js"></script>
+<style type='text/css'>
+	body.active-yp {
+		overflow: hidden;
+	}
+	.yp-fc-btn{
+		display: flex;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		align-items: center;
+		justify-content: space-between;
+		font-size: 13px;
+	}
+	.yp-fc-btn span{
+		cursor: pointer;
+		padding: 2px 10px;
+		color: #4b4b4b;
+		border: #4b4b4b 1px solid;
+		border-radius:5px;
+	}
+	#yp-hide{
+		position: fixed;
+		display: flex;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		justify-content: center;
+		flex-direction: column;
+		left:0;
+		top:0;
+		right:0;
+		bottom:0;
+		background-color:rgba(0,0,0,.5);
+		z-index: 99999;
+		visibility: hidden;
+	}
+	#yoniu-poster{
+		box-sizing: border-box;
+		width: 350px;
+		height: 467.2px;
+		background-color: #fff;
+		margin: 0 auto;
+		padding: 0;
+		line-height: 1.6;
+		text-align:justify;
+	}
+	
+	.yp-img {
+		min-height: 240px;
+		position: relative;
+		display: flex;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		justify-content: flex-end;
+		flex-direction: column;
+		background-position: 50% 50%;
+		background-size: cover;
+		overflow:hidden;
+	}
+	.yp-img>div{
+		padding: 10px 20px;
+	}
+	.yp-name{
+		display: block;
+		color: #fff;
+		font-size: 20px;
+		font-weight: 600;
+		text-shadow: #4b4b4b 0.1em 0.1em 0.2em;
+		margin-top: 10px;
+	}
+	.yp-sort{
+		padding: 3px 10px;
+		font-size: 12px;
+		color: #fff;
+		background: #2e2e2e;
+	}
+	.yp-des{
+		color: #2e2e2e;
+		font-size: 14px;
+		margin: 20px;
+		height: 67.2px;
+	}
+	.yp-qcode{
+		display: flex;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		justify-content: space-between;
+		align-items: center;
+		margin: 10px;
+		padding: 10px 20px;
+		background: #f5f5f5;
+		color: #818181;
+		border-radius: 10px;
+	}
+	.yp-tips{
+		display: flex;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		justify-content: space-between;
+		align-items: center;
+		color: #ccc;
+		margin: 0 10px 10px;
+		font-size: 10px;
+		letter-spacing: 1.5px;
+	}
+	.yp-btns{
+		display: flex;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		align-items: stretch;
+		justify-content: center;
+		width:350px;
+		margin: 0 auto;
+	}
+	.yp-btns>span{
+		display: flex;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		align-items: center;
+		justify-content: center;
+		font-size: 14px;
+		padding: 10px 15px;
+		background:rgba(0,0,0,.2);
+		color: #f5f5f5;
+		cursor: pointer;
+	}
+	.yp-btns>span>a{
+		color: #f5f5f5;
+	}
+	.yp-btns>span>a:hover{
+		text-decoration:none;
+	}
+	#yp-close{
+		font-size: 18px;
+		font-weight: 600;
+	}
+</style>
+<div id="yp-hide">
+    <div id="yoniu-poster">
+        <div class="yp-img" id="yp-img">
+            <div>
+                <span class="yp-sort">数据存储</span>
+                <span class="yp-name">Dapper.Contrib在Oracle环境下引发ORA-00928异常问题的解决</span>
+            </div>
+        </div>
+        <div class="yp-des">    
+            
+                话说最近这两周里，被迫官宣996的生活实在是无趣，在两周时间里安排三周的工作量，倘若用丞相的口吻来说，那便是: 我从未见过有如此厚颜无耻之人。无...
+            
+        </div>
+        <div class="yp-qcode">
+            <span>扫描二维码阅读原文</span>
+            <img id="yp-qcode" width="64px" src="//api.qrserver.com/v1/create-qr-code/?data=https://qinyuanpei.github.io/posts/3086300103/">
+        </div>
+        <div class="yp-tips">
+            <span>一个人的孤落时辰</span>
+            <span><time class="post-time" title="2020-09-05 14:28:20" datetime="2020-09-05T14:28:20.000Z"  itemprop="datePublished">2020-09-05</time>
+</span>
+        </div>
+    </div>
+    <div class="yp-btns">
+        <span id="yp-load-yp" onClick="load_yp()">生成海报</span>
+        <span><a id="yp-download"></a></span>
+        <span id="yp-close" onClick="close_yp()">×</span>
+    </div>
+</div>
+<script type="text/javascript">
+    function show_yp(){
+        window.scrollTo(0, 0);
+        document.body.setAttribute("class","active-yp");
+        let cover = document.getElementsByTagName('img')[1];
+        if (cover != null && typeof(cover) != 'undefined') {
+            document.getElementById('yp-img').style.backgroundImage = `url(${cover.src})`;
+        } else {
+            document.getElementById('yp-img').style.backgroundColor = '#d7dbf0';
+        }
+        document.getElementById("yp-hide").style.visibility = "visible";
+    }
+    function close_yp(){
+        var domClass = document.body.getAttribute("class");
+        domClass = domClass.replace("active-yp","");
+        document.body.setAttribute("class",domClass);
+        document.getElementById("yp-hide").style.visibility = "hidden";
+    }
+    function load_yp(){
+        document.getElementById('yp-load-yp').textContent = '海报生成中...';
+        setTimeout(function() {
+            h2c_();
+        },2000);
+
+    }
+</script>
+
+</div>
+
+        <footer class="footer">
+    <div class="top">
+        
+   <p>
+      <span id="lc_counter_container_site_uv">
+         <i class="icon icon-user"></i><span id="lc_counter_value_site_uv"></span>
+      </span>
+      <span id="lc_counter_container_site_pv">
+         <i class="icon icon-eye"></i><span id="lc_counter_value_site_pv"></span>
+      </span>
+  </p>
+
+
+        <p>
+   <a id="jinrishici-sentence" href="https://www.jinrishici.com/" target="_blank" rel="noopener">加载中</a>
+</p>
+<script src="https://sdk.jinrishici.com/v2/browser/jinrishici.js" charset="utf-8"></script>
+<script>
+   jinrishici.load(function(result) {
+      document.querySelector('#subtitle').innerText = result.data.content;
+      document.querySelector('#jinrishici-sentence').innerText = result.data.content;
+  });
+</script>
+            <!--Todo: 考虑重构为插件 -->
+            <p>
+                
+                    <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+                
+                <span>
+                    <a href="https://github.com/qinyuanpei" target="_blank" rel="license noopener" title="Github">
+                        <i class="icon icon-lg icon-github"></i>
+                    </a>
+                </span>
+                <span>
+                    <a href="https://weibo.com/1278609231/profile" target="_blank" rel="license noopener" title="微博">
+                        <i class="icon icon-lg icon-weibo"></i>
+                    </a>
+                </span>
+                <span>
+                    <a href="https://www.douban.com/people/60029335/" target="_blank" rel="license noopener" title="豆瓣">
+                        <i class="icon icon-lg icon-douban"></i>
+                    </a>
+                </span>
+                <span>
+                    <a href="https://www.zhihu.com/people/qinyuanpei" target="_blank" rel="license noopener" title="知乎">
+                        <i class="icon icon-lg icon-zhihu-square"></i>
+                    </a>
+                </span>
+                <span>
+                    <a href="https://blog.csdn.net/qinyuanpei" target="_blank" rel="license noopener" title="CSDN">
+                        <i class="icon icon-lg">C</i>
+                    </a>
+                </span>
+                <span>
+                    <a href="https://music.163.com/#/user/home?id=47002864" target="_blank" rel="license noopener" title="网易音乐">
+                        <i class="icon icon-lg icon-wangyiyunyinyue"></i>
+                    </a>
+                </span>
+            </p>
+        
+    </div>
+    <div class="bottom">
+        <p><span>飞鸿踏雪 &copy; 2014 - 2021</span><br>
+            
+                
+                Powered by <a href="http://hexo.io/" target="_blank">Hexo</a> & Theme by <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a><br>
+                
+                
+                    <p>Hosted by <a href="https://pages.github.com" target="_blank" rel="noopener" style="font-weight: bold">Github Pages</a></p>
+                
+        </p>
+    </div>
+</footer>
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span
+        class="icon icon-lg icon-chevron-up"></span></a>
+
+    
+
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://qinyuanpei.github.io/posts/3086300103/&title=《Dapper.Contrib在Oracle环境下引发ORA-00928异常问题的解决》 — 一个人的孤落时辰&pic=https://qinyuanpei.github.ioassets/images/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://qinyuanpei.github.io/posts/3086300103/&title=《Dapper.Contrib在Oracle环境下引发ORA-00928异常问题的解决》 — 一个人的孤落时辰&source=一个人的孤落时辰 | 纵有疾风起，人生不言弃 | 隐约雷鸣，阴霾天空，即使天无雨，我亦留此地。" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://qinyuanpei.github.io/posts/3086300103/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Dapper.Contrib在Oracle环境下引发ORA-00928异常问题的解决》 — 一个人的孤落时辰&url=https://qinyuanpei.github.io/posts/3086300103/&via=https://qinyuanpei.github.io" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://qinyuanpei.github.io/posts/3086300103/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+      
+      <li>
+        <a class="google share-sns" target="_blank" onClick="show_yp()" data-title=" 生成海报">
+          <i class="icon icon-file-image-o"></i>
+        </a>
+      </li>
+      
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="//api.qrserver.com/v1/create-qr-code/?data=https://qinyuanpei.github.io/posts/3086300103/" alt="微信分享二维码">
+</div>
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.6/waves.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/4.2.1/echarts.min.js"></script>
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/echarts-wordcloud.min.js" async></script>
+<script>
+    var BLOG = { ROOT: '/', SHARE: true, REWARD: true };
+
+
+</script>
+
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/main.min.js"></script>
+
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/search.min.js" async></script>
+
+
+
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/heart.min.js" async></script>
+
+
+
+
+
+
+
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/leancloud-counter.min.js"></script>
+<script>
+        (function () {
+            var appId = 'JbHqRp2eMrTgIwYpfERH0g79-gzGzoHsz';
+            var appKey = 'VsiKvLuiBGvJL1XrAfv7siY2';
+            new VisitorCounter().init({
+                appId: appId,       //应用ID, 必输
+                appKey: appKey,      //应用Key, 必输
+                region: '华北',      //华东,华北,国际, 默认华东
+                domain: '',      //自定义域名
+                collectIP: true, //是否收集IP及位置信息, 默认开启
+                collectUA: true  //是否收集UserAgent, 默认开启
+            });
+        })();
+</script>
+
+
+
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/vconsole.min.js"></script>
+<script type="text/javascript">
+    //当地址中存在debug=true时，实例化vConsole
+    if (location.href.indexOf('debug=true') > -1) {
+        var vConsole = new VConsole();
+    }
+</script>
+
+
+    <script>
+    //国内用户自动重定向Coding Pages镜像
+    // var ipInfo = JSON.parse(localStorage.getItem('ipInfo'));
+    // if (ipInfo.country_code == 'CN') {
+    //     location.href = location.href.replace('qinyuanpei.github.io', 'blog.yuanpei.me');
+    // }
+    </script>
+
+
+<script>
+titleArray = [];
+function scrollTitle() {
+    if (titleArray.length == 0) return;
+    titleArray.push(titleArray[0]);
+	titleArray.shift();
+	document.title = titleArray.join("");
+}
+setInterval(scrollTitle, 500);
+(function() {
+    var originTitile = document.title, titleTime;
+    document.addEventListener('visibilitychange', function() {
+        if (document.hidden) {
+            titleArray = originTitile.split('');
+            clearTimeout(titleTime);
+        } else {
+            document.title = originTitile;
+            titleArray = originTitile.split('');
+            titleTime = setTimeout(function() {
+                document.title = originTitile;
+                titleArray = [];
+            },2000);
+        }
+    });
+})();
+</script>
+
+
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/ribbon.min.js"></script>
+</body>
+</html>
