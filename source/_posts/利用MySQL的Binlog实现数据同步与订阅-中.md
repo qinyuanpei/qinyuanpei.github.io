@@ -1,6 +1,6 @@
 ---
 toc: true
-title: 利用MySQL的Binlog实现数据同步与订阅(中)
+title: 利用MySQL的Binlog实现数据同步与订阅(中)：RabbitMQ篇
 categories:
   - 数据存储
 tags:
