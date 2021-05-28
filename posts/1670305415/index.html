@@ -1,0 +1,941 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+    
+<script async defer data-domain="blog.yuanpei.me" src="https://plausible.io/js/plausible.js"></script>
+    
+    <meta charset="utf-8">
+    <!-- HTTP 1.1 -->  
+    <meta http-equiv="pragma" content="no-cache">  
+    <!-- HTTP 1.0 -->  
+    <meta http-equiv="cache-control" content="no-cache">
+    <!-- 微博图床防盗链 --> 
+    <!-- <meta name="referrer" content="no-referrer"/> -->
+    <!--Google站点验证-->
+    
+    <!--百度站点验证-->
+    
+    
+    <!--Google AdSense-->
+    
+    <!--Bing站点验证-->
+    <meta name="msvalidate.01" content="713A48A3FE17D4841C292A6B3942EB4C" />
+    
+    <title>
+        《Cg Programming in Unity》读书笔记 | 一个人的孤落时辰
+    </title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+        <meta name="theme-color" content="#3F51B5">
+    
+
+    <meta name="keywords" content="图形,Shader,CG,Unity,秦元培,技术博客,生活随笔,个人博客,NET,Python,数据挖掘,数据分析,NLP">
+    
+        <meta name="description" content="在这里子着色器使用Tags标签来告诉渲染引擎期望何时和如何渲染对象，其语法是：;在通道中可以定义其名称和任意数目的标签，通过使用tags来告诉渲染引擎在什么时候该如何渲染他们所期望的效果，其语法和Tags标签完全相同，即采用键值对来定义标签的名称和其对应的值;Properties是由多条标签组成的Shader属性定义，这些属性能够在Unity3D中的编辑器中显示出来，以此来确定这段Shader代码由哪些输入;设置当顶点光照关闭时所使用的颜色;表示决定渲染次序的队列标签，其取值定义如下：">
+    
+    <meta name="description" content="在这里子着色器使用Tags标签来告诉渲染引擎期望何时和如何渲染对象，其语法是：;在通道中可以定义其名称和任意数目的标签，通过使用tags来告诉渲染引擎在什么时候该如何渲染他们所期望的效果，其语法和Tags标签完全相同，即采用键值对来定义标签的名称和其对应的值;Properties是由多条标签组成的Shader属性定义，这些属性能够在Unity3D中的编辑器中显示出来，以此来确定这段Shader代码">
+<meta property="og:type" content="article">
+<meta property="og:title" content="《Cg Programming in Unity》读书笔记">
+<meta property="og:url" content="https://qinyuanpei.github.io/posts/1670305415/index.html">
+<meta property="og:site_name" content="一个人的孤落时辰">
+<meta property="og:description" content="在这里子着色器使用Tags标签来告诉渲染引擎期望何时和如何渲染对象，其语法是：;在通道中可以定义其名称和任意数目的标签，通过使用tags来告诉渲染引擎在什么时候该如何渲染他们所期望的效果，其语法和Tags标签完全相同，即采用键值对来定义标签的名称和其对应的值;Properties是由多条标签组成的Shader属性定义，这些属性能够在Unity3D中的编辑器中显示出来，以此来确定这段Shader代码">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2015-12-25T12:29:20.000Z">
+<meta property="article:modified_time" content="2021-05-28T02:08:18.583Z">
+<meta property="article:author" content="飞鸿踏雪">
+<meta property="article:tag" content="图形">
+<meta property="article:tag" content="Shader">
+<meta property="article:tag" content="CG">
+<meta property="article:tag" content="Unity">
+<meta name="twitter:card" content="summary">
+    
+        <link rel="alternate" type="application/atom+xml" title="一个人的孤落时辰" href="/atom.xml">
+    
+    <link rel="shortcut icon" href="/assets/images/favicon.ico">
+    
+        <link rel="manifest" href="/manifest.json">
+    
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master//assets/styles/style.css">
+    <script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/instantclick.min.js"></script>
+    <script>window.lazyScripts=[]</script>
+    <!-- custom head -->
+    
+
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu" class="hide" >
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap" style="background-image:url(/assets/images/brand.jpg)">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/assets/images/avatar.jpg" alt="avatar">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">飞鸿踏雪</h5>
+          <a href="mailto:qinyuanpei@163.com" title="qinyuanpei@163.com" class="mail">qinyuanpei@163.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/"  >
+                <i class="icon icon-lg icon-home"></i>
+                主页
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives"  >
+                <i class="icon icon-lg icon-archives"></i>
+                归档
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags"  >
+                <i class="icon icon-lg icon-tags"></i>
+                标签
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/categories"  >
+                <i class="icon icon-lg icon-th-list"></i>
+                分类
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/books"  >
+                <i class="icon icon-lg icon-bookmark"></i>
+                书单
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/movies"  >
+                <i class="icon icon-lg icon-film"></i>
+                影单
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/works"  >
+                <i class="icon icon-lg icon-code"></i>
+                实验室
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/about"  >
+                <i class="icon icon-lg icon-circle"></i>
+                关于我
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+            <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">《Cg Programming in Unity》读书笔记</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off"
+                placeholder="输入感兴趣的关键字">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+        <a href="https://github.com/qinyuanpei/qinyuanpei.github.io" target="_blank" rel="noopener" class="header-icon waves-effect waves-circle waves-light" id="menuGithub">
+            <i class="icon icon-lg icon-code-fork"></i>
+        </a>
+    </div>
+</header>
+<header class="content-header post-header">
+    <div class="container fade-scale">
+        <h1 class="title">《Cg Programming in Unity》读书笔记</h1>
+        <h5 class="subtitle" id="subtitle">
+            
+            <time datetime="2015-12-25T12:29:20.000Z" itemprop="datePublished" class="page-time">
+  2015-12-25
+</time>
+
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/">读书笔记</a></li></ul>
+
+            
+        </h5>
+    </div>
+    
+
+</header>
+
+<div class="container body-wrap">
+    
+    <aside class="post-widget">
+        <nav class="post-toc-wrap" id="post-toc">
+            <h4>目录</h4>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#Unity3D中的Shader概述"><span class="post-toc-number">1.</span> <span class="post-toc-text">Unity3D中的Shader概述</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#Unity3D中Shader的基本结构"><span class="post-toc-number">2.</span> <span class="post-toc-text">Unity3D中Shader的基本结构</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#Shader中的Properties"><span class="post-toc-number">2.1.</span> <span class="post-toc-text">Shader中的Properties</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#Shader中的SubShader"><span class="post-toc-number">2.2.</span> <span class="post-toc-text">Shader中的SubShader</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#Tags标签"><span class="post-toc-number">2.2.1.</span> <span class="post-toc-text">Tags标签</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#Pass通道"><span class="post-toc-number">2.2.2.</span> <span class="post-toc-text">Pass通道</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#名称与标签"><span class="post-toc-number">2.2.3.</span> <span class="post-toc-text">名称与标签</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#渲染设置"><span class="post-toc-number">2.2.3.1.</span> <span class="post-toc-text">渲染设置</span></a></li><li class="post-toc-item post-toc-level-4"><a class="post-toc-link" href="#纹理设置"><span class="post-toc-number">2.2.3.2.</span> <span class="post-toc-text">纹理设置</span></a></li></ol></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#Shader中的Fallback"><span class="post-toc-number">2.3.</span> <span class="post-toc-text">Shader中的Fallback</span></a></li></ol></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#Unity3D中Shader的语法"><span class="post-toc-number">3.</span> <span class="post-toc-text">Unity3D中Shader的语法</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#Unity3D中的三种着色器"><span class="post-toc-number">4.</span> <span class="post-toc-text">Unity3D中的三种着色器</span></a></li></ol>
+        </nav>
+    </aside>
+    
+    <article id="post-《Cg Programming in Unity》读书笔记" class="post-article article-type-post fade" itemprop="blogPost">
+
+        <div class="post-card">
+            <h1 class="post-card-title">
+                《Cg Programming in Unity》读书笔记
+            </h1>
+            <div class="post-meta">
+                <time class="post-time" title="2015-12-25 12:29:20" datetime="2015-12-25T12:29:20.000Z"  itemprop="datePublished">2015-12-25</time>
+
+                
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/">读书笔记</a></li></ul>
+
+
+
+                
+<span id="lc_counter_container_page_pv" title="文章总阅读量" data-page-url="" data-page-title="《Cg Programming in Unity》读书笔记">
+    <i class="icon icon-eye icon-pr"></i><span id="lc_counter_value_page_pv"></span>
+</span>
+
+
+
+
+
+                
+    <span>
+        <i class="icon icon-clock-o"></i>
+        16 min.
+    </span>
+    
+            </div>
+            <div class="post-content" id="post-content" itemprop="postContent">
+                <p>&emsp;&emsp;最近开始着手Shader语言的学习，因为Unity3D没有提供类似虚幻四引擎的材质编辑器功能，所以当在Unity3D中碰到需要提供引擎默认材质以外的效果的时候，就需要我们来编写Shader以实现各种特效，本文主要是结合《Cg Programming in Unity》这本书和<a href="http://blog.csdn.net/poem_qianmo/article/details/49405909" target="_blank" rel="noopener">浅墨</a>博客中关于Shader的这部分内容来学习和整理，目的是帮助博主快速掌握Shader语言。</p>
+<a id="more"></a>
+
+<h1 id="Unity3D中的Shader概述"><a href="#Unity3D中的Shader概述" class="headerlink" title="Unity3D中的Shader概述"></a>Unity3D中的Shader概述</h1><p>&emsp;&emsp;为Unity3D编写Sahder代码相对OpenGL和DirectX要简单。Unity3D没有刻意地区分Cg语言和HLSL语言，因为这两者是非常相似的，这意味着使用HLSL编写的代码可以直接在Cg中使用，更为深入地探索HLSL和Cg的渊源你会戏剧性地发现Cg是Microsoft和NVIDIA联手推出并试图从硬件和软件上和GLSL相抗衡的一种产物。</p>
+<p>&emsp;&emsp;其中<a href="http://http.developer.nvidia.com/Cg/Cg_language.html" target="_blank" rel="noopener">Cg</a>是<a href="http://http.developer.nvidia.com/CgTutorial/cg_tutorial_chapter01.html" target="_blank" rel="noopener">Nvidia</a>提供的一种Shader编写语言，HLSL是DirectX提供的一种Shader编写语言，这意味着大部分的Cg代码同样可以被HLSL支持。Unity3D中使用的Shader编写语言是ShaderLab，其本质是对Cg进行了封装，因此在Unity3D中编写Shader本质上在给DirectX或者OpenGL写Shader，因为我猜测在引擎内部存在HLSL和GLSL的相互转换使得Unity3D能够在不同的平台都有较好的图形表现。</p>
+<p>&emsp;&emsp;Unity3D中Shader程序的编写可以参考<a href="http://unity3d.com/support/documentation/Components/SL-Reference.html" target="_blank" rel="noopener">这里</a>。我们知道计算机图形学的中渲染管线一般可以分为两种类型，即固定功能渲染管线和可编程渲染管线。因此从这个角度来看，Unity3D中主要有三种着色器，即固定功能着色器（Fixed Function Shader）、表面着色器（Surface Shader）和 顶点着色器&amp;片段着色器 （Vertex Shader &amp; Fragment Shader）。</p>
+<h1 id="Unity3D中Shader的基本结构"><a href="#Unity3D中Shader的基本结构" class="headerlink" title="Unity3D中Shader的基本结构"></a>Unity3D中Shader的基本结构</h1><p>&emsp;&emsp;首先，Unity3D中Shader的基本结构是：</p>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">Shader </span><br><span class="line">&#123; </span><br><span class="line">    <span class="regexp">//</span>------【属性】------<span class="regexp">//</span></span><br><span class="line">    Properties</span><br><span class="line">    &#123;</span><br><span class="line"></span><br><span class="line">    &#125; </span><br><span class="line"></span><br><span class="line">    <span class="regexp">//</span>------【子着色器】------<span class="regexp">//</span></span><br><span class="line">    SubShaders</span><br><span class="line">    &#123;</span><br><span class="line">    &#125;</span><br><span class="line">       </span><br><span class="line">    <span class="regexp">//</span>------【回滚】------<span class="regexp">//</span></span><br><span class="line">    Fallback</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>对这个结构我们的理解是，Shader代码首先是一些属性定义，用来指定这段代码将有哪些输入。接下来是一个或者多个的子着色器，在实际运行中，哪一个子着色器被使用是由运行的平台所决定的。子着色器是代码的主体，每一个子着色器中包含一个或者多个的Pass。在计算着色时，平台先选择最优先可以使用的着色器，然后依次运行其中的Pass，然后得到输出的结果。最后指定一个Fallback，用来处理所有SubShader都不能运行的情况称为回滚。下面来分别介绍Shader基本结构中的各个部分：</p>
+<h2 id="Shader中的Properties"><a href="#Shader中的Properties" class="headerlink" title="Shader中的Properties"></a>Shader中的Properties</h2><p>Properties是由多条标签组成的Shader属性定义，这些属性能够在Unity3D中的编辑器中显示出来，以此来确定这段Shader代码由哪些输入。常见的标签定义有：</p>
+<figure class="highlight fortran"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">name</span>(<span class="string">"display name"</span>, <span class="built_in">Range</span>(<span class="built_in">min</span>, <span class="built_in">max</span>)) = <span class="keyword">number</span></span><br></pre></td></tr></table></figure>
+<p>定义一个在编辑器中可通过滑动条修改的浮点数属性</p>
+<figure class="highlight applescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">name</span>(<span class="string">"display name"</span>, Color) = (<span class="built_in">number</span>,<span class="built_in">number</span>,<span class="built_in">number</span>,<span class="built_in">number</span>)</span><br></pre></td></tr></table></figure>
+<p>定义一个在编辑器中可通过拾色器来设置RGBA的颜色值属性</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="title">name</span><span class="params">(<span class="string">"display name"</span>, <span class="number">2</span>D)</span></span> = <span class="string">"name"</span> &#123;options &#125;</span><br></pre></td></tr></table></figure>
+<p>定义一个在编辑器中可编辑的2D纹理属性，其中options可选表示即纹理自动生成纹理坐标时的模式，通常是ObjectLinear、EyeLinear、SphereMap、 CubeReflect、CubeNormal其中之一。</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="title">name</span><span class="params">(<span class="string">"display name"</span>, Rect)</span></span> = <span class="string">"name"</span>&#123; options &#125;</span><br></pre></td></tr></table></figure>
+<p>定义一个在编辑器中可编辑的非二次方2D纹理属性</p>
+<figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">name</span>("display name", <span class="keyword">Cube</span>) = "name"&#123; <span class="keyword">options</span> &#125;</span><br></pre></td></tr></table></figure>
+<p>定义一个在编辑器中可编辑的立方贴图纹理属性</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="title">name</span><span class="params">(<span class="string">"display name"</span>, Float)</span></span> = number</span><br></pre></td></tr></table></figure>
+<p>定义一个在编辑器中可通过输入框修改的浮点数值属性</p>
+<figure class="highlight applescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">name</span>(<span class="string">"display name"</span>, Vector) =(<span class="built_in">number</span>,<span class="built_in">number</span>,<span class="built_in">number</span>,<span class="built_in">number</span>)</span><br></pre></td></tr></table></figure>
+<p>定义一个在编辑器中可通过输入框修改的Vector4属性</p>
+<h2 id="Shader中的SubShader"><a href="#Shader中的SubShader" class="headerlink" title="Shader中的SubShader"></a>Shader中的SubShader</h2><p>&emsp;&emsp;SubShader，即子着色器。子着色器是代码的主体，每一个子着色器中包含一个或者多个的Pass。在计算着色时，平台先选择最优先可以使用的着色器，然后依次运行其中的Pass，然后得到输出的结果。子着色器的基本结构是：</p>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">Subshader</span><br><span class="line">&#123; </span><br><span class="line">    <span class="regexp">//</span>------【Tags标签】------<span class="regexp">//</span></span><br><span class="line">    Tags&#123;&#125;</span><br><span class="line"></span><br><span class="line">    <span class="regexp">//</span>------【Pass通道】------<span class="regexp">//</span></span><br><span class="line">    Pass</span><br><span class="line">    &#123;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="Tags标签"><a href="#Tags标签" class="headerlink" title="Tags标签"></a>Tags标签</h3><p>在这里子着色器使用Tags标签来告诉渲染引擎期望何时和如何渲染对象，其语法是：</p>
+<figure class="highlight dts"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="class">Tags </span>&#123; <span class="string">"TagName1"</span> = <span class="string">"Value1"</span> <span class="string">"TagName2"</span> = <span class="string">"Value2"</span> &#125;</span><br></pre></td></tr></table></figure>
+<p>即采用一个键值对来表示标签的名称及其对应的值，通常由三种标签可以在这里使用：</p>
+<figure class="highlight 1c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">"Queue"</span> = <span class="string">"Transparent"</span></span><br></pre></td></tr></table></figure>
+<p>表示决定渲染次序的队列标签，其取值定义如下：</p>
+<ul>
+<li>Background在所有队列渲染之前被渲染，如天空盒等。</li>
+<li>Geometry默认渲染大部分的对象，如不透明的几何体等。</li>
+<li>Transparent在所有队列渲染之后被渲染采用由后到前的次序，如玻璃、粒子效果等。</li>
+<li>Overlay主要实现叠加效果的渲染，如镜头光晕等。</li>
+</ul>
+<figure class="highlight dts"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="class">Tags </span>&#123; <span class="string">"Queue"</span> = <span class="string">"Geometry+1"</span> &#125;</span><br></pre></td></tr></table></figure>
+<p>表示自定义中间渲染队列，当默认的渲染队列不能满足要求时可选用当前渲染队列。在Unity实现中每一个队列都被一个整数的索引值所代表。Background为1000、Geometry为2000、Transparent为3000、Overlay为4000.</p>
+<figure class="highlight dts"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="class">Tags </span>&#123; <span class="string">"IgnoreProjector"</span> =<span class="string">"True"</span> &#125;</span><br></pre></td></tr></table></figure>
+<p>表示忽略投影标签，其值为True表示忽略投影反之表示受投影影响。</p>
+<h3 id="Pass通道"><a href="#Pass通道" class="headerlink" title="Pass通道"></a>Pass通道</h3><p>Pass通道块控制被渲染的对象的几何体。其结构定义如下：</p>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">Pass </span><br><span class="line">&#123; </span><br><span class="line">    <span class="regexp">//</span>------【名称与标签】------<span class="regexp">//</span></span><br><span class="line">    [Name and Tags] </span><br><span class="line">    <span class="regexp">//</span>------【渲染设置】------<span class="regexp">//</span></span><br><span class="line">    [RenderSetup]</span><br><span class="line">    <span class="regexp">//</span>------【纹理设置】------<span class="regexp">//</span></span><br><span class="line">    [TextureSetup] </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="名称与标签"><a href="#名称与标签" class="headerlink" title="名称与标签"></a>名称与标签</h3><p>在通道中可以定义其名称和任意数目的标签，通过使用tags来告诉渲染引擎在什么时候该如何渲染他们所期望的效果，其语法和Tags标签完全相同，即采用键值对来定义标签的名称和其对应的值。常用的标签有：</p>
+<figure class="highlight dts"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="class">Tags </span>&#123; <span class="string">"LightMode"</span> = <span class="string">"Always"</span> &#125;</span><br></pre></td></tr></table></figure>
+<p>表示一个光照模式标签，该标签的取值可以是：</p>
+<ul>
+<li>Always总是渲染。没有运用光照。</li>
+<li>ForwardBase用于正向渲染,环境光、方向光和顶点光等</li>
+<li>ForwardAdd用于正向渲染，用于设定附加的像素光，每个光照对应一个pass</li>
+<li>PrepassBase用于延迟光照，渲染法线/镜面光。</li>
+<li>PrepassFinal用于延迟光照，通过结合纹理，光照和自发光渲染最终颜色</li>
+<li>Vertex用于顶点光照渲染，当物体没有光照映射时，应用所有的顶点光照</li>
+<li>VertexLMRGBM用于顶点光照渲染，当物体有光照映射的时候使用顶点光照渲染。在平台上光照映射是RGBM 编码</li>
+<li>VertexLM用于顶点光照渲染，当物体有光照映射的时候使用顶点光照渲染。在平台上光照映射是double-LDR 编码（移动平台，及老式台式CPU）</li>
+<li>ShadowCaster使物体投射阴影。</li>
+<li>ShadowCollector为正向渲染对象的路径，将对象的阴影收集到屏幕空间缓冲区中。</li>
+</ul>
+<h4 id="渲染设置"><a href="#渲染设置" class="headerlink" title="渲染设置"></a>渲染设置</h4><p>渲染设置设定显示硬件的各种状态，常用的命令如下：</p>
+<figure class="highlight hsp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">Material </span><br><span class="line">&#123; </span><br><span class="line">    Diffuse <span class="keyword">Color</span>(R,G,B,A)</span><br><span class="line">    <span class="comment">//漫反射颜色构成，即对象的基本颜色。</span></span><br><span class="line"></span><br><span class="line">    Ambient <span class="keyword">Color</span>(R,G,B,A)</span><br><span class="line">    <span class="comment">//环境色颜色构成，即当对象被RenderSettings中设定的环境色所照射时对象所表现的颜色。</span></span><br><span class="line"></span><br><span class="line">    Specular <span class="keyword">Color</span>(R,G,B,A)</span><br><span class="line">    <span class="comment">//对象反射高光的颜色。</span></span><br><span class="line">    <span class="comment">//(R,G,B,A)四个分量分别代表红绿蓝和Alpha，取值为0到1之间。</span></span><br><span class="line"></span><br><span class="line">    Shininess Number</span><br><span class="line">    <span class="comment">//加亮时的光泽度，在0和1之间。</span></span><br><span class="line"></span><br><span class="line">    Emission <span class="keyword">Color</span></span><br><span class="line">    <span class="comment">//自发光颜色，即当不被任何光照所照到时对象的颜色。</span></span><br><span class="line">    <span class="comment">//(R,G,B,A)四个分量分别代表红绿蓝和Alpha，取值为0到1之间。</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="comment">//【备注】对象上的完整光照颜色最终是：</span></span><br><span class="line">    <span class="comment">//FinalColor = Ambient * RenderSettings ambientsetting + </span></span><br><span class="line">    <span class="comment">//(Light Color * Diffuse + Light Color *Specular) + Emission</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>定义一个使用顶点光照管线的材质</p>
+<figure class="highlight mathematica"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">Lighting</span> <span class="keyword">On</span> | <span class="keyword">Off</span></span><br></pre></td></tr></table></figure>
+<p>开启或关闭顶点光照</p>
+<figure class="highlight coq"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Cull <span class="keyword">Back</span> | <span class="type">Front</span> | <span class="type">Off</span></span><br></pre></td></tr></table></figure>
+<p>设置多边形剔除模式</p>
+<figure class="highlight coq"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ZTest (Less | <span class="type">Greater</span> | <span class="type">LEqual</span> | <span class="type">GEqual</span> |<span class="type">Equal</span> | <span class="type">NotEqual</span> | <span class="type">Always</span>)</span><br></pre></td></tr></table></figure>
+<p>设置深度测试模式</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">ZWrite</span> <span class="literal">On</span> | <span class="literal">Off</span></span><br></pre></td></tr></table></figure>
+<p>设置深度写模式</p>
+<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">Fog</span> &#123; <span class="attribute">Fog</span> Block &#125;</span><br></pre></td></tr></table></figure>
+<p>设置雾参数</p>
+<figure class="highlight coq"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">AlphaTest (Less | <span class="type">Greater</span> | <span class="type">LEqual</span> | <span class="type">GEqual</span>| <span class="type">Equal</span> | <span class="type">NotEqual</span> | <span class="type">Always</span>) CutoffValue</span><br></pre></td></tr></table></figure>
+<p>开启alpha测试</p>
+<figure class="highlight 1c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Blend SourceBlendMode <span class="string">| DestBlendMode</span></span><br></pre></td></tr></table></figure>
+<p>设置alpha混合模式</p>
+<figure class="highlight dos"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">Color</span> <span class="built_in">Color</span> value</span><br></pre></td></tr></table></figure>
+<p>设置当顶点光照关闭时所使用的颜色</p>
+<figure class="highlight coq"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ColorMask RGB | <span class="type">A</span> | <span class="type">0</span> | <span class="type">any</span> combination of R, G, B, A</span><br></pre></td></tr></table></figure>
+<p>设置颜色写遮罩。设置为0将关闭所有颜色通道的渲染</p>
+<figure class="highlight tp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">Offset</span> <span class="keyword">Offset</span>Factor , <span class="keyword">Offset</span>Units</span><br></pre></td></tr></table></figure>
+<p>设置深度偏移</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">SeparateSpecular</span> <span class="literal">On</span> | <span class="literal">Off</span></span><br></pre></td></tr></table></figure>
+<p>开启或关闭顶点光照相关的平行高光颜色</p>
+<figure class="highlight 1c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ColorMaterial AmbientAndDiffuse <span class="string">| Emission</span></span><br></pre></td></tr></table></figure>
+<p>当计算顶点光照时使用每顶点的颜色</p>
+<h4 id="纹理设置"><a href="#纹理设置" class="headerlink" title="纹理设置"></a>纹理设置</h4><p>纹理设置的作用是在完成渲染设定后指定一定数目的纹理及其混合模式：</p>
+<figure class="highlight crmsh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SetTexture [texture <span class="keyword">property</span><span class="title"></span>]&#123; [Combineoptions] &#125;</span><br></pre></td></tr></table></figure>
+
+
+<h2 id="Shader中的Fallback"><a href="#Shader中的Fallback" class="headerlink" title="Shader中的Fallback"></a>Shader中的Fallback</h2><p>Fallback就像switch-case结构中的default，其作用是定义当处理所有SubShader都不能运行时采取的一个补救方案，这个主要是为了解决不同的显卡对Shader支持的差异问题。</p>
+<h1 id="Unity3D中Shader的语法"><a href="#Unity3D中Shader的语法" class="headerlink" title="Unity3D中Shader的语法"></a>Unity3D中Shader的语法</h1><p>Unity3D中Shader的语法主要针对Cg代码而言，Cg代码是可编程着色器和表面着色器中的核心内容，Cg代码从CGPROGRAM开始到ENDCG结束</p>
+<h1 id="Unity3D中的三种着色器"><a href="#Unity3D中的三种着色器" class="headerlink" title="Unity3D中的三种着色器"></a>Unity3D中的三种着色器</h1>
+                
+
+                
+
+
+<div class="recommended_posts">
+    <h1>推荐阅读</h1>
+    <ul>
+        
+        <li><a href="https://qinyuanpei.github.io/posts/3789971938/">SDL游戏开发系列第二话：基本图形的绘制</a></li>
+        
+        <li><a href="https://qinyuanpei.github.io/posts/2997581895/">视频是不能P的系列：OpenCV人脸检测</a></li>
+        
+        <li><a href="https://qinyuanpei.github.io/posts/183718218/">SDL游戏开发系列第一话：Hello SDL</a></li>
+        
+    </ul>
+</div>
+
+            </div>
+            
+<blockquote class="post-copyright">
+    <div class="content">
+        <p><b>版权声明：</b>
+        <a href="https://qinyuanpei.github.io/posts/1670305415/" rel="external">《Cg Programming in Unity》读书笔记</a>
+        ，由&nbsp;<a href="/about" target="_blank" rel="external">飞鸿踏雪</a>&nbsp;
+        首次发表于&nbsp;<a href="/" target="_blank" rel="external">一个人的孤落时辰</a>&nbsp;
+        ，本文地址为：<a href="https://qinyuanpei.github.io/posts/1670305415/" target="_blank" rel="external">https://qinyuanpei.github.io/posts/1670305415/</a>
+        ，转载请注明<b>作者</b>和<b>出处</b>。</p>
+    </div>
+    <footer>
+        <a href="https://qinyuanpei.github.io">
+            <img src="/assets/images/avatar.jpg" alt="飞鸿踏雪">
+            飞鸿踏雪
+        </a>
+    </footer>
+</blockquote>
+
+
+            
+<div class="page-reward">
+    <a id="rewardBtn" href="javascript:;" class="page-reward-btn waves-effect waves-circle waves-light">赏</a>
+</div>
+
+
+            <div class="post-footer">
+                
+	<ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/CG/" rel="tag">CG</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Shader/" rel="tag">Shader</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Unity/" rel="tag">Unity</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%9B%BE%E5%BD%A2/" rel="tag">图形</a></li></ul>
+
+                
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://qinyuanpei.github.io/posts/1670305415/&title=《《Cg Programming in Unity》读书笔记》 — 一个人的孤落时辰&pic=https://qinyuanpei.github.ioassets/images/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://qinyuanpei.github.io/posts/1670305415/&title=《《Cg Programming in Unity》读书笔记》 — 一个人的孤落时辰&source=&emsp;&emsp;最近开始着手Shader语言的学习，因为Unity3D没有提供类似虚幻四引擎的材质编辑器功能，所以当在Unity3D中碰到需要提供..." data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://qinyuanpei.github.io/posts/1670305415/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《《Cg Programming in Unity》读书笔记》 — 一个人的孤落时辰&url=https://qinyuanpei.github.io/posts/1670305415/&via=https://qinyuanpei.github.io" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://qinyuanpei.github.io/posts/1670305415/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+      
+      <li>
+        <a class="google share-sns" target="_blank" onClick="show_yp()" data-title=" 生成海报">
+          <i class="icon icon-file-image-o"></i>
+        </a>
+      </li>
+      
+    </ul>
+ </div>
+
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
+            </div>
+        </div>
+
+        
+<nav class="post-nav flex-row flex-justify-between">
+  
+    <div class="waves-block waves-effect prev">
+      <a href="/posts/3653662258/" id="post-prev" class="post-nav-link">
+        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
+        <h4 class="title">扩展Unity3D编辑器的脚本模板</h4>
+      </a>
+    </div>
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/posts/316230277/" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h4 class="title">EasyAR尝鲜系列教程之视频播放功能的实现</h4>
+      </a>
+    </div>
+  
+</nav>
+
+
+        
+    <div id="comment"></div>
+<script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+<script src='//unpkg.com/valine/dist/Valine.min.js'></script>
+<script type="text/javascript">
+new Valine({
+    el: '#comment' ,
+    notify: false, 
+    verify: true, 
+    appId: 'JbHqRp2eMrTgIwYpfERH0g79-gzGzoHsz',
+    appKey: 'VsiKvLuiBGvJL1XrAfv7siY2',
+    placeholder: '云中谁寄锦书来，雁字回时，月满西楼。&#10;Tips：如果希望收到我的评论回复，请至少留下你的邮箱哦:)',
+    path:'https://qinyuanpei.github.io/posts/1670305415/', 
+    avatar:'identicon',
+    requiredFields: ['nick','mail']
+});
+</script>
+
+
+
+
+    </article>
+    
+<div id="reward" class="page-modal reward-lay">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <h3 class="reward-title">
+        <i class="icon icon-quote-left"></i>
+        赠人玫瑰，手有余香
+        <i class="icon icon-quote-right"></i>
+    </h3>
+    <div class="reward-content">
+        
+        <div class="reward-code">
+            <img id="rewardCode" src="/assets/images/wechat.png" alt="打赏二维码">
+        </div>
+        
+        <label class="reward-toggle">
+            <input id="rewardToggle" type="checkbox" class="reward-toggle-check"
+                data-wechat="/assets/images/wechat.png" data-alipay="/assets/images/alipay.jpg">
+            <div class="reward-toggle-ctrol">
+                <span class="reward-toggle-item wechat">微信</span>
+                <span class="reward-toggle-label"></span>
+                <span class="reward-toggle-item alipay">支付宝</span>
+            </div>
+        </label>
+        
+    </div>
+</div>
+
+
+    <script type="text/javascript" src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/yoniu.min.js"></script>
+<style type='text/css'>
+	body.active-yp {
+		overflow: hidden;
+	}
+	.yp-fc-btn{
+		display: flex;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		align-items: center;
+		justify-content: space-between;
+		font-size: 13px;
+	}
+	.yp-fc-btn span{
+		cursor: pointer;
+		padding: 2px 10px;
+		color: #4b4b4b;
+		border: #4b4b4b 1px solid;
+		border-radius:5px;
+	}
+	#yp-hide{
+		position: fixed;
+		display: flex;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		justify-content: center;
+		flex-direction: column;
+		left:0;
+		top:0;
+		right:0;
+		bottom:0;
+		background-color:rgba(0,0,0,.5);
+		z-index: 99999;
+		visibility: hidden;
+	}
+	#yoniu-poster{
+		box-sizing: border-box;
+		width: 350px;
+		height: 467.2px;
+		background-color: #fff;
+		margin: 0 auto;
+		padding: 0;
+		line-height: 1.6;
+		text-align:justify;
+	}
+	
+	.yp-img {
+		min-height: 240px;
+		position: relative;
+		display: flex;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		justify-content: flex-end;
+		flex-direction: column;
+		background-position: 50% 50%;
+		background-size: cover;
+		overflow:hidden;
+	}
+	.yp-img>div{
+		padding: 10px 20px;
+	}
+	.yp-name{
+		display: block;
+		color: #fff;
+		font-size: 20px;
+		font-weight: 600;
+		text-shadow: #4b4b4b 0.1em 0.1em 0.2em;
+		margin-top: 10px;
+	}
+	.yp-sort{
+		padding: 3px 10px;
+		font-size: 12px;
+		color: #fff;
+		background: #2e2e2e;
+	}
+	.yp-des{
+		color: #2e2e2e;
+		font-size: 14px;
+		margin: 20px;
+		height: 67.2px;
+	}
+	.yp-qcode{
+		display: flex;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		justify-content: space-between;
+		align-items: center;
+		margin: 10px;
+		padding: 10px 20px;
+		background: #f5f5f5;
+		color: #818181;
+		border-radius: 10px;
+	}
+	.yp-tips{
+		display: flex;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		justify-content: space-between;
+		align-items: center;
+		color: #ccc;
+		margin: 0 10px 10px;
+		font-size: 10px;
+		letter-spacing: 1.5px;
+	}
+	.yp-btns{
+		display: flex;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		align-items: stretch;
+		justify-content: center;
+		width:350px;
+		margin: 0 auto;
+	}
+	.yp-btns>span{
+		display: flex;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		align-items: center;
+		justify-content: center;
+		font-size: 14px;
+		padding: 10px 15px;
+		background:rgba(0,0,0,.2);
+		color: #f5f5f5;
+		cursor: pointer;
+	}
+	.yp-btns>span>a{
+		color: #f5f5f5;
+	}
+	.yp-btns>span>a:hover{
+		text-decoration:none;
+	}
+	#yp-close{
+		font-size: 18px;
+		font-weight: 600;
+	}
+</style>
+<div id="yp-hide">
+    <div id="yoniu-poster">
+        <div class="yp-img" id="yp-img">
+            <div>
+                <span class="yp-sort">读书笔记</span>
+                <span class="yp-name">《Cg Programming in Unity》读书笔记</span>
+            </div>
+        </div>
+        <div class="yp-des">    
+            
+                &emsp;&emsp;最近开始着手Shader语言的学习，因为Unity3D没有提供类似虚幻四引擎的材质编辑器功能，所以当在Unity3D中碰...
+            
+        </div>
+        <div class="yp-qcode">
+            <span>扫描二维码阅读原文</span>
+            <img id="yp-qcode" width="64px" src="//api.qrserver.com/v1/create-qr-code/?data=https://qinyuanpei.github.io/posts/1670305415/">
+        </div>
+        <div class="yp-tips">
+            <span>一个人的孤落时辰</span>
+            <span><time class="post-time" title="2015-12-25 12:29:20" datetime="2015-12-25T12:29:20.000Z"  itemprop="datePublished">2015-12-25</time>
+</span>
+        </div>
+    </div>
+    <div class="yp-btns">
+        <span id="yp-load-yp" onClick="load_yp()">生成海报</span>
+        <span><a id="yp-download"></a></span>
+        <span id="yp-close" onClick="close_yp()">×</span>
+    </div>
+</div>
+<script type="text/javascript">
+    function show_yp(){
+        window.scrollTo(0, 0);
+        document.body.setAttribute("class","active-yp");
+        let cover = document.getElementsByTagName('img')[1];
+        if (cover != null && typeof(cover) != 'undefined') {
+            document.getElementById('yp-img').style.backgroundImage = `url(${cover.src})`;
+        } else {
+            document.getElementById('yp-img').style.backgroundColor = '#d7dbf0';
+        }
+        document.getElementById("yp-hide").style.visibility = "visible";
+    }
+    function close_yp(){
+        var domClass = document.body.getAttribute("class");
+        domClass = domClass.replace("active-yp","");
+        document.body.setAttribute("class",domClass);
+        document.getElementById("yp-hide").style.visibility = "hidden";
+    }
+    function load_yp(){
+        document.getElementById('yp-load-yp').textContent = '海报生成中...';
+        setTimeout(function() {
+            h2c_();
+        },2000);
+
+    }
+</script>
+
+</div>
+
+        <footer class="footer">
+    <div class="top">
+        
+   <p>
+      <span id="lc_counter_container_site_uv">
+         <i class="icon icon-user"></i><span id="lc_counter_value_site_uv"></span>
+      </span>
+      <span id="lc_counter_container_site_pv">
+         <i class="icon icon-eye"></i><span id="lc_counter_value_site_pv"></span>
+      </span>
+  </p>
+
+
+        <p>
+   <a id="jinrishici-sentence" href="https://www.jinrishici.com/" target="_blank" rel="noopener">加载中</a>
+</p>
+<script src="https://sdk.jinrishici.com/v2/browser/jinrishici.js" charset="utf-8"></script>
+<script>
+   jinrishici.load(function(result) {
+      document.querySelector('#subtitle').innerText = result.data.content;
+      document.querySelector('#jinrishici-sentence').innerText = result.data.content;
+  });
+</script>
+            <!--Todo: 考虑重构为插件 -->
+            <p>
+                
+                    <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+                
+                <span>
+                    <a href="https://github.com/qinyuanpei" target="_blank" rel="license noopener" title="Github">
+                        <i class="icon icon-lg icon-github"></i>
+                    </a>
+                </span>
+                <span>
+                    <a href="https://weibo.com/1278609231/profile" target="_blank" rel="license noopener" title="微博">
+                        <i class="icon icon-lg icon-weibo"></i>
+                    </a>
+                </span>
+                <span>
+                    <a href="https://www.douban.com/people/60029335/" target="_blank" rel="license noopener" title="豆瓣">
+                        <i class="icon icon-lg icon-douban"></i>
+                    </a>
+                </span>
+                <span>
+                    <a href="https://www.zhihu.com/people/qinyuanpei" target="_blank" rel="license noopener" title="知乎">
+                        <i class="icon icon-lg icon-zhihu-square"></i>
+                    </a>
+                </span>
+                <span>
+                    <a href="https://blog.csdn.net/qinyuanpei" target="_blank" rel="license noopener" title="CSDN">
+                        <i class="icon icon-lg">C</i>
+                    </a>
+                </span>
+                <span>
+                    <a href="https://music.163.com/#/user/home?id=47002864" target="_blank" rel="license noopener" title="网易音乐">
+                        <i class="icon icon-lg icon-wangyiyunyinyue"></i>
+                    </a>
+                </span>
+            </p>
+        
+    </div>
+    <div class="bottom">
+        <p><span>飞鸿踏雪 &copy; 2014 - 2021</span><br>
+            
+                
+                Powered by <a href="http://hexo.io/" target="_blank">Hexo</a> & Theme by <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a><br>
+                
+                
+                    <p>Hosted by <a href="https://pages.github.com" target="_blank" rel="noopener" style="font-weight: bold">Github Pages</a></p>
+                
+        </p>
+    </div>
+</footer>
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span
+        class="icon icon-lg icon-chevron-up"></span></a>
+
+    
+
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://qinyuanpei.github.io/posts/1670305415/&title=《《Cg Programming in Unity》读书笔记》 — 一个人的孤落时辰&pic=https://qinyuanpei.github.ioassets/images/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://qinyuanpei.github.io/posts/1670305415/&title=《《Cg Programming in Unity》读书笔记》 — 一个人的孤落时辰&source=&emsp;&emsp;最近开始着手Shader语言的学习，因为Unity3D没有提供类似虚幻四引擎的材质编辑器功能，所以当在Unity3D中碰到需要提供..." data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://qinyuanpei.github.io/posts/1670305415/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《《Cg Programming in Unity》读书笔记》 — 一个人的孤落时辰&url=https://qinyuanpei.github.io/posts/1670305415/&via=https://qinyuanpei.github.io" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://qinyuanpei.github.io/posts/1670305415/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+      
+      <li>
+        <a class="google share-sns" target="_blank" onClick="show_yp()" data-title=" 生成海报">
+          <i class="icon icon-file-image-o"></i>
+        </a>
+      </li>
+      
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="//api.qrserver.com/v1/create-qr-code/?data=https://qinyuanpei.github.io/posts/1670305415/" alt="微信分享二维码">
+</div>
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.6/waves.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/4.2.1/echarts.min.js"></script>
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/echarts-wordcloud.min.js" async></script>
+<script>
+    var BLOG = { ROOT: '/', SHARE: true, REWARD: true };
+
+
+</script>
+
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/main.min.js"></script>
+
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/search.min.js" async></script>
+
+
+
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/heart.min.js" async></script>
+
+
+
+
+
+
+
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/leancloud-counter.min.js"></script>
+<script>
+        (function () {
+            var appId = 'JbHqRp2eMrTgIwYpfERH0g79-gzGzoHsz';
+            var appKey = 'VsiKvLuiBGvJL1XrAfv7siY2';
+            new VisitorCounter().init({
+                appId: appId,       //应用ID, 必输
+                appKey: appKey,      //应用Key, 必输
+                region: '华北',      //华东,华北,国际, 默认华东
+                domain: '',      //自定义域名
+                collectIP: true, //是否收集IP及位置信息, 默认开启
+                collectUA: true  //是否收集UserAgent, 默认开启
+            });
+        })();
+</script>
+
+
+
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/vconsole.min.js"></script>
+<script type="text/javascript">
+    //当地址中存在debug=true时，实例化vConsole
+    if (location.href.indexOf('debug=true') > -1) {
+        var vConsole = new VConsole();
+    }
+</script>
+
+
+    <script>
+    //国内用户自动重定向Coding Pages镜像
+    // var ipInfo = JSON.parse(localStorage.getItem('ipInfo'));
+    // if (ipInfo.country_code == 'CN') {
+    //     location.href = location.href.replace('qinyuanpei.github.io', 'blog.yuanpei.me');
+    // }
+    </script>
+
+
+<script>
+titleArray = [];
+function scrollTitle() {
+    if (titleArray.length == 0) return;
+    titleArray.push(titleArray[0]);
+	titleArray.shift();
+	document.title = titleArray.join("");
+}
+setInterval(scrollTitle, 500);
+(function() {
+    var originTitile = document.title, titleTime;
+    document.addEventListener('visibilitychange', function() {
+        if (document.hidden) {
+            titleArray = originTitile.split('');
+            clearTimeout(titleTime);
+        } else {
+            document.title = originTitile;
+            titleArray = originTitile.split('');
+            titleTime = setTimeout(function() {
+                document.title = originTitile;
+                titleArray = [];
+            },2000);
+        }
+    });
+})();
+</script>
+
+
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/ribbon.min.js"></script>
+</body>
+</html>

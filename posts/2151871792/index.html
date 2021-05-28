@@ -1,0 +1,995 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+    
+<script async defer data-domain="blog.yuanpei.me" src="https://plausible.io/js/plausible.js"></script>
+    
+    <meta charset="utf-8">
+    <!-- HTTP 1.1 -->  
+    <meta http-equiv="pragma" content="no-cache">  
+    <!-- HTTP 1.0 -->  
+    <meta http-equiv="cache-control" content="no-cache">
+    <!-- 微博图床防盗链 --> 
+    <!-- <meta name="referrer" content="no-referrer"/> -->
+    <!--Google站点验证-->
+    
+    <!--百度站点验证-->
+    
+    
+    <!--Google AdSense-->
+    
+    <!--Bing站点验证-->
+    <meta name="msvalidate.01" content="713A48A3FE17D4841C292A6B3942EB4C" />
+    
+    <title>
+        浅议 EF Core 分库分表及多租户架构的实现 | 一个人的孤落时辰
+    </title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+        <meta name="theme-color" content="#3F51B5">
+    
+
+    <meta name="keywords" content="数据库,EF,架构,多租户,秦元培,技术博客,生活随笔,个人博客,NET,Python,数据挖掘,数据分析,NLP">
+    
+        <meta name="description" content="private set;在谈论分库、分表的时候，我们忍不住会去想譬如“**自动分表**”和“**路由**”这样的问题，这些子库、子表，到底是提前在数据库里分好呢，还是在运行时期间自动去拆分呢，以及我对库/表进行拆分以后，我应该怎么样找到某条数据对应的库/表;此时，我们所有的请求都会自动带上类似`Album.TenantId = &#39;xxxx&#39;`这样的条件，这样我们就实现了单数据库的多租户架构;多租户架构、读写分离均可以看作是特殊的分库场景，`EF Core` 中新增的`HasQueryFilter()`方法则帮助我们解决了单数据库的多租户架构问题;在学习数学的过程中，学会转化问题是一种重要的思维，即让一个不熟悉的问题变成一个熟悉的问题，在今天这篇博客中，从分库发散到多租户、读写分离，正是这一思路的体现，通常情况下，多租户架构有多数据库和单数据库两种实现方式">
+    
+    <meta name="description" content="private set;在谈论分库、分表的时候，我们忍不住会去想譬如“**自动分表**”和“**路由**”这样的问题，这些子库、子表，到底是提前在数据库里分好呢，还是在运行时期间自动去拆分呢，以及我对库&#x2F;表进行拆分以后，我应该怎么样找到某条数据对应的库&#x2F;表;此时，我们所有的请求都会自动带上类似&#96;Album.TenantId &#x3D; &#39;xxxx&#39;&#96;这样的条件，这样我们就实现了单数据库的多租户架构;多租户">
+<meta property="og:type" content="article">
+<meta property="og:title" content="浅议 EF Core 分库分表及多租户架构的实现">
+<meta property="og:url" content="https://qinyuanpei.github.io/posts/2151871792/index.html">
+<meta property="og:site_name" content="一个人的孤落时辰">
+<meta property="og:description" content="private set;在谈论分库、分表的时候，我们忍不住会去想譬如“**自动分表**”和“**路由**”这样的问题，这些子库、子表，到底是提前在数据库里分好呢，还是在运行时期间自动去拆分呢，以及我对库&#x2F;表进行拆分以后，我应该怎么样找到某条数据对应的库&#x2F;表;此时，我们所有的请求都会自动带上类似&#96;Album.TenantId &#x3D; &#39;xxxx&#39;&#96;这样的条件，这样我们就实现了单数据库的多租户架构;多租户">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://i.loli.net/2021/03/29/nX8NBbhP9ToQa2M.png">
+<meta property="og:image" content="https://i.loli.net/2021/03/29/pmhOTFkZYjAsLXq.png">
+<meta property="og:image" content="https://i.loli.net/2021/03/29/jLxlK3fro8qXSas.png">
+<meta property="og:image" content="https://img2018.cnblogs.com/blog/1090617/201909/1090617-20190929153851001-806440217.jpg">
+<meta property="og:image" content="https://img2018.cnblogs.com/blog/1090617/201909/1090617-20190929153912863-301123895.jpg">
+<meta property="og:image" content="https://i.loli.net/2021/03/29/cIFp74gUAX2Q8xq.png">
+<meta property="og:image" content="https://i.loli.net/2021/03/29/Evj8wXCIsV1Ddme.png">
+<meta property="og:image" content="https://i.loli.net/2021/03/29/S5QeCjzdcgG9wpT.png">
+<meta property="og:image" content="https://i.loli.net/2021/03/29/7na2eIo4suLhTGY.png">
+<meta property="article:published_time" content="2021-03-27T17:47:47.000Z">
+<meta property="article:modified_time" content="2021-05-28T02:08:18.595Z">
+<meta property="article:author" content="飞鸿踏雪">
+<meta property="article:tag" content="数据库">
+<meta property="article:tag" content="EF">
+<meta property="article:tag" content="架构">
+<meta property="article:tag" content="多租户">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i.loli.net/2021/03/29/nX8NBbhP9ToQa2M.png">
+    
+        <link rel="alternate" type="application/atom+xml" title="一个人的孤落时辰" href="/atom.xml">
+    
+    <link rel="shortcut icon" href="/assets/images/favicon.ico">
+    
+        <link rel="manifest" href="/manifest.json">
+    
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master//assets/styles/style.css">
+    <script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/instantclick.min.js"></script>
+    <script>window.lazyScripts=[]</script>
+    <!-- custom head -->
+    
+
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu" class="hide" >
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap" style="background-image:url(/assets/images/brand.jpg)">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/assets/images/avatar.jpg" alt="avatar">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">飞鸿踏雪</h5>
+          <a href="mailto:qinyuanpei@163.com" title="qinyuanpei@163.com" class="mail">qinyuanpei@163.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/"  >
+                <i class="icon icon-lg icon-home"></i>
+                主页
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives"  >
+                <i class="icon icon-lg icon-archives"></i>
+                归档
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags"  >
+                <i class="icon icon-lg icon-tags"></i>
+                标签
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/categories"  >
+                <i class="icon icon-lg icon-th-list"></i>
+                分类
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/books"  >
+                <i class="icon icon-lg icon-bookmark"></i>
+                书单
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/movies"  >
+                <i class="icon icon-lg icon-film"></i>
+                影单
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/works"  >
+                <i class="icon icon-lg icon-code"></i>
+                实验室
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/about"  >
+                <i class="icon icon-lg icon-circle"></i>
+                关于我
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+            <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">浅议 EF Core 分库分表及多租户架构的实现</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off"
+                placeholder="输入感兴趣的关键字">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+        <a href="https://github.com/qinyuanpei/qinyuanpei.github.io" target="_blank" rel="noopener" class="header-icon waves-effect waves-circle waves-light" id="menuGithub">
+            <i class="icon icon-lg icon-code-fork"></i>
+        </a>
+    </div>
+</header>
+<header class="content-header post-header">
+    <div class="container fade-scale">
+        <h1 class="title">浅议 EF Core 分库分表及多租户架构的实现</h1>
+        <h5 class="subtitle" id="subtitle">
+            
+            <time datetime="2021-03-27T17:47:47.000Z" itemprop="datePublished" class="page-time">
+  2021-03-27
+</time>
+
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/%E6%95%B0%E6%8D%AE%E5%AD%98%E5%82%A8/">数据存储</a></li></ul>
+
+            
+        </h5>
+    </div>
+    
+
+</header>
+
+<div class="container body-wrap">
+    
+    <aside class="post-widget">
+        <nav class="post-toc-wrap" id="post-toc">
+            <h4>目录</h4>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#分库"><span class="post-toc-number">1.</span> <span class="post-toc-text">分库</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#分表"><span class="post-toc-number">2.</span> <span class="post-toc-text">分表</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#多租户架构"><span class="post-toc-number">3.</span> <span class="post-toc-text">多租户架构</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#多数据库"><span class="post-toc-number">3.1.</span> <span class="post-toc-text">多数据库</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#单数据库"><span class="post-toc-number">3.2.</span> <span class="post-toc-text">单数据库</span></a></li></ol></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#本文小结"><span class="post-toc-number">4.</span> <span class="post-toc-text">本文小结</span></a></li></ol>
+        </nav>
+    </aside>
+    
+    <article id="post-浅议 EF Core 分库分表及多租户架构的实现" class="post-article article-type-post fade" itemprop="blogPost">
+
+        <div class="post-card">
+            <h1 class="post-card-title">
+                浅议 EF Core 分库分表及多租户架构的实现
+            </h1>
+            <div class="post-meta">
+                <time class="post-time" title="2021-03-27 17:47:47" datetime="2021-03-27T17:47:47.000Z"  itemprop="datePublished">2021-03-27</time>
+
+                
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/%E6%95%B0%E6%8D%AE%E5%AD%98%E5%82%A8/">数据存储</a></li></ul>
+
+
+
+                
+<span id="lc_counter_container_page_pv" title="文章总阅读量" data-page-url="" data-page-title="浅议 EF Core 分库分表及多租户架构的实现">
+    <i class="icon icon-eye icon-pr"></i><span id="lc_counter_value_page_pv"></span>
+</span>
+
+
+
+
+
+                
+    <span>
+        <i class="icon icon-clock-o"></i>
+        31 min.
+    </span>
+    
+            </div>
+            <div class="post-content" id="post-content" itemprop="postContent">
+                <p>各位朋友，大家好，我是 Payne，欢迎大家关注我的博客，我的博客地址是：<a href="https://blog.yuanpei.me" target="_blank" rel="noopener">https://blog.yuanpei.me</a>。最近这段时间，我一直在学习 <a href="https://github.com/abpframework/abp" target="_blank" rel="noopener">ABP vNext</a> 框架，在整个学习过程中，我基本就是在“<strong>文档</strong>”和“<strong>源码</strong>”间来回横跳。我个人推荐大家，多去阅读一点优秀的代码，因为阅读 <a href="https://github.com/abpframework/abp" target="_blank" rel="noopener">ABP vNext</a> 的源代码简直就是一种享受，它可以暂时让你摆脱如泥沼一般的业务代码。言归正传，<a href="https://github.com/abpframework/abp" target="_blank" rel="noopener">ABP vNext</a> 是一个支持多租户架构的框架，在了解了其多租户的实现原理以后，从中收获一点微不足道的小技巧。正好前几天，刚刚同一位朋友讨论完分库、分表这类话题。因此，在今天这篇博客中，我想和大家一起探讨下 <a href="https://docs.microsoft.com/zh-cn/ef/core/get-started/overview/first-app?tabs=netcore-cli" target="_blank" rel="noopener">EF Core</a> 关于分库、分表以及多租户架构的实现。此中曲折，可以说是初窥门径，或许我无法提供给你一个开箱即用的方案，至少它可以带给你一点启发。有读者朋友建议我，不要总是写这种“<strong>高深</strong>”、“<strong>复杂</strong>”的话题，适当地迎合读者写点不需要动脑子的东西。对此，我想说，我有我个人技术上的追求，希望大家理解！</p>
+<h1 id="分库"><a href="#分库" class="headerlink" title="分库"></a>分库</h1><p>首先，我们一起来探讨分库这个话题。从字面含义上了解，分库就是指<strong>应用程序拥有多个数据库，而这些数据库则拥有相同的表结构</strong>。你可能会问，为什么我们需要分库、分表？答案自然是<strong>性能</strong>，<strong>性能</strong>，还是TM的<strong>性能</strong>。我相信，大家都曾经或多或少地听到过<strong>垂直拆分</strong>、<strong>水平拆分</strong>这样的术语，下图展示了如何在<strong>数据库</strong>这一层级上进行拆分：</p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="https://i.loli.net/2021/03/29/nX8NBbhP9ToQa2M.png" alt="数据库的垂直拆分与水平拆分" title="" referrerpolicy="no-referrer">
+                </div>
+                <div class="image-caption">数据库的垂直拆分与水平拆分</div>
+            </figure>
+
+<p>其实，我们可以从<strong>索引存储</strong>、<strong>B+树高度</strong>、<strong>QPS</strong> 和 <strong>连接数</strong> 这四个不同的角度来审视这个话题。相关观点认为，当单表数据量达到一定量级(阿里巴巴Java开发手册中为500W)时，由于内存无法存储其索引，此时SQL查询会产生磁盘IO；行记录的大小决定了B+树的每个叶子节点能存储多少记录，所以，行记录的大小会影响B+树的高度；单个MySQL物理机实例写QPS峰值大概为1万，一旦业务量达到某个量级，这个瓶颈会逐步凸显出来；单个MySQL实例最大连接数有限，更多的访问量意味着需要更多的连接数。</p>
+<p>在谈论分库、分表的时候，我们忍不住会去想譬如“<strong>自动分表</strong>”和“<strong>路由</strong>”这样的问题，这些子库、子表，到底是提前在数据库里分好呢，还是在运行时期间自动去拆分呢，以及我对库/表进行拆分以后，我应该怎么样找到某条数据对应的库/表。我承认，这些问题并不简单，但当我们对问题进行简化以后，分库本质上就是动态地切换数据库，对不对？无非是拆分后的数据库可能会是类似db_0、db_1等等这样的序列。</p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="https://i.loli.net/2021/03/29/pmhOTFkZYjAsLXq.png" alt="对 Chinook 进行水平拆分" title="" referrerpolicy="no-referrer">
+                </div>
+                <div class="image-caption">对 Chinook 进行水平拆分</div>
+            </figure>
+
+<p>对于数据库的自动拆分，博主尝试过的一种方案是：首先，通过<code>Add-Migration</code>生成迁移。然后，通过循环修改连接字符串的方式，调用<code>Context.Database.Migrate()</code>方法为一个数据库迁移表结构和种子数据。当然，有些朋友不认同在生产环境使用迁移的做法，认为对数据库的操作权限还是应该交给 DBA 来管理，这当然无可厚非。我表达的一直都是一种思路，我不想一个工作六年的人，对技术的态度永远都停留在“能跑”、“能抄”这种水平。</p>
+<p>一旦想清楚这一层，实现起来还是非常简单的。我们在配置中准备多个数据库来模拟分库的场景，实际应用中到底是用<strong>范围</strong>、<strong>Hash</strong> 还是 <strong>配置</strong>，大家结合自己的场景来决定就好。其实，这个思路还可以用来做读写分离，无非是这个库更特殊一点，它是个从库。好了，我们一起来看下面的代码：</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 这里随机连接到某一个数据库</span></span><br><span class="line"><span class="comment">// 实际应该按照某种方式获得数据库库名后缀</span></span><br><span class="line"><span class="keyword">var</span> shardings = _options.Value.MultiTenants;</span><br><span class="line"><span class="keyword">var</span> sharding = shardings[<span class="keyword">new</span> Random().Next(<span class="number">0</span>, shardings.Count)];</span><br><span class="line">_chinookContext.Database.GetDbConnection().ConnectionString = sharding.ConnectionString;</span><br><span class="line">Console.WriteLine(<span class="string">"--------分库场景--------"</span>);</span><br><span class="line">Console.WriteLine(_chinookContext.Database.GetDbConnection().ConnectionString);</span><br><span class="line">Console.WriteLine(_chinookContext.Album.ToQueryString());</span><br><span class="line">Console.WriteLine(_chinookContext.Artist.ToQueryString());</span><br></pre></td></tr></table></figure>
+<p>事实上，如果选择性地忽略 “<strong>路由</strong>” 和 “<strong>自动分表</strong>” 这两个特性，我们已经在 EF 层面上局部的实现了 “<strong>分库</strong>” 功能：</p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="https://i.loli.net/2021/03/29/jLxlK3fro8qXSas.png" alt="分库场景" title="" referrerpolicy="no-referrer">
+                </div>
+                <div class="image-caption">分库场景</div>
+            </figure>
+
+<h1 id="分表"><a href="#分表" class="headerlink" title="分表"></a>分表</h1><p>好了，聊完分库，我们再来聊聊分表。分表就是指同一个数据库里拥有多张结构(<strong>Schema</strong>)相同的表。一个典型的例子是，Excel里的多张Sheet，只要它们拥有相同的结构(<strong>Schema</strong>)，就可以视为同一类型的数据，虽然它们拥有不同的表名。和分库类似，分表的着眼点是避免产生“大表”，从而达到提高查询性能的目的。而对应到 EF(<strong>EntityFramework</strong>) 的场景中，<strong>分表本质上就是在解决 EF 动态适配表名的问题</strong>。同样的，下面两张图展示了如何在<strong>表</strong>这个层级进行拆分：</p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="https://img2018.cnblogs.com/blog/1090617/201909/1090617-20190929153851001-806440217.jpg" alt="表的垂直拆分" title="" referrerpolicy="no-referrer">
+                </div>
+                <div class="image-caption">表的垂直拆分</div>
+            </figure>
+
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="https://img2018.cnblogs.com/blog/1090617/201909/1090617-20190929153912863-301123895.jpg" alt="表的水平拆分" title="" referrerpolicy="no-referrer">
+                </div>
+                <div class="image-caption">表的水平拆分</div>
+            </figure>
+
+<blockquote>
+<p>图片援引自：<a href="https://www.cnblogs.com/qdhxhz/p/11608222.html" target="_blank" rel="noopener">雨点的名字 - 分库分表(1) — 理论</a></p>
+</blockquote>
+<p>譬如，我们以年为单位，产生了<code>Album_2020</code>和<code>Album_2021</code>两张表。那么，在已经定义好了实体<code>Album</code>的情况下，有没有办法可以让实体<code>Album</code>动态地去适配这两张表呢？或许，熟悉 EF 的你，此刻正在心里暗笑道，这有何难，只要在对应实体的<code>OnModelCreating()</code>方法中，修改<code>ToTable()</code>方法的参数就好了啊。可如果你亲自试一试，就会知道这是你的一厢情愿啦！</p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="https://i.loli.net/2021/03/29/cIFp74gUAX2Q8xq.png" alt="针对 Album 和 Artist 按年份进行拆分" title="" referrerpolicy="no-referrer">
+                </div>
+                <div class="image-caption">针对 Album 和 Artist 按年份进行拆分</div>
+            </figure>
+
+<p>事实上，EF 针对实体和表的映射关系做了缓存，这意味着，一旦在<code>OnModelCreating()</code>方法中确定映射关系，这组映射关系将被缓存下来。在 EF 中，这组映射关系的缓存行为，由<code>IModelCacheKeyFactory</code>接口来决定，它提供了一个<code>Create()</code>方法，如果该方法的返回值与上一次相同，则不会调用<code>OnModelCreating()</code>方法。所以，我们的思路就是，让这个<code>Create()</code>方法返回不同的对象。为此，我们考虑实现<code>IModelCacheKeyFactory</code>接口，并用这个自定义实现来替换微软的默认实现。我们一起来看下面的代码：</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">DynamicModelCacheKeyFactory</span> : <span class="title">IModelCacheKeyFactory</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">object</span> <span class="title">Create</span>(<span class="params">DbContext context</span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        <span class="keyword">return</span> context <span class="keyword">is</span> ShardingContext shardingContext</span><br><span class="line">            ? (context.GetType(), shardingContext.ShardingSuffix)</span><br><span class="line">            : (<span class="keyword">object</span>)context.GetType();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>为了配合<code>DynamicModelCacheKeyFactory</code>的使用，我们还需要定义用于分表的<code>ShardingContext</code>，它继承自<code>DbContext</code>，我们为其扩展了<code>ShardingSuffix</code>属性，并通过注入的<code>IShardingPolicyProvider</code>接口来获取一个分表后缀。比如，我们有<code>Order</code>表，经过拆分后获得<code>Order_01</code>、<code>Order_02</code>这样的子表，所以，这个分表后缀其实就是01、02。没错，我们还是要去修改<code>ToTable()</code>方法中的表名，不同的是，这里的表名是动态的。注意到，<code>Create()</code>方法返回的是一个元组，所以，不同的<code>ShardingSuffix</code>会产生不同的映射关系。</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">ShardingContext</span> : <span class="title">DbContext</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">public</span> DbSet&lt;Artist&gt; Artist &#123; <span class="keyword">get</span>; <span class="keyword">set</span>; &#125;</span><br><span class="line">    <span class="keyword">public</span> DbSet&lt;Album&gt; Album &#123; <span class="keyword">get</span>; <span class="keyword">set</span>; &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">readonly</span> IShardingPolicyProvider _shardingPolicyProvider;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">string</span> ShardingSuffix &#123; <span class="keyword">get</span>; <span class="keyword">private</span> <span class="keyword">set</span>; &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">ShardingContext</span>(<span class="params"></span></span></span><br><span class="line"><span class="function"><span class="params">      DbContextOptions&lt;ShardingContext&gt; options, </span></span></span><br><span class="line"><span class="function"><span class="params">      IShardingPolicyProvider shardingPolicyProvider</span></span></span><br><span class="line"><span class="function"><span class="params">    </span>) : <span class="title">base</span>(<span class="params">options</span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        _shardingPolicyProvider = shardingPolicyProvider;</span><br><span class="line">        ShardingSuffix = _shardingPolicyProvider.GetShardingSuffix();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">override</span> <span class="keyword">void</span> <span class="title">OnModelCreating</span>(<span class="params">ModelBuilder modelBuilder</span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        <span class="keyword">base</span>.OnModelCreating(modelBuilder);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// Album</span></span><br><span class="line">        <span class="comment">// 动态映射表名，譬如：Album_2021</span></span><br><span class="line">        modelBuilder.Entity&lt;Album&gt;().ToTable(<span class="string">$"Album_<span class="subst">&#123;ShardingSuffix&#125;</span>"</span>);</span><br><span class="line">        modelBuilder.Entity&lt;Album&gt;().HasKey(x =&gt; x.AlbumId);</span><br><span class="line">        modelBuilder.Entity&lt;Album&gt;()</span><br><span class="line">          .Property(x =&gt; x.AlbumId).HasColumnName(<span class="string">"AlbumId"</span>);</span><br><span class="line">        modelBuilder.Entity&lt;Album&gt;()</span><br><span class="line">          .Property(x =&gt; x.Title).HasColumnName(<span class="string">"Title"</span>);</span><br><span class="line">        modelBuilder.Entity&lt;Album&gt;()</span><br><span class="line">          .Property(x =&gt; x.ArtistId).HasColumnName(<span class="string">"ArtistId"</span>);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// Artist</span></span><br><span class="line">        <span class="comment">// 动态映射表名，譬如：Artist_2021</span></span><br><span class="line">        modelBuilder.Entity&lt;Artist&gt;().ToTable(<span class="string">$"Artist_<span class="subst">&#123;ShardingSuffix&#125;</span>"</span>);</span><br><span class="line">        modelBuilder.Entity&lt;Artist&gt;().HasKey(x =&gt; x.ArtistId);</span><br><span class="line">        modelBuilder.Entity&lt;Artist&gt;()</span><br><span class="line">          .Property(x =&gt; x.ArtistId).HasColumnName(<span class="string">"ArtistId"</span>);</span><br><span class="line">        modelBuilder.Entity&lt;Artist&gt;()</span><br><span class="line">          .Property(x =&gt; x.Name).HasColumnName(<span class="string">"Name"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>关于分库、分表以后，怎么去匹配对应的库或者表，这类问题我们称之为路由问题。常见的策略主要有，<strong>范围</strong>、<strong>Hash</strong> 和 <strong>配置</strong>：</p>
+<ul>
+<li>范围最直观的就是按照时间来拆分，比如按年、按月、按天等等，主要的问题是分布不均匀；其次，可以按照Id的范围来划分，比如0到10万、10万到20万依次划分到不同的表里，主要的问题是热点数据带来的性能问题。</li>
+<li>Hash主要指哈希取模。例如，可以针对用户Id做如下处理：<code>HASH(userId) % N</code>，其中，<code>N</code>表示当前拆分表的数目。可以预见的问题是，当<code>N</code>变化的时候，会产生数据迁移的需求，所以，这种方式并不利于扩容，</li>
+<li>配置，顾名思义，就是用一张表来存储数据和子表间的映射关系，每次先按照数据的主键找到子表，然后再从子表中查询所需要的数据。好处是扩容灵活，而缺点同样明显，查询配置表，带来了额外的性能损耗。</li>
+</ul>
+<p>在这里，我们是使用年份来作为分表后缀的。为了方便演示，在实现<code>ShardingByYearPolicy</code>类时，我们直接使用了当前时间，这意味着我们会将<code>Album</code>实体映射到<code>Album_2021</code>这张表，以此类推。在实际使用中，更推荐大家使用 <a href="https://halo.sherlocky.com/archives/xue-hua-suan-fa-snowflake/" target="_blank" rel="noopener">雪花算法</a> 生成Id，因为这样，我们就可以通过Id反推出具体的时间范围，进而决定要映射到哪一个库、哪一张表。关于子表的生成，博主这里是通过迁移来实现的，考虑到EF自动创建数据库/表，都需要先创建迁移，所以，这并不是一个开箱即用的方案。</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title">ShardingByYearPolicy</span> : <span class="title">IShardingPolicyProvider</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">string</span> <span class="title">GetShardingSuffix</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">$"<span class="subst">&#123;DateTime.Now.ToString(<span class="string">"yyyy"</span>)&#125;</span>"</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>好了，现在我们可以编写简单的代码，来验证我们的这些想法是都正确，即使是最简单的控制台程序，我还是喜欢用依赖注入：</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 注入ShardingContext</span></span><br><span class="line">services.AddDbContext&lt;ShardingContext&gt;(options =&gt; &#123;</span><br><span class="line">    options.UseSqlite(config.GetValue&lt;<span class="keyword">string</span>&gt;(<span class="string">"Database:Default"</span>)); </span><br><span class="line">    <span class="comment">//替换默认实现</span></span><br><span class="line">    options.ReplaceService&lt;IModelCacheKeyFactory, DynamicModelCacheKeyFactory&gt;(); </span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 注入IShardingPolicyProvider</span></span><br><span class="line">services.AddTransient&lt;IShardingPolicyProvider, ShardingByYearPolicy&gt;();</span><br></pre></td></tr></table></figure>
+
+<p>接下来，我们可以通过<code>ShardingContext</code>来匹配<code>Album_2021</code>表：</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 这里应该连接到Album_2021表</span></span><br><span class="line"><span class="comment">// 实际应该按照某种方式获得表名后缀</span></span><br><span class="line">Console.WriteLine(<span class="string">"--------分表场景--------"</span>);</span><br><span class="line">Console.WriteLine(_shardingContext.Database.GetDbConnection().ConnectionString);</span><br><span class="line">Console.WriteLine(_shardingContext.Album.ToQueryString());</span><br><span class="line">Console.WriteLine(_shardingContext.Artist.ToQueryString());</span><br></pre></td></tr></table></figure>
+<p>此时，我们会得到下面的结果：</p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="https://i.loli.net/2021/03/29/Evj8wXCIsV1Ddme.png" alt="EF Core 分表效果演示" title="" referrerpolicy="no-referrer">
+                </div>
+                <div class="image-caption">EF Core 分表效果演示</div>
+            </figure>
+
+<p>至此，如果选择性地忽略 “<strong>路由</strong>” 和 “<strong>自动分表</strong>” 这两个特性，我们已经在 EF 层面上局部的实现了 “<strong>分表</strong>” 功能。怎么样，是不是还行？</p>
+<h1 id="多租户架构"><a href="#多租户架构" class="headerlink" title="多租户架构"></a>多租户架构</h1><p>最后，我们来聊聊多租户架构这个话题。可能有朋友觉得多租户架构和分库、分表没什么关系，不好意思啊，这是个非常合理的联想，因为还真就有关系，甚至我们还能继续发散到读写分离。你想想看，多租户架构中，如果一个租户一个数据库，这是不是就是分库的场景。而在分库的场景中，如果一个是主库，一个是从库，这是不是就是读写分离的场景。在学习数学的过程中，学会转化问题是一种重要的思维，即让一个不熟悉的问题变成一个熟悉的问题，在今天这篇博客中，从分库发散到多租户、读写分离，正是这一思路的体现，通常情况下，多租户架构有多数据库和单数据库两种实现方式。</p>
+<h2 id="多数据库"><a href="#多数据库" class="headerlink" title="多数据库"></a>多数据库</h2><p>多数据库，指每一个租户一个数据库。这种实现方式的好处是，租户间的数据天然隔离，数据库的访问压力天然隔离。可由于所有租户都共享一套应用程序，随着数据库越来越多，维护的成本亦越来越高。参考分库的实现，我们可以非常容易地实现租户数据库的切换。这里，我们的思路是，调用方在 HTTP 请求中加入自定义的首部字段<code>X-TenantId</code>，<code>DbContext</code>通过该字段来匹配对应的链接字符串，这样就可以实现多数据库的多租户架构：</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">TenantInfoProvider</span> : <span class="title">ITenantInfoProvider</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">const</span> <span class="keyword">string</span> X_TENANT_ID = <span class="string">"X-TenantId"</span>;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">readonly</span> IHttpContextAccessor _httpContextAccessor;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">TenantInfoProvider</span>(<span class="params">IHttpContextAccessor httpContextAccessor</span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        _httpContextAccessor = httpContextAccessor;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">string</span> <span class="title">GetTenantId</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        <span class="keyword">var</span> httpContext = _httpContextAccessor.HttpContext;</span><br><span class="line">        <span class="keyword">if</span> (httpContext != <span class="literal">null</span> &amp;&amp; httpContext.Request.Headers.ContainsKey(X_TENANT_ID))</span><br><span class="line">            <span class="keyword">return</span> httpContext.Request.Headers[X_TENANT_ID].FirstOrDefault();</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>接下来，假设我们<code>AppSettings.json</code>文件维护各个租户的连接字符串信息。通常，在实际场景中，我们会将这些信息存储在数据库中：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attr">"Database"</span>: &#123;</span><br><span class="line">    <span class="attr">"Default"</span>: <span class="string">"Data Source=Chinook.db"</span>,</span><br><span class="line">    <span class="attr">"MultiTenants"</span>: [</span><br><span class="line">      &#123;</span><br><span class="line">        <span class="attr">"tenantId"</span>: <span class="string">"01"</span>,</span><br><span class="line">        <span class="attr">"ConnectionString"</span>: <span class="string">"Data Source=Chinook01.db"</span></span><br><span class="line">      &#125;,</span><br><span class="line">      &#123;</span><br><span class="line">        <span class="attr">"tenantId"</span>: <span class="string">"02"</span>,</span><br><span class="line">        <span class="attr">"ConnectionString"</span>: <span class="string">"Data Source=Chinook02.db"</span></span><br><span class="line">      &#125;</span><br><span class="line">    ]</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>此时，我们可以通过下面的代码片段来实现租户切换：</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> tenantId = _tenantInfoProvider.GetTenantId();</span><br><span class="line"><span class="keyword">var</span> database = _options.Value.MultiTenants.FirstOrDefault(x =&gt; x.TenantId == tenantId);</span><br><span class="line"><span class="keyword">if</span> (database == <span class="literal">null</span>)</span><br><span class="line">    <span class="keyword">throw</span> <span class="keyword">new</span> Exception(<span class="string">$"Invalid tenantId \"<span class="subst">&#123;tenantId&#125;</span>\""</span>);</span><br><span class="line"></span><br><span class="line">_chinookContext.Database.GetDbConnection().ConnectionString = database.ConnectionString;</span><br><span class="line">Console.WriteLine(<span class="string">"--------多租户 + 多数据库--------"</span>);</span><br><span class="line">Console.WriteLine(<span class="string">$"TenantId:<span class="subst">&#123;tenantId&#125;</span>"</span>);</span><br><span class="line">Console.WriteLine(_chinookContext.Database.GetDbConnection().ConnectionString);</span><br><span class="line">Console.WriteLine(_chinookContext.Album.ToQueryString());</span><br><span class="line">Console.WriteLine(_chinookContext.Artist.ToQueryString());</span><br></pre></td></tr></table></figure>
+
+<p>可以注意到，一切如我们所预料的一样，程序自动切换到<code>01</code>这个租户：</p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="https://i.loli.net/2021/03/29/S5QeCjzdcgG9wpT.png" alt="多租户 + 多数据库" title="" referrerpolicy="no-referrer">
+                </div>
+                <div class="image-caption">多租户 + 多数据库</div>
+            </figure>
+
+<h2 id="单数据库"><a href="#单数据库" class="headerlink" title="单数据库"></a>单数据库</h2><p>单数据库，指所有租户都在一个数据库里，使用相同的表结构(<strong>Schema</strong>)，并通过<code>TenantId</code>字段进行区分。<a href="https://github.com/abpframework/abp" target="_blank" rel="noopener">ABP vNext</a> 中的多租户架构就是这种模式，而我之前的公司，则是单数据库 + 多数据库的混合模式。这种实现方式的好处是数据库非常精简，而缺点同样很明显，一旦某个租户出现问题，非常容易波及所有租户，因为所有租户都在一个数据库里，数据库的压力实际上是大家一起分担的，租户间相互影响的可能性非常大。</p>
+<p>同样地，我们依然需要用到<code>X-TenantId</code>这个请求头，由于所有租户都在一个数据库上，我们不会再试图去修改链接字符串。EF Core 中针对实体提供了<code>HasQueryFilter()</code>扩展方法，该访问允许我们传入一个 Lambda 表达式。此时，我们所有的请求都会自动带上类似<code>Album.TenantId = &#39;xxxx&#39;</code>这样的条件，这样我们就实现了单数据库的多租户架构。</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">MulitiTenancyContext</span> : <span class="title">DbContext</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">public</span> DbSet&lt;Artist&gt; Artist &#123; <span class="keyword">get</span>; <span class="keyword">set</span>; &#125;</span><br><span class="line">    <span class="keyword">public</span> DbSet&lt;Album&gt; Album &#123; <span class="keyword">get</span>; <span class="keyword">set</span>; &#125;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">readonly</span> ITenantInfoProvider _tenantInfoProvider;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">MulitiTenancyContext</span>(<span class="params"></span></span></span><br><span class="line"><span class="function"><span class="params">      DbContextOptions&lt;MulitiTenancyContext&gt; options, </span></span></span><br><span class="line"><span class="function"><span class="params">      ITenantInfoProvider tenantInfoProvider</span></span></span><br><span class="line"><span class="function"><span class="params">    </span>) : <span class="title">base</span>(<span class="params">options</span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        _tenantInfoProvider = tenantInfoProvider;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">override</span> <span class="keyword">void</span> <span class="title">OnModelCreating</span>(<span class="params">ModelBuilder modelBuilder</span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        <span class="keyword">base</span>.OnModelCreating(modelBuilder);</span><br><span class="line"></span><br><span class="line">        modelBuilder.ApplyConfiguration(<span class="keyword">new</span> ArtistMap());</span><br><span class="line">        modelBuilder.ApplyConfiguration(<span class="keyword">new</span> AlbumMap());</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// 利用 HasQueryFilter 进行租户间数据隔离</span></span><br><span class="line">        <span class="keyword">var</span> tenantId = _tenantInfoProvider.GetTenantId();</span><br><span class="line">        <span class="keyword">if</span> (!<span class="keyword">string</span>.IsNullOrEmpty(tenantId))</span><br><span class="line">        &#123;</span><br><span class="line">            modelBuilder.Entity&lt;Album&gt;().HasQueryFilter(x =&gt; x.TenantId == tenantId);</span><br><span class="line">            modelBuilder.Entity&lt;Artist&gt;().HasQueryFilter(x =&gt; x.TenantId == tenantId);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>为了在实体上应用这个过滤条件，参照 <a href="https://github.com/abpframework/abp" target="_blank" rel="noopener">ABP vNext</a> 中的实现，我们定义了<code>IMulitiTenancy</code>接口，所有实体均需要实现<code>TenantId</code>字段。为了简化设计，我们直接使用字符串类型来定义租户Id，而在 <a href="https://github.com/abpframework/abp" target="_blank" rel="noopener">ABP vNext</a> 中很多主键都被定义为 <code>Guid</code>，我们掌握核心原理即可，不用过分强求和 <a href="https://github.com/abpframework/abp" target="_blank" rel="noopener">ABP vNext</a> 的一致。</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// IMulitiTenancy</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">interface</span> <span class="title">IMulitiTenancy</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">string</span> TenantId &#123; <span class="keyword">get</span>; <span class="keyword">set</span>; &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Album</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">Album</span> : <span class="title">IMulitiTenancy</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">int</span> AlbumId &#123; <span class="keyword">get</span>; <span class="keyword">set</span>; &#125;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">string</span> Title &#123; <span class="keyword">get</span>; <span class="keyword">set</span>; &#125;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">int</span> ArtistId &#123; <span class="keyword">get</span>; <span class="keyword">set</span>; &#125;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">string</span> TenantId &#123; <span class="keyword">get</span>; <span class="keyword">set</span>; &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>此时，我们可以编写简单的测试代码，来验证我们的想法是否正确。同样地，我还是使用了依赖注入：</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 这里应该查询01租户内的Album</span></span><br><span class="line"><span class="keyword">var</span> tenantId = _tenantInfoProvider.GetTenantId();</span><br><span class="line">Console.WriteLine(<span class="string">"--------多租户 + 单数据库--------"</span>);</span><br><span class="line">Console.WriteLine(<span class="string">$"TenantId:<span class="subst">&#123;tenantId&#125;</span>"</span>);</span><br><span class="line">Console.WriteLine(_mulitiTenancyContext.Database.GetDbConnection().ConnectionString);</span><br><span class="line">Console.WriteLine(_mulitiTenancyContext.Album.ToQueryString());</span><br><span class="line">Console.WriteLine(_mulitiTenancyContext.Artist.ToQueryString());</span><br></pre></td></tr></table></figure>
+
+<p>可以注意到，打印出的 SQL 语句中自动带出了过滤条件：</p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="https://i.loli.net/2021/03/29/7na2eIo4suLhTGY.png" alt="多租户 + 多数据库" title="" referrerpolicy="no-referrer">
+                </div>
+                <div class="image-caption">多租户 + 多数据库</div>
+            </figure>
+
+<h1 id="本文小结"><a href="#本文小结" class="headerlink" title="本文小结"></a>本文小结</h1><p>这篇博客主要探讨了 EF 在分库、分表及多租户架构上实施的可能性。分库、分表的目的是为了提高数据库的查询性能，在这个过程中，我们可以考虑<strong>范围</strong>、<strong>Hash</strong>和<strong>配置</strong>三种路由策略，它们各自有自己的优缺点，需要使用者结合业务场景去衡量。虽然分库、分表在面对百万级别以上的数据时，不失为一种提高性能的方案，可世间万物都是双刃剑，它同样带来了一系列新的问题，譬如<strong>跨库写带来的分布式事务问题，跨库读带来的Join、Count()、排序、分页等问题，数据迁移问题</strong>等等，而如果希望通过Hash(Id)来进行拆分，还需要解决<strong>全局Id唯一的问题</strong>。所以说，这是一个没有标准答案的问题，需要使用者自己去进行取舍。多租户架构、读写分离均可以看作是特殊的分库场景，<code>EF Core</code> 中新增的<code>HasQueryFilter()</code>方法则帮助我们解决了单数据库的多租户架构问题。好了，以上就是这篇博客的全部内容啦，如果大家对文中的观点有建议或者意见，欢迎大家在评论区留言，谢谢！</p>
+<p>附本文源代码：<a href="https://github.com/Regularly-Archive/2021/tree/master/EF.Sharding" target="_blank" rel="noopener">https://github.com/Regularly-Archive/2021/tree/master/EF.Sharding</a></p>
+
+                
+
+                
+
+
+<div class="recommended_posts">
+    <h1>推荐阅读</h1>
+    <ul>
+        
+        <li><a href="https://qinyuanpei.github.io/posts/570888918/">基于过滤器实现异常处理的探索</a></li>
+        
+        <li><a href="https://qinyuanpei.github.io/posts/2418566449/">基于EF的数据库主从复制、读写分离实现</a></li>
+        
+        <li><a href="https://qinyuanpei.github.io/posts/2318173297/">关于单位转换相关问题的常见思路</a></li>
+        
+        <li><a href="https://qinyuanpei.github.io/posts/3032366281/">Redis缓存技术学习系列之邂逅Redis</a></li>
+        
+        <li><a href="https://qinyuanpei.github.io/posts/582264328/">Unity3D游戏开发之SQLite让数据库开发更简单</a></li>
+        
+    </ul>
+</div>
+
+            </div>
+            
+<blockquote class="post-copyright">
+    <div class="content">
+        <p><b>版权声明：</b>
+        <a href="https://qinyuanpei.github.io/posts/2151871792/" rel="external">浅议 EF Core 分库分表及多租户架构的实现</a>
+        ，由&nbsp;<a href="/about" target="_blank" rel="external">飞鸿踏雪</a>&nbsp;
+        首次发表于&nbsp;<a href="/" target="_blank" rel="external">一个人的孤落时辰</a>&nbsp;
+        ，本文地址为：<a href="https://qinyuanpei.github.io/posts/2151871792/" target="_blank" rel="external">https://qinyuanpei.github.io/posts/2151871792/</a>
+        ，转载请注明<b>作者</b>和<b>出处</b>。</p>
+    </div>
+    <footer>
+        <a href="https://qinyuanpei.github.io">
+            <img src="/assets/images/avatar.jpg" alt="飞鸿踏雪">
+            飞鸿踏雪
+        </a>
+    </footer>
+</blockquote>
+
+
+            
+<div class="page-reward">
+    <a id="rewardBtn" href="javascript:;" class="page-reward-btn waves-effect waves-circle waves-light">赏</a>
+</div>
+
+
+            <div class="post-footer">
+                
+	<ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/EF/" rel="tag">EF</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%A4%9A%E7%A7%9F%E6%88%B7/" rel="tag">多租户</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" rel="tag">数据库</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%9E%B6%E6%9E%84/" rel="tag">架构</a></li></ul>
+
+                
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://qinyuanpei.github.io/posts/2151871792/&title=《浅议 EF Core 分库分表及多租户架构的实现》 — 一个人的孤落时辰&pic=https://qinyuanpei.github.ioassets/images/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://qinyuanpei.github.io/posts/2151871792/&title=《浅议 EF Core 分库分表及多租户架构的实现》 — 一个人的孤落时辰&source=一个人的孤落时辰 | 纵有疾风起，人生不言弃 | 隐约雷鸣，阴霾天空，即使天无雨，我亦留此地。" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://qinyuanpei.github.io/posts/2151871792/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《浅议 EF Core 分库分表及多租户架构的实现》 — 一个人的孤落时辰&url=https://qinyuanpei.github.io/posts/2151871792/&via=https://qinyuanpei.github.io" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://qinyuanpei.github.io/posts/2151871792/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+      
+      <li>
+        <a class="google share-sns" target="_blank" onClick="show_yp()" data-title=" 生成海报">
+          <i class="icon icon-file-image-o"></i>
+        </a>
+      </li>
+      
+    </ul>
+ </div>
+
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
+            </div>
+        </div>
+
+        
+<nav class="post-nav flex-row flex-justify-between">
+  
+    <div class="waves-block waves-effect prev">
+      <a href="/posts/3670340170/" id="post-prev" class="post-nav-link">
+        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
+        <h4 class="title">ABP vNext 对接 Ant Design Vue 实现分页查询</h4>
+      </a>
+    </div>
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/posts/1276287490/" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h4 class="title">源代码探案系列之 .NET Core 跨域中间件 CORS</h4>
+      </a>
+    </div>
+  
+</nav>
+
+
+        
+    <div id="comment"></div>
+<script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+<script src='//unpkg.com/valine/dist/Valine.min.js'></script>
+<script type="text/javascript">
+new Valine({
+    el: '#comment' ,
+    notify: false, 
+    verify: true, 
+    appId: 'JbHqRp2eMrTgIwYpfERH0g79-gzGzoHsz',
+    appKey: 'VsiKvLuiBGvJL1XrAfv7siY2',
+    placeholder: '云中谁寄锦书来，雁字回时，月满西楼。&#10;Tips：如果希望收到我的评论回复，请至少留下你的邮箱哦:)',
+    path:'https://qinyuanpei.github.io/posts/2151871792/', 
+    avatar:'identicon',
+    requiredFields: ['nick','mail']
+});
+</script>
+
+
+
+
+    </article>
+    
+<div id="reward" class="page-modal reward-lay">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <h3 class="reward-title">
+        <i class="icon icon-quote-left"></i>
+        赠人玫瑰，手有余香
+        <i class="icon icon-quote-right"></i>
+    </h3>
+    <div class="reward-content">
+        
+        <div class="reward-code">
+            <img id="rewardCode" src="/assets/images/wechat.png" alt="打赏二维码">
+        </div>
+        
+        <label class="reward-toggle">
+            <input id="rewardToggle" type="checkbox" class="reward-toggle-check"
+                data-wechat="/assets/images/wechat.png" data-alipay="/assets/images/alipay.jpg">
+            <div class="reward-toggle-ctrol">
+                <span class="reward-toggle-item wechat">微信</span>
+                <span class="reward-toggle-label"></span>
+                <span class="reward-toggle-item alipay">支付宝</span>
+            </div>
+        </label>
+        
+    </div>
+</div>
+
+
+    <script type="text/javascript" src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/yoniu.min.js"></script>
+<style type='text/css'>
+	body.active-yp {
+		overflow: hidden;
+	}
+	.yp-fc-btn{
+		display: flex;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		align-items: center;
+		justify-content: space-between;
+		font-size: 13px;
+	}
+	.yp-fc-btn span{
+		cursor: pointer;
+		padding: 2px 10px;
+		color: #4b4b4b;
+		border: #4b4b4b 1px solid;
+		border-radius:5px;
+	}
+	#yp-hide{
+		position: fixed;
+		display: flex;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		justify-content: center;
+		flex-direction: column;
+		left:0;
+		top:0;
+		right:0;
+		bottom:0;
+		background-color:rgba(0,0,0,.5);
+		z-index: 99999;
+		visibility: hidden;
+	}
+	#yoniu-poster{
+		box-sizing: border-box;
+		width: 350px;
+		height: 467.2px;
+		background-color: #fff;
+		margin: 0 auto;
+		padding: 0;
+		line-height: 1.6;
+		text-align:justify;
+	}
+	
+	.yp-img {
+		min-height: 240px;
+		position: relative;
+		display: flex;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		justify-content: flex-end;
+		flex-direction: column;
+		background-position: 50% 50%;
+		background-size: cover;
+		overflow:hidden;
+	}
+	.yp-img>div{
+		padding: 10px 20px;
+	}
+	.yp-name{
+		display: block;
+		color: #fff;
+		font-size: 20px;
+		font-weight: 600;
+		text-shadow: #4b4b4b 0.1em 0.1em 0.2em;
+		margin-top: 10px;
+	}
+	.yp-sort{
+		padding: 3px 10px;
+		font-size: 12px;
+		color: #fff;
+		background: #2e2e2e;
+	}
+	.yp-des{
+		color: #2e2e2e;
+		font-size: 14px;
+		margin: 20px;
+		height: 67.2px;
+	}
+	.yp-qcode{
+		display: flex;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		justify-content: space-between;
+		align-items: center;
+		margin: 10px;
+		padding: 10px 20px;
+		background: #f5f5f5;
+		color: #818181;
+		border-radius: 10px;
+	}
+	.yp-tips{
+		display: flex;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		justify-content: space-between;
+		align-items: center;
+		color: #ccc;
+		margin: 0 10px 10px;
+		font-size: 10px;
+		letter-spacing: 1.5px;
+	}
+	.yp-btns{
+		display: flex;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		align-items: stretch;
+		justify-content: center;
+		width:350px;
+		margin: 0 auto;
+	}
+	.yp-btns>span{
+		display: flex;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		align-items: center;
+		justify-content: center;
+		font-size: 14px;
+		padding: 10px 15px;
+		background:rgba(0,0,0,.2);
+		color: #f5f5f5;
+		cursor: pointer;
+	}
+	.yp-btns>span>a{
+		color: #f5f5f5;
+	}
+	.yp-btns>span>a:hover{
+		text-decoration:none;
+	}
+	#yp-close{
+		font-size: 18px;
+		font-weight: 600;
+	}
+</style>
+<div id="yp-hide">
+    <div id="yoniu-poster">
+        <div class="yp-img" id="yp-img">
+            <div>
+                <span class="yp-sort">数据存储</span>
+                <span class="yp-name">浅议 EF Core 分库分表及多租户架构的实现</span>
+            </div>
+        </div>
+        <div class="yp-des">    
+            
+                各位朋友，大家好，我是 Payne，欢迎大家关注我的博客，我的博客地址是：https://blog.yuanpei.me。最近这段时间，我一直在...
+            
+        </div>
+        <div class="yp-qcode">
+            <span>扫描二维码阅读原文</span>
+            <img id="yp-qcode" width="64px" src="//api.qrserver.com/v1/create-qr-code/?data=https://qinyuanpei.github.io/posts/2151871792/">
+        </div>
+        <div class="yp-tips">
+            <span>一个人的孤落时辰</span>
+            <span><time class="post-time" title="2021-03-27 17:47:47" datetime="2021-03-27T17:47:47.000Z"  itemprop="datePublished">2021-03-27</time>
+</span>
+        </div>
+    </div>
+    <div class="yp-btns">
+        <span id="yp-load-yp" onClick="load_yp()">生成海报</span>
+        <span><a id="yp-download"></a></span>
+        <span id="yp-close" onClick="close_yp()">×</span>
+    </div>
+</div>
+<script type="text/javascript">
+    function show_yp(){
+        window.scrollTo(0, 0);
+        document.body.setAttribute("class","active-yp");
+        let cover = document.getElementsByTagName('img')[1];
+        if (cover != null && typeof(cover) != 'undefined') {
+            document.getElementById('yp-img').style.backgroundImage = `url(${cover.src})`;
+        } else {
+            document.getElementById('yp-img').style.backgroundColor = '#d7dbf0';
+        }
+        document.getElementById("yp-hide").style.visibility = "visible";
+    }
+    function close_yp(){
+        var domClass = document.body.getAttribute("class");
+        domClass = domClass.replace("active-yp","");
+        document.body.setAttribute("class",domClass);
+        document.getElementById("yp-hide").style.visibility = "hidden";
+    }
+    function load_yp(){
+        document.getElementById('yp-load-yp').textContent = '海报生成中...';
+        setTimeout(function() {
+            h2c_();
+        },2000);
+
+    }
+</script>
+
+</div>
+
+        <footer class="footer">
+    <div class="top">
+        
+   <p>
+      <span id="lc_counter_container_site_uv">
+         <i class="icon icon-user"></i><span id="lc_counter_value_site_uv"></span>
+      </span>
+      <span id="lc_counter_container_site_pv">
+         <i class="icon icon-eye"></i><span id="lc_counter_value_site_pv"></span>
+      </span>
+  </p>
+
+
+        <p>
+   <a id="jinrishici-sentence" href="https://www.jinrishici.com/" target="_blank" rel="noopener">加载中</a>
+</p>
+<script src="https://sdk.jinrishici.com/v2/browser/jinrishici.js" charset="utf-8"></script>
+<script>
+   jinrishici.load(function(result) {
+      document.querySelector('#subtitle').innerText = result.data.content;
+      document.querySelector('#jinrishici-sentence').innerText = result.data.content;
+  });
+</script>
+            <!--Todo: 考虑重构为插件 -->
+            <p>
+                
+                    <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+                
+                <span>
+                    <a href="https://github.com/qinyuanpei" target="_blank" rel="license noopener" title="Github">
+                        <i class="icon icon-lg icon-github"></i>
+                    </a>
+                </span>
+                <span>
+                    <a href="https://weibo.com/1278609231/profile" target="_blank" rel="license noopener" title="微博">
+                        <i class="icon icon-lg icon-weibo"></i>
+                    </a>
+                </span>
+                <span>
+                    <a href="https://www.douban.com/people/60029335/" target="_blank" rel="license noopener" title="豆瓣">
+                        <i class="icon icon-lg icon-douban"></i>
+                    </a>
+                </span>
+                <span>
+                    <a href="https://www.zhihu.com/people/qinyuanpei" target="_blank" rel="license noopener" title="知乎">
+                        <i class="icon icon-lg icon-zhihu-square"></i>
+                    </a>
+                </span>
+                <span>
+                    <a href="https://blog.csdn.net/qinyuanpei" target="_blank" rel="license noopener" title="CSDN">
+                        <i class="icon icon-lg">C</i>
+                    </a>
+                </span>
+                <span>
+                    <a href="https://music.163.com/#/user/home?id=47002864" target="_blank" rel="license noopener" title="网易音乐">
+                        <i class="icon icon-lg icon-wangyiyunyinyue"></i>
+                    </a>
+                </span>
+            </p>
+        
+    </div>
+    <div class="bottom">
+        <p><span>飞鸿踏雪 &copy; 2014 - 2021</span><br>
+            
+                
+                Powered by <a href="http://hexo.io/" target="_blank">Hexo</a> & Theme by <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a><br>
+                
+                
+                    <p>Hosted by <a href="https://pages.github.com" target="_blank" rel="noopener" style="font-weight: bold">Github Pages</a></p>
+                
+        </p>
+    </div>
+</footer>
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span
+        class="icon icon-lg icon-chevron-up"></span></a>
+
+    
+
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://qinyuanpei.github.io/posts/2151871792/&title=《浅议 EF Core 分库分表及多租户架构的实现》 — 一个人的孤落时辰&pic=https://qinyuanpei.github.ioassets/images/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://qinyuanpei.github.io/posts/2151871792/&title=《浅议 EF Core 分库分表及多租户架构的实现》 — 一个人的孤落时辰&source=一个人的孤落时辰 | 纵有疾风起，人生不言弃 | 隐约雷鸣，阴霾天空，即使天无雨，我亦留此地。" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://qinyuanpei.github.io/posts/2151871792/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《浅议 EF Core 分库分表及多租户架构的实现》 — 一个人的孤落时辰&url=https://qinyuanpei.github.io/posts/2151871792/&via=https://qinyuanpei.github.io" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://qinyuanpei.github.io/posts/2151871792/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+      
+      <li>
+        <a class="google share-sns" target="_blank" onClick="show_yp()" data-title=" 生成海报">
+          <i class="icon icon-file-image-o"></i>
+        </a>
+      </li>
+      
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="//api.qrserver.com/v1/create-qr-code/?data=https://qinyuanpei.github.io/posts/2151871792/" alt="微信分享二维码">
+</div>
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.6/waves.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/4.2.1/echarts.min.js"></script>
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/echarts-wordcloud.min.js" async></script>
+<script>
+    var BLOG = { ROOT: '/', SHARE: true, REWARD: true };
+
+
+</script>
+
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/main.min.js"></script>
+
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/search.min.js" async></script>
+
+
+
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/heart.min.js" async></script>
+
+
+
+
+
+
+
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/leancloud-counter.min.js"></script>
+<script>
+        (function () {
+            var appId = 'JbHqRp2eMrTgIwYpfERH0g79-gzGzoHsz';
+            var appKey = 'VsiKvLuiBGvJL1XrAfv7siY2';
+            new VisitorCounter().init({
+                appId: appId,       //应用ID, 必输
+                appKey: appKey,      //应用Key, 必输
+                region: '华北',      //华东,华北,国际, 默认华东
+                domain: '',      //自定义域名
+                collectIP: true, //是否收集IP及位置信息, 默认开启
+                collectUA: true  //是否收集UserAgent, 默认开启
+            });
+        })();
+</script>
+
+
+
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/vconsole.min.js"></script>
+<script type="text/javascript">
+    //当地址中存在debug=true时，实例化vConsole
+    if (location.href.indexOf('debug=true') > -1) {
+        var vConsole = new VConsole();
+    }
+</script>
+
+
+    <script>
+    //国内用户自动重定向Coding Pages镜像
+    // var ipInfo = JSON.parse(localStorage.getItem('ipInfo'));
+    // if (ipInfo.country_code == 'CN') {
+    //     location.href = location.href.replace('qinyuanpei.github.io', 'blog.yuanpei.me');
+    // }
+    </script>
+
+
+<script>
+titleArray = [];
+function scrollTitle() {
+    if (titleArray.length == 0) return;
+    titleArray.push(titleArray[0]);
+	titleArray.shift();
+	document.title = titleArray.join("");
+}
+setInterval(scrollTitle, 500);
+(function() {
+    var originTitile = document.title, titleTime;
+    document.addEventListener('visibilitychange', function() {
+        if (document.hidden) {
+            titleArray = originTitile.split('');
+            clearTimeout(titleTime);
+        } else {
+            document.title = originTitile;
+            titleArray = originTitile.split('');
+            titleTime = setTimeout(function() {
+                document.title = originTitile;
+                titleArray = [];
+            },2000);
+        }
+    });
+})();
+</script>
+
+
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/ribbon.min.js"></script>
+</body>
+</html>
