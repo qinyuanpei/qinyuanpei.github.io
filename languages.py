@@ -25,8 +25,10 @@ def analyseLanguages(posts):
         if len(matches) > 0:
             for match in matches:
                 language = match[3:]
-                if language == "CSharp" or  language == "csharp":
+                if language.lower() == "csharp":
                    language = 'C#'
+                if language.lower() == "javascript" or language.lower() == "js":
+                   language = 'JavaScript'
                 if language in ['shell','json','csharp','lua','yaml','yml']:
                     print(post)
                 if language in languages.keys():
