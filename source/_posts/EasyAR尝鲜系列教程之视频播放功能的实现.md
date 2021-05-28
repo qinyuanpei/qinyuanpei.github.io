@@ -27,7 +27,7 @@ title: EasyAR尝鲜系列教程之视频播放功能的实现
 # 增强ImageTarget
 &emsp;&emsp;这个增强ImageTarget是指在ImageTarget的基础上融入VideoPlayerBehaviour的功能，因为按照官方的示例来考虑，这两部分功能是独立的，博主希望让大家在制作识别图的时候完全忘记区别ImageTarget和VideoTarget，这样我们可以更为专注地制作识别图，因为视频组件就只是设置参数这一件事情，完全可以一次性搞定，所以我们首先来定义一个VideoTargetBaseBehaviour类，一起来看代码：
 
-```
+```csharp
 using UnityEngine;
 using System.Collections;
 using EasyAR;

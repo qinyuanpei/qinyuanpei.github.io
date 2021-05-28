@@ -31,7 +31,7 @@ title: EasyAR尝鲜系列教程之自定义Marker的实现
 
 # 创建自定义Marker
 &emsp;&emsp;在了解了EasyAR的基本流程后，我们就来说说如何在EasyAR中创建自定义Marker吧！相信使用过Vuforia的人都知道要创建一个自定义的Marker需要到开发者后台去创建然后下载资源包，这种方式虽然高效、直接，可是因为没有人为地干预过程，所以我们对AR引擎内部究竟做了怎样的处理基本上是一无所知的，换句话说我们大部分的工作都是在做黑箱测试。到了EasyAR这里，一切就变得特别简单，这一点要给EasyAR点个赞。首先在EasyAR中配置Marker是通过StreamingAssets目录下的dataset.json这个文件来实现的：
-```
+```json
 {
   "images" :
   [
@@ -56,7 +56,7 @@ title: EasyAR尝鲜系列教程之自定义Marker的实现
 好了，下面我们来具体看看如何创建一个自定义Markder。
 * 首先我们在StreamingAssets目录中添加一张图片ziying.jpg，然后在dataset.json文件中增加该图片的信息。此时ziying.jpg的位置是在StreamingAssets根目录下。如果我们希望把它放在一个自定义的文件夹中，如StreamingAssets/ziying目录下，则需要将ziying的image属性值改为ziying/ziying.jpg，以此类推。
 
-```
+```json
 {
   "images" :
   [

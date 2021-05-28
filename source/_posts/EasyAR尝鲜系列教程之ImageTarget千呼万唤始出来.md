@@ -28,7 +28,7 @@ title: EasyAR尝鲜系列教程之ImageTarget千呼万唤始出来
 ##EasyAR的初始化
 &emsp;&emsp;首先我们在Assets/EasyAR/Prefabs目录下找到EasyAR这个预制体，然后将其拖放到场景中，这样我们就创建了基本的EasyAR应用场景，接下来我们要做的事情就是在这个场景中填入各种各样的识别物。为了让EasyAR正常工作，我们首先要编写一个初始化EasyAR的脚本：
 
-```
+```csharp
 using UnityEngine;
 using System.Collections;
 using EasyAR;
@@ -59,7 +59,7 @@ public class EasyARConfig : MonoBehaviour
 ## 制作一个ImageTarget
 &emsp;&emsp;接下来我们在Assets/EasyAR/Prefabs目录中找到ImageTarget这个预制体，将其拖放到场景中，确保它在摄像机的视野范围内。我们注意到默认情况下它附加了一个ImageTargetBehaviour脚本，我们在前面已经说过，这个类是一个抽象类，抽象类通常是不做任何事情的，因此我们需要继承这个类来编写一个具体类，我们将这个具体类命名为CustomImageTargetBehaviour。下面给出它的代码实现：
 
-```
+```csharp
 using UnityEngine;
 using System.Collections;
 using EasyAR;
