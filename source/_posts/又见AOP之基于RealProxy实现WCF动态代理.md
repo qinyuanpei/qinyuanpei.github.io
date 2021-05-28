@@ -104,12 +104,18 @@ public class CalculatorServiceProxy : RealProxy
             }
             catch (Exception ex)
             {
-                Console.WriteLine("调用{0}服务的{1}方法失败,失败原因：{2}", serviceName, methodName, ex.Message);
+                Console.WriteLine(
+                    "调用{0}服务的{1}方法失败,失败原因：{2}", 
+                    serviceName, methodName, ex.Message
+                );
                 throw ex;
             }
             finally
             {
-                Console.WriteLine("调用{0}服务的{1}方法结束,共耗时{2}秒", serviceName, methodName, DateTime.Now.Subtract(startTime).TotalSeconds);
+                Console.WriteLine(
+                    "调用{0}服务的{1}方法结束,共耗时{2}秒", 
+                    serviceName, methodName, DateTime.Now.Subtract(startTime).TotalSeconds
+                );
                 Console.WriteLine("----------------------------------");
             }
         }
@@ -211,13 +217,19 @@ public class DynamicServiceProxy<TService> : RealProxy
         }
         catch (Exception ex)
         {
-            Console.WriteLine("RealProxy调用{0}服务{1}方法失败,失败原因：{2}", serviceName, methodName, ex.Message);
+            Console.WriteLine(
+                "RealProxy调用{0}服务{1}方法失败,失败原因：{2}", 
+                serviceName, methodName, ex.Message
+            );
             throw ex;
         }
         finally
         {
             serviceInfo.Close();
-            Console.WriteLine("调用{0}服务{1}方法结束,共耗时{2}秒", serviceName, methodName, DateTime.Now.Subtract(startTime).TotalSeconds);
+            Console.WriteLine(
+                "调用{0}服务{1}方法结束,共耗时{2}秒", 
+                serviceName, methodName, DateTime.Now.Subtract(startTime).TotalSeconds
+            );
             Console.WriteLine("----------------------------------");
         }
     }
@@ -268,13 +280,19 @@ public void Intercept(IInvocation invocation)
     }
     catch (Exception ex)
     {
-        Console.WriteLine("CastleProxy调用{0}服务{1}方法失败,失败原因：{2}", serviceName, methodName, ex.Message);
+        Console.WriteLine(
+            "CastleProxy调用{0}服务{1}方法失败,失败原因：{2}", 
+            serviceName, methodName, ex.Message
+        );
         throw ex;
     }
     finally
     {
         serviceInfo.Close();
-        Console.WriteLine("CastleProxy调用{0}服务{1}方法结束,共耗时{2}秒", serviceName, methodName, DateTime.Now.Subtract(startTime).TotalSeconds);
+        Console.WriteLine(
+            "CastleProxy调用{0}服务{1}方法结束,共耗时{2}秒", 
+            serviceName, methodName, DateTime.Now.Subtract(startTime).TotalSeconds
+        );
         Console.WriteLine("----------------------------------");
     }
 }
