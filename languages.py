@@ -1,4 +1,4 @@
-import os
+﻿import os
 import sys
 import re
 import json
@@ -25,7 +25,7 @@ def analyseLanguages(posts):
         if len(matches) > 0:
             for match in matches:
                 language = match[3:]
-                if language == "CSharp":
+                if language == "CSharp" or  language == "csharp":
                    language = 'C#'
                 if language in ['shell','json','csharp','lua','yaml','yml']:
                     print(post)
