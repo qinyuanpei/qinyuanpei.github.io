@@ -1,0 +1,874 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+    
+<script async defer data-domain="blog.yuanpei.me" src="https://plausible.io/js/plausible.js"></script>
+    
+    <meta charset="utf-8">
+    <!-- HTTP 1.1 -->  
+    <meta http-equiv="pragma" content="no-cache">  
+    <!-- HTTP 1.0 -->  
+    <meta http-equiv="cache-control" content="no-cache">
+    <!-- 微博图床防盗链 --> 
+    <!-- <meta name="referrer" content="no-referrer"/> -->
+    <!--Google站点验证-->
+    
+    <!--百度站点验证-->
+    
+    
+    <!--Google AdSense-->
+    
+    <!--Bing站点验证-->
+    <meta name="msvalidate.01" content="713A48A3FE17D4841C292A6B3942EB4C" />
+    
+    <title>
+        源代码探案系列之 .NET Core 并发限制中间件 ConcurrencyLimiter | 一个人的孤落时辰
+    </title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+        <meta name="theme-color" content="#3F51B5">
+    
+
+    <meta name="keywords" content="源码,.NET Core,并发,中间件,秦元培,技术博客,生活随笔,个人博客,NET,Python,数据挖掘,数据分析,NLP">
+    
+        <meta name="description" content="至此，我们就理清了整个中间件的运作机制，[ConcurrencyLimiterMiddleware](https://github.com/dotnet/aspnetcore/blob/main/src/Middleware/ConcurrencyLimiter/src/ConcurrencyLimiterMiddleware.cs) 中注入了`IQueuePolicy`这个接口，当一个新的请求进来，中间件会调用`IQueuePolicy`接口的`TryEnterAsync()`方法，该方法决定了一个请求是会被接受还是拒绝;在实现`StackPolicy`的过程中，首先会判断是否还有访问请求次数`_freeServerSpots`，直接返回true，确保中间件可以继续执行;在其默认实现`QueuePolicy`中，`TryEnterAsync()`方法，决定着一个请求是会被拒绝还是接受;如果当前的并发请求数小于最大的并发请求数，表示还可以允许新的请求进来，此时，`TryEnterAsync()`方法会返回true;这个中间件的核心是 `IQueuePolicy` ，其位于以下[位置](https://github.com/dotnet/aspnetcore/tree/main/src/Middleware/ConcurrencyLimiter/src/QueuePolicies)，它定义了两个核心的方法：`TryEnterAsync()` 和 `OnExit()`：">
+    
+    <meta name="description" content="至此，我们就理清了整个中间件的运作机制，[ConcurrencyLimiterMiddleware](https:&#x2F;&#x2F;github.com&#x2F;dotnet&#x2F;aspnetcore&#x2F;blob&#x2F;main&#x2F;src&#x2F;Middleware&#x2F;ConcurrencyLimiter&#x2F;src&#x2F;ConcurrencyLimiterMiddleware.cs) 中注入了&#96;IQueuePolicy&#96;这个接口，当一个新的请求进">
+<meta property="og:type" content="article">
+<meta property="og:title" content="源代码探案系列之 .NET Core 并发限制中间件 ConcurrencyLimiter">
+<meta property="og:url" content="https://qinyuanpei.github.io/posts/18417412/index.html">
+<meta property="og:site_name" content="一个人的孤落时辰">
+<meta property="og:description" content="至此，我们就理清了整个中间件的运作机制，[ConcurrencyLimiterMiddleware](https:&#x2F;&#x2F;github.com&#x2F;dotnet&#x2F;aspnetcore&#x2F;blob&#x2F;main&#x2F;src&#x2F;Middleware&#x2F;ConcurrencyLimiter&#x2F;src&#x2F;ConcurrencyLimiterMiddleware.cs) 中注入了&#96;IQueuePolicy&#96;这个接口，当一个新的请求进">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-03-04T20:13:47.000Z">
+<meta property="article:modified_time" content="2021-05-28T01:50:50.201Z">
+<meta property="article:author" content="飞鸿踏雪">
+<meta property="article:tag" content="源码">
+<meta property="article:tag" content=".NET Core">
+<meta property="article:tag" content="并发">
+<meta property="article:tag" content="中间件">
+<meta name="twitter:card" content="summary">
+    
+        <link rel="alternate" type="application/atom+xml" title="一个人的孤落时辰" href="/atom.xml">
+    
+    <link rel="shortcut icon" href="/assets/images/favicon.ico">
+    
+        <link rel="manifest" href="/manifest.json">
+    
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master//assets/styles/style.css">
+    <script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/instantclick.min.js"></script>
+    <script>window.lazyScripts=[]</script>
+    <!-- custom head -->
+    
+
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu" class="hide" >
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap" style="background-image:url(/assets/images/brand.jpg)">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/assets/images/avatar.jpg" alt="avatar">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">飞鸿踏雪</h5>
+          <a href="mailto:qinyuanpei@163.com" title="qinyuanpei@163.com" class="mail">qinyuanpei@163.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/"  >
+                <i class="icon icon-lg icon-home"></i>
+                主页
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives"  >
+                <i class="icon icon-lg icon-archives"></i>
+                归档
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags"  >
+                <i class="icon icon-lg icon-tags"></i>
+                标签
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/categories"  >
+                <i class="icon icon-lg icon-th-list"></i>
+                分类
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/books"  >
+                <i class="icon icon-lg icon-bookmark"></i>
+                书单
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/movies"  >
+                <i class="icon icon-lg icon-film"></i>
+                影单
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/works"  >
+                <i class="icon icon-lg icon-code"></i>
+                实验室
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/about"  >
+                <i class="icon icon-lg icon-circle"></i>
+                关于我
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+            <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">源代码探案系列之 .NET Core 并发限制中间件 ConcurrencyLimiter</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off"
+                placeholder="输入感兴趣的关键字">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+        <a href="https://github.com/qinyuanpei/qinyuanpei.github.io" target="_blank" rel="noopener" class="header-icon waves-effect waves-circle waves-light" id="menuGithub">
+            <i class="icon icon-lg icon-code-fork"></i>
+        </a>
+    </div>
+</header>
+<header class="content-header post-header">
+    <div class="container fade-scale">
+        <h1 class="title">源代码探案系列之 .NET Core 并发限制中间件 ConcurrencyLimiter</h1>
+        <h5 class="subtitle" id="subtitle">
+            
+            <time datetime="2021-03-04T20:13:47.000Z" itemprop="datePublished" class="page-time">
+  2021-03-04
+</time>
+
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/">编程语言</a></li></ul>
+
+            
+        </h5>
+    </div>
+    
+
+</header>
+
+<div class="container body-wrap">
+    
+    <aside class="post-widget">
+        <nav class="post-toc-wrap" id="post-toc">
+            <h4>目录</h4>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#揭秘-StackPolicy"><span class="post-toc-number">1.</span> <span class="post-toc-text">揭秘 StackPolicy</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#揭秘-Middleware"><span class="post-toc-number">2.</span> <span class="post-toc-text">揭秘 Middleware</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#本文小结"><span class="post-toc-number">3.</span> <span class="post-toc-text">本文小结</span></a></li></ol>
+        </nav>
+    </aside>
+    
+    <article id="post-源代码探案系列之 .NET Core 并发限制中间件 ConcurrencyLimiter" class="post-article article-type-post fade" itemprop="blogPost">
+
+        <div class="post-card">
+            <h1 class="post-card-title">
+                源代码探案系列之 .NET Core 并发限制中间件 ConcurrencyLimiter
+            </h1>
+            <div class="post-meta">
+                <time class="post-time" title="2021-03-04 20:13:47" datetime="2021-03-04T20:13:47.000Z"  itemprop="datePublished">2021-03-04</time>
+
+                
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/">编程语言</a></li></ul>
+
+
+
+                
+<span id="lc_counter_container_page_pv" title="文章总阅读量" data-page-url="" data-page-title="源代码探案系列之 .NET Core 并发限制中间件 ConcurrencyLimiter">
+    <i class="icon icon-eye icon-pr"></i><span id="lc_counter_value_page_pv"></span>
+</span>
+
+
+
+
+
+                
+    <span>
+        <i class="icon icon-clock-o"></i>
+        15 min.
+    </span>
+    
+            </div>
+            <div class="post-content" id="post-content" itemprop="postContent">
+                <p>打算开一个新的专栏——<strong>源代码探案系列</strong>，目的是通过源代码来探索更广阔的技术世界。因为我越来越意识到，我可能缺乏一个结构化的知识体系，虽然处在一个碎片化的时代，从外界接收了大量的信息，可这些碎片化的信息，到底能不能转化为自身可用的知识，其实是需要去认真思考一番。尤其是当我注意到，许多人工作多年，在经历过从“<strong>生手</strong>”到“<strong>熟练工</strong>”这种蜕变以后，居然还是会害怕原理性内容的考察。我承认，程序员这个职业更像是一个“<strong>手艺人</strong>”，可我更想说一句古人的话——<strong>君子不器</strong>。什么是器呢？“<strong>形而上者谓之道，形而下者谓之器</strong>”，用一句更直白的话来说，就是“<strong>不能知其然而不知其所以然</strong>”，这是我一个非CS科班出身的程序员，想去写这样一个专栏的初衷，因为在我看来，“<strong>器</strong>”是永远学不完的，而“<strong>道</strong>”虽然听起来虚无缥缈，实则“<strong>朝闻道，夕死可矣</strong>”。</p>
+<p>作为这个专栏的第一篇博客，我打算从 <a href="https://github.com/dotnet/aspnetcore" target="_blank" rel="noopener">ASP.NET Core</a> 中的 <a href="https://github.com/dotnet/aspnetcore/tree/main/src/Middleware/ConcurrencyLimiter" target="_blank" rel="noopener">ConcurrencyLimiter</a> 这个中间件开始。并发是一个爱恨交织的话题，我们喜欢高并发，因为这是程序员跻身高手行列的好机会；我们厌恶并发，因为它引入了多线程、锁、信号量这些复杂的东西。相信大家都曾被并发困扰过，古人云：<strong>他山之石，可以攻玉</strong>，还有什么比阅读源代码更朴实无华的“学习”呢？你找大牛，大牛可能忙着开会、做PPT；你找同事，同事里可能十个有八个都不知道啊。这个中间件的核心是 <code>IQueuePolicy</code> ，其位于以下<a href="https://github.com/dotnet/aspnetcore/tree/main/src/Middleware/ConcurrencyLimiter/src/QueuePolicies" target="_blank" rel="noopener">位置</a>，它定义了两个核心的方法：<code>TryEnterAsync()</code> 和 <code>OnExit()</code>：</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">interface</span> <span class="title">IQueuePolicy</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="function">ValueTask&lt;<span class="keyword">bool</span>&gt; <span class="title">TryEnterAsync</span>(<span class="params"></span>)</span>;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">OnExit</span>(<span class="params"></span>)</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在其默认实现<code>QueuePolicy</code>中，<code>TryEnterAsync()</code>方法，决定着一个请求是会被拒绝还是接受。具体是怎么做呢？它定义了一个最大的并发请求数目，如果实际数超过了最大的并发请求数目，那么请求将会被拒绝。反之，请求将被接受。再仔细看，我们就会发现，它内部使用了<code>SeamphoreSlim</code>和<code>Interlocked</code>，所以，聪明的小伙伴们应该立马会联想到，这两种锁各自的作用是什么。</p>
+<p>其中，<code>Seamphore</code> 是一个 Windows 内核中的一个同步信号量，适用于在多个有限的线程资源中共享内存资源，它就像一个栅栏，本身具有一定的容量，当线程数量达到这个容量后，新的线程就无法再通过，直到某个线程执行完成。<code>SeamphoreSlim</code>是<code>Seamphore</code>优化后的版本，在性能上表现更好一点，更推荐大家使用<code>SeamphoreSlim</code>。</p>
+<p>而 <code>Interlocked</code> 的则是我们熟悉的原子操作，它可以在多个线程中，对共享的内存资源进行原子加或者原子减操作。在这里，<code>Interlocked</code>主要用来控制并发请求数的加和减。如果当前的并发请求数小于最大的并发请求数，表示还可以允许新的请求进来，此时，<code>TryEnterAsync()</code>方法会返回true。如果此时的并发请求数大于最大的并发请求数，则需要对当前请求数进行减操作，此时，<code>TryEnterAsync()</code>方法会返回false。</p>
+<p>一旦搞清楚这一点，结合中间件的代码，我们可以非常容易地想明白,这个并发控制的实现思路。下面是<code>QueuePolicy</code>中<code>TryEnterAsync()</code>和<code>OnExit()</code>两个方法的实现，分别代表了“<strong>加锁</strong>”和“<strong>解锁</strong>”两个不同的阶段。某种程度上，<code>Seamphore</code>更像一个水闸，每次可以通过的“<strong>流量</strong>”是固定的，超出的部分会被直接“<strong>拒绝</strong>”：</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//“加锁”</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> ValueTask&lt;<span class="keyword">bool</span>&gt; <span class="title">TryEnterAsync</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">// a return value of 'false' indicates that the request is rejected</span></span><br><span class="line">    <span class="comment">// a return value of 'true' indicates that the request may proceed</span></span><br><span class="line">    <span class="comment">// _serverSemaphore.Release is *not* called in this method, </span></span><br><span class="line">    <span class="comment">// it is called externally when requests leave the server</span></span><br><span class="line">    <span class="keyword">int</span> totalRequests = Interlocked.Increment(<span class="keyword">ref</span> _totalRequests);</span><br><span class="line">     </span><br><span class="line">    <span class="comment">//当前请求次数 &gt; 最大请求次数，返回false表示拒绝</span></span><br><span class="line">    <span class="keyword">if</span> (totalRequests &gt; _maxTotalRequest) &#123;</span><br><span class="line">        Interlocked.Decrement(<span class="keyword">ref</span> _totalRequests);</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> ValueTask&lt;<span class="keyword">bool</span>&gt;(<span class="literal">false</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    Task task = _serverSemaphore.WaitAsync();</span><br><span class="line">    <span class="keyword">if</span> (task.IsCompletedSuccessfully) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> ValueTask&lt;<span class="keyword">bool</span>&gt;(<span class="literal">true</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> SemaphoreAwaited(task);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//“解锁”</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">OnExit</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    _serverSemaphore.Release();</span><br><span class="line">    Interlocked.Decrement(<span class="keyword">ref</span> _totalRequests);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="揭秘-StackPolicy"><a href="#揭秘-StackPolicy" class="headerlink" title="揭秘 StackPolicy"></a>揭秘 StackPolicy</h1><p>除了<code>QueuePolicy</code>这种实现以外，官方还提供了<code>StackPolicy</code>的实现。从名称上，我们就能大致区分出它们的不同，因为我相信大家都能拎得清“队列”和“栈”。在实现<code>StackPolicy</code>的过程中，首先会判断是否还有访问请求次数<code>_freeServerSpots</code>，直接返回true，确保中间件可以继续执行。如果<code>_queueLength</code>和我们设置的队列最大容量相同，此时，表示队列已满，需要先取消之前的请求，并保留后来的请求。</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> ValueTask&lt;<span class="keyword">bool</span>&gt; <span class="title">TryEnterAsync</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">lock</span> (_bufferLock) &#123;</span><br><span class="line">        <span class="keyword">if</span> (_freeServerSpots &gt; <span class="number">0</span>) &#123;</span><br><span class="line">            _freeServerSpots--;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">new</span> ValueTask&lt;<span class="keyword">bool</span>&gt;(<span class="literal">true</span>);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 队列已满，则取消之前的请求，即_head</span></span><br><span class="line">        <span class="keyword">if</span> (_queueLength == _maxQueueCapacity) &#123;</span><br><span class="line">            _hasReachedCapacity = <span class="literal">true</span>;</span><br><span class="line">            _buffer[_head].Complete(<span class="literal">false</span>);</span><br><span class="line">            _queueLength--;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">var</span> tcs = _cachedResettableTCS ?? </span><br><span class="line">            = <span class="keyword">new</span> ResettableBooleanCompletionSource(<span class="keyword">this</span>);</span><br><span class="line">        _cachedResettableTCS = <span class="literal">null</span>;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (_hasReachedCapacity || _queueLength &lt; _buffer.Count) &#123;</span><br><span class="line">            _buffer[_head] = tcs;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            _buffer.Add(tcs);</span><br><span class="line">        &#125;</span><br><span class="line">        _queueLength++;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// increment _head for next time</span></span><br><span class="line">        <span class="comment">// 如果_head = 最大队列容量，则_head需要移动至首位</span></span><br><span class="line">        _head++;</span><br><span class="line">        <span class="keyword">if</span> (_head == _maxQueueCapacity) &#123;</span><br><span class="line">            _head = <span class="number">0</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> tcs.GetValueTask();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">OnExit</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">lock</span> (_bufferLock) &#123;</span><br><span class="line">        <span class="keyword">if</span> (_queueLength == <span class="number">0</span>) &#123;</span><br><span class="line">            _freeServerSpots++;</span><br><span class="line"></span><br><span class="line">            f (_freeServerSpots &gt; _maxConcurrentRequests) &#123;</span><br><span class="line">                _freeServerSpots--;</span><br><span class="line">                <span class="keyword">throw</span> <span class="keyword">new</span> InvalidOperationException(<span class="string">"OnExit must only be called once per successful call to TryEnterAsync"</span>);</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// step backwards and launch a new task</span></span><br><span class="line">    <span class="keyword">if</span> (_head == <span class="number">0</span>) &#123;</span><br><span class="line">        _head = _maxQueueCapacity - <span class="number">1</span>;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        _head--;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    _buffer[_head].Complete(<span class="literal">true</span>);</span><br><span class="line">    _queueLength--;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>所以，现在，你可以感受到这两种策略的差异了，<code>QueuePolicy</code>是一个水闸，“多”出来的流量会被直接拒绝掉。<code>StackPolicy</code>是一个垂直的管道，每次都是先取消底部的请求，再让新的请求从顶部进来。此时，如果我们再回过头来看 <a href="https://github.com/dotnet/aspnetcore/blob/main/src/Middleware/ConcurrencyLimiter/src/ConcurrencyLimiterMiddleware.cs" target="_blank" rel="noopener">ConcurrencyLimiterMiddleware</a> 这个中间件的实现，就会有种恍然大悟的感觉。</p>
+<h1 id="揭秘-Middleware"><a href="#揭秘-Middleware" class="headerlink" title="揭秘 Middleware"></a>揭秘 Middleware</h1><figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">async</span> Task <span class="title">Invoke</span>(<span class="params">HttpContext context</span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">// Make sure we only ever call GetResult once on the TryEnterAsync ValueTask b/c it resets.</span></span><br><span class="line">    <span class="comment">// 以下代码片段，其实都是调用IQueuePolicy.TryEnterAsync()</span></span><br><span class="line">    <span class="keyword">var</span> waitInQueueTask = _queuePolicy.TryEnterAsync();</span><br><span class="line">    <span class="keyword">bool</span> result;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (waitInQueueTask.IsCompleted) &#123;</span><br><span class="line">        ConcurrencyLimiterEventSource.Log.QueueSkipped();</span><br><span class="line">        result = waitInQueueTask.Result;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="keyword">using</span> (ConcurrencyLimiterEventSource.Log.QueueTimer())</span><br><span class="line">        &#123;</span><br><span class="line">            result = <span class="keyword">await</span> waitInQueueTask;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 当result为true，表示请求被接收，此时，让中间件继续执行</span></span><br><span class="line">    <span class="comment">// 切记：调用_queuePolicy.OnExit()来释放锁</span></span><br><span class="line">    <span class="keyword">if</span> (result) &#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="keyword">await</span> _next(context);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">finally</span> &#123;</span><br><span class="line">            _queuePolicy.OnExit();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="comment">//这里就是请求被拒绝的情况，修改状态码以及输出错误信息</span></span><br><span class="line">        ConcurrencyLimiterEventSource.Log.RequestRejected();</span><br><span class="line">        ConcurrencyLimiterLog.RequestRejectedQueueFull(_logger);</span><br><span class="line">        context.Response.StatusCode = StatusCodes.Status503ServiceUnavailable;</span><br><span class="line">        <span class="keyword">await</span> _onRejected(context);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>至此，我们就理清了整个中间件的运作机制，<a href="https://github.com/dotnet/aspnetcore/blob/main/src/Middleware/ConcurrencyLimiter/src/ConcurrencyLimiterMiddleware.cs" target="_blank" rel="noopener">ConcurrencyLimiterMiddleware</a> 中注入了<code>IQueuePolicy</code>这个接口，当一个新的请求进来，中间件会调用<code>IQueuePolicy</code>接口的<code>TryEnterAsync()</code>方法，该方法决定了一个请求是会被接受还是拒绝。当请求被接受的时候，中间件会调用<code>_next(context)</code>让请求继续往下走；当请求被拒绝的时候，中间件会修改 HTTP 状态码(503) 和 返回值，保证调用者可以收到错误信息。这就是这个中间件全部的秘密。而如果要在项目中使用这个中间件，同样是非常简单的：</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="comment">// 中间件基本法，先注册后使用</span></span><br><span class="line"><span class="comment">// ConfigureServices()</span></span><br><span class="line"><span class="comment">// 或者 services.AddQueuePolicy()</span></span><br><span class="line">services.AddStackPolicy(options =&gt;</span><br><span class="line">&#123;</span><br><span class="line">    options.MaxConcurrentRequests = <span class="number">2</span>;</span><br><span class="line">    options.RequestQueueLimit = <span class="number">25</span>;</span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line"><span class="comment">// Configure()</span></span><br><span class="line">app.UseConcurrencyLimiter();</span><br></pre></td></tr></table></figure>
+
+<h1 id="本文小结"><a href="#本文小结" class="headerlink" title="本文小结"></a>本文小结</h1><p>这篇博客，主要揭秘了 <a href="https://github.com/dotnet/aspnetcore" target="_blank" rel="noopener">ASP.NET Core</a> 中的 <a href="https://github.com/dotnet/aspnetcore/tree/main/src/Middleware/ConcurrencyLimiter" target="_blank" rel="noopener">ConcurrencyLimiter</a> 中间件，这个中间件的主要功能是控制 ASP.NET Core 中的请求并发。作为这个中间件的核心，微软为 <code>IQueuePolicy</code> 接口提供了 <code>QueuePolicy</code> 和 <code>StackPolicy</code> 两种不同的策略实现。其中，<code>QueuePolicy</code>是一个水闸，“多”出来的流量会被直接拒绝掉。<code>StackPolicy</code>是一个垂直的管道，每次都是先取消底部的请求，再让新的请求从顶部进来。对于我们而言，这个中间件最值得学习的地方，其实是<code>SeamphoreSlim</code>和<code>Interlocked</code>，我们经常提到“<strong>锁</strong>”，其实，“<strong>锁</strong>”不单单是指 .NET 中<code>Monitor</code>的语法糖，即<code>lock</code>关键字，在同步信号量以及线程同步的相关话题中，我们还会接触到譬如 <strong>Mutex(互斥锁)</strong>、ReaderWriterLockSlim、<strong>Interlocked(原子操作)</strong>、<strong>SpinLock(自旋锁)</strong> 以及 SeamphoreSlim 等等不同的“<strong>锁</strong>”。除此之外，还有譬如AutoResetEvent、ManualResetEvent 和 ManualResetEventSlim 等等的同步信号量。如果有读者朋友对此感兴趣，可以到 MSDN 上去搜索相关的关键字，能让博主本人和大家从中有所收获，这是我坚持写下去的理由。好了，以上就是这篇博客的全部内容啦，欢迎大家在评论区留言、讨论。</p>
+
+                
+
+                
+
+
+<div class="recommended_posts">
+    <h1>推荐阅读</h1>
+    <ul>
+        
+        <li><a href="https://qinyuanpei.github.io/posts/3099575458/">从 .NET Core 2.2 升级到 3.1 的踩坑之旅</a></li>
+        
+        <li><a href="https://qinyuanpei.github.io/posts/116795088/">.NET Core POCOController在动态Web API中的应用</a></li>
+        
+        <li><a href="https://qinyuanpei.github.io/posts/3269605707/">基于WebSocket和Redis实现Bilibili弹幕效果</a></li>
+        
+        <li><a href="https://qinyuanpei.github.io/posts/1658310834/">.NET Core原生DI扩展之属性注入实现</a></li>
+        
+        <li><a href="https://qinyuanpei.github.io/posts/2396015802/">源代码探案系列之 .NET Core 限流中间件 AspNetCoreRateLimit</a></li>
+        
+    </ul>
+</div>
+
+            </div>
+            
+<blockquote class="post-copyright">
+    <div class="content">
+        <p><b>版权声明：</b>
+        <a href="https://qinyuanpei.github.io/posts/18417412/" rel="external">源代码探案系列之 .NET Core 并发限制中间件 ConcurrencyLimiter</a>
+        ，由&nbsp;<a href="/about" target="_blank" rel="external">飞鸿踏雪</a>&nbsp;
+        首次发表于&nbsp;<a href="/" target="_blank" rel="external">一个人的孤落时辰</a>&nbsp;
+        ，本文地址为：<a href="https://qinyuanpei.github.io/posts/18417412/" target="_blank" rel="external">https://qinyuanpei.github.io/posts/18417412/</a>
+        ，转载请注明<b>作者</b>和<b>出处</b>。</p>
+    </div>
+    <footer>
+        <a href="https://qinyuanpei.github.io">
+            <img src="/assets/images/avatar.jpg" alt="飞鸿踏雪">
+            飞鸿踏雪
+        </a>
+    </footer>
+</blockquote>
+
+
+            
+<div class="page-reward">
+    <a id="rewardBtn" href="javascript:;" class="page-reward-btn waves-effect waves-circle waves-light">赏</a>
+</div>
+
+
+            <div class="post-footer">
+                
+	<ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/NET-Core/" rel="tag">.NET Core</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E4%B8%AD%E9%97%B4%E4%BB%B6/" rel="tag">中间件</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%B9%B6%E5%8F%91/" rel="tag">并发</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%BA%90%E7%A0%81/" rel="tag">源码</a></li></ul>
+
+                
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://qinyuanpei.github.io/posts/18417412/&title=《源代码探案系列之 .NET Core 并发限制中间件 ConcurrencyLimiter》 — 一个人的孤落时辰&pic=https://qinyuanpei.github.ioassets/images/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://qinyuanpei.github.io/posts/18417412/&title=《源代码探案系列之 .NET Core 并发限制中间件 ConcurrencyLimiter》 — 一个人的孤落时辰&source=一个人的孤落时辰 | 纵有疾风起，人生不言弃 | 隐约雷鸣，阴霾天空，即使天无雨，我亦留此地。" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://qinyuanpei.github.io/posts/18417412/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《源代码探案系列之 .NET Core 并发限制中间件 ConcurrencyLimiter》 — 一个人的孤落时辰&url=https://qinyuanpei.github.io/posts/18417412/&via=https://qinyuanpei.github.io" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://qinyuanpei.github.io/posts/18417412/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+      
+      <li>
+        <a class="google share-sns" target="_blank" onClick="show_yp()" data-title=" 生成海报">
+          <i class="icon icon-file-image-o"></i>
+        </a>
+      </li>
+      
+    </ul>
+ </div>
+
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
+            </div>
+        </div>
+
+        
+<nav class="post-nav flex-row flex-justify-between">
+  
+    <div class="waves-block waves-effect prev">
+      <a href="/posts/2396015802/" id="post-prev" class="post-nav-link">
+        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
+        <h4 class="title">源代码探案系列之 .NET Core 限流中间件 AspNetCoreRateLimit</h4>
+      </a>
+    </div>
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/posts/3789745079/" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h4 class="title">通过 EmbededFileProvider 实现 Blazor 的静态文件访问</h4>
+      </a>
+    </div>
+  
+</nav>
+
+
+        
+    <div id="comment"></div>
+<script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+<script src='//unpkg.com/valine/dist/Valine.min.js'></script>
+<script type="text/javascript">
+new Valine({
+    el: '#comment' ,
+    notify: false, 
+    verify: true, 
+    appId: 'JbHqRp2eMrTgIwYpfERH0g79-gzGzoHsz',
+    appKey: 'VsiKvLuiBGvJL1XrAfv7siY2',
+    placeholder: '云中谁寄锦书来，雁字回时，月满西楼。&#10;Tips：如果希望收到我的评论回复，请至少留下你的邮箱哦:)',
+    path:'https://qinyuanpei.github.io/posts/18417412/', 
+    avatar:'identicon',
+    requiredFields: ['nick','mail']
+});
+</script>
+
+
+
+
+    </article>
+    
+<div id="reward" class="page-modal reward-lay">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <h3 class="reward-title">
+        <i class="icon icon-quote-left"></i>
+        赠人玫瑰，手有余香
+        <i class="icon icon-quote-right"></i>
+    </h3>
+    <div class="reward-content">
+        
+        <div class="reward-code">
+            <img id="rewardCode" src="/assets/images/wechat.png" alt="打赏二维码">
+        </div>
+        
+        <label class="reward-toggle">
+            <input id="rewardToggle" type="checkbox" class="reward-toggle-check"
+                data-wechat="/assets/images/wechat.png" data-alipay="/assets/images/alipay.jpg">
+            <div class="reward-toggle-ctrol">
+                <span class="reward-toggle-item wechat">微信</span>
+                <span class="reward-toggle-label"></span>
+                <span class="reward-toggle-item alipay">支付宝</span>
+            </div>
+        </label>
+        
+    </div>
+</div>
+
+
+    <script type="text/javascript" src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/yoniu.min.js"></script>
+<style type='text/css'>
+	body.active-yp {
+		overflow: hidden;
+	}
+	.yp-fc-btn{
+		display: flex;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		align-items: center;
+		justify-content: space-between;
+		font-size: 13px;
+	}
+	.yp-fc-btn span{
+		cursor: pointer;
+		padding: 2px 10px;
+		color: #4b4b4b;
+		border: #4b4b4b 1px solid;
+		border-radius:5px;
+	}
+	#yp-hide{
+		position: fixed;
+		display: flex;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		justify-content: center;
+		flex-direction: column;
+		left:0;
+		top:0;
+		right:0;
+		bottom:0;
+		background-color:rgba(0,0,0,.5);
+		z-index: 99999;
+		visibility: hidden;
+	}
+	#yoniu-poster{
+		box-sizing: border-box;
+		width: 350px;
+		height: 467.2px;
+		background-color: #fff;
+		margin: 0 auto;
+		padding: 0;
+		line-height: 1.6;
+		text-align:justify;
+	}
+	
+	.yp-img {
+		min-height: 240px;
+		position: relative;
+		display: flex;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		justify-content: flex-end;
+		flex-direction: column;
+		background-position: 50% 50%;
+		background-size: cover;
+		overflow:hidden;
+	}
+	.yp-img>div{
+		padding: 10px 20px;
+	}
+	.yp-name{
+		display: block;
+		color: #fff;
+		font-size: 20px;
+		font-weight: 600;
+		text-shadow: #4b4b4b 0.1em 0.1em 0.2em;
+		margin-top: 10px;
+	}
+	.yp-sort{
+		padding: 3px 10px;
+		font-size: 12px;
+		color: #fff;
+		background: #2e2e2e;
+	}
+	.yp-des{
+		color: #2e2e2e;
+		font-size: 14px;
+		margin: 20px;
+		height: 67.2px;
+	}
+	.yp-qcode{
+		display: flex;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		justify-content: space-between;
+		align-items: center;
+		margin: 10px;
+		padding: 10px 20px;
+		background: #f5f5f5;
+		color: #818181;
+		border-radius: 10px;
+	}
+	.yp-tips{
+		display: flex;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		justify-content: space-between;
+		align-items: center;
+		color: #ccc;
+		margin: 0 10px 10px;
+		font-size: 10px;
+		letter-spacing: 1.5px;
+	}
+	.yp-btns{
+		display: flex;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		align-items: stretch;
+		justify-content: center;
+		width:350px;
+		margin: 0 auto;
+	}
+	.yp-btns>span{
+		display: flex;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		align-items: center;
+		justify-content: center;
+		font-size: 14px;
+		padding: 10px 15px;
+		background:rgba(0,0,0,.2);
+		color: #f5f5f5;
+		cursor: pointer;
+	}
+	.yp-btns>span>a{
+		color: #f5f5f5;
+	}
+	.yp-btns>span>a:hover{
+		text-decoration:none;
+	}
+	#yp-close{
+		font-size: 18px;
+		font-weight: 600;
+	}
+</style>
+<div id="yp-hide">
+    <div id="yoniu-poster">
+        <div class="yp-img" id="yp-img">
+            <div>
+                <span class="yp-sort">编程语言</span>
+                <span class="yp-name">源代码探案系列之 .NET Core 并发限制中间件 ConcurrencyLimiter</span>
+            </div>
+        </div>
+        <div class="yp-des">    
+            
+                打算开一个新的专栏——源代码探案系列，目的是通过源代码来探索更广阔的技术世界。因为我越来越意识到，我可能缺乏一个结构化的知识体系，虽然处在一个碎...
+            
+        </div>
+        <div class="yp-qcode">
+            <span>扫描二维码阅读原文</span>
+            <img id="yp-qcode" width="64px" src="//api.qrserver.com/v1/create-qr-code/?data=https://qinyuanpei.github.io/posts/18417412/">
+        </div>
+        <div class="yp-tips">
+            <span>一个人的孤落时辰</span>
+            <span><time class="post-time" title="2021-03-04 20:13:47" datetime="2021-03-04T20:13:47.000Z"  itemprop="datePublished">2021-03-04</time>
+</span>
+        </div>
+    </div>
+    <div class="yp-btns">
+        <span id="yp-load-yp" onClick="load_yp()">生成海报</span>
+        <span><a id="yp-download"></a></span>
+        <span id="yp-close" onClick="close_yp()">×</span>
+    </div>
+</div>
+<script type="text/javascript">
+    function show_yp(){
+        window.scrollTo(0, 0);
+        document.body.setAttribute("class","active-yp");
+        let cover = document.getElementsByTagName('img')[1];
+        if (cover != null && typeof(cover) != 'undefined') {
+            document.getElementById('yp-img').style.backgroundImage = `url(${cover.src})`;
+        } else {
+            document.getElementById('yp-img').style.backgroundColor = '#d7dbf0';
+        }
+        document.getElementById("yp-hide").style.visibility = "visible";
+    }
+    function close_yp(){
+        var domClass = document.body.getAttribute("class");
+        domClass = domClass.replace("active-yp","");
+        document.body.setAttribute("class",domClass);
+        document.getElementById("yp-hide").style.visibility = "hidden";
+    }
+    function load_yp(){
+        document.getElementById('yp-load-yp').textContent = '海报生成中...';
+        setTimeout(function() {
+            h2c_();
+        },2000);
+
+    }
+</script>
+
+</div>
+
+        <footer class="footer">
+    <div class="top">
+        
+   <p>
+      <span id="lc_counter_container_site_uv">
+         <i class="icon icon-user"></i><span id="lc_counter_value_site_uv"></span>
+      </span>
+      <span id="lc_counter_container_site_pv">
+         <i class="icon icon-eye"></i><span id="lc_counter_value_site_pv"></span>
+      </span>
+  </p>
+
+
+        <p>
+   <a id="jinrishici-sentence" href="https://www.jinrishici.com/" target="_blank" rel="noopener">加载中</a>
+</p>
+<script src="https://sdk.jinrishici.com/v2/browser/jinrishici.js" charset="utf-8"></script>
+<script>
+   jinrishici.load(function(result) {
+      document.querySelector('#subtitle').innerText = result.data.content;
+      document.querySelector('#jinrishici-sentence').innerText = result.data.content;
+  });
+</script>
+            <!--Todo: 考虑重构为插件 -->
+            <p>
+                
+                    <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+                
+                <span>
+                    <a href="https://github.com/qinyuanpei" target="_blank" rel="license noopener" title="Github">
+                        <i class="icon icon-lg icon-github"></i>
+                    </a>
+                </span>
+                <span>
+                    <a href="https://weibo.com/1278609231/profile" target="_blank" rel="license noopener" title="微博">
+                        <i class="icon icon-lg icon-weibo"></i>
+                    </a>
+                </span>
+                <span>
+                    <a href="https://www.douban.com/people/60029335/" target="_blank" rel="license noopener" title="豆瓣">
+                        <i class="icon icon-lg icon-douban"></i>
+                    </a>
+                </span>
+                <span>
+                    <a href="https://www.zhihu.com/people/qinyuanpei" target="_blank" rel="license noopener" title="知乎">
+                        <i class="icon icon-lg icon-zhihu-square"></i>
+                    </a>
+                </span>
+                <span>
+                    <a href="https://blog.csdn.net/qinyuanpei" target="_blank" rel="license noopener" title="CSDN">
+                        <i class="icon icon-lg">C</i>
+                    </a>
+                </span>
+                <span>
+                    <a href="https://music.163.com/#/user/home?id=47002864" target="_blank" rel="license noopener" title="网易音乐">
+                        <i class="icon icon-lg icon-wangyiyunyinyue"></i>
+                    </a>
+                </span>
+            </p>
+        
+    </div>
+    <div class="bottom">
+        <p><span>飞鸿踏雪 &copy; 2014 - 2021</span><br>
+            
+                
+                Powered by <a href="http://hexo.io/" target="_blank">Hexo</a> & Theme by <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a><br>
+                
+                
+                    <p>Hosted by <a href="https://pages.github.com" target="_blank" rel="noopener" style="font-weight: bold">Github Pages</a></p>
+                
+        </p>
+    </div>
+</footer>
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span
+        class="icon icon-lg icon-chevron-up"></span></a>
+
+    
+
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://qinyuanpei.github.io/posts/18417412/&title=《源代码探案系列之 .NET Core 并发限制中间件 ConcurrencyLimiter》 — 一个人的孤落时辰&pic=https://qinyuanpei.github.ioassets/images/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://qinyuanpei.github.io/posts/18417412/&title=《源代码探案系列之 .NET Core 并发限制中间件 ConcurrencyLimiter》 — 一个人的孤落时辰&source=一个人的孤落时辰 | 纵有疾风起，人生不言弃 | 隐约雷鸣，阴霾天空，即使天无雨，我亦留此地。" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://qinyuanpei.github.io/posts/18417412/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《源代码探案系列之 .NET Core 并发限制中间件 ConcurrencyLimiter》 — 一个人的孤落时辰&url=https://qinyuanpei.github.io/posts/18417412/&via=https://qinyuanpei.github.io" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://qinyuanpei.github.io/posts/18417412/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+      
+      <li>
+        <a class="google share-sns" target="_blank" onClick="show_yp()" data-title=" 生成海报">
+          <i class="icon icon-file-image-o"></i>
+        </a>
+      </li>
+      
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="//api.qrserver.com/v1/create-qr-code/?data=https://qinyuanpei.github.io/posts/18417412/" alt="微信分享二维码">
+</div>
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.6/waves.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/4.2.1/echarts.min.js"></script>
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/echarts-wordcloud.min.js" async></script>
+<script>
+    var BLOG = { ROOT: '/', SHARE: true, REWARD: true };
+
+
+</script>
+
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/main.min.js"></script>
+
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/search.min.js" async></script>
+
+
+
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/heart.min.js" async></script>
+
+
+
+
+
+
+
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/leancloud-counter.min.js"></script>
+<script>
+        (function () {
+            var appId = 'JbHqRp2eMrTgIwYpfERH0g79-gzGzoHsz';
+            var appKey = 'VsiKvLuiBGvJL1XrAfv7siY2';
+            new VisitorCounter().init({
+                appId: appId,       //应用ID, 必输
+                appKey: appKey,      //应用Key, 必输
+                region: '华北',      //华东,华北,国际, 默认华东
+                domain: '',      //自定义域名
+                collectIP: true, //是否收集IP及位置信息, 默认开启
+                collectUA: true  //是否收集UserAgent, 默认开启
+            });
+        })();
+</script>
+
+
+
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/vconsole.min.js"></script>
+<script type="text/javascript">
+    //当地址中存在debug=true时，实例化vConsole
+    if (location.href.indexOf('debug=true') > -1) {
+        var vConsole = new VConsole();
+    }
+</script>
+
+
+    <script>
+    //国内用户自动重定向Coding Pages镜像
+    // var ipInfo = JSON.parse(localStorage.getItem('ipInfo'));
+    // if (ipInfo.country_code == 'CN') {
+    //     location.href = location.href.replace('qinyuanpei.github.io', 'blog.yuanpei.me');
+    // }
+    </script>
+
+
+<script>
+titleArray = [];
+function scrollTitle() {
+    if (titleArray.length == 0) return;
+    titleArray.push(titleArray[0]);
+	titleArray.shift();
+	document.title = titleArray.join("");
+}
+setInterval(scrollTitle, 500);
+(function() {
+    var originTitile = document.title, titleTime;
+    document.addEventListener('visibilitychange', function() {
+        if (document.hidden) {
+            titleArray = originTitile.split('');
+            clearTimeout(titleTime);
+        } else {
+            document.title = originTitile;
+            titleArray = originTitile.split('');
+            titleTime = setTimeout(function() {
+                document.title = originTitile;
+                titleArray = [];
+            },2000);
+        }
+    });
+})();
+</script>
+
+
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/ribbon.min.js"></script>
+</body>
+</html>
