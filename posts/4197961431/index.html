@@ -1,0 +1,909 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+    
+<script async defer data-domain="blog.yuanpei.me" src="https://plausible.io/js/plausible.js"></script>
+    
+    <meta charset="utf-8">
+    <!-- HTTP 1.1 -->  
+    <meta http-equiv="pragma" content="no-cache">  
+    <!-- HTTP 1.0 -->  
+    <meta http-equiv="cache-control" content="no-cache">
+    <!-- 微博图床防盗链 --> 
+    <!-- <meta name="referrer" content="no-referrer"/> -->
+    <!--Google站点验证-->
+    
+    <!--百度站点验证-->
+    
+    
+    <!--Google AdSense-->
+    
+    <!--Bing站点验证-->
+    <meta name="msvalidate.01" content="713A48A3FE17D4841C292A6B3942EB4C" />
+    
+    <title>
+        Redis缓存技术学习系列之Lua脚本 | 一个人的孤落时辰 | 纵有疾风起，人生不言弃
+    </title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+        <meta name="theme-color" content="#3F51B5">
+    
+
+    <meta name="keywords" content="数据库,笔记,Redis,缓存,秦元培,技术博客,生活随笔,个人博客,NET,Python,数据挖掘,数据分析,NLP">
+    
+        <meta name="description" content="好了，现在大家应该理解EVAL这个命令的使用方法啦，那么对EVALSHA命令来说，顾名思义，它就是使用了SHA1验证的EVAL方法，我们注意到现在脚本都是定义在EVAL命令的第一个参数上，假如我们需要复用一个脚本，而该脚本可以为我们提供Sum这样的功能，即它可以返回一组参数的和给我们，显然参数的个数是不同的，那么这个时候我们总不能每次都重复写这个脚本吧，所以Redis会为脚本创建一个指纹，我们使用EVALSHA命令来传入一个指纹，Redis将从缓存的脚本中找到这个脚本，并结合我们的参数来调用它，这样我们就可以获得脚本执行以后的结果，关于指纹的这种说法，大家可以结合Git提交代码时的感受进行理解，除此以外，它和EVAL在使用方法上是完全一致的，所以不再举例子说明啦;尤其当我面试的时候，我发现好多我写在简历上的内容，都会成为某种意义上的呈堂证供，这让我更加确信好多东西需要不断地去巩固，所以尝试在实际项目上使用Moq、考虑怎么写出更好的测试方法以及时刻保持自我的不可替代性，这些都是我最近在考虑的事情，有时候发脾气是因为觉得自己在浪费生命，可越是被这种无力感笼罩的时候，就越是要对自己狠一点儿，所以在这篇博客中，让我们重新拾起对Redis的学习兴趣，今天我们来说说Redis中的Lua脚本;好了，我们下面来解释下这段脚本，我们向Redis中键名为**data**的集合中添加了5个元素，注意这句脚本是在执行**src/redis-cli**后执行的，这部分内容我们在前面讲解Redis中的数据结构的时候提到过，博主表示在写这篇文章的时候依然要去看文档，总之现在我们有一个集合，并且这个集合中有5个元素，与此同时呢，我们编写了一个Lua脚本文件**script01.lua**，这个脚本的作用是对集合中的元素进行求和;所以我们可以想到一种Lua脚本自动管理的思路，即通过命令行读取指定目录下的Lua脚本文件，通过SCRIPT LOAD方法获得其在Redis中的SHA1指纹，然后我们将脚本名称或者ID和这个指纹关联起来并将其存储在Redis中，此时我们只需要传入脚本名称和参数即可返回脚本执行后的结果，这样是不是感觉非常优雅呢;在Lua脚本中调用call()或者pcall()方法来执行Redis命令时，Redis命令执行的结构会被转换为Lua中的数据结构">
+    
+    <meta name="description" content="好了，现在大家应该理解EVAL这个命令的使用方法啦，那么对EVALSHA命令来说，顾名思义，它就是使用了SHA1验证的EVAL方法，我们注意到现在脚本都是定义在EVAL命令的第一个参数上，假如我们需要复用一个脚本，而该脚本可以为我们提供Sum这样的功能，即它可以返回一组参数的和给我们，显然参数的个数是不同的，那么这个时候我们总不能每次都重复写这个脚本吧，所以Redis会为脚本创建一个指纹，我们使用">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Redis缓存技术学习系列之Lua脚本">
+<meta property="og:url" content="https://qinyuanpei.github.io/posts/4197961431/index.html">
+<meta property="og:site_name" content="一个人的孤落时辰">
+<meta property="og:description" content="好了，现在大家应该理解EVAL这个命令的使用方法啦，那么对EVALSHA命令来说，顾名思义，它就是使用了SHA1验证的EVAL方法，我们注意到现在脚本都是定义在EVAL命令的第一个参数上，假如我们需要复用一个脚本，而该脚本可以为我们提供Sum这样的功能，即它可以返回一组参数的和给我们，显然参数的个数是不同的，那么这个时候我们总不能每次都重复写这个脚本吧，所以Redis会为脚本创建一个指纹，我们使用">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2017-09-17T10:49:07.000Z">
+<meta property="article:modified_time" content="2021-05-28T03:58:24.406Z">
+<meta property="article:author" content="飞鸿踏雪">
+<meta property="article:tag" content="数据库">
+<meta property="article:tag" content="笔记">
+<meta property="article:tag" content="Redis">
+<meta property="article:tag" content="缓存">
+<meta name="twitter:card" content="summary">
+    
+        <link rel="alternate" type="application/atom+xml" title="一个人的孤落时辰" href="/atom.xml">
+    
+    <link rel="shortcut icon" href="/assets/images/favicon.ico">
+    
+        <link rel="manifest" href="/manifest.json">
+    
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master//assets/styles/style.css">
+    <script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/instantclick.min.js"></script>
+    <script>window.lazyScripts=[]</script>
+    <!-- custom head -->
+    
+
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu" class="hide" >
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap" style="background-image:url(/assets/images/brand.jpg)">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/assets/images/avatar.jpg" alt="avatar">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">飞鸿踏雪</h5>
+          <a href="mailto:qinyuanpei@163.com" title="qinyuanpei@163.com" class="mail">qinyuanpei@163.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/"  >
+                <i class="icon icon-lg icon-home"></i>
+                主页
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives"  >
+                <i class="icon icon-lg icon-archives"></i>
+                归档
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags"  >
+                <i class="icon icon-lg icon-tags"></i>
+                标签
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/categories"  >
+                <i class="icon icon-lg icon-th-list"></i>
+                分类
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/books"  >
+                <i class="icon icon-lg icon-bookmark"></i>
+                书单
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/movies"  >
+                <i class="icon icon-lg icon-film"></i>
+                影单
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/works"  >
+                <i class="icon icon-lg icon-code"></i>
+                实验室
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/about"  >
+                <i class="icon icon-lg icon-circle"></i>
+                关于我
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+            <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">Redis缓存技术学习系列之Lua脚本</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off"
+                placeholder="输入感兴趣的关键字">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+        <a href="https://github.com/qinyuanpei/qinyuanpei.github.io" target="_blank" rel="noopener" class="header-icon waves-effect waves-circle waves-light" id="menuGithub">
+            <i class="icon icon-lg icon-code-fork"></i>
+        </a>
+    </div>
+</header>
+<header class="content-header post-header">
+    <div class="container fade-scale">
+        <h1 class="title">Redis缓存技术学习系列之Lua脚本</h1>
+        <h5 class="subtitle" id="subtitle">
+            
+            <time datetime="2017-09-17T10:49:07.000Z" itemprop="datePublished" class="page-time">
+  2017-09-17
+</time>
+
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/%E6%95%B0%E6%8D%AE%E5%AD%98%E5%82%A8/">数据存储</a></li></ul>
+
+            
+        </h5>
+    </div>
+    
+
+</header>
+
+<div class="container body-wrap">
+    
+    <aside class="post-widget">
+        <nav class="post-toc-wrap" id="post-toc">
+            <h4>目录</h4>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#Eval系列"><span class="post-toc-number">1.</span> <span class="post-toc-text">Eval系列</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#Script系列"><span class="post-toc-number">2.</span> <span class="post-toc-text">Script系列</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#Lua脚本应用"><span class="post-toc-number">3.</span> <span class="post-toc-text">Lua脚本应用</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#参考文章"><span class="post-toc-number">4.</span> <span class="post-toc-text">参考文章</span></a></li></ol>
+        </nav>
+    </aside>
+    
+    <article id="post-Redis缓存技术学习系列之Lua脚本" class="post-article article-type-post fade" itemprop="blogPost">
+
+        <div class="post-card">
+            <h1 class="post-card-title">
+                Redis缓存技术学习系列之Lua脚本
+            </h1>
+            <div class="post-meta">
+                <time class="post-time" title="2017-09-17 10:49:07" datetime="2017-09-17T10:49:07.000Z"  itemprop="datePublished">2017-09-17</time>
+
+                
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/%E6%95%B0%E6%8D%AE%E5%AD%98%E5%82%A8/">数据存储</a></li></ul>
+
+
+
+                
+<span id="lc_counter_container_page_pv" title="文章总阅读量" data-page-url="" data-page-title="Redis缓存技术学习系列之Lua脚本">
+    <i class="icon icon-eye icon-pr"></i><span id="lc_counter_value_page_pv"></span>
+</span>
+
+
+
+
+
+                
+    <span>
+        <i class="icon icon-clock-o"></i>
+        28 min.
+    </span>
+    
+            </div>
+            <div class="post-content" id="post-content" itemprop="postContent">
+                <p>各位朋友，大家好，我是Payne，欢迎大家关注我的博客，我的博客地址是<a href="https://qinyuanpei.github.io">https://qinyuanpei.github.io</a>。想起来大概有一个月没有更新博客啦。或许是因为这中间发生了太多的事情，想来人生原本就充满曲折和变数。在微信群里得知家中舅爷去世的消息，突然意识到时间早已摧毁你我的一切。那个曾经同你有千丝万缕联系的人，会在某一刻同你彻底失去联系。所以我更珍视彼此在一起的时光，因为在这个世界上每天都面临着改变。有时候工作上遇到不开心的时候，会想着一个人去一个陌生的地方，我们就在不断地相聚和离别中慢慢老去。这段时间一直在学习做饭，为此特意买了本菜谱，结果发现，最难的并不是如何去做好一道菜，而是你为了做好一道菜需要准备各种食材，就像人与人交流并没有什么困难，真正困难的地方，是你找不到一个可以一直陪你说话的人。熟悉的店面会被拆迁转让，熟悉的人事会被错过改变，上帝想把世界煮成一锅粥，可味道的调配却由我们来掌控。</p>
+<p>  好了，所谓“如人饮水，冷暖自知”，人生奇就奇在你没有办法用三言两语去描述它。这段时间面试过两三家公司，整体上感觉自己的生活太安逸了些，虽然我现在依然住在租来的房子里，转眼间2017年接近尾声啦，可是回想起来今年年初制定的计划，在广泛阅读和提升技术上都是不及格的状态，印象中打算研究Redis和MonogoDB这两种数据库的(因为没有购买为知笔记会员导致部分笔记损坏或者丢失)，然而到现在为止我还有研究完Redis。尤其当我面试的时候，我发现好多我写在简历上的内容，都会成为某种意义上的呈堂证供，这让我更加确信好多东西需要不断地去巩固，所以尝试在实际项目上使用Moq、考虑怎么写出更好的测试方法以及时刻保持自我的不可替代性，这些都是我最近在考虑的事情，有时候发脾气是因为觉得自己在浪费生命，可越是被这种无力感笼罩的时候，就越是要对自己狠一点儿，所以在这篇博客中，让我们重新拾起对Redis的学习兴趣，今天我们来说说Redis中的Lua脚本。</p>
+<p>  熟悉我博客的朋友一定都知道，我曾经开发过Unity3D相关的项目，而Lua脚本正是Unity3D中主流的热更新方案。关于Lua脚本相关的文章，大家可以通过下面的链接来了解，在这里我们不再讲述Lua的基础内容，本篇文章所讲述的是如何通过Redis内置的Lua解释器来执行脚本，我们为什么使用脚本语言进行开发呢，因为这样可以降低开发的难度啊。</p>
+<ul>
+<li><a href="https://qinyuanpei.github.io/2015/02/03/programing-with-the-lua-base.html">脚本语言编程：Lua脚本编程入门</a></li>
+<li><a href="https://qinyuanpei.github.io:4000/2015/04/16/building-lua5-3-with-visual-studio-2012-in-windows.html">在Windows下使用Visual Studio编译Lua5.3</a></li>
+<li><a href="http://blog.csdn.net/qinyuanpei/article/details/39826323" target="_blank" rel="noopener">Unity3D游戏开发之Lua与游戏的不解之缘(上)</a></li>
+<li><a href="http://blog.csdn.net/qinyuanpei/article/details/39910099" target="_blank" rel="noopener">Unity3D游戏开发之Lua与游戏的不解之缘(中)</a></li>
+<li><a href="http://blog.csdn.net/qinyuanpei/article/details/40050225" target="_blank" rel="noopener">Unity3D游戏开发之Lua与游戏的不解之缘(下)</a></li>
+<li><a href="http://blog.csdn.net/qinyuanpei/article/details/40213439" target="_blank" rel="noopener">Unity3D游戏开发之Lua与游戏的不解之缘终结篇：UniLua热更新完全解读</a></li>
+</ul>
+<p>  好了，既然我们已然了解到Redis是通过内置的Lua解释器来执行脚本，所以Redis中的Lua脚本其实可以理解为Lua语法 + Redis API。为了写作这篇文章，我不得不将我的操作系统切换到Linux，因为这样我可以随时在写作过程中使用终端，我写作的一个重要特点，就是所有的内容都尽量保证有测试覆盖，我知道有许多人都不喜欢写测试，测试虽然不能保证你没有BUG，可是有了BUG以后可以直接在测试中定位问题，这就是我们为什么要重视测试的原因所在。在Redis中我们有两类命令用以处理和脚本相关的事情：</p>
+<h1 id="Eval系列"><a href="#Eval系列" class="headerlink" title="Eval系列"></a>Eval系列</h1><p>  熟悉JavsScript的朋友应该会更熟悉这个方法，因为Eval在JavaScript是个神奇的存在，它可以执行任何合法的JavaScript代码，我和我的同事就曾经在一个项目中写过两层嵌套的Eval方法，显然这是为了实现某种奇怪的需求。那么在Redis中有EVAL和EVALSHA两个命令可以使用，这两个命令是从Redis2.6.0版本开始的，通过内置的Lua解释器来实现对脚本求值。EVAL命令的基本格式如下：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">EVAL script numkeys key [key ...] arg [arg ...]</span><br></pre></td></tr></table></figure>
+
+<p>  我们可以注意到在这里EVAL命令由三部分组成，即第一个部分，表示一段Lua脚本程序，并且这段脚本不需要更不应该定义函数；第二部分，表示参数列表，指在脚本中需要用到的键，因为Redis是一个键值数据库，这些键名可以通过全局变量KEYS来访问，默认索引将从1开始，事实上我们更推荐你使用这种方式来访问键名；第三部分，表示除建键名参数以外的附加参数，和第二部分类似，这里我们可以通过全局变量ARGV来访问，这里就不再赘述啦。我们一起来看下面的例子：</p>
+<figure class="highlight vim"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">EVAL <span class="string">"return &#123;KEYS[1],KEYS[2]&#125;"</span> <span class="number">2</span> <span class="keyword">ab</span> <span class="keyword">cd</span></span><br></pre></td></tr></table></figure>
+
+<p>  此时我们会返回一个由KEYS[1]和KEYS[2]组成的集合，集合中的两个元素分别是ab、cd，注意到这里有一个参数2,它表示我们这里将有两个参数，事实上Redis将从这个位置开始解析参数，所以我们必须告诉Redis参数解析到什么位置结束，因为主要参数(KEYS)和附加参数(ARGV)是从解析的角度上是无法区分的，所以我们期望的结果会是：</p>
+<figure class="highlight lsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">1</span>) <span class="string">"ab"</span></span><br><span class="line"><span class="number">2</span>) <span class="string">"cd"</span></span><br></pre></td></tr></table></figure>
+
+<p>  现在我们来增加点难度，显然你明白我在说什么，请注意我要引入附加参数(ARGV)啦！</p>
+<figure class="highlight vim"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">EVAL  <span class="string">"return &#123;KEYS[1]..ARGV[2] ,KEYS[2]..ARGV[1] &#125;"</span> <span class="number">2</span> <span class="keyword">ab</span> <span class="keyword">cd</span> <span class="keyword">ab</span> <span class="keyword">cd</span></span><br></pre></td></tr></table></figure>
+
+<p>  这里我们尝试对KEYS和ARGV进行拼接，需要说明的是Lua中连接字符串使用的是. .，所以这里将得到结果：</p>
+<figure class="highlight lsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">1</span>) <span class="string">"abcd"</span></span><br><span class="line"><span class="number">2</span>) <span class="string">"cdab"</span></span><br></pre></td></tr></table></figure>
+
+<p>  好了，现在大家应该理解EVAL这个命令的使用方法啦，那么对EVALSHA命令来说，顾名思义，它就是使用了SHA1验证的EVAL方法，我们注意到现在脚本都是定义在EVAL命令的第一个参数上，假如我们需要复用一个脚本，而该脚本可以为我们提供Sum这样的功能，即它可以返回一组参数的和给我们，显然参数的个数是不同的，那么这个时候我们总不能每次都重复写这个脚本吧，所以Redis会为脚本创建一个指纹，我们使用EVALSHA命令来传入一个指纹，Redis将从缓存的脚本中找到这个脚本，并结合我们的参数来调用它，这样我们就可以获得脚本执行以后的结果，关于指纹的这种说法，大家可以结合Git提交代码时的感受进行理解，除此以外，它和EVAL在使用方法上是完全一致的，所以不再举例子说明啦。</p>
+<h1 id="Script系列"><a href="#Script系列" class="headerlink" title="Script系列"></a>Script系列</h1><p>  好了，下面我们来介绍第二类和Lua脚本相关的API，相比Eval给人云里雾里的感觉，Script系列的命令处处洋溢着规范命名的美好气息，我们通过这些命令的名字基本上就可以知道它是做什么事情的，这告诉我们平时写代码的时候如何去写出优雅的代码。我们通过下面一组命令来了解Script系列命令的具体用法：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">/* 载入一个脚本到缓存中 */</span><br><span class="line">SCRIPT LOAD "return 'Hello Redis'" </span><br><span class="line">/* Redis返回该脚本的指纹信息 */</span><br><span class="line">"e509eb0869056563287758d23146eb00e0518da5"</span><br><span class="line">/* 查询脚本是否存在于缓存中 */</span><br><span class="line">SCRIPT EXISTS "e509eb0869056563287758d23146eb00e0518da5"</span><br><span class="line">/* Redis返回1表示脚本存在，反之不存在 */</span><br><span class="line">1) (integer) 1</span><br><span class="line">/* 从缓存中清空所有脚本 */</span><br><span class="line">SCRIPT FLUSH</span><br><span class="line">OK</span><br><span class="line">/* 此时脚本在缓存中是不存在的 */</span><br><span class="line">SCRIPT EXISTS "e509eb0869056563287758d23146eb00e0518da5"</span><br><span class="line">1) (integer) 0</span><br></pre></td></tr></table></figure>
+
+<p>  至此，我们了解到了Redis中对Lua脚本支持的主要特性，坦白地讲，我认为Lua脚本在这里的应用极其薄弱，完全达不到我们印象中Lua脚本的强大，甚至我对Redis中的KEYS和ARGV依然有些模糊，大概越想搞明白的事情有时候就越搞不清楚。这里我没有提到的一个SCRIPT系列的命令是SCRIPT KILL，这个命令的作用是杀死当前正在运行的脚本，并且当且仅当这个脚本没有执行过任何写操作时，这个命令才会生效，所以这个命令主要用于杀死长时间运行的脚本，执行完这个命令后，执行这个脚本的客户端将从阻塞的EVAL命令中退出，并收一个错误作为返回值，所以我们可以理解为这是一个强行终止脚本执行的方法，因为我这里这个脚本非常的简单，所以它执行起来非常快，而我没有这样一个足够长的脚本去验证这个命令，所以在上面的脚本示例中我没有去验证这个命令，对此感兴趣的朋友可以自行去研究啦。</p>
+<h1 id="Lua脚本应用"><a href="#Lua脚本应用" class="headerlink" title="Lua脚本应用"></a>Lua脚本应用</h1><p>  通过本文前面两个部分，我们基本了解了Redis中Lua脚本是如何工作的，在演示示例脚本的时候，我是直接在终端下运行redis-server和redis-cli的，并且所有的命令都是在终端下手动键入的，难道在实际的使用中我们要这样子玩Redis吗？想起来都觉得好可怕是不是？所以我们下面来通过一个具体的案例，来演示Redis怎么去和一个Lua脚本脚本进行交：</p>
+<p>  首先，我们来定义一个简单的Lua脚本文件<strong>script01.lua</strong>，该脚本将对集合中的元素进行求和：</p>
+<figure class="highlight lua"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">local</span> sum = <span class="number">0</span>;</span><br><span class="line"><span class="keyword">local</span> key = KEYS[<span class="number">1</span>]</span><br><span class="line"><span class="keyword">local</span> length = redis.call(<span class="string">"LLEN"</span>,key)</span><br><span class="line"><span class="keyword">local</span> index = <span class="number">0</span></span><br><span class="line"><span class="keyword">while</span> (index &lt; length)</span><br><span class="line"><span class="keyword">do</span></span><br><span class="line">  sum = sum + redis.call(<span class="string">"LINDEX"</span>,key,index)</span><br><span class="line">  index = index + <span class="number">1</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">return</span> sum</span><br></pre></td></tr></table></figure>
+
+<p>  现在我们在终端中执行这个脚本，为了方便起见，我们这里将其放在redis-3.2.8目录下的scripts目录。我们首先在Redis中准备些数据来做好准备，在终端中执行命令：</p>
+<figure class="highlight angelscript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">LPUSH data <span class="number">2</span> <span class="number">4</span> <span class="number">6</span> <span class="number">8</span> <span class="number">10</span></span><br><span class="line">(<span class="built_in">int</span>eger) <span class="number">5</span></span><br><span class="line">src/redis-cli --eval ~/文档/redis<span class="number">-3.2</span><span class="number">.8</span>/scripts/script01.lua data</span><br><span class="line">(<span class="built_in">int</span>eger) <span class="number">30</span></span><br></pre></td></tr></table></figure>
+
+<p>  好了，我们下面来解释下这段脚本，我们向Redis中键名为<strong>data</strong>的集合中添加了5个元素，注意这句脚本是在执行<strong>src/redis-cli</strong>后执行的，这部分内容我们在前面讲解Redis中的数据结构的时候提到过，博主表示在写这篇文章的时候依然要去看文档，总之现在我们有一个集合，并且这个集合中有5个元素，与此同时呢，我们编写了一个Lua脚本文件<strong>script01.lua</strong>，这个脚本的作用是对集合中的元素进行求和。在这里我们注意到，我们可以通过redis.call()这个方法来调用redis中的命令，具体到这里我们使用LLEN命令获取了集合的长度，使用LINDEX命令获取了集合中的元素。我们在前面提到两个全局变量KEYS和ARGV，可以完全当作Lua脚本中的两个变量来处理，从编程角度来讲，我们可以将其直接在脚本中写死。可是考虑到Redis是一个键值数据库，所以我们很容易想到键名应该对外暴露出来，以满足复用Lua脚本的目的。这里我们直接用redis-cli来运行EVAL命令，所以我们注意到它的传参方式有点不一样，事实上KEYS和ARGV中间使用逗号隔开即可。</p>
+<p>  所以我们可以想到一种Lua脚本自动管理的思路，即通过命令行读取指定目录下的Lua脚本文件，通过SCRIPT LOAD方法获得其在Redis中的SHA1指纹，然后我们将脚本名称或者ID和这个指纹关联起来并将其存储在Redis中，此时我们只需要传入脚本名称和参数即可返回脚本执行后的结果，这样是不是感觉非常优雅呢？虽然Redis是一个键值性数据库，它不具备传统关系型数据库的查询能力，但是现在我们有了Lua脚本以后一样可以通过脚本来定制出查询，而到此时此刻我或许才真正明白Redis中Lua脚本是一种怎样神奇的存在。我们心怀敬畏，同时对这个世界永远充满期待，因为我们从来不知道人类潜能开发的极限在哪里。我们创造了太多不可思议的事情，有时候甚至连我们自己都怀疑，为什么我们会走到今天这一步。在脚本语言里我最喜欢的编程语言是Lua和Python，如果说我喜欢Lua源于我对游戏开发的兴趣，喜欢Python源于我对编写网页爬虫的兴趣，那么我很庆幸今天我又多了一个使用Lua的原因。世上美好的事情莫过于，你喜欢一样东西，恰好有人和你一样喜欢，可惜那是很久以前的事情啦。</p>
+<p>  我们现在可以了解到，Redis提供了一种机制可以让Lua脚本同Redis进行交互。可是事实上Redis和Lua在数据结构定义上存在一定差异。所以，下面我们来了解下这两种数据结构是如何进行转换的，了解完这些我认为这篇文章就可以结束啦，因为现在接近1点钟啦而明天还要上班。在Lua脚本中调用call()或者pcall()方法来执行Redis命令时，Redis命令执行的结构会被转换为Lua中的数据结构。同理，当Lua脚本在终端中执行时，Lua脚本的返回值会被转化为Redis的协议并经由EVAL返回给客户端。关于call()和pcall()这两个方法，一个显著的区别是前者在出错时返回的是错误信息，而后者返回的是经由Lua table包装后的结果。我们知道table在Lua语言中是一个非常强大的数据结构，显然后者对调用者更为友好些啦。通常在处理类型转换时我们有以下原则：</p>
+<ul>
+<li>Lua table结构中不能含有nil，否则Redis将从第一个为nil的位置返回</li>
+<li>Lua number结构中不能区分浮点类型，默认会转换为整型并舍弃小数部分，如果需要保留小数部分请返回string类型</li>
+<li>Lua boolean结构在Redis中会被转换为0和1的取值</li>
+<li>Redis提供了redis.error_reply()和redis.error_status()两个辅助方法来完成Lua-&gt;Redis的转换</li>
+</ul>
+<p>  好了，这篇博客就是这样子啦，关于为什么使用Lua脚本这个问题，我认为可以从减少网络开销、原子性和脚本复用三个角度来考虑，尤其是第二点，因为Redis执行脚本的时候是整体的、阻塞的执行，中间不会被插入新的命令，因此它完全可以不用担心出现竞态或者事务相关的问题，可是即使这样我们还是建议编写短小精悍的Lua脚本。以上就是这篇博客的全部内容啦，感谢大家关注，欢迎在博客留言及讨论相关技术问题，谢谢大家。</p>
+<h1 id="参考文章"><a href="#参考文章" class="headerlink" title="参考文章"></a>参考文章</h1><ul>
+<li><a href="https://segmentfault.com/a/1190000007892988" target="_blank" rel="noopener">Xbynet - Redis与Lua及Redis-py应用Lua</a></li>
+<li><a href="http://www.cnblogs.com/yourarebest/p/5987438.html" target="_blank" rel="noopener">一路向前走 - 【原】Redis基本操作</a></li>
+<li><a href="http://www.cnblogs.com/dgcx/p/4967175.html" target="_blank" rel="noopener">小咚 - Redis Lua 总结</a></li>
+<li><a href="http://www.redis.net.cn/tutorial/3516.html" target="_blank" rel="noopener">Redis中文网 - Redis 脚本</a></li>
+</ul>
+
+                
+
+                
+
+
+<div class="recommended_posts">
+    <h1>推荐阅读</h1>
+    <ul>
+        
+        <li><a href="https://qinyuanpei.github.io/posts/2151871792/">浅议 EF Core 分库分表及多租户架构的实现</a></li>
+        
+        <li><a href="https://qinyuanpei.github.io/posts/3677280829/">《Web API 的设计与开发》读书笔记</a></li>
+        
+        <li><a href="https://qinyuanpei.github.io/posts/582264328/">Unity3D游戏开发之SQLite让数据库开发更简单</a></li>
+        
+        <li><a href="https://qinyuanpei.github.io/posts/795474045/">记通过EF生成不同数据库SQL脚本的一次尝试</a></li>
+        
+        <li><a href="https://qinyuanpei.github.io/posts/3269605707/">基于WebSocket和Redis实现Bilibili弹幕效果</a></li>
+        
+    </ul>
+</div>
+
+            </div>
+            
+<blockquote class="post-copyright">
+    <div class="content">
+        <p><b>版权声明：</b>
+        <a href="https://qinyuanpei.github.io/posts/4197961431/" rel="external">Redis缓存技术学习系列之Lua脚本</a>
+        ，由&nbsp;<a href="/about" target="_blank" rel="external">飞鸿踏雪</a>&nbsp;
+        首次发表于&nbsp;<a href="/" target="_blank" rel="external">一个人的孤落时辰</a>&nbsp;
+        ，本文地址为：<a href="https://qinyuanpei.github.io/posts/4197961431/" target="_blank" rel="external">https://qinyuanpei.github.io/posts/4197961431/</a>
+        ，转载请注明<b>作者</b>和<b>出处</b>。</p>
+    </div>
+    <footer>
+        <a href="https://qinyuanpei.github.io">
+            <img src="/assets/images/avatar.jpg" alt="飞鸿踏雪">
+            飞鸿踏雪
+        </a>
+    </footer>
+</blockquote>
+
+
+            
+<div class="page-reward">
+    <a id="rewardBtn" href="javascript:;" class="page-reward-btn waves-effect waves-circle waves-light">赏</a>
+</div>
+
+
+            <div class="post-footer">
+                
+	<ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Redis/" rel="tag">Redis</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" rel="tag">数据库</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%AC%94%E8%AE%B0/" rel="tag">笔记</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%BC%93%E5%AD%98/" rel="tag">缓存</a></li></ul>
+
+                
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://qinyuanpei.github.io/posts/4197961431/&title=《Redis缓存技术学习系列之Lua脚本》 — 一个人的孤落时辰&pic=https://qinyuanpei.github.ioassets/images/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://qinyuanpei.github.io/posts/4197961431/&title=《Redis缓存技术学习系列之Lua脚本》 — 一个人的孤落时辰&source=一个人的孤落时辰 | 纵有疾风起，人生不言弃 | 隐约雷鸣，阴霾天空，即使天无雨，我亦留此地。" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://qinyuanpei.github.io/posts/4197961431/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Redis缓存技术学习系列之Lua脚本》 — 一个人的孤落时辰&url=https://qinyuanpei.github.io/posts/4197961431/&via=https://qinyuanpei.github.io" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://qinyuanpei.github.io/posts/4197961431/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+      
+      <li>
+        <a class="google share-sns" target="_blank" onClick="show_yp()" data-title=" 生成海报">
+          <i class="icon icon-file-image-o"></i>
+        </a>
+      </li>
+      
+    </ul>
+ </div>
+
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
+            </div>
+        </div>
+
+        
+<nav class="post-nav flex-row flex-justify-between">
+  
+    <div class="waves-block waves-effect prev">
+      <a href="/posts/1166840790/" id="post-prev" class="post-nav-link">
+        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
+        <h4 class="title">从React专利事件看开源软件许可</h4>
+      </a>
+    </div>
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/posts/3873710624/" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h4 class="title">基于特性(Attribute)的实体属性验证方案设计</h4>
+      </a>
+    </div>
+  
+</nav>
+
+
+        
+    <div id="comment"></div>
+<script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+<script src='//unpkg.com/valine/dist/Valine.min.js'></script>
+<script type="text/javascript">
+new Valine({
+    el: '#comment' ,
+    notify: false, 
+    verify: true, 
+    appId: 'JbHqRp2eMrTgIwYpfERH0g79-gzGzoHsz',
+    appKey: 'VsiKvLuiBGvJL1XrAfv7siY2',
+    placeholder: '云中谁寄锦书来，雁字回时，月满西楼。&#10;Tips：如果希望收到我的评论回复，请至少留下你的邮箱哦:)',
+    path:'https://qinyuanpei.github.io/posts/4197961431/', 
+    avatar:'identicon',
+    requiredFields: ['nick','mail']
+});
+</script>
+
+
+
+
+    </article>
+    
+<div id="reward" class="page-modal reward-lay">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <h3 class="reward-title">
+        <i class="icon icon-quote-left"></i>
+        赠人玫瑰，手有余香
+        <i class="icon icon-quote-right"></i>
+    </h3>
+    <div class="reward-content">
+        
+        <div class="reward-code">
+            <img id="rewardCode" src="/assets/images/wechat.png" alt="打赏二维码">
+        </div>
+        
+        <label class="reward-toggle">
+            <input id="rewardToggle" type="checkbox" class="reward-toggle-check"
+                data-wechat="/assets/images/wechat.png" data-alipay="/assets/images/alipay.jpg">
+            <div class="reward-toggle-ctrol">
+                <span class="reward-toggle-item wechat">微信</span>
+                <span class="reward-toggle-label"></span>
+                <span class="reward-toggle-item alipay">支付宝</span>
+            </div>
+        </label>
+        
+    </div>
+</div>
+
+
+    <script type="text/javascript" src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/yoniu.min.js"></script>
+<style type='text/css'>
+	body.active-yp {
+		overflow: hidden;
+	}
+	.yp-fc-btn{
+		display: flex;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		align-items: center;
+		justify-content: space-between;
+		font-size: 13px;
+	}
+	.yp-fc-btn span{
+		cursor: pointer;
+		padding: 2px 10px;
+		color: #4b4b4b;
+		border: #4b4b4b 1px solid;
+		border-radius:5px;
+	}
+	#yp-hide{
+		position: fixed;
+		display: flex;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		justify-content: center;
+		flex-direction: column;
+		left:0;
+		top:0;
+		right:0;
+		bottom:0;
+		background-color:rgba(0,0,0,.5);
+		z-index: 99999;
+		visibility: hidden;
+	}
+	#yoniu-poster{
+		box-sizing: border-box;
+		width: 350px;
+		height: 467.2px;
+		background-color: #fff;
+		margin: 0 auto;
+		padding: 0;
+		line-height: 1.6;
+		text-align:justify;
+	}
+	
+	.yp-img {
+		min-height: 240px;
+		position: relative;
+		display: flex;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		justify-content: flex-end;
+		flex-direction: column;
+		background-position: 50% 50%;
+		background-size: cover;
+		overflow:hidden;
+	}
+	.yp-img>div{
+		padding: 10px 20px;
+	}
+	.yp-name{
+		display: block;
+		color: #fff;
+		font-size: 20px;
+		font-weight: 600;
+		text-shadow: #4b4b4b 0.1em 0.1em 0.2em;
+		margin-top: 10px;
+	}
+	.yp-sort{
+		padding: 3px 10px;
+		font-size: 12px;
+		color: #fff;
+		background: #2e2e2e;
+	}
+	.yp-des{
+		color: #2e2e2e;
+		font-size: 14px;
+		margin: 20px;
+		height: 67.2px;
+	}
+	.yp-qcode{
+		display: flex;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		justify-content: space-between;
+		align-items: center;
+		margin: 10px;
+		padding: 10px 20px;
+		background: #f5f5f5;
+		color: #818181;
+		border-radius: 10px;
+	}
+	.yp-tips{
+		display: flex;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		justify-content: space-between;
+		align-items: center;
+		color: #ccc;
+		margin: 0 10px 10px;
+		font-size: 10px;
+		letter-spacing: 1.5px;
+	}
+	.yp-btns{
+		display: flex;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		align-items: stretch;
+		justify-content: center;
+		width:350px;
+		margin: 0 auto;
+	}
+	.yp-btns>span{
+		display: flex;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		align-items: center;
+		justify-content: center;
+		font-size: 14px;
+		padding: 10px 15px;
+		background:rgba(0,0,0,.2);
+		color: #f5f5f5;
+		cursor: pointer;
+	}
+	.yp-btns>span>a{
+		color: #f5f5f5;
+	}
+	.yp-btns>span>a:hover{
+		text-decoration:none;
+	}
+	#yp-close{
+		font-size: 18px;
+		font-weight: 600;
+	}
+</style>
+<div id="yp-hide">
+    <div id="yoniu-poster">
+        <div class="yp-img" id="yp-img">
+            <div>
+                <span class="yp-sort">数据存储</span>
+                <span class="yp-name">Redis缓存技术学习系列之Lua脚本</span>
+            </div>
+        </div>
+        <div class="yp-des">    
+            
+                各位朋友，大家好，我是Payne，欢迎大家关注我的博客，我的博客地址是https://qinyuanpei.github.io。想起来大概有一个...
+            
+        </div>
+        <div class="yp-qcode">
+            <span>扫描二维码阅读原文</span>
+            <img id="yp-qcode" width="64px" src="//api.qrserver.com/v1/create-qr-code/?data=https://qinyuanpei.github.io/posts/4197961431/">
+        </div>
+        <div class="yp-tips">
+            <span>一个人的孤落时辰</span>
+            <span><time class="post-time" title="2017-09-17 10:49:07" datetime="2017-09-17T10:49:07.000Z"  itemprop="datePublished">2017-09-17</time>
+</span>
+        </div>
+    </div>
+    <div class="yp-btns">
+        <span id="yp-load-yp" onClick="load_yp()">生成海报</span>
+        <span><a id="yp-download"></a></span>
+        <span id="yp-close" onClick="close_yp()">×</span>
+    </div>
+</div>
+<script type="text/javascript">
+    function show_yp(){
+        window.scrollTo(0, 0);
+        document.body.setAttribute("class","active-yp");
+        let cover = document.getElementsByTagName('img')[1];
+        if (cover != null && typeof(cover) != 'undefined') {
+            document.getElementById('yp-img').style.backgroundImage = `url(${cover.src})`;
+        } else {
+            document.getElementById('yp-img').style.backgroundColor = '#d7dbf0';
+        }
+        document.getElementById("yp-hide").style.visibility = "visible";
+    }
+    function close_yp(){
+        var domClass = document.body.getAttribute("class");
+        domClass = domClass.replace("active-yp","");
+        document.body.setAttribute("class",domClass);
+        document.getElementById("yp-hide").style.visibility = "hidden";
+    }
+    function load_yp(){
+        document.getElementById('yp-load-yp').textContent = '海报生成中...';
+        setTimeout(function() {
+            h2c_();
+        },2000);
+
+    }
+</script>
+
+</div>
+
+        <footer class="footer">
+    <div class="top">
+        
+   <p>
+      <span id="lc_counter_container_site_uv">
+         <i class="icon icon-user"></i><span id="lc_counter_value_site_uv"></span>
+      </span>
+      <span id="lc_counter_container_site_pv">
+         <i class="icon icon-eye"></i><span id="lc_counter_value_site_pv"></span>
+      </span>
+  </p>
+
+
+        <p>
+   <a id="jinrishici-sentence" href="https://www.jinrishici.com/" target="_blank" rel="noopener">加载中</a>
+</p>
+<script src="https://sdk.jinrishici.com/v2/browser/jinrishici.js" charset="utf-8"></script>
+<script>
+   jinrishici.load(function(result) {
+      document.querySelector('#subtitle').innerText = result.data.content;
+      document.querySelector('#jinrishici-sentence').innerText = result.data.content;
+  });
+</script>
+            <!--Todo: 考虑重构为插件 -->
+            <p>
+                
+                    <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+                
+                <span>
+                    <a href="https://github.com/qinyuanpei" target="_blank" rel="license noopener" title="Github">
+                        <i class="icon icon-lg icon-github"></i>
+                    </a>
+                </span>
+                <span>
+                    <a href="https://weibo.com/1278609231/profile" target="_blank" rel="license noopener" title="微博">
+                        <i class="icon icon-lg icon-weibo"></i>
+                    </a>
+                </span>
+                <span>
+                    <a href="https://www.douban.com/people/60029335/" target="_blank" rel="license noopener" title="豆瓣">
+                        <i class="icon icon-lg icon-douban"></i>
+                    </a>
+                </span>
+                <span>
+                    <a href="https://www.zhihu.com/people/qinyuanpei" target="_blank" rel="license noopener" title="知乎">
+                        <i class="icon icon-lg icon-zhihu-square"></i>
+                    </a>
+                </span>
+                <span>
+                    <a href="https://blog.csdn.net/qinyuanpei" target="_blank" rel="license noopener" title="CSDN">
+                        <i class="icon icon-lg">C</i>
+                    </a>
+                </span>
+                <span>
+                    <a href="https://music.163.com/#/user/home?id=47002864" target="_blank" rel="license noopener" title="网易音乐">
+                        <i class="icon icon-lg icon-wangyiyunyinyue"></i>
+                    </a>
+                </span>
+            </p>
+        
+    </div>
+    <div class="bottom">
+        <p><span>飞鸿踏雪 &copy; 2014 - 2021</span><br>
+            
+                
+                Powered by <a href="http://hexo.io/" target="_blank">Hexo</a> & Theme by <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a><br>
+                
+                
+                    <p>Hosted by <a href="https://pages.github.com" target="_blank" rel="noopener" style="font-weight: bold">Github Pages</a></p>
+                
+        </p>
+    </div>
+</footer>
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span
+        class="icon icon-lg icon-chevron-up"></span></a>
+
+    
+
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://qinyuanpei.github.io/posts/4197961431/&title=《Redis缓存技术学习系列之Lua脚本》 — 一个人的孤落时辰&pic=https://qinyuanpei.github.ioassets/images/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://qinyuanpei.github.io/posts/4197961431/&title=《Redis缓存技术学习系列之Lua脚本》 — 一个人的孤落时辰&source=一个人的孤落时辰 | 纵有疾风起，人生不言弃 | 隐约雷鸣，阴霾天空，即使天无雨，我亦留此地。" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://qinyuanpei.github.io/posts/4197961431/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Redis缓存技术学习系列之Lua脚本》 — 一个人的孤落时辰&url=https://qinyuanpei.github.io/posts/4197961431/&via=https://qinyuanpei.github.io" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://qinyuanpei.github.io/posts/4197961431/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+      
+      <li>
+        <a class="google share-sns" target="_blank" onClick="show_yp()" data-title=" 生成海报">
+          <i class="icon icon-file-image-o"></i>
+        </a>
+      </li>
+      
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="//api.qrserver.com/v1/create-qr-code/?data=https://qinyuanpei.github.io/posts/4197961431/" alt="微信分享二维码">
+</div>
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.6/waves.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/4.2.1/echarts.min.js"></script>
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/echarts-wordcloud.min.js" async></script>
+<script>
+    var BLOG = { ROOT: '/', SHARE: true, REWARD: true };
+
+
+</script>
+
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/main.min.js"></script>
+
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/search.min.js" async></script>
+
+
+
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/heart.min.js" async></script>
+
+
+
+
+
+
+
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/leancloud-counter.min.js"></script>
+<script>
+        (function () {
+            var appId = 'JbHqRp2eMrTgIwYpfERH0g79-gzGzoHsz';
+            var appKey = 'VsiKvLuiBGvJL1XrAfv7siY2';
+            new VisitorCounter().init({
+                appId: appId,       //应用ID, 必输
+                appKey: appKey,      //应用Key, 必输
+                region: '华北',      //华东,华北,国际, 默认华东
+                domain: '',      //自定义域名
+                collectIP: true, //是否收集IP及位置信息, 默认开启
+                collectUA: true  //是否收集UserAgent, 默认开启
+            });
+        })();
+</script>
+
+
+
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/vconsole.min.js"></script>
+<script type="text/javascript">
+    //当地址中存在debug=true时，实例化vConsole
+    if (location.href.indexOf('debug=true') > -1) {
+        var vConsole = new VConsole();
+    }
+</script>
+
+
+    <script>
+    //国内用户自动重定向Coding Pages镜像
+    // var ipInfo = JSON.parse(localStorage.getItem('ipInfo'));
+    // if (ipInfo.country_code == 'CN') {
+    //     location.href = location.href.replace('qinyuanpei.github.io', 'blog.yuanpei.me');
+    // }
+    </script>
+
+
+<script>
+titleArray = [];
+function scrollTitle() {
+    if (titleArray.length == 0) return;
+    titleArray.push(titleArray[0]);
+	titleArray.shift();
+	document.title = titleArray.join("");
+}
+setInterval(scrollTitle, 500);
+(function() {
+    var originTitile = document.title, titleTime;
+    document.addEventListener('visibilitychange', function() {
+        if (document.hidden) {
+            titleArray = originTitile.split('');
+            clearTimeout(titleTime);
+        } else {
+            document.title = originTitile;
+            titleArray = originTitile.split('');
+            titleTime = setTimeout(function() {
+                document.title = originTitile;
+                titleArray = [];
+            },2000);
+        }
+    });
+})();
+</script>
+
+
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/ribbon.min.js"></script>
+</body>
+</html>

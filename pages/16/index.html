@@ -1,0 +1,913 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+    
+<script async defer data-domain="blog.yuanpei.me" src="https://plausible.io/js/plausible.js"></script>
+    
+    <meta charset="utf-8">
+    <!-- HTTP 1.1 -->  
+    <meta http-equiv="pragma" content="no-cache">  
+    <!-- HTTP 1.0 -->  
+    <meta http-equiv="cache-control" content="no-cache">
+    <!-- 微博图床防盗链 --> 
+    <!-- <meta name="referrer" content="no-referrer"/> -->
+    <!--Google站点验证-->
+    
+    <!--百度站点验证-->
+    
+    
+    <!--Google AdSense-->
+    
+    <!--Bing站点验证-->
+    <meta name="msvalidate.01" content="713A48A3FE17D4841C292A6B3942EB4C" />
+    
+    <title>
+        一个人的孤落时辰 | 纵有疾风起，人生不言弃
+    </title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+        <meta name="theme-color" content="#3F51B5">
+    
+
+    <meta name="keywords" content="秦元培,技术博客,生活随笔,个人博客,NET,Python,数据挖掘,数据分析,NLP">
+    
+        <meta name="description" content="一个人的孤落时辰 | 纵有疾风起，人生不言弃 | 隐约雷鸣，阴霾天空，即使天无雨，我亦留此地。">
+    
+    <meta name="description" content="一个人的孤落时辰 | 纵有疾风起，人生不言弃 | 隐约雷鸣，阴霾天空，即使天无雨，我亦留此地。">
+<meta property="og:type" content="website">
+<meta property="og:title" content="一个人的孤落时辰">
+<meta property="og:url" content="https://qinyuanpei.github.io/pages/16/index.html">
+<meta property="og:site_name" content="一个人的孤落时辰">
+<meta property="og:description" content="一个人的孤落时辰 | 纵有疾风起，人生不言弃 | 隐约雷鸣，阴霾天空，即使天无雨，我亦留此地。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:author" content="飞鸿踏雪">
+<meta property="article:tag" content="秦元培">
+<meta property="article:tag" content="技术博客">
+<meta property="article:tag" content="生活随笔">
+<meta property="article:tag" content="个人博客">
+<meta property="article:tag" content="NET">
+<meta property="article:tag" content="Python">
+<meta property="article:tag" content="数据挖掘">
+<meta property="article:tag" content="数据分析">
+<meta property="article:tag" content="NLP">
+<meta name="twitter:card" content="summary">
+    
+        <link rel="alternate" type="application/atom+xml" title="一个人的孤落时辰" href="/atom.xml">
+    
+    <link rel="shortcut icon" href="/assets/images/favicon.ico">
+    
+        <link rel="manifest" href="/manifest.json">
+    
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master//assets/styles/style.css">
+    <script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/instantclick.min.js"></script>
+    <script>window.lazyScripts=[]</script>
+    <!-- custom head -->
+    
+
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu"  >
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap" style="background-image:url(/assets/images/brand.jpg)">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/assets/images/avatar.jpg" alt="avatar">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">飞鸿踏雪</h5>
+          <a href="mailto:qinyuanpei@163.com" title="qinyuanpei@163.com" class="mail">qinyuanpei@163.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/"  >
+                <i class="icon icon-lg icon-home"></i>
+                主页
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives"  >
+                <i class="icon icon-lg icon-archives"></i>
+                归档
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags"  >
+                <i class="icon icon-lg icon-tags"></i>
+                标签
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/categories"  >
+                <i class="icon icon-lg icon-th-list"></i>
+                分类
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/books"  >
+                <i class="icon icon-lg icon-bookmark"></i>
+                书单
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/movies"  >
+                <i class="icon icon-lg icon-film"></i>
+                影单
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/works"  >
+                <i class="icon icon-lg icon-code"></i>
+                实验室
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/about"  >
+                <i class="icon icon-lg icon-circle"></i>
+                关于我
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+            <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">一个人的孤落时辰</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off"
+                placeholder="输入感兴趣的关键字">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+        <a href="https://github.com/qinyuanpei/qinyuanpei.github.io" target="_blank" rel="noopener" class="header-icon waves-effect waves-circle waves-light" id="menuGithub">
+            <i class="icon icon-lg icon-code-fork"></i>
+        </a>
+    </div>
+</header>
+<header class="content-header index-header">
+    <div class="container fade-scale">
+        <h1 class="title">一个人的孤落时辰</h1>
+        <h5 class="subtitle" id="subtitle">
+            
+            纵有疾风起，人生不言弃
+            
+        </h5>
+    </div>
+    
+
+</header>
+<div class="container body-wrap">
+
+    <ul class="post-list">
+    
+        <li class="post-list-item fade">
+            <article id="post-青黄未接的2015"
+  class="article-card article-type-post" itemprop="blogPost">
+
+    <div class="post-meta">
+        <time class="post-time" title="2015-12-01 19:24:18" datetime="2015-12-01T19:24:18.000Z"  itemprop="datePublished">2015-12-01</time>
+
+        
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/%E7%94%9F%E6%B4%BB%E6%84%9F%E6%82%9F/">生活感悟</a></li></ul>
+
+
+
+    </div>
+
+    
+
+
+  
+    <h3 class="post-title" itemprop="name">
+      <a class="post-title-link" href="/posts/1394521917/">青黄未接的2015</a>
+    </h3>
+  
+
+
+
+
+    <div class="post-content" id="post-content" itemprop="postContent">
+
+    
+        &emsp;&emsp;匆匆时光总是把我们这些过客留在感慨和叹息中，而它却如风之旅人一般渐行远去。转眼这大半年的时间里，每天我都在努力让时间发挥它的意义，可是有时候这种努力却像枷锁一样让我有些莫名的压抑。从毕业那天起，我就决定这辈子不会再靠我的本科专业生活，因为它从来没有和我的内心发生过强烈的共鸣，所以当我毕业以后就意味着我再没有回头的路可以走。曾经因为怯懦而将自己封闭在这座小城市，其结果就是我在我人生中的第一家公司的项目在拖延和等待中慢慢地死亡。
+    
+
+        <a href="/posts/1394521917/" class="post-more waves-effect waves-button">
+            阅读全文…
+        </a>
+    </div>
+    
+    <div class="post-footer">
+        
+	<ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%84%9F%E6%82%9F/" rel="tag">感悟</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%88%90%E9%95%BF/" rel="tag">成长</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%94%9F%E6%B4%BB/" rel="tag">生活</a></li></ul>
+
+    </div>
+    
+</article>
+
+        </li>
+    
+        <li class="post-list-item fade">
+            <article id="post-Unity3D游戏开发之C++插件接入"
+  class="article-card article-type-post" itemprop="blogPost">
+
+    <div class="post-meta">
+        <time class="post-time" title="2015-11-21 14:47:26" datetime="2015-11-21T14:47:26.000Z"  itemprop="datePublished">2015-11-21</time>
+
+        
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Unity3D/">Unity3D</a></li></ul>
+
+
+
+    </div>
+
+    
+
+
+  
+    <h3 class="post-title" itemprop="name">
+      <a class="post-title-link" href="/posts/2527231326/">Unity3D游戏开发之C++插件接入</a>
+    </h3>
+  
+
+
+
+
+    <div class="post-content" id="post-content" itemprop="postContent">
+
+    
+        &emsp;&emsp;各位朋友大家好，我是秦元培，欢迎大家关注我的博客，我的博客地址是http://qinyuanpei.com。虽然Unity3D引擎依靠强大的跨平台能力睥睨高手林立的游戏引擎世界，我们在使用Unity3D游戏引擎的时候基本上不会去接触底层的东西，可是有时候面对某些奇葩的要求的时候，我们就不得不考虑使用C++这样的语言来为其编写相关的插件。你如果问我是什么样的奇葩要求，比如接入蓝牙手柄来控制游戏、接入类似街机的设备来控制游戏、接入同一个游戏到两个不同的设备上并响应不同的控制……诸如此类的种种问题，可能目前在Unity3D引擎中找不到解决方案，这个时候写C++插件就变成了一种刚性需求，这就是我们今天要来一起探讨的问题。
+    
+
+        <a href="/posts/2527231326/" class="post-more waves-effect waves-button">
+            阅读全文…
+        </a>
+    </div>
+    
+    <div class="post-footer">
+        
+	<ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/C/" rel="tag">C++</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Unity3D/" rel="tag">Unity3D</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%8F%92%E4%BB%B6/" rel="tag">插件</a></li></ul>
+
+    </div>
+    
+</article>
+
+        </li>
+    
+        <li class="post-list-item fade">
+            <article id="post-在Hexo中为文章自动添加版权信息声明模块"
+  class="article-card article-type-post" itemprop="blogPost">
+
+    <div class="post-meta">
+        <time class="post-time" title="2015-11-15 13:12:22" datetime="2015-11-15T13:12:22.000Z"  itemprop="datePublished">2015-11-15</time>
+
+        
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/%E7%8B%AC%E7%AB%8B%E5%8D%9A%E5%AE%A2/">独立博客</a></li></ul>
+
+
+
+    </div>
+
+    
+
+
+  
+    <h3 class="post-title" itemprop="name">
+      <a class="post-title-link" href="/posts/2950334112/">在Hexo中为文章自动添加版权信息声明模块</a>
+    </h3>
+  
+
+
+
+
+    <div class="post-content" id="post-content" itemprop="postContent">
+
+    
+        &emsp;&emsp;各位朋友，大家好，欢迎大家关注我的博客，我是秦元培，我的博客地址是http://qinyuanpei.com。今天想和大家说说博客文章版权这件事情。每当提到版权的时候，我知道大家内心深处都是对此不以为然的，因为国内版权意识薄弱，所以版权在我们的眼中就变成了这样一件可有可无的东西，可是事实真的是这样的吗？首先我们必须承认一件事情，即你从互联网上获得的知识都是有价值的，即使这些知识的创造者并未因此而获得利益。
+    
+
+        <a href="/posts/2950334112/" class="post-more waves-effect waves-button">
+            阅读全文…
+        </a>
+    </div>
+    
+    <div class="post-footer">
+        
+	<ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Hexo/" rel="tag">Hexo</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%89%88%E6%9D%83/" rel="tag">版权</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%9F%A5%E8%AF%86%E5%85%B1%E4%BA%AB/" rel="tag">知识共享</a></li></ul>
+
+    </div>
+    
+</article>
+
+        </li>
+    
+        <li class="post-list-item fade">
+            <article id="post-解析OBJ模型并将其加载到Unity3D场景中"
+  class="article-card article-type-post" itemprop="blogPost">
+
+    <div class="post-meta">
+        <time class="post-time" title="2015-11-15 13:07:57" datetime="2015-11-15T13:07:57.000Z"  itemprop="datePublished">2015-11-15</time>
+
+        
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91/">游戏开发</a></li></ul>
+
+
+
+    </div>
+
+    
+
+
+  
+    <h3 class="post-title" itemprop="name">
+      <a class="post-title-link" href="/posts/1124152964/">解析OBJ模型并将其加载到Unity3D场景中</a>
+    </h3>
+  
+
+
+
+
+    <div class="post-content" id="post-content" itemprop="postContent">
+
+    
+        &emsp;&emsp;各位朋友，大家好，欢迎大家关注我的博客，我是秦元培，我的博客地址是http://qinyuanpei.com。今天想和大家交流的是解析obj模型并将其加载到Unity3D场景中，虽然我们知道Unity3D是可以直接导入OBJ模型的，可是有时候我们并不能保证我们目标客户知道如何使用Unity3D的这套制作流程，可能对方最终提供给我们的就是一个模型文件而已，所以这个在这里做这个尝试想想还是蛮有趣的呢，既然如此，我们就选择在所有3D模型格式中最为简单的OBJ模型来一起探讨这个问题吧！
+    
+
+        <a href="/posts/1124152964/" class="post-more waves-effect waves-button">
+            阅读全文…
+        </a>
+    </div>
+    
+    <div class="post-footer">
+        
+	<ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/OBJ/" rel="tag">OBJ</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Unity3D/" rel="tag">Unity3D</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%A0%BC%E5%BC%8F/" rel="tag">格式</a></li></ul>
+
+    </div>
+    
+</article>
+
+        </li>
+    
+        <li class="post-list-item fade">
+            <article id="post-Unity3D游戏开发之分页效果在uGUI中的实现"
+  class="article-card article-type-post" itemprop="blogPost">
+
+    <div class="post-meta">
+        <time class="post-time" title="2015-11-10 20:46:35" datetime="2015-11-10T20:46:35.000Z"  itemprop="datePublished">2015-11-10</time>
+
+        
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Unity3D/">Unity3D</a></li></ul>
+
+
+
+    </div>
+
+    
+
+
+  
+    <h3 class="post-title" itemprop="name">
+      <a class="post-title-link" href="/posts/166983157/">Unity3D游戏开发之分页效果在uGUI中的实现</a>
+    </h3>
+  
+
+
+
+
+    <div class="post-content" id="post-content" itemprop="postContent">
+
+    
+        &emsp;&emsp;各位朋友大家好，我是秦元培，欢迎大家关注我的博客，我的博客地址是http://qinyuanpei.com。今天想和大家分享的是uGUI中分页效果的实现，我们知道相对NGUI来说uGUI在功能覆盖上来讲，它并没有像NGUI那样提供较为丰富和炫酷的组件，可是因为uGUI有着较好的扩展性，因此我们可以通过编写脚本来扩展它的功能。虽然在移动开发时代以开发速度论成败，可是这并不是我们“不求甚解”的正当理由。每次看到NGUI各种”丰富”的组件在脑海中打转的时候，每次看到编译项目时弹出各种Warming的时候，我内心是如此地期望有这样一个简单高效的UI系统啊，直到有一天我遇上了uGUI。
+    
+
+        <a href="/posts/166983157/" class="post-more waves-effect waves-button">
+            阅读全文…
+        </a>
+    </div>
+    
+    <div class="post-footer">
+        
+	<ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Unity3D/" rel="tag">Unity3D</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/uGUI/" rel="tag">uGUI</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91/" rel="tag">游戏开发</a></li></ul>
+
+    </div>
+    
+</article>
+
+        </li>
+    
+        <li class="post-list-item fade">
+            <article id="post-EasyAR尝鲜系列教程之自定义Marker的实现"
+  class="article-card article-type-post" itemprop="blogPost">
+
+    <div class="post-meta">
+        <time class="post-time" title="2015-11-03 10:23:14" datetime="2015-11-03T10:23:14.000Z"  itemprop="datePublished">2015-11-03</time>
+
+        
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Unity3D/">Unity3D</a></li></ul>
+
+
+
+    </div>
+
+    
+
+
+  
+    <h3 class="post-title" itemprop="name">
+      <a class="post-title-link" href="/posts/1156673678/">EasyAR尝鲜系列教程之自定义Marker的实现</a>
+    </h3>
+  
+
+
+
+
+    <div class="post-content" id="post-content" itemprop="postContent">
+
+    
+        &emsp;&emsp;各位朋友大家好，欢迎大家关注我的博客，我是秦元培，我的博客地址是http://qinyuanpei.com。通过本系列第一篇文章，我们初步了解了EasyAR这个增强现实引擎，这次我们来尝试自己定义一个Marker，这样我们就可以用自己喜欢的图片来作为Marker。因为目前EasyAR文档并不完善，所以下面的这些内容可能更多的是我个人的尝试和探索。如果大家对此感兴趣的话继续往下看否则就不要往下看了，因为我担心在官方正式文档出来以后大家可能会骂我啊。好了，对这个话题感兴趣的朋友就请继续往下看吧！
+    
+
+        <a href="/posts/1156673678/" class="post-more waves-effect waves-button">
+            阅读全文…
+        </a>
+    </div>
+    
+    <div class="post-footer">
+        
+	<ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/AR/" rel="tag">AR</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Unity3D/" rel="tag">Unity3D</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%A2%9E%E5%BC%BA%E7%8E%B0%E5%AE%9E/" rel="tag">增强现实</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%95%99%E7%A8%8B/" rel="tag">教程</a></li></ul>
+
+    </div>
+    
+</article>
+
+        </li>
+    
+        <li class="post-list-item fade">
+            <article id="post-EasyAR尝鲜系列教程之Hello EasyAR"
+  class="article-card article-type-post" itemprop="blogPost">
+
+    <div class="post-meta">
+        <time class="post-time" title="2015-10-30 09:44:18" datetime="2015-10-30T09:44:18.000Z"  itemprop="datePublished">2015-10-30</time>
+
+        
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Unity3D/">Unity3D</a></li></ul>
+
+
+
+    </div>
+
+    
+
+
+  
+    <h3 class="post-title" itemprop="name">
+      <a class="post-title-link" href="/posts/3120185261/">EasyAR尝鲜系列教程之Hello EasyAR</a>
+    </h3>
+  
+
+
+
+
+    <div class="post-content" id="post-content" itemprop="postContent">
+
+    
+        &emsp;&emsp;各位朋友，大家好，我是秦元培，欢迎大家关注我的博客，我的博客地址是http://qinyuanpei.com。从今天起博主将为大家带来EasyAR尝鲜系列教程，本教程适用的对象是增强现实应用开发者和Unity3D游戏开发者，在阅读本教程前请确保具备增强现实应用开发及Unity3D游戏开发的相关基础知识。在本节及后续内容中，博主将以国产增强现实引擎EasyAR为主要开发平台来带领大家一起走进增强现实应用开发的世界，希望大家能够喜欢！
+    
+
+        <a href="/posts/3120185261/" class="post-more waves-effect waves-button">
+            阅读全文…
+        </a>
+    </div>
+    
+    <div class="post-footer">
+        
+	<ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/AR/" rel="tag">AR</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Unity3D/" rel="tag">Unity3D</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%A2%9E%E5%BC%BA%E7%8E%B0%E5%AE%9E/" rel="tag">增强现实</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%95%99%E7%A8%8B/" rel="tag">教程</a></li></ul>
+
+    </div>
+    
+</article>
+
+        </li>
+    
+        <li class="post-list-item fade">
+            <article id="post-教你一步步实现一个虚拟摇杆"
+  class="article-card article-type-post" itemprop="blogPost">
+
+    <div class="post-meta">
+        <time class="post-time" title="2015-10-30 09:44:18" datetime="2015-10-30T09:44:18.000Z"  itemprop="datePublished">2015-10-30</time>
+
+        
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Unity3D/">Unity3D</a></li></ul>
+
+
+
+    </div>
+
+    
+
+
+  
+    <h3 class="post-title" itemprop="name">
+      <a class="post-title-link" href="/posts/331752533/">教你一步步实现一个虚拟摇杆</a>
+    </h3>
+  
+
+
+
+
+    <div class="post-content" id="post-content" itemprop="postContent">
+
+    
+        &emsp;&emsp;各位朋友，大家好，我是秦元培，欢迎大家关注我的博客，我的博客地址是http://qinyuanpei.com。最近因为项目需要决定尝试自己来实现一个虚拟摇杆，所以在今天的文章中我们的目标是使用uGUI来制作一个可以在移动平台稳定运行的虚拟摇杆(请不要问我为什么不使用NGUI来实现，你说我做个虚拟摇杆有必要在项目里导入那么多的资源嘛23333)。关于使用第三方插件来实现虚拟摇杆，请大家参照我以前写的文章Unity3D游戏开发之使用EasyTouch虚拟摇杆控制人物移动，在这里就不再赘述了。
+    
+
+        <a href="/posts/331752533/" class="post-more waves-effect waves-button">
+            阅读全文…
+        </a>
+    </div>
+    
+    <div class="post-footer">
+        
+	<ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/uGUI/" rel="tag">uGUI</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91/" rel="tag">游戏开发</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E8%99%9A%E6%8B%9F%E6%91%87%E6%9D%86/" rel="tag">虚拟摇杆</a></li></ul>
+
+    </div>
+    
+</article>
+
+        </li>
+    
+        <li class="post-list-item fade">
+            <article id="post-Unity3D游戏开发之Unity3D场景编辑器扩展开发"
+  class="article-card article-type-post" itemprop="blogPost">
+
+    <div class="post-meta">
+        <time class="post-time" title="2015-10-13 12:59:01" datetime="2015-10-13T12:59:01.000Z"  itemprop="datePublished">2015-10-13</time>
+
+        
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91/">游戏开发</a></li></ul>
+
+
+
+    </div>
+
+    
+
+
+  
+    <h3 class="post-title" itemprop="name">
+      <a class="post-title-link" href="/posts/3019914405/">Unity3D游戏开发之Unity3D场景编辑器扩展开发</a>
+    </h3>
+  
+
+
+
+
+    <div class="post-content" id="post-content" itemprop="postContent">
+
+    
+        &emsp;&emsp;今天博主想和大家分享的是Unity3D场景编辑器的扩展开发，相关的话题我们在Unity3D游戏开发之编辑器扩展程序开发实例这篇文章中我们已经有所涉及，今天博主想特别针对场景编辑器的扩展开发来进行下深入研究。对于一个场景编辑器来说，它主要的作用是3D场景视图中实时显示、输入反馈和相关信息的更新。在Unity3D中提供了Editor、EditorWindow、GUILayout、EditorGUILayout、GUIUtility、EditorGUIUtility、Handles、Event等来完成这些工作。其中基于EditorWindow的这种扩展方式我们已经研究过了，这种扩展方式拥有自己的独立窗口使用OnGUI方法进行界面的绘制。
+    
+
+        <a href="/posts/3019914405/" class="post-more waves-effect waves-button">
+            阅读全文…
+        </a>
+    </div>
+    
+    <div class="post-footer">
+        
+	<ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Unity3D/" rel="tag">Unity3D</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%89%A9%E5%B1%95/" rel="tag">扩展</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%BC%96%E8%BE%91%E5%99%A8/" rel="tag">编辑器</a></li></ul>
+
+    </div>
+    
+</article>
+
+        </li>
+    
+        <li class="post-list-item fade">
+            <article id="post-在Unity3D中加载外部图片的两种方法"
+  class="article-card article-type-post" itemprop="blogPost">
+
+    <div class="post-meta">
+        <time class="post-time" title="2015-10-08 15:03:01" datetime="2015-10-08T15:03:01.000Z"  itemprop="datePublished">2015-10-08</time>
+
+        
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Unity3D/">Unity3D</a></li></ul>
+
+
+
+    </div>
+
+    
+
+
+  
+    <h3 class="post-title" itemprop="name">
+      <a class="post-title-link" href="/posts/821259985/">在Unity3D中加载外部图片的两种方法</a>
+    </h3>
+  
+
+
+
+
+    <div class="post-content" id="post-content" itemprop="postContent">
+
+    
+        &emsp;&emsp;各位朋友大家好，我是秦元培，欢迎大家关注我的博客。最近在做项目的过程中遇到这样的一个需求：玩家可以在游戏过程中进行实时存档，在存档过程中会保存当前游戏进度，同时会截取当前游戏画面并加载到游戏存档界面中。当下一次进入游戏的时候，将读取本地存档图片并加载到游戏界面中。这在单机游戏中是特别常见的一种功能，这里主要有两个关键点。首先是截取游戏画面，这个问题大家可以在《Unity3D游戏开发之截屏保存精彩瞬间》这篇文章中找到答案。其次是从本地加载图片，因为这里要保证可读可写，因此传统的Resources.Load()方式和AssetBundle方式均无法实现这样的功能。那么怎样从外部加载图片到游戏中，这就是我们今天要讨论的内容啦。好了，这里介绍两种方法来实现这一目的。
+    
+
+        <a href="/posts/821259985/" class="post-more waves-effect waves-button">
+            阅读全文…
+        </a>
+    </div>
+    
+    <div class="post-footer">
+        
+	<ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Unity3D/" rel="tag">Unity3D</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/uGUI/" rel="tag">uGUI</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91/" rel="tag">游戏开发</a></li></ul>
+
+    </div>
+    
+</article>
+
+        </li>
+    
+    </ul>
+
+    
+<nav id="page-nav">
+    <div class="inner">
+    <a class="extend prev" rel="prev" href="/pages/15/">上一页</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/pages/14/">14</a><a class="page-number" href="/pages/15/">15</a><span class="page-number current">16</span><a class="page-number" href="/pages/17/">17</a><a class="page-number" href="/pages/18/">18</a><span class="space">&hellip;</span><a class="page-number" href="/pages/20/">20</a><a class="extend next" rel="next" href="/pages/17/">下一页</a>
+    </div>
+</nav>
+
+
+</div>
+
+        <footer class="footer">
+    <div class="top">
+        
+   <p>
+      <span id="lc_counter_container_site_uv">
+         <i class="icon icon-user"></i><span id="lc_counter_value_site_uv"></span>
+      </span>
+      <span id="lc_counter_container_site_pv">
+         <i class="icon icon-eye"></i><span id="lc_counter_value_site_pv"></span>
+      </span>
+  </p>
+
+
+        <p>
+   <a id="jinrishici-sentence" href="https://www.jinrishici.com/" target="_blank" rel="noopener">加载中</a>
+</p>
+<script src="https://sdk.jinrishici.com/v2/browser/jinrishici.js" charset="utf-8"></script>
+<script>
+   jinrishici.load(function(result) {
+      document.querySelector('#subtitle').innerText = result.data.content;
+      document.querySelector('#jinrishici-sentence').innerText = result.data.content;
+  });
+</script>
+            <!--Todo: 考虑重构为插件 -->
+            <p>
+                
+                    <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+                
+                <span>
+                    <a href="https://github.com/qinyuanpei" target="_blank" rel="license noopener" title="Github">
+                        <i class="icon icon-lg icon-github"></i>
+                    </a>
+                </span>
+                <span>
+                    <a href="https://weibo.com/1278609231/profile" target="_blank" rel="license noopener" title="微博">
+                        <i class="icon icon-lg icon-weibo"></i>
+                    </a>
+                </span>
+                <span>
+                    <a href="https://www.douban.com/people/60029335/" target="_blank" rel="license noopener" title="豆瓣">
+                        <i class="icon icon-lg icon-douban"></i>
+                    </a>
+                </span>
+                <span>
+                    <a href="https://www.zhihu.com/people/qinyuanpei" target="_blank" rel="license noopener" title="知乎">
+                        <i class="icon icon-lg icon-zhihu-square"></i>
+                    </a>
+                </span>
+                <span>
+                    <a href="https://blog.csdn.net/qinyuanpei" target="_blank" rel="license noopener" title="CSDN">
+                        <i class="icon icon-lg">C</i>
+                    </a>
+                </span>
+                <span>
+                    <a href="https://music.163.com/#/user/home?id=47002864" target="_blank" rel="license noopener" title="网易音乐">
+                        <i class="icon icon-lg icon-wangyiyunyinyue"></i>
+                    </a>
+                </span>
+            </p>
+        
+    </div>
+    <div class="bottom">
+        <p><span>飞鸿踏雪 &copy; 2014 - 2021</span><br>
+            
+                
+                Powered by <a href="http://hexo.io/" target="_blank">Hexo</a> & Theme by <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a><br>
+                
+                
+                    <p>Hosted by <a href="https://pages.github.com" target="_blank" rel="noopener" style="font-weight: bold">Github Pages</a></p>
+                
+        </p>
+    </div>
+</footer>
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span
+        class="icon icon-lg icon-chevron-up"></span></a>
+
+    
+
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://qinyuanpei.github.io/pages/16/&title=一个人的孤落时辰&pic=https://qinyuanpei.github.ioassets/images/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://qinyuanpei.github.io/pages/16/&title=一个人的孤落时辰&source=一个人的孤落时辰 | 纵有疾风起，人生不言弃 | 隐约雷鸣，阴霾天空，即使天无雨，我亦留此地。" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://qinyuanpei.github.io/pages/16/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=一个人的孤落时辰&url=https://qinyuanpei.github.io/pages/16/&via=https://qinyuanpei.github.io" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://qinyuanpei.github.io/pages/16/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+      
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="//api.qrserver.com/v1/create-qr-code/?data=https://qinyuanpei.github.io/pages/16/" alt="微信分享二维码">
+</div>
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.6/waves.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/4.2.1/echarts.min.js"></script>
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/echarts-wordcloud.min.js" async></script>
+<script>
+    var BLOG = { ROOT: '/', SHARE: true, REWARD: false };
+
+
+</script>
+
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/main.min.js"></script>
+
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/search.min.js" async></script>
+
+
+
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/heart.min.js" async></script>
+
+
+
+
+
+
+
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/leancloud-counter.min.js"></script>
+<script>
+        (function () {
+            var appId = 'JbHqRp2eMrTgIwYpfERH0g79-gzGzoHsz';
+            var appKey = 'VsiKvLuiBGvJL1XrAfv7siY2';
+            new VisitorCounter().init({
+                appId: appId,       //应用ID, 必输
+                appKey: appKey,      //应用Key, 必输
+                region: '华北',      //华东,华北,国际, 默认华东
+                domain: '',      //自定义域名
+                collectIP: true, //是否收集IP及位置信息, 默认开启
+                collectUA: true  //是否收集UserAgent, 默认开启
+            });
+        })();
+</script>
+
+
+
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/vconsole.min.js"></script>
+<script type="text/javascript">
+    //当地址中存在debug=true时，实例化vConsole
+    if (location.href.indexOf('debug=true') > -1) {
+        var vConsole = new VConsole();
+    }
+</script>
+
+
+    <script>
+    //国内用户自动重定向Coding Pages镜像
+    // var ipInfo = JSON.parse(localStorage.getItem('ipInfo'));
+    // if (ipInfo.country_code == 'CN') {
+    //     location.href = location.href.replace('qinyuanpei.github.io', 'blog.yuanpei.me');
+    // }
+    </script>
+
+
+<script>
+titleArray = [];
+function scrollTitle() {
+    if (titleArray.length == 0) return;
+    titleArray.push(titleArray[0]);
+	titleArray.shift();
+	document.title = titleArray.join("");
+}
+setInterval(scrollTitle, 500);
+(function() {
+    var originTitile = document.title, titleTime;
+    document.addEventListener('visibilitychange', function() {
+        if (document.hidden) {
+            titleArray = originTitile.split('');
+            clearTimeout(titleTime);
+        } else {
+            document.title = originTitile;
+            titleArray = originTitile.split('');
+            titleTime = setTimeout(function() {
+                document.title = originTitile;
+                titleArray = [];
+            },2000);
+        }
+    });
+})();
+</script>
+
+
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/ribbon.min.js"></script>
+</body>
+</html>
