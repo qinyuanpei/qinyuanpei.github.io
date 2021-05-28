@@ -1,0 +1,913 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+    
+<script async defer data-domain="blog.yuanpei.me" src="https://plausible.io/js/plausible.js"></script>
+    
+    <meta charset="utf-8">
+    <!-- HTTP 1.1 -->  
+    <meta http-equiv="pragma" content="no-cache">  
+    <!-- HTTP 1.0 -->  
+    <meta http-equiv="cache-control" content="no-cache">
+    <!-- 微博图床防盗链 --> 
+    <!-- <meta name="referrer" content="no-referrer"/> -->
+    <!--Google站点验证-->
+    
+    <!--百度站点验证-->
+    
+    
+    <!--Google AdSense-->
+    
+    <!--Bing站点验证-->
+    <meta name="msvalidate.01" content="713A48A3FE17D4841C292A6B3942EB4C" />
+    
+    <title>
+        一个人的孤落时辰 | 纵有疾风起，人生不言弃
+    </title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+        <meta name="theme-color" content="#3F51B5">
+    
+
+    <meta name="keywords" content="秦元培,技术博客,生活随笔,个人博客,NET,Python,数据挖掘,数据分析,NLP">
+    
+        <meta name="description" content="一个人的孤落时辰 | 纵有疾风起，人生不言弃 | 隐约雷鸣，阴霾天空，即使天无雨，我亦留此地。">
+    
+    <meta name="description" content="一个人的孤落时辰 | 纵有疾风起，人生不言弃 | 隐约雷鸣，阴霾天空，即使天无雨，我亦留此地。">
+<meta property="og:type" content="website">
+<meta property="og:title" content="一个人的孤落时辰">
+<meta property="og:url" content="https://qinyuanpei.github.io/pages/14/index.html">
+<meta property="og:site_name" content="一个人的孤落时辰">
+<meta property="og:description" content="一个人的孤落时辰 | 纵有疾风起，人生不言弃 | 隐约雷鸣，阴霾天空，即使天无雨，我亦留此地。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:author" content="飞鸿踏雪">
+<meta property="article:tag" content="秦元培">
+<meta property="article:tag" content="技术博客">
+<meta property="article:tag" content="生活随笔">
+<meta property="article:tag" content="个人博客">
+<meta property="article:tag" content="NET">
+<meta property="article:tag" content="Python">
+<meta property="article:tag" content="数据挖掘">
+<meta property="article:tag" content="数据分析">
+<meta property="article:tag" content="NLP">
+<meta name="twitter:card" content="summary">
+    
+        <link rel="alternate" type="application/atom+xml" title="一个人的孤落时辰" href="/atom.xml">
+    
+    <link rel="shortcut icon" href="/assets/images/favicon.ico">
+    
+        <link rel="manifest" href="/manifest.json">
+    
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master//assets/styles/style.css">
+    <script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/instantclick.min.js"></script>
+    <script>window.lazyScripts=[]</script>
+    <!-- custom head -->
+    
+
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu"  >
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap" style="background-image:url(/assets/images/brand.jpg)">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/assets/images/avatar.jpg" alt="avatar">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">飞鸿踏雪</h5>
+          <a href="mailto:qinyuanpei@163.com" title="qinyuanpei@163.com" class="mail">qinyuanpei@163.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/"  >
+                <i class="icon icon-lg icon-home"></i>
+                主页
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives"  >
+                <i class="icon icon-lg icon-archives"></i>
+                归档
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags"  >
+                <i class="icon icon-lg icon-tags"></i>
+                标签
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/categories"  >
+                <i class="icon icon-lg icon-th-list"></i>
+                分类
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/books"  >
+                <i class="icon icon-lg icon-bookmark"></i>
+                书单
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/movies"  >
+                <i class="icon icon-lg icon-film"></i>
+                影单
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/works"  >
+                <i class="icon icon-lg icon-code"></i>
+                实验室
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/about"  >
+                <i class="icon icon-lg icon-circle"></i>
+                关于我
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+            <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">一个人的孤落时辰</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off"
+                placeholder="输入感兴趣的关键字">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+        <a href="https://github.com/qinyuanpei/qinyuanpei.github.io" target="_blank" rel="noopener" class="header-icon waves-effect waves-circle waves-light" id="menuGithub">
+            <i class="icon icon-lg icon-code-fork"></i>
+        </a>
+    </div>
+</header>
+<header class="content-header index-header">
+    <div class="container fade-scale">
+        <h1 class="title">一个人的孤落时辰</h1>
+        <h5 class="subtitle" id="subtitle">
+            
+            纵有疾风起，人生不言弃
+            
+        </h5>
+    </div>
+    
+
+</header>
+<div class="container body-wrap">
+
+    <ul class="post-list">
+    
+        <li class="post-list-item fade">
+            <article id="post-你了解爱的艺术吗？"
+  class="article-card article-type-post" itemprop="blogPost">
+
+    <div class="post-meta">
+        <time class="post-time" title="2016-09-24 22:42:44" datetime="2016-09-24T22:42:44.000Z"  itemprop="datePublished">2016-09-24</time>
+
+        
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/">读书笔记</a></li></ul>
+
+
+
+    </div>
+
+    
+
+
+  
+    <h3 class="post-title" itemprop="name">
+      <a class="post-title-link" href="/posts/2275646954/">你了解爱的艺术吗？</a>
+    </h3>
+  
+
+
+
+
+    <div class="post-content" id="post-content" itemprop="postContent">
+
+    
+        &emsp;&emsp;或许我不是一个懂得如何去爱人的人，我时常陷入一种自我否定的焦虑当中，当我发觉自己喜欢上一个人的时候，从某种意义上它会让我身上的缺点被无情地放大，我并不畏惧在喜欢的人面前暴露这些缺点，因为这就是真实的我，因此我从来不喜欢去塑造别人，让别人成为我心目中期待的样子，可是我会忍不住去塑造我自己，尤其是在和别人相处的过程中，发现我身上的缺点或者问题的时候，我习惯了对自我严格，虽然我知道这个过程注定痛苦，可是你能告诉我，爱到底是什么吗？如果爱不足以让我们改变，我们喜欢的究竟是一个怎样的自己、怎样的别人？
+    
+
+        <a href="/posts/2275646954/" class="post-more waves-effect waves-button">
+            阅读全文…
+        </a>
+    </div>
+    
+    <div class="post-footer">
+        
+	<ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Kindle/" rel="tag">Kindle</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%88%B1%E6%83%85/" rel="tag">爱情</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E8%AF%BB%E4%B9%A6/" rel="tag">读书</a></li></ul>
+
+    </div>
+    
+</article>
+
+        </li>
+    
+        <li class="post-list-item fade">
+            <article id="post-一个关于概率的问题的思考"
+  class="article-card article-type-post" itemprop="blogPost">
+
+    <div class="post-meta">
+        <time class="post-time" title="2016-09-24 20:06:45" datetime="2016-09-24T20:06:45.000Z"  itemprop="datePublished">2016-09-24</time>
+
+        
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/">编程语言</a></li></ul>
+
+
+
+    </div>
+
+    
+
+
+  
+    <h3 class="post-title" itemprop="name">
+      <a class="post-title-link" href="/posts/3247186509/">一个关于概率的问题的思考</a>
+    </h3>
+  
+
+
+
+
+    <div class="post-content" id="post-content" itemprop="postContent">
+
+    
+        &emsp;&emsp;最近需要给公司内部编写一个随机生成人员名单的小工具，在解决这个问题的过程中，我认识到这是一个概率相关的问题，即使在过去我曾经设计过类似转盘抽奖这样的应用程序，可我并不认为我真正搞清楚了这个问题，所以想在这篇文章中说说我对概率问题的相关思考。首先，我们来考虑这个问题的背景，我们需要定期在内部举行英语交流活动，可是大家的英语水差异悬殊，所以如果按照常规的思路来解决这个问题，即认为每个人被选中的概率是相等的话，实际上对英语不好的人是显得不公平的。其次，作为一个内部活动它需要的是营造一种氛围，让每个人参与到其中，所以它要求英语好的人有一个相对高的优先级，这样能够方便在活动开始前“破冰”，可是同时它需要让英语不好的人能够参与其中，所以这个问题该如何解决呢？这就是我们今天想要讨论的话题！
+    
+
+        <a href="/posts/3247186509/" class="post-more waves-effect waves-button">
+            阅读全文…
+        </a>
+    </div>
+    
+    <div class="post-footer">
+        
+	<ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%95%B0%E5%AD%A6/" rel="tag">数学</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%A6%82%E7%8E%87/" rel="tag">概率</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%AE%97%E6%B3%95/" rel="tag">算法</a></li></ul>
+
+    </div>
+    
+</article>
+
+        </li>
+    
+        <li class="post-list-item fade">
+            <article id="post-一见钟情，无疾而终"
+  class="article-card article-type-post" itemprop="blogPost">
+
+    <div class="post-meta">
+        <time class="post-time" title="2016-09-10 19:29:57" datetime="2016-09-10T19:29:57.000Z"  itemprop="datePublished">2016-09-10</time>
+
+        
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/%E7%94%9F%E6%B4%BB%E6%84%9F%E6%82%9F/">生活感悟</a></li></ul>
+
+
+
+    </div>
+
+    
+
+
+  
+    <h3 class="post-title" itemprop="name">
+      <a class="post-title-link" href="/posts/21112647/">一见钟情，无疾而终</a>
+    </h3>
+  
+
+
+
+
+    <div class="post-content" id="post-content" itemprop="postContent">
+
+    
+        &emsp;&emsp;昨天下午，当她从公司办理完离职手续的时候，她在内部聊天工具上告诉我：“师父，我在公司的离职手续都办理完了，我要走了”。在那一瞬间，我突然非常平静地走过去对她说：“那就走吧”。我不知道她是不是想让我在她离开之前做些什么，或许这完全就是我的一厢情愿，因为她在此之前就明确地告诉我，她不喜欢我，所以这注定是一个悲伤的故事。一个月前，当她的同学从公司离职的时候，她就告诉我或许某一天她就离开这里了，当时我说我会想她的，而当她真正要离开的时候，我甚至都想不明白自己为什么会如此平静。下班路上同事Kent若有所思的告诉我，在我这个年龄“一见钟情”这种满足初恋情结的机会会越来越少，与其在感情的创伤中持续失落不如努力去争取一段新的开始。我惊诧于他突然间发现我隐藏在心底的秘密，我更加纠结于我丧失了喜欢一个人的能力。
+    
+
+        <a href="/posts/21112647/" class="post-more waves-effect waves-button">
+            阅读全文…
+        </a>
+    </div>
+    
+    <div class="post-footer">
+        
+	<ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%84%9F%E6%82%9F/" rel="tag">感悟</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%88%90%E9%95%BF/" rel="tag">成长</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%88%B1%E6%83%85/" rel="tag">爱情</a></li></ul>
+
+    </div>
+    
+</article>
+
+        </li>
+    
+        <li class="post-list-item fade">
+            <article id="post-浅析WPF中MVVM模式下命令与委托的关系"
+  class="article-card article-type-post" itemprop="blogPost">
+
+    <div class="post-meta">
+        <time class="post-time" title="2016-07-21 14:27:07" datetime="2016-07-21T14:27:07.000Z"  itemprop="datePublished">2016-07-21</time>
+
+        
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/">编程语言</a></li></ul>
+
+
+
+    </div>
+
+    
+
+
+  
+    <h3 class="post-title" itemprop="name">
+      <a class="post-title-link" href="/posts/569337285/">浅析WPF中MVVM模式下命令与委托的关系</a>
+    </h3>
+  
+
+
+
+
+    <div class="post-content" id="post-content" itemprop="postContent">
+
+    
+        &emsp;&emsp;各位朋友大家好，我是Payne，欢迎大家关注我的博客，我的博客地址是http://qinyuanpei.com。最近因为项目上的原因开始接触WPF，或许这样一个在现在来讲显得过时的东西，我猜大家不会有兴趣去了解，可是你不会明白对某些保守的项目来讲，安全性比先进性更为重要，所以当你发现银行这类机构还在使用各种“复古”的软件系统的时候，你应该相信这类东西的确有它们存在的意义。与此同时，你会更加深刻地明白一个道理：技术是否先进性和其流行程度本身并无直接联系。由此我们可以推论出：一项不流行的技术不一定是因为它本身技术不先进，或许仅仅是因为它无法满足商业化的需求而已。我这里的确是在说WPF,MVVM思想最早由WPF提出，然而其发扬光大却是因为前端领域近年来比较热的AngularJS和Vue.js，我们这里表达的一个观点是：很多你以为非常新潮的概念，或许仅仅是被人们重新赋予了新的名字，当你理清这一切的来龙去脉以后，你会发现这一切并没有什么不同。这符合我一贯的主张：去发现问题的实质、不要被框架束缚、通过共性来消除差异，所以在今天这篇文章里，我想说说WPF中MVVM模式下命令与委托的关系。
+    
+
+        <a href="/posts/569337285/" class="post-more waves-effect waves-button">
+            阅读全文…
+        </a>
+    </div>
+    
+    <div class="post-footer">
+        
+	<ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/MVVM/" rel="tag">MVVM</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%91%BD%E4%BB%A4/" rel="tag">命令</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%A7%94%E6%89%98/" rel="tag">委托</a></li></ul>
+
+    </div>
+    
+</article>
+
+        </li>
+    
+        <li class="post-list-item fade">
+            <article id="post-在Unity3D中使用uGUI实现3D旋转特效"
+  class="article-card article-type-post" itemprop="blogPost">
+
+    <div class="post-meta">
+        <time class="post-time" title="2016-07-10 14:29:33" datetime="2016-07-10T14:29:33.000Z"  itemprop="datePublished">2016-07-10</time>
+
+        
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Unity3D/">Unity3D</a></li></ul>
+
+
+
+    </div>
+
+    
+
+
+  
+    <h3 class="post-title" itemprop="name">
+      <a class="post-title-link" href="/posts/1150143610/">在Unity3D中使用uGUI实现3D旋转特效</a>
+    </h3>
+  
+
+
+
+
+    <div class="post-content" id="post-content" itemprop="postContent">
+
+    
+        &emsp;&emsp;各位朋友大家好，欢迎大家关注我的博客，我是Payne，我的博客地址是http://qinyuanpei.com。最近一位朋友问我，如何在Unity引擎中实现类似《英雄联盟》中选择皮肤时的3D滚动视图效果，虽然我非常不喜欢这个游戏，可是大学四年在宿舍里被周围同学们耳濡目染，对这个游戏中常见英雄的口头禅还是颇为熟悉的，曾经在周围同学的“硝烟”和“噪杂”中熬夜编程，此时此刻想起来大概是最能让我怀念和骄傲的记忆了。剑圣说“你的剑就是我的剑”，伊泽瑞尔说“是时候表演真正的技术了”，杰斯说“为了更美好的明天而战”……或许曾经的某一瞬间，我们曾经有过类似的让你我疯狂着迷的人生信条，可是不管怎样，我希望我们可以将这些永远地铭刻在心里，如同心中栽种下一棵红莲，在黑夜中静静地等待开放，这样当此去经年亦或时过境迁的时候，我们不会说是时光抹去了你我年轻的棱角，因为我相信真正的棱角会因为磨砺而变得更加明亮，绝对不会因为此刻的苟且就变的麻木甚至迷茫。好了，喝完我这碗心灵鸡汤，下面我们来一起学习如何在Unity3D中使用uGUI实现3D滚动视图效果。
+    
+
+        <a href="/posts/1150143610/" class="post-more waves-effect waves-button">
+            阅读全文…
+        </a>
+    </div>
+    
+    <div class="post-footer">
+        
+	<ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Unity3D/" rel="tag">Unity3D</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/uGUI/" rel="tag">uGUI</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91/" rel="tag">游戏开发</a></li></ul>
+
+    </div>
+    
+</article>
+
+        </li>
+    
+        <li class="post-list-item fade">
+            <article id="post-Unity3D游戏开发之在uGUI中使用不规则精灵制作按钮"
+  class="article-card article-type-post" itemprop="blogPost">
+
+    <div class="post-meta">
+        <time class="post-time" title="2016-07-08 21:58:39" datetime="2016-07-08T21:58:39.000Z"  itemprop="datePublished">2016-07-08</time>
+
+        
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Unity3D/">Unity3D</a></li></ul>
+
+
+
+    </div>
+
+    
+
+
+  
+    <h3 class="post-title" itemprop="name">
+      <a class="post-title-link" href="/posts/1190622881/">Unity3D游戏开发之在uGUI中使用不规则精灵制作按钮</a>
+    </h3>
+  
+
+
+
+
+    <div class="post-content" id="post-content" itemprop="postContent">
+
+    
+        &emsp;&emsp;各位朋友大家好，欢迎关注我的博客，我的博客地址是http://www.qinyuanpei.com。最近因为受到工作上业务因素影响，所以博主在Unity引擎上的研究有所停滞。虽然目前的工作内容和Unity3D没有直接的关联，可是我觉得工程师应该有这样一种情怀，即工作和兴趣是完全不同的两个概念。编程对我而言，首先是一种兴趣，其次是一份工作。所以我宁愿在每天下班以后继续研究自己感兴趣的东西，而非为了取悦这个世界、为了加班而加班。最近广电总局让整个游戏行业都坐立不安了，因为其新发布的一系列规定，让中国的独立游戏开发者怨声载道。可是我们更应该看到积极的一面是，无数的小游戏公司会在最近数月内大量消失，或许对中国野蛮生长的游戏行业这是一次“形式”上的整顿，可对我们开发者来说，在这个过程中努力提升自我、巩固基础永远比追求时髦、流行的技术或者框架有意义的多，因为热闹的从来都是昙花一现般的璀璨，而永恒的永远都是历久弥新的真理。好了，闲言少叙，今天我们的话题是在uGUI中使用不规则精灵制作按钮。
+    
+
+        <a href="/posts/1190622881/" class="post-more waves-effect waves-button">
+            阅读全文…
+        </a>
+    </div>
+    
+    <div class="post-footer">
+        
+	<ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Unity3D/" rel="tag">Unity3D</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/uGUI/" rel="tag">uGUI</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91/" rel="tag">游戏开发</a></li></ul>
+
+    </div>
+    
+</article>
+
+        </li>
+    
+        <li class="post-list-item fade">
+            <article id="post-使用C#开发HTTP服务器系列之实现Get和Post"
+  class="article-card article-type-post" itemprop="blogPost">
+
+    <div class="post-meta">
+        <time class="post-time" title="2016-06-11 15:01:35" datetime="2016-06-11T15:01:35.000Z"  itemprop="datePublished">2016-06-11</time>
+
+        
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/">编程语言</a></li></ul>
+
+
+
+    </div>
+
+    
+
+
+  
+    <h3 class="post-title" itemprop="name">
+      <a class="post-title-link" href="/posts/1700650235/">使用C#开发HTTP服务器系列之实现Get和Post</a>
+    </h3>
+  
+
+
+
+
+    <div class="post-content" id="post-content" itemprop="postContent">
+
+    
+        &emsp;&emsp;各位朋友大家好，我是秦元培，欢迎大家关注我的博客，我的博客地址是http://qinyuanpei.com。在我们这个Web服务器有了一个基本的门面以后，我们是时候来用它做点实际的事情了。还记得我们最早提到HTTP协议的用途是什么吗？它叫超文本传输协议啊，所以我们必须考虑让我们的服务器能够接收到客户端传来的数据。因为我们目前完成了大部分的工作，所以对数据传输这个问题我们这里选择以最简单的GET和POST为例来实现，这样我们今天的重点就落实在Get和Post的实现这个问题上来。而从原理上来讲，无论Get方式请求还是Post方式请求，我们都可以在请求报文中获得其请求参数，不同的是前者出现在请求行中，而后者出现在消息体中。例如我们传递的两个参数num1和num2对应的数值分别是12和24，那么在具体的请求报文中我们都能找到类似“num1=12&amp;num2=24”这样的字符结构，所以只要针对这个字符结构进行解析，就可以获得客户端传递给服务器的参数啦。
+    
+
+        <a href="/posts/1700650235/" class="post-more waves-effect waves-button">
+            阅读全文…
+        </a>
+    </div>
+    
+    <div class="post-footer">
+        
+	<ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/C/" rel="tag">C#</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/HTTP/" rel="tag">HTTP</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%9C%8D%E5%8A%A1%E5%99%A8/" rel="tag">服务器</a></li></ul>
+
+    </div>
+    
+</article>
+
+        </li>
+    
+        <li class="post-list-item fade">
+            <article id="post-使用C#开发HTTP服务器系列之更简单的实现方式"
+  class="article-card article-type-post" itemprop="blogPost">
+
+    <div class="post-meta">
+        <time class="post-time" title="2016-06-11 15:01:35" datetime="2016-06-11T15:01:35.000Z"  itemprop="datePublished">2016-06-11</time>
+
+        
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/">编程语言</a></li></ul>
+
+
+
+    </div>
+
+    
+
+
+  
+    <h3 class="post-title" itemprop="name">
+      <a class="post-title-link" href="/posts/3603924376/">使用C#开发HTTP服务器系列之更简单的实现方式</a>
+    </h3>
+  
+
+
+
+
+    <div class="post-content" id="post-content" itemprop="postContent">
+
+    
+        &emsp;&emsp;各位朋友大家好，我是秦元培，欢迎大家关注我的博客，我的博客地址是http://qinyuanpei.com。到目前为止，我已经发布了3篇HTTP服务器开发的系列文章。对我个人而言，我非常享受这个从无到有的过程，或许我现在写的这个Web服务器有各种不完美的因素，可是当有一天我需要一个轻量级的服务器的时候，我在无形中是不是比别人多了一种选择呢？我们常常提到“不要重复造轮子”，可事实上这并不能成为我们“不造轮子”的理由，虽然我们有各种各样的服务器软件、有各种各样的服务端框架可以供我们选择，可是在动手写这个系列文章前，我对Web服务器的印象无非是因为我是用LAWP(Linux + Apache + MySQL + PHP)搭建过Wordpress博客而已。虽然在对动态页面(如.aspx、.jsp、.php等)的处理上，可能会和静态页面有所不同，但是我庆幸我了解了这个过程以及它的内部原理，这种跨语言、跨平台的设计思路是任何框架或者标准都无法告诉我的。或许有人会问我，为什么不在最开始的时候就选择更简单的实现方法，那么在这篇文章中你将会找到答案。
+    
+
+        <a href="/posts/3603924376/" class="post-more waves-effect waves-button">
+            阅读全文…
+        </a>
+    </div>
+    
+    <div class="post-footer">
+        
+	<ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/C/" rel="tag">C#</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/HTTP/" rel="tag">HTTP</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%9C%8D%E5%8A%A1%E5%99%A8/" rel="tag">服务器</a></li></ul>
+
+    </div>
+    
+</article>
+
+        </li>
+    
+        <li class="post-list-item fade">
+            <article id="post-使用C#开发HTTP服务器系列之构建RESTful API"
+  class="article-card article-type-post" itemprop="blogPost">
+
+    <div class="post-meta">
+        <time class="post-time" title="2016-06-11 15:01:35" datetime="2016-06-11T15:01:35.000Z"  itemprop="datePublished">2016-06-11</time>
+
+        
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/">编程语言</a></li></ul>
+
+
+
+    </div>
+
+    
+
+
+  
+    <h3 class="post-title" itemprop="name">
+      <a class="post-title-link" href="/posts/3637847962/">使用C#开发HTTP服务器系列之构建RESTful API</a>
+    </h3>
+  
+
+
+
+
+    <div class="post-content" id="post-content" itemprop="postContent">
+
+    
+        &emsp;&emsp;各位朋友大家好，我是秦元培，欢迎大家关注我的博客，我的博客地址是http://qinyuanpei.com。到目前为止，“使用C#开发HTTP服务器”这个系列系列文章目前已经接近尾声了，虽然我们在服务器功能的完整性(如支持并发、缓存、异步、Htts等)上没有再继续深入下去，可是我们现在已经具备了一个基本的服务器框架啦，所以更多深层次的问题就需要大家根据自己的需要来扩展了，因为写博客更多的是一种“记录-输出-反馈”的一个过程，所以我更希望大家在看完我的博客后能对我有所反馈，因为抄博客上的代码实在是太无聊啦！好了，保持愉悦的心情我们下面来引出今天的话题：构建RESTful API。RESTful API，这个概念或许你曾经听说过，可能它和我们所熟悉的各种Web息息相关，甚至在某种意义上来讲它并不是一种新的技术，而这一切的一切归根到底都是在问一个问题，即网站真的是Web的唯一形态吗？
+    
+
+        <a href="/posts/3637847962/" class="post-more waves-effect waves-button">
+            阅读全文…
+        </a>
+    </div>
+    
+    <div class="post-footer">
+        
+	<ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/C/" rel="tag">C#</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/HTTP/" rel="tag">HTTP</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%9C%8D%E5%8A%A1%E5%99%A8/" rel="tag">服务器</a></li></ul>
+
+    </div>
+    
+</article>
+
+        </li>
+    
+        <li class="post-list-item fade">
+            <article id="post-使用C#开发HTTP服务器系列之静态页面"
+  class="article-card article-type-post" itemprop="blogPost">
+
+    <div class="post-meta">
+        <time class="post-time" title="2016-06-11 15:01:35" datetime="2016-06-11T15:01:35.000Z"  itemprop="datePublished">2016-06-11</time>
+
+        
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/">编程语言</a></li></ul>
+
+
+
+    </div>
+
+    
+
+
+  
+    <h3 class="post-title" itemprop="name">
+      <a class="post-title-link" href="/posts/3695777215/">使用C#开发HTTP服务器系列之静态页面</a>
+    </h3>
+  
+
+
+
+
+    <div class="post-content" id="post-content" itemprop="postContent">
+
+    
+        &emsp;&emsp;各位朋友大家好，我是秦元培，欢迎大家关注我的博客，我的博客地址是http://qinyuanpei.com。在这个系列文章的第一篇中，我们着重认识和了解了HTTP协议，并在此基础上实现了一个可交互的Web服务器，即当客户端访问该服务器的时候，服务器能够返回并输出一个简单的“Hello World”。现在这个服务器看起来非常简陋，为此我们需要在这个基础上继续开展工作。今天我们希望为这个服务器增加主页支持，即当我们访问这个服务器的时候，它可以向我们展示一个定制化的服务器主页。通常情况下网站的主页被定义为index.html，而在动态网站技术中它可以被定义为index.php。了解这些将有助于帮助我们认识Web技术的实质，为了方便我们这里的研究，我们以最简单的静态页面为例。
+    
+
+        <a href="/posts/3695777215/" class="post-more waves-effect waves-button">
+            阅读全文…
+        </a>
+    </div>
+    
+    <div class="post-footer">
+        
+	<ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/C/" rel="tag">C#</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/HTTP/" rel="tag">HTTP</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%9C%8D%E5%8A%A1%E5%99%A8/" rel="tag">服务器</a></li></ul>
+
+    </div>
+    
+</article>
+
+        </li>
+    
+    </ul>
+
+    
+<nav id="page-nav">
+    <div class="inner">
+    <a class="extend prev" rel="prev" href="/pages/13/">上一页</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/pages/12/">12</a><a class="page-number" href="/pages/13/">13</a><span class="page-number current">14</span><a class="page-number" href="/pages/15/">15</a><a class="page-number" href="/pages/16/">16</a><span class="space">&hellip;</span><a class="page-number" href="/pages/20/">20</a><a class="extend next" rel="next" href="/pages/15/">下一页</a>
+    </div>
+</nav>
+
+
+</div>
+
+        <footer class="footer">
+    <div class="top">
+        
+   <p>
+      <span id="lc_counter_container_site_uv">
+         <i class="icon icon-user"></i><span id="lc_counter_value_site_uv"></span>
+      </span>
+      <span id="lc_counter_container_site_pv">
+         <i class="icon icon-eye"></i><span id="lc_counter_value_site_pv"></span>
+      </span>
+  </p>
+
+
+        <p>
+   <a id="jinrishici-sentence" href="https://www.jinrishici.com/" target="_blank" rel="noopener">加载中</a>
+</p>
+<script src="https://sdk.jinrishici.com/v2/browser/jinrishici.js" charset="utf-8"></script>
+<script>
+   jinrishici.load(function(result) {
+      document.querySelector('#subtitle').innerText = result.data.content;
+      document.querySelector('#jinrishici-sentence').innerText = result.data.content;
+  });
+</script>
+            <!--Todo: 考虑重构为插件 -->
+            <p>
+                
+                    <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+                
+                <span>
+                    <a href="https://github.com/qinyuanpei" target="_blank" rel="license noopener" title="Github">
+                        <i class="icon icon-lg icon-github"></i>
+                    </a>
+                </span>
+                <span>
+                    <a href="https://weibo.com/1278609231/profile" target="_blank" rel="license noopener" title="微博">
+                        <i class="icon icon-lg icon-weibo"></i>
+                    </a>
+                </span>
+                <span>
+                    <a href="https://www.douban.com/people/60029335/" target="_blank" rel="license noopener" title="豆瓣">
+                        <i class="icon icon-lg icon-douban"></i>
+                    </a>
+                </span>
+                <span>
+                    <a href="https://www.zhihu.com/people/qinyuanpei" target="_blank" rel="license noopener" title="知乎">
+                        <i class="icon icon-lg icon-zhihu-square"></i>
+                    </a>
+                </span>
+                <span>
+                    <a href="https://blog.csdn.net/qinyuanpei" target="_blank" rel="license noopener" title="CSDN">
+                        <i class="icon icon-lg">C</i>
+                    </a>
+                </span>
+                <span>
+                    <a href="https://music.163.com/#/user/home?id=47002864" target="_blank" rel="license noopener" title="网易音乐">
+                        <i class="icon icon-lg icon-wangyiyunyinyue"></i>
+                    </a>
+                </span>
+            </p>
+        
+    </div>
+    <div class="bottom">
+        <p><span>飞鸿踏雪 &copy; 2014 - 2021</span><br>
+            
+                
+                Powered by <a href="http://hexo.io/" target="_blank">Hexo</a> & Theme by <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a><br>
+                
+                
+                    <p>Hosted by <a href="https://pages.github.com" target="_blank" rel="noopener" style="font-weight: bold">Github Pages</a></p>
+                
+        </p>
+    </div>
+</footer>
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span
+        class="icon icon-lg icon-chevron-up"></span></a>
+
+    
+
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://qinyuanpei.github.io/pages/14/&title=一个人的孤落时辰&pic=https://qinyuanpei.github.ioassets/images/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://qinyuanpei.github.io/pages/14/&title=一个人的孤落时辰&source=一个人的孤落时辰 | 纵有疾风起，人生不言弃 | 隐约雷鸣，阴霾天空，即使天无雨，我亦留此地。" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://qinyuanpei.github.io/pages/14/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=一个人的孤落时辰&url=https://qinyuanpei.github.io/pages/14/&via=https://qinyuanpei.github.io" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://qinyuanpei.github.io/pages/14/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+      
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="//api.qrserver.com/v1/create-qr-code/?data=https://qinyuanpei.github.io/pages/14/" alt="微信分享二维码">
+</div>
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.6/waves.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/4.2.1/echarts.min.js"></script>
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/echarts-wordcloud.min.js" async></script>
+<script>
+    var BLOG = { ROOT: '/', SHARE: true, REWARD: false };
+
+
+</script>
+
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/main.min.js"></script>
+
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/search.min.js" async></script>
+
+
+
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/heart.min.js" async></script>
+
+
+
+
+
+
+
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/leancloud-counter.min.js"></script>
+<script>
+        (function () {
+            var appId = 'JbHqRp2eMrTgIwYpfERH0g79-gzGzoHsz';
+            var appKey = 'VsiKvLuiBGvJL1XrAfv7siY2';
+            new VisitorCounter().init({
+                appId: appId,       //应用ID, 必输
+                appKey: appKey,      //应用Key, 必输
+                region: '华北',      //华东,华北,国际, 默认华东
+                domain: '',      //自定义域名
+                collectIP: true, //是否收集IP及位置信息, 默认开启
+                collectUA: true  //是否收集UserAgent, 默认开启
+            });
+        })();
+</script>
+
+
+
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/vconsole.min.js"></script>
+<script type="text/javascript">
+    //当地址中存在debug=true时，实例化vConsole
+    if (location.href.indexOf('debug=true') > -1) {
+        var vConsole = new VConsole();
+    }
+</script>
+
+
+    <script>
+    //国内用户自动重定向Coding Pages镜像
+    // var ipInfo = JSON.parse(localStorage.getItem('ipInfo'));
+    // if (ipInfo.country_code == 'CN') {
+    //     location.href = location.href.replace('qinyuanpei.github.io', 'blog.yuanpei.me');
+    // }
+    </script>
+
+
+<script>
+titleArray = [];
+function scrollTitle() {
+    if (titleArray.length == 0) return;
+    titleArray.push(titleArray[0]);
+	titleArray.shift();
+	document.title = titleArray.join("");
+}
+setInterval(scrollTitle, 500);
+(function() {
+    var originTitile = document.title, titleTime;
+    document.addEventListener('visibilitychange', function() {
+        if (document.hidden) {
+            titleArray = originTitile.split('');
+            clearTimeout(titleTime);
+        } else {
+            document.title = originTitile;
+            titleArray = originTitile.split('');
+            titleTime = setTimeout(function() {
+                document.title = originTitile;
+                titleArray = [];
+            },2000);
+        }
+    });
+})();
+</script>
+
+
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/ribbon.min.js"></script>
+</body>
+</html>
