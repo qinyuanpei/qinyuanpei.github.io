@@ -145,6 +145,14 @@
 
     function handleCategoryChart(el, data) {
         var chart = echarts.init(document.getElementById(el));
+        chart.on("click", function (param) {
+            if (typeof param.seriesIndex == 'undefined') {
+                return;
+            }
+            if (param.type == 'click') {
+                location.href = '<%- config.url %>' + '/categories/' + encodeURI(param.data.name);
+            }
+        });
         var seriesData = []
         for (var key in data.categories) {
             seriesData.push({
