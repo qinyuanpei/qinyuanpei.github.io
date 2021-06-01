@@ -1,0 +1,883 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+    
+<script async defer data-domain="blog.yuanpei.me" src="https://plausible.io/js/plausible.js"></script>
+    
+    <meta charset="utf-8">
+    <!-- HTTP 1.1 -->  
+    <meta http-equiv="pragma" content="no-cache">  
+    <!-- HTTP 1.0 -->  
+    <meta http-equiv="cache-control" content="no-cache">
+    <!-- 微博图床防盗链 --> 
+    <!-- <meta name="referrer" content="no-referrer"/> -->
+    <!--Google站点验证-->
+    
+    <!--百度站点验证-->
+    
+    
+    <!--Google AdSense-->
+    
+    <!--Bing站点验证-->
+    <meta name="msvalidate.01" content="713A48A3FE17D4841C292A6B3942EB4C" />
+    
+    <title>
+        基于过滤器实现异常处理的探索 | 一个人的孤落时辰 | 纵有疾风起，人生不言弃
+    </title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+        <meta name="theme-color" content="#3F51B5">
+    
+
+    <meta name="keywords" content="异常,设计,架构,秦元培,技术博客,生活随笔,个人博客,NET,Python,数据挖掘,数据分析,NLP">
+    
+        <meta name="description" content="垠神这篇文章其实在说一个问题，Checked Exception鼓励开发者主动告知调用者来捕获特定异常，这种思路完全是没有问题的，问题是调用者如何能够知道它需要捕获哪些异常，我们不可能每次都通过&#34;转到定义”功能去看一个方法会引发哪些异常，垠神从PL的角度出发，想到了通过代码静态分析的方法来处理异常，垠神吐槽的其实是不分青红皂白滥用try-catch的做法，实际上Java标准库里对异常处理相当混乱，虽然官方鼓励使用Checked Exception，但是标准库实现和工程实践上不乏将异常包装为RuntimeException来规避Check的做法，我认为Checked Exception在工程学意义上最大贡献是，在开发阶段该抛出什么异常就应该抛出异常，因为这样可以方便我们快读定位问题，而到了发布阶段则应该将这些异常都catch住即可，这样用户就不会看到这些奇葩的异常;我们可以注意到Java强制让Foo()方法实现了throws声明，原因是在该方法内部可能会引发FileNotFoundException，如果我们不遵从这一&#34;霸王条款&#34;，那么我们的代码将无法通过编译，而在调用者层面上，Java的霸道则体现在要求调用者使用try-catch结构处理这种异常，或者继续使用throws声明来使异常继续向上传递，我更喜欢将这种设计称之为一种理想状态下的异常处理机制，比如我们读写一个文件的时候，除了FileNotFoundException以外，可能还会遇到FileLoadException、PathTooLongException、EndOfStreamException等等的异常，如果这些异常在业务层面上是无差别的，那么我认为将异常细分到如此精细的程度是没有意义的，因为对用户而言这个时候它关心的是否成功读写了这个文件，具体的异常原因用户并不想真的知道，可是Java的Checked Exception在面对这种处境的时候，整体而言是显得力不从心的，因为我们不得不在方法从声明该方法会引出哪些异常，这对方法的编写者和方法的调用者来说都很痛苦;可以注意到C#采用的是一种相对温和的策略，即文档会明确告诉你，某个方法是否会引发异常以及引发哪些异常，但是是否要捕获这些异常则完全由调用者决定，我认为这是C#之父Hejlsberg在权衡后在工程实践上选择的一种妥协，因为Java的Checked Exception理想主义色彩稍重，并不是在所有场景下我们都需要去处理所有的异常，所以Checked Exception带来的问题是，即使在只需要捕获基类异常的情况下，我们依然不得不去捕获各种子类异常，这难道不有点矫枉过正的感觉吗;在上一个项目中，我对于异常处理其实实践得并不好，因为我一直不知道哪里是捕获异常的入口，我个人并不认同直接捕获到异常直接throw这种做法，因为你在自定义异常的时候就应该想清楚，哪些异常是需要捕获并处理的，哪些异常时可以直接让它Crash的，如果每个人都仅仅是抛出异常而不去拦截异常，那么异常机制设计得再好又有什么用呢，关于Java的异常有一个梗，是说Java的异常给出了详细的堆栈信息，可就是不直接告诉你到底是哪里异常了，事实证明我设计的这个方案运行的很好，其实我很想吐槽操作日志真的有存在的必要吗;事实上这两者在程序的表达能力上等价的，它们都可以向调用者传达&#34;异常发生“这个事件，譬如我们在集合中查找一个元素，如果元素不存在则返回-1，这其实就是一个使用错误码来表示&#34;错误“的经典案例，显然这种从C/C++时代遗留下来的传统解释了Win32 API为什么会选择这样的设计方式，换言之，选择哪种方式，本质上是一种从API风格、代码风格和性能指标等方面综合考虑后的结果，错误码这种方式的缺陷主要在于，错误码不能明确地告诉调用者到底发生了什么错误，除非我们定义更多的错误代码，而且在没有引入可空类型以前，我们没有办法避免错误码污染返回值的值域，比如在这个例子，如果集合中恰好有一个元素-1，那么通过-1这个返回值我们是没有办法判断出，这个-1到底是不是因为方法内部发生了错误而返回-1.">
+    
+    <meta name="description" content="垠神这篇文章其实在说一个问题，Checked Exception鼓励开发者主动告知调用者来捕获特定异常，这种思路完全是没有问题的，问题是调用者如何能够知道它需要捕获哪些异常，我们不可能每次都通过&quot;转到定义”功能去看一个方法会引发哪些异常，垠神从PL的角度出发，想到了通过代码静态分析的方法来处理异常，垠神吐槽的其实是不分青红皂白滥用try-catch的做法，实际上Java标准库里对异常处理相当混乱，">
+<meta property="og:type" content="article">
+<meta property="og:title" content="基于过滤器实现异常处理的探索">
+<meta property="og:url" content="https://qinyuanpei.github.io/posts/570888918/index.html">
+<meta property="og:site_name" content="一个人的孤落时辰">
+<meta property="og:description" content="垠神这篇文章其实在说一个问题，Checked Exception鼓励开发者主动告知调用者来捕获特定异常，这种思路完全是没有问题的，问题是调用者如何能够知道它需要捕获哪些异常，我们不可能每次都通过&quot;转到定义”功能去看一个方法会引发哪些异常，垠神从PL的角度出发，想到了通过代码静态分析的方法来处理异常，垠神吐槽的其实是不分青红皂白滥用try-catch的做法，实际上Java标准库里对异常处理相当混乱，">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2017-05-20T20:10:28.000Z">
+<meta property="article:modified_time" content="2021-06-01T04:07:35.813Z">
+<meta property="article:author" content="飞鸿踏雪">
+<meta property="article:tag" content="异常">
+<meta property="article:tag" content="设计">
+<meta property="article:tag" content="架构">
+<meta name="twitter:card" content="summary">
+    
+        <link rel="alternate" type="application/atom+xml" title="一个人的孤落时辰" href="/atom.xml">
+    
+    <link rel="shortcut icon" href="/assets/images/favicon.ico">
+    
+        <link rel="manifest" href="/manifest.json">
+    
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master//assets/styles/style.css">
+    <script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/instantclick.min.js"></script>
+    <script>window.lazyScripts=[]</script>
+    <!-- custom head -->
+    
+
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu" class="hide" >
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap" style="background-image:url(/assets/images/brand.jpg)">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/assets/images/avatar.jpg" alt="avatar">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">飞鸿踏雪</h5>
+          <a href="mailto:qinyuanpei@163.com" title="qinyuanpei@163.com" class="mail">qinyuanpei@163.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/"  >
+                <i class="icon icon-lg icon-home"></i>
+                主页
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives"  >
+                <i class="icon icon-lg icon-archives"></i>
+                归档
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags"  >
+                <i class="icon icon-lg icon-tags"></i>
+                标签
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/categories"  >
+                <i class="icon icon-lg icon-th-list"></i>
+                分类
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/books"  >
+                <i class="icon icon-lg icon-bookmark"></i>
+                书单
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/movies"  >
+                <i class="icon icon-lg icon-film"></i>
+                影单
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/works"  >
+                <i class="icon icon-lg icon-code"></i>
+                实验室
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/about"  >
+                <i class="icon icon-lg icon-circle"></i>
+                关于我
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+            <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">基于过滤器实现异常处理的探索</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off"
+                placeholder="输入感兴趣的关键字">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+        <a href="https://github.com/qinyuanpei/qinyuanpei.github.io" target="_blank" rel="noopener" class="header-icon waves-effect waves-circle waves-light" id="menuGithub">
+            <i class="icon icon-lg icon-code-fork"></i>
+        </a>
+    </div>
+</header>
+<header class="content-header post-header">
+    <div class="container fade-scale">
+        <h1 class="title">基于过滤器实现异常处理的探索</h1>
+        <h5 class="subtitle" id="subtitle">
+            
+            <time datetime="2017-05-20T20:10:28.000Z" itemprop="datePublished" class="page-time">
+  2017-05-20
+</time>
+
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/">编程语言</a></li></ul>
+
+            
+        </h5>
+    </div>
+    
+
+</header>
+
+<div class="container body-wrap">
+    
+    <aside class="post-widget">
+        <nav class="post-toc-wrap" id="post-toc">
+            <h4>目录</h4>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#异常和错误"><span class="post-toc-number">1.</span> <span class="post-toc-text">异常和错误</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#Checked-Exception"><span class="post-toc-number">2.</span> <span class="post-toc-text">Checked Exception</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#让异常处理更优雅"><span class="post-toc-number">3.</span> <span class="post-toc-text">让异常处理更优雅</span></a></li></ol>
+        </nav>
+    </aside>
+    
+    <article id="post-基于过滤器实现异常处理的探索" class="post-article article-type-post fade" itemprop="blogPost">
+
+        <div class="post-card">
+            <h1 class="post-card-title">
+                基于过滤器实现异常处理的探索
+            </h1>
+            <div class="post-meta">
+                <time class="post-time" title="2017-05-20 20:10:28" datetime="2017-05-20T20:10:28.000Z"  itemprop="datePublished">2017-05-20</time>
+
+                
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/">编程语言</a></li></ul>
+
+
+
+                
+<span id="lc_counter_container_page_pv" title="文章总阅读量" data-page-url="" data-page-title="基于过滤器实现异常处理的探索">
+    <i class="icon icon-eye icon-pr"></i><span id="lc_counter_value_page_pv"></span>
+</span>
+
+
+
+
+
+                
+    <span>
+        <i class="icon icon-clock-o"></i>
+        37 min.
+    </span>
+    
+            </div>
+            <div class="post-content" id="post-content" itemprop="postContent">
+                <p>&emsp;&emsp;正如你所看到的那样，今天我想和大家聊聊异常处理这个话题。对于异常处理这个话题，我相信大家都有各自的方法论。而我今天想和大家探讨的这种异常处理方案，我将其称之为基于过滤器的异常处理。我不知道这种定义是否准确，我们的项目上在要引入AOP的概念以后，我们对异常处理的关注点就从<strong>try-catch</strong>转向<strong>Interceptor</strong>。虽然首席架构极力推荐，使用Unity框架来拦截代码中的各种异常，可从我最初纠结于”return”和”throw”的取舍，到现在我可以灵活地使用和捕捉自定义异常，对我而言老老实实地实践异常处理的经典做法，比使用AOP这样一种高大上的概念要有意义地多，因为我相信在某些情况下，我们并不是真正地了解了异常处理。</p>
+<h1 id="异常和错误"><a href="#异常和错误" class="headerlink" title="异常和错误"></a>异常和错误</h1><p>  或许是因为人类对机器时代充满了近乎苛刻的憧憬，我们的计算机程序在开始设计的时候，就被告知不允许出现错误，甚至我们的教科书上会用一种充满传奇色彩的口吻，来讲述一个因为粗心的工程师计算错了小数点而导致航天飞行器机毁人亡的故事。可是人类常常会对自己选择宽容，而对他人则选择严格，这种观点在整个数字时代更为凸显，当我们无法容忍一个糟糕的应用程序的时候，无论曾经人们为此付出过多少努力，在这一瞬间他们的价值都将不复存在。我们的这种苛刻迫使我们不允许软件出现错误，我们尝试通过各种各样的测试来避免错误发生，可是事实上软件工程实践最终会演变为一个妥协的产物，这意味着我们任何的形式化方法最终都会失败，没有人可以保证一生都不会犯错，而软件工程师同样是人，为什么我们一定要求他们不可以犯错呢？</p>
+<p>  我们不得不承认软件产品是一个持续演进的过程，如果抛开商业意义上的<strong>Deadline</strong>来说，实际上软件是永远没有写完的那一天的，这就是为什么工程师都有点理想主义的原因，不考虑外界环境因素的变化，而期待软件永远不会有新的问题产生，这实在是一种苛刻地要求。好了，我们在这里频繁地提到错误，那么在软件工程学意义上的异常和错误分别是指什么呢？具体来讲，异常是指我们可以明确预测到它会发生并且需要我们进一步处理的流程，而错误是指我们无法明确预测到它会发生并且它会程序流程中断而导致程序崩溃，所以我认为区分”异常”和”错误”最直观、最简单粗暴的方法就是，如果你捕捉到了一个异常并处理了这个异常，那么它就是异常。反之，如果任由异常导致程序Crash，那么它就是错误。如果我们因为畏惧异常而给所有方法增加try-catch，我不得不遗憾得告诉你，你还没有真正明白什么是异常。</p>
+<p>&emsp;&emsp;在早期的Win32 API中，微软大量使用了错误码来表示方法执行过程中发生的错误，这样就引出异常处理中的第一个问题，我们到底是应该是使用错误码还是异常来表示方法执行中发生的错误？事实上这两者在程序的表达能力上等价的，它们都可以向调用者传达”异常发生“这个事件，譬如我们在集合中查找一个元素，如果元素不存在则返回-1，这其实就是一个使用错误码来表示”错误“的经典案例，显然这种从C/C++时代遗留下来的传统解释了Win32 API为什么会选择这样的设计方式，换言之，选择哪种方式，本质上是一种从API风格、代码风格和性能指标等方面综合考虑后的结果，错误码这种方式的缺陷主要在于，错误码不能明确地告诉调用者到底发生了什么错误，除非我们定义更多的错误代码，而且在没有引入可空类型以前，我们没有办法避免错误码污染返回值的值域，比如在这个例子，如果集合中恰好有一个元素-1，那么通过-1这个返回值我们是没有办法判断出，这个-1到底是不是因为方法内部发生了错误而返回-1.</p>
+<p>&emsp;&emsp;好了，现在我们来说说异常，异常在主流的编程语言里基本上是一个标配。异常可以保存从异常抛出点到异常捕获点间的相关信息，所以异常相比错误码可以持有更多的信息，或许你可以尝试去设计一种数据结构来让返回值更丰富:)。我们常常听到”使用异常会降低程序性能”这样的说法，可这部分性能上的差异仅仅是因为，我们需要在抛出异常的时候给调用者更多的信息，所以这是一个非常公平的事情。第二个问题，我们是不是在所有情况下都使用异常？使用异常的好处是它可以让我们以一种更安全的方式去处理异常，可一旦发生了异常程序的性能就会降低，所以我们可以看到.NET中提供TryParse这样的方法，这其实是在告诉我们：如果预测到异常一定会发生，正确的策略不是去捕捉它而是去回避它。在《编写高质量的C#代码》一书中曾建议：不要在foreach内部使用try-catch，就是这个道理，即采用防御式编程的策略来回避异常，而不是总是抛出异常。</p>
+<p>&emsp;&emsp;那么，总结下行文至此的观点：异常是强类型的，类型安全的分支处理技术，而错误码是弱类型的，类型不安全的分支处理技术。元组等可以让函数返回多个返回值的技术，从理论层面上可以模拟异常，即将更多的细节信息返回给调用者，可是这种方式相比由运行时提供支持的异常机制，在性能指标和堆栈调用上都存在缺陷。异常在被运行时抛出来的时候，程序性能是下降的，这是因为调用者需要更多的细节信息，所以不建议在所有场合都抛出异常，建议使用防御式编程的策略去回避异常，直到确定程序没有办法处理下去的时候再抛出异常。理论上所有自定义的异常都应该去捕捉并处理，否则定义这些自定义异常是没有意义的。异常处理应该拥有统一的入口，在代码中到处try-catch和记日志是种非常丑陋的做法，理论上应该坚决摒弃。</p>
+<h1 id="Checked-Exception"><a href="#Checked-Exception" class="headerlink" title="Checked Exception"></a>Checked Exception</h1><p>  最近垠神写了一篇新的文章<a href="http://www.yinwang.org/blog-cn/2017/05/23/kotlin" target="_blank" rel="noopener">《Kotlin和Checked Exception》</a>，在这篇文章中垠神提到了Checked Exception这种针对异常处理的设计，而恰好我这篇文章写的同样是异常处理，并且我在下面提到的基于过滤器的异常处理方案，实际上就是为了解决这种Checked Exception的问题，虽然在.NET中不存在Checked Exception。</p>
+<p>  要了解什么是Checked Exception，要从Java中的异常机制说起。Java中的异常类全部继承自Throwable，它有两个直接子类Error和Exception，通常情况下Error是指Java虚拟机中发生错误，所以Error不需要捕捉或者抛出，因为对此表示无能为力；而Exception则是指代码逻辑中发生错误，这类错误需要调用者去捕捉和处理。那么在这样的分类下，Java中的异常可以分为Checked Exception(<strong>受检查的异常</strong>)和Unchecked Exception(<strong>未受检查的异常</strong>)，前者需要需要方法强制实现throws声明或者是使用try-catch，如果不这样做编辑器就会直接报错，后者就相对宽容啦，没有这样霸道的条款，可是诡异的是RuntimeException是一个UncheckedException，可它居然是继承自Exception而不是Error，这实在令人费解，Java的设计模式果然博大精深。</p>
+<p>  那么对一个Checked Exception，Java的处理方式是十分地霸道的，我们一起来看下面这段代码：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">Foo</span><span class="params">(<span class="built_in">string</span> fileName)</span> throws FileNotFoundException</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">if</span>(...) <span class="keyword">throw</span> <span class="keyword">new</span> FileNotFoundException();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>我们可以注意到Java强制让Foo()方法实现了throws声明，原因是在该方法内部可能会引发FileNotFoundException，如果我们不遵从这一”霸王条款”，那么我们的代码将无法通过编译，而在调用者层面上，Java的霸道则体现在要求调用者使用try-catch结构处理这种异常，或者继续使用throws声明来使异常继续向上传递，我更喜欢将这种设计称之为一种理想状态下的异常处理机制，比如我们读写一个文件的时候，除了FileNotFoundException以外，可能还会遇到FileLoadException、PathTooLongException、EndOfStreamException等等的异常，如果这些异常在业务层面上是无差别的，那么我认为将异常细分到如此精细的程度是没有意义的，因为对用户而言这个时候它关心的是否成功读写了这个文件，具体的异常原因用户并不想真的知道，可是Java的Checked Exception在面对这种处境的时候，整体而言是显得力不从心的，因为我们不得不在方法从声明该方法会引出哪些异常，这对方法的编写者和方法的调用者来说都很痛苦。</p>
+<p>&emsp;&emsp;垠神这篇文章其实在说一个问题，Checked Exception鼓励开发者主动告知调用者来捕获特定异常，这种思路完全是没有问题的，问题是调用者如何能够知道它需要捕获哪些异常，我们不可能每次都通过”转到定义”功能去看一个方法会引发哪些异常，垠神从PL的角度出发，想到了通过代码静态分析的方法来处理异常，垠神吐槽的其实是不分青红皂白滥用try-catch的做法，实际上Java标准库里对异常处理相当混乱，虽然官方鼓励使用Checked Exception，但是标准库实现和工程实践上不乏将异常包装为RuntimeException来规避Check的做法，我认为Checked Exception在工程学意义上最大贡献是，在开发阶段该抛出什么异常就应该抛出异常，因为这样可以方便我们快读定位问题，而到了发布阶段则应该将这些异常都catch住即可，这样用户就不会看到这些奇葩的异常。换句话说，我们不必在程序中去处理所有的异常，而是将异常机制作为我们定位问题的工具，去捕获那些有可能出现的异常即可。</p>
+<p>&emsp;&emsp;C#中其实是由类似Checked Exception的概念存在的，不过所有的Check都不是强制去实现的，我们知道.NET中一个方法会抛出哪些异常完全是由注释来说明的，XML注释中的exception节点表示该方法会引发何种异常，我们一起来看下面的例子：</p>
+<figure class="highlight cs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;exception cref="MasterFileFormatCorruptException"&gt;</span><span class="doctag">&lt;/exception&gt;</span></span></span><br><span class="line"><span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;exception cref="MasterFileLockedOpenException"&gt;</span><span class="doctag">&lt;/exception&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">ReadRecord</span>(<span class="params"><span class="keyword">int</span> flag</span>) </span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">     <span class="keyword">if</span> (flag == <span class="number">1</span>)</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> MasterFileFormatCorruptException();</span><br><span class="line">     <span class="keyword">else</span> <span class="keyword">if</span> (flag == <span class="number">2</span>)</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> MasterFileLockedOpenException();</span><br><span class="line">     <span class="comment">// …</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>可以注意到C#采用的是一种相对温和的策略，即文档会明确告诉你，某个方法是否会引发异常以及引发哪些异常，但是是否要捕获这些异常则完全由调用者决定，我认为这是C#之父Hejlsberg在权衡后在工程实践上选择的一种妥协，因为Java的Checked Exception理想主义色彩稍重，并不是在所有场景下我们都需要去处理所有的异常，所以Checked Exception带来的问题是，即使在只需要捕获基类异常的情况下，我们依然不得不去捕获各种子类异常，这难道不有点矫枉过正的感觉吗？事实上所有工程实践中，不分青红皂白直接捕获Exception父类的做法，就是因为调用者完全不想关注发生得异常细节，这是垠神在文章中吐槽的”糟糕的代码”，C#相对Java在异常处理上好的一点就是，优秀的工程师会自觉地处理异常，如果他们清楚地知道异常会发生就一定会去捕获异常。你不能强迫他们去做他们不喜欢做的事情。</p>
+<h1 id="让异常处理更优雅"><a href="#让异常处理更优雅" class="headerlink" title="让异常处理更优雅"></a>让异常处理更优雅</h1><p>&emsp;&emsp;好了，现在我们来考虑这样一个问题，设计Checked Exception的初衷是为了让我们处理业务逻辑中不同的具体的异常，当这些异常在业务逻辑层面上无差别的时候，其实我们可以完全忽略这些异常的细节，因为不管是哪种具体的异常，在业务逻辑层面都被认为是任务执行失败，这种情况下我们直接捕获基类异常即可，例如在读写文件的例子中我们关注IOException即可。那么如果这些具体异常在业务逻辑层面上存在差异呢？这种情况下我们就应该向Checked Exception方向靠拢，下面我们来一起听一个实际的故事。</p>
+<p>&emsp;&emsp;我们的项目上需要从多个相互独立的系统中抓取数据并生成报表，因为这些系统在设计上都存在缺陷，所以在抓取数据的过程中非常容易出现错误，所以我们必须非常谨慎地处理这些异常，用户要求我们必须一种视觉友好的方式将报表输出出来，当异常发生时我们需要将抓取失败的数据高亮显示出来，并输出相关的错误信息来提醒用户来Check这些信息，而事实上每种异常发生的时候其处理逻辑是完全不同的。为此我们定义了将近10种的自定义异常，并为用户设计了完善的操作日志记录机制，这一切听起来非常不错，最终写出来的代码大概是下面这个样子：</p>
+<figure class="highlight vim"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">try</span></span><br><span class="line">&#123;</span><br><span class="line">  Foo()</span><br><span class="line">&#125;<span class="keyword">catch</span>(ExceptionA <span class="keyword">ex</span>)&#123;</span><br><span class="line">  </span><br><span class="line">&#125;<span class="keyword">catch</span>(ExceptionB <span class="keyword">ex</span>)&#123;</span><br><span class="line">  </span><br><span class="line">&#125;<span class="keyword">catch</span>(ExceptionC <span class="keyword">ex</span>)&#123;</span><br><span class="line">  </span><br><span class="line">&#125;carch(ExceptionD <span class="keyword">ex</span>)&#123;</span><br><span class="line">  </span><br><span class="line">&#125;</span><br><span class="line">// ...</span><br></pre></td></tr></table></figure>
+
+<p>  相信在Java的相关工程实践中，这种教科书般的代码基本上是异常处理的金科玉律啦，可是这种代码实现写起来会让人感觉头重脚轻，因为我们所有重要的逻辑都写在了catch块里，这让我非常不喜欢这种”臃肿”的代码，而且事实上在这个案例中catch块里的代码具备可重用的可能，所以我决定以一种更优雅的方式来重构这段代码。数学领域中有一个不变的真理，即任何问题都可以通过引入一个新的问题来得到解决，这个理论在编程中同样适用，因为在公司里受到同事Wesley的影响，我对Ioc和AOP都从思想上有了一定认识，公司在推行Unity的过程中我并没有看到多少实际的意义，所以我对”道”的重视远远超过对”术”的追求，因为我相信框架学习起来并不会花费多少实践，可怕的是你从来不试图去了解框架背后的秘密，所以我借由AOP中拦截器和MVC中过滤器的概念，想到了我接下来要说的这种异常处理的方案。</p>
+<p>  其实我们在这里的核心目的是为了消除分支，所以采用多态是我们重构这部分代码的第一步。我们首先定义一个针对Foo方法的异常基类ExceptionBase，然后让这里的ExceptionA、ExceptionB、ExceptionC等全部继承自ExceptionBase，这样我们就可以将这些具体的异常子类向上转型为ExceptionBase统一进行处理。与此同时，我们注意到处理各种异常子类的逻辑各不相同，虽然我们可以直接将处理异常的逻辑写到异常中(通过一个虚方法来实现)，可这样会造成异常子类里的职责负荷，我更希望异常子类是一个朴素的贫血模型，所以我们这里引入过滤器的概念(不知道这样叫是否合适)，Filter全部继承自FilterBase，它有一个Invoke的方法，我们最终会在这里实现异常处理的方法，为此我们需要定义各种各样的Filter，然后通过Attribute将每一种Filter和特定的Exception关联起来，比如我们希望在所有异常的地方打日志，那么我们只需要实现一个LoggerFilter，然后给所有的Exception添加Attribute，这可以显著改善我们的代码。</p>
+<p>  现在，我们只需要给ExceptionBase类提供一个GetFilter()方法，该方法的返回值类型为FilterBase，我们将通过反射来创建一个Filter并将其返回，所以我们写出来的代码会是下面这个样子：</p>
+<figure class="highlight angelscript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">[ExceptionFilter(FilterName = <span class="string">"FilterA"</span>)]</span><br><span class="line"><span class="keyword">class</span> <span class="symbol">ExceptionA</span> : <span class="symbol">ExceptionBase</span> &#123; &#125;</span><br><span class="line"></span><br><span class="line">[ExceptionFilter(FilterName = <span class="string">"FilterB"</span>)]</span><br><span class="line"><span class="keyword">class</span> <span class="symbol">ExceptionB</span> : <span class="symbol">ExceptionBase</span> &#123; &#125;</span><br><span class="line"></span><br><span class="line">[ExceptionFilter(FilterName = <span class="string">"FilterC"</span>)]</span><br><span class="line"><span class="keyword">class</span> <span class="symbol">ExceptionC</span> : <span class="symbol">ExceptionBase</span> &#123; &#125;</span><br></pre></td></tr></table></figure>
+
+<p>此时此刻，我们的关注点就从一堆catch块中转移到了不同的filter中，虽然我们编写代码的工作量没有减少，但这样的做法无疑增强了代码的可维护性，因为我们只需要到不同的Filter里去修改逻辑即可，我在书上看到这样一句话，无论什么时候合并代码总是比拆分代码要容易，当你不确定某个功能是否要放在特定模块中的时候，最好的解决方案就是将他们完全独立设计。降低代码的耦合度是一件我们常常挂在嘴边的事情，可是如何去真正地降低代码耦合度，这件事情需要我们一直思考下去。好了，现在我们完成了分支结构上的精简，而最终调用的代码会是：</p>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">try</span><br><span class="line">&#123;</span><br><span class="line">  Foo()</span><br><span class="line">&#125;catch(ExceptionBase ex)</span><br><span class="line">&#123;</span><br><span class="line">  var<span class="built_in"> filter </span>= ex.GetFilter();</span><br><span class="line">  filter.Invoke();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>现在的代码是不是比原来清新了好多呢？虽然这相比真正的AOP还是稍显稚嫩，可它的出现成功地让一段”丑陋”的代码变得优雅起来，我们不必再担心修改异常处理流程时会原来的代码产生副作用，如果需要增加新的处理逻辑我们继续派生异常类和过滤器即可，这就是代码设计上以不变应万变的道理，你要相信程序员都是非常懒惰的，如果有可以不用修改代码就适应变化的设计，他们是一定会喜欢的，因为这个世界对程序员并不友好，如果你不想你的代码被这个世界修改得面目全非，最好的选择就是不给它们这样的机会，他们说人长大一定会变成自己讨厌的样子，我想告诉这个世界永远不要忘记初心。</p>
+<p>  好了，这篇文章唠叨到现在，写了大概5000多字，花了我整整两个下午的时间，我在向Paul和John询问这个问题的看法时，他们都告诉我这个问题没有好的解决方案或者是劝我不要做这样探索，可是事实上我只用了半天时间就完成了这个设计，在去年的时候我曾向房燕良前辈请教好异常处理的问题，当时我的关注点主要在使用错误码还是使用异常。在上一个项目中，我对于异常处理其实实践得并不好，因为我一直不知道哪里是捕获异常的入口，我个人并不认同直接捕获到异常直接throw这种做法，因为你在自定义异常的时候就应该想清楚，哪些异常是需要捕获并处理的，哪些异常时可以直接让它Crash的，如果每个人都仅仅是抛出异常而不去拦截异常，那么异常机制设计得再好又有什么用呢，关于Java的异常有一个梗，是说Java的异常给出了详细的堆栈信息，可就是不直接告诉你到底是哪里异常了，事实证明我设计的这个方案运行的很好，其实我很想吐槽操作日志真的有存在的必要吗？很多时候，我们要学会遵从自己内心的声音，所谓世间难道不就是我们吗？真正绑架我们的永远都只有别人，让我们时刻谨记：万物为虚，万事皆允。</p>
+
+                
+
+                
+
+
+<div class="recommended_posts">
+    <h1>推荐阅读</h1>
+    <ul>
+        
+        <li><a href="https://qinyuanpei.github.io/posts/2151871792/">浅议 EF Core 分库分表及多租户架构的实现</a></li>
+        
+        <li><a href="https://qinyuanpei.github.io/posts/3291578070/">使用Unity框架简化应用程序异常处理及日志记录流程</a></li>
+        
+        <li><a href="https://qinyuanpei.github.io/posts/2318173297/">关于单位转换相关问题的常见思路</a></li>
+        
+        <li><a href="https://qinyuanpei.github.io/posts/815861661/">使用Jexus实现ASP.NET在Linux平台下的部署</a></li>
+        
+        <li><a href="https://qinyuanpei.github.io/posts/115524443/">漫谈应用程序重试策略及其实现</a></li>
+        
+    </ul>
+</div>
+
+            </div>
+            
+<blockquote class="post-copyright">
+    <div class="content">
+        <p><b>版权声明：</b>
+        <a href="https://qinyuanpei.github.io/posts/570888918/" rel="external">基于过滤器实现异常处理的探索</a>
+        ，由&nbsp;<a href="/about" target="_blank" rel="external">飞鸿踏雪</a>&nbsp;
+        首次发表于&nbsp;<a href="/" target="_blank" rel="external">一个人的孤落时辰</a>&nbsp;
+        ，本文地址为：<a href="https://qinyuanpei.github.io/posts/570888918/" target="_blank" rel="external">https://qinyuanpei.github.io/posts/570888918/</a>
+        ，转载请注明<b>作者</b>和<b>出处</b>。</p>
+    </div>
+    <footer>
+        <a href="https://qinyuanpei.github.io">
+            <img src="/assets/images/avatar.jpg" alt="飞鸿踏雪">
+            飞鸿踏雪
+        </a>
+    </footer>
+</blockquote>
+
+
+            
+<div class="page-reward">
+    <a id="rewardBtn" href="javascript:;" class="page-reward-btn waves-effect waves-circle waves-light">赏</a>
+</div>
+
+
+            <div class="post-footer">
+                
+	<ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%BC%82%E5%B8%B8/" rel="tag">异常</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%9E%B6%E6%9E%84/" rel="tag">架构</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E8%AE%BE%E8%AE%A1/" rel="tag">设计</a></li></ul>
+
+                
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://qinyuanpei.github.io/posts/570888918/&title=《基于过滤器实现异常处理的探索》 — 一个人的孤落时辰&pic=https://qinyuanpei.github.ioassets/images/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://qinyuanpei.github.io/posts/570888918/&title=《基于过滤器实现异常处理的探索》 — 一个人的孤落时辰&source=一个人的孤落时辰 | 纵有疾风起，人生不言弃 | 隐约雷鸣，阴霾天空，即使天无雨，我亦留此地。" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://qinyuanpei.github.io/posts/570888918/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《基于过滤器实现异常处理的探索》 — 一个人的孤落时辰&url=https://qinyuanpei.github.io/posts/570888918/&via=https://qinyuanpei.github.io" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://qinyuanpei.github.io/posts/570888918/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+      
+      <li>
+        <a class="google share-sns" target="_blank" onClick="show_yp()" data-title=" 生成海报">
+          <i class="icon icon-file-image-o"></i>
+        </a>
+      </li>
+      
+    </ul>
+ </div>
+
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
+            </div>
+        </div>
+
+        
+<nav class="post-nav flex-row flex-justify-between">
+  
+    <div class="waves-block waves-effect prev">
+      <a href="/posts/1684318907/" id="post-prev" class="post-nav-link">
+        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
+        <h4 class="title">《大护法》—— 花生镇里的成人童话</h4>
+      </a>
+    </div>
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/posts/187480982/" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h4 class="title">异步Lambda表达式问题的探索</h4>
+      </a>
+    </div>
+  
+</nav>
+
+
+        
+    <div id="comment"></div>
+<script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+<script src='//unpkg.com/valine/dist/Valine.min.js'></script>
+<script type="text/javascript">
+new Valine({
+    el: '#comment' ,
+    notify: false, 
+    verify: true, 
+    appId: 'JbHqRp2eMrTgIwYpfERH0g79-gzGzoHsz',
+    appKey: 'VsiKvLuiBGvJL1XrAfv7siY2',
+    placeholder: '云中谁寄锦书来，雁字回时，月满西楼。&#10;Tips：如果希望收到我的评论回复，请至少留下你的邮箱哦:)',
+    path:'https://qinyuanpei.github.io/posts/570888918/', 
+    avatar:'identicon',
+    requiredFields: ['nick','mail']
+});
+</script>
+
+
+
+
+    </article>
+    
+<div id="reward" class="page-modal reward-lay">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <h3 class="reward-title">
+        <i class="icon icon-quote-left"></i>
+        赠人玫瑰，手有余香
+        <i class="icon icon-quote-right"></i>
+    </h3>
+    <div class="reward-content">
+        
+        <div class="reward-code">
+            <img id="rewardCode" src="/assets/images/wechat.png" alt="打赏二维码">
+        </div>
+        
+        <label class="reward-toggle">
+            <input id="rewardToggle" type="checkbox" class="reward-toggle-check"
+                data-wechat="/assets/images/wechat.png" data-alipay="/assets/images/alipay.jpg">
+            <div class="reward-toggle-ctrol">
+                <span class="reward-toggle-item wechat">微信</span>
+                <span class="reward-toggle-label"></span>
+                <span class="reward-toggle-item alipay">支付宝</span>
+            </div>
+        </label>
+        
+    </div>
+</div>
+
+
+    <script type="text/javascript" src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/yoniu.min.js"></script>
+<style type='text/css'>
+	body.active-yp {
+		overflow: hidden;
+	}
+	.yp-fc-btn{
+		display: flex;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		align-items: center;
+		justify-content: space-between;
+		font-size: 13px;
+	}
+	.yp-fc-btn span{
+		cursor: pointer;
+		padding: 2px 10px;
+		color: #4b4b4b;
+		border: #4b4b4b 1px solid;
+		border-radius:5px;
+	}
+	#yp-hide{
+		position: fixed;
+		display: flex;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		justify-content: center;
+		flex-direction: column;
+		left:0;
+		top:0;
+		right:0;
+		bottom:0;
+		background-color:rgba(0,0,0,.5);
+		z-index: 99999;
+		visibility: hidden;
+	}
+	#yoniu-poster{
+		box-sizing: border-box;
+		width: 350px;
+		height: 467.2px;
+		background-color: #fff;
+		margin: 0 auto;
+		padding: 0;
+		line-height: 1.6;
+		text-align:justify;
+	}
+	
+	.yp-img {
+		min-height: 240px;
+		position: relative;
+		display: flex;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		justify-content: flex-end;
+		flex-direction: column;
+		background-position: 50% 50%;
+		background-size: cover;
+		overflow:hidden;
+	}
+	.yp-img>div{
+		padding: 10px 20px;
+	}
+	.yp-name{
+		display: block;
+		color: #fff;
+		font-size: 20px;
+		font-weight: 600;
+		text-shadow: #4b4b4b 0.1em 0.1em 0.2em;
+		margin-top: 10px;
+	}
+	.yp-sort{
+		padding: 3px 10px;
+		font-size: 12px;
+		color: #fff;
+		background: #2e2e2e;
+	}
+	.yp-des{
+		color: #2e2e2e;
+		font-size: 14px;
+		margin: 20px;
+		height: 67.2px;
+	}
+	.yp-qcode{
+		display: flex;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		justify-content: space-between;
+		align-items: center;
+		margin: 10px;
+		padding: 10px 20px;
+		background: #f5f5f5;
+		color: #818181;
+		border-radius: 10px;
+	}
+	.yp-tips{
+		display: flex;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		justify-content: space-between;
+		align-items: center;
+		color: #ccc;
+		margin: 0 10px 10px;
+		font-size: 10px;
+		letter-spacing: 1.5px;
+	}
+	.yp-btns{
+		display: flex;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		align-items: stretch;
+		justify-content: center;
+		width:350px;
+		margin: 0 auto;
+	}
+	.yp-btns>span{
+		display: flex;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		align-items: center;
+		justify-content: center;
+		font-size: 14px;
+		padding: 10px 15px;
+		background:rgba(0,0,0,.2);
+		color: #f5f5f5;
+		cursor: pointer;
+	}
+	.yp-btns>span>a{
+		color: #f5f5f5;
+	}
+	.yp-btns>span>a:hover{
+		text-decoration:none;
+	}
+	#yp-close{
+		font-size: 18px;
+		font-weight: 600;
+	}
+</style>
+<div id="yp-hide">
+    <div id="yoniu-poster">
+        <div class="yp-img" id="yp-img">
+            <div>
+                <span class="yp-sort">编程语言</span>
+                <span class="yp-name">基于过滤器实现异常处理的探索</span>
+            </div>
+        </div>
+        <div class="yp-des">    
+            
+                &emsp;&emsp;正如你所看到的那样，今天我想和大家聊聊异常处理这个话题。对于异常处理这个话题，我相信大家都有各自的方法论。而我今天想和大...
+            
+        </div>
+        <div class="yp-qcode">
+            <span>扫描二维码阅读原文</span>
+            <img id="yp-qcode" width="64px" src="//api.qrserver.com/v1/create-qr-code/?data=https://qinyuanpei.github.io/posts/570888918/">
+        </div>
+        <div class="yp-tips">
+            <span>一个人的孤落时辰</span>
+            <span><time class="post-time" title="2017-05-20 20:10:28" datetime="2017-05-20T20:10:28.000Z"  itemprop="datePublished">2017-05-20</time>
+</span>
+        </div>
+    </div>
+    <div class="yp-btns">
+        <span id="yp-load-yp" onClick="load_yp()">生成海报</span>
+        <span><a id="yp-download"></a></span>
+        <span id="yp-close" onClick="close_yp()">×</span>
+    </div>
+</div>
+<script type="text/javascript">
+    function show_yp(){
+        window.scrollTo(0, 0);
+        document.body.setAttribute("class","active-yp");
+        let cover = document.getElementsByTagName('img')[1];
+        if (cover != null && typeof(cover) != 'undefined') {
+            document.getElementById('yp-img').style.backgroundImage = `url(${cover.src})`;
+        } else {
+            document.getElementById('yp-img').style.backgroundColor = '#d7dbf0';
+        }
+        document.getElementById("yp-hide").style.visibility = "visible";
+    }
+    function close_yp(){
+        var domClass = document.body.getAttribute("class");
+        domClass = domClass.replace("active-yp","");
+        document.body.setAttribute("class",domClass);
+        document.getElementById("yp-hide").style.visibility = "hidden";
+    }
+    function load_yp(){
+        document.getElementById('yp-load-yp').textContent = '海报生成中...';
+        setTimeout(function() {
+            h2c_();
+        },2000);
+
+    }
+</script>
+
+</div>
+
+        <footer class="footer">
+    <div class="top">
+        
+   <p>
+      <span id="lc_counter_container_site_uv">
+         <i class="icon icon-user"></i><span id="lc_counter_value_site_uv"></span>
+      </span>
+      <span id="lc_counter_container_site_pv">
+         <i class="icon icon-eye"></i><span id="lc_counter_value_site_pv"></span>
+      </span>
+  </p>
+
+
+        <p>
+   <a id="jinrishici-sentence" href="https://www.jinrishici.com/" target="_blank" rel="noopener">加载中</a>
+</p>
+<script src="https://sdk.jinrishici.com/v2/browser/jinrishici.js" charset="utf-8"></script>
+<script>
+   jinrishici.load(function(result) {
+      document.querySelector('#subtitle').innerText = result.data.content;
+      document.querySelector('#jinrishici-sentence').innerText = result.data.content;
+  });
+</script>
+            <!--Todo: 考虑重构为插件 -->
+            <p>
+                
+                    <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+                
+                <span>
+                    <a href="https://github.com/qinyuanpei" target="_blank" rel="license noopener" title="Github">
+                        <i class="icon icon-lg icon-github"></i>
+                    </a>
+                </span>
+                <span>
+                    <a href="https://weibo.com/1278609231/profile" target="_blank" rel="license noopener" title="微博">
+                        <i class="icon icon-lg icon-weibo"></i>
+                    </a>
+                </span>
+                <span>
+                    <a href="https://www.douban.com/people/60029335/" target="_blank" rel="license noopener" title="豆瓣">
+                        <i class="icon icon-lg icon-douban"></i>
+                    </a>
+                </span>
+                <span>
+                    <a href="https://www.zhihu.com/people/qinyuanpei" target="_blank" rel="license noopener" title="知乎">
+                        <i class="icon icon-lg icon-zhihu-square"></i>
+                    </a>
+                </span>
+                <span>
+                    <a href="https://blog.csdn.net/qinyuanpei" target="_blank" rel="license noopener" title="CSDN">
+                        <i class="icon icon-lg">C</i>
+                    </a>
+                </span>
+                <span>
+                    <a href="https://music.163.com/#/user/home?id=47002864" target="_blank" rel="license noopener" title="网易音乐">
+                        <i class="icon icon-lg icon-wangyiyunyinyue"></i>
+                    </a>
+                </span>
+            </p>
+        
+    </div>
+    <div class="bottom">
+        <p><span>飞鸿踏雪 &copy; 2014 - 2021</span><br>
+            
+                
+                Powered by <a href="http://hexo.io/" target="_blank">Hexo</a> & Theme by <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a><br>
+                
+                
+                    <p>Hosted by <a href="https://pages.github.com" target="_blank" rel="noopener" style="font-weight: bold">Github Pages</a></p>
+                
+        </p>
+    </div>
+</footer>
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span
+        class="icon icon-lg icon-chevron-up"></span></a>
+
+    
+
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://qinyuanpei.github.io/posts/570888918/&title=《基于过滤器实现异常处理的探索》 — 一个人的孤落时辰&pic=https://qinyuanpei.github.ioassets/images/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://qinyuanpei.github.io/posts/570888918/&title=《基于过滤器实现异常处理的探索》 — 一个人的孤落时辰&source=一个人的孤落时辰 | 纵有疾风起，人生不言弃 | 隐约雷鸣，阴霾天空，即使天无雨，我亦留此地。" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://qinyuanpei.github.io/posts/570888918/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《基于过滤器实现异常处理的探索》 — 一个人的孤落时辰&url=https://qinyuanpei.github.io/posts/570888918/&via=https://qinyuanpei.github.io" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://qinyuanpei.github.io/posts/570888918/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+      
+      <li>
+        <a class="google share-sns" target="_blank" onClick="show_yp()" data-title=" 生成海报">
+          <i class="icon icon-file-image-o"></i>
+        </a>
+      </li>
+      
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="//api.qrserver.com/v1/create-qr-code/?data=https://qinyuanpei.github.io/posts/570888918/" alt="微信分享二维码">
+</div>
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.6/waves.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/4.2.1/echarts.min.js"></script>
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/echarts-wordcloud.min.js" async></script>
+<script>
+    var BLOG = { ROOT: '/', SHARE: true, REWARD: true };
+
+
+</script>
+
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/main.min.js"></script>
+
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/search.min.js" async></script>
+
+
+
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/heart.min.js" async></script>
+
+
+
+
+
+
+
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/leancloud-counter.min.js"></script>
+<script>
+        (function () {
+            var appId = 'JbHqRp2eMrTgIwYpfERH0g79-gzGzoHsz';
+            var appKey = 'VsiKvLuiBGvJL1XrAfv7siY2';
+            new VisitorCounter().init({
+                appId: appId,       //应用ID, 必输
+                appKey: appKey,      //应用Key, 必输
+                region: '华北',      //华东,华北,国际, 默认华东
+                domain: '',      //自定义域名
+                collectIP: true, //是否收集IP及位置信息, 默认开启
+                collectUA: true  //是否收集UserAgent, 默认开启
+            });
+        })();
+</script>
+
+
+
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/vconsole.min.js"></script>
+<script type="text/javascript">
+    //当地址中存在debug=true时，实例化vConsole
+    if (location.href.indexOf('debug=true') > -1) {
+        var vConsole = new VConsole();
+    }
+</script>
+
+
+    <script>
+    //国内用户自动重定向Coding Pages镜像
+    // var ipInfo = JSON.parse(localStorage.getItem('ipInfo'));
+    // if (ipInfo.country_code == 'CN') {
+    //     location.href = location.href.replace('qinyuanpei.github.io', 'blog.yuanpei.me');
+    // }
+    </script>
+
+
+<script>
+titleArray = [];
+function scrollTitle() {
+    if (titleArray.length == 0) return;
+    titleArray.push(titleArray[0]);
+	titleArray.shift();
+	document.title = titleArray.join("");
+}
+setInterval(scrollTitle, 500);
+(function() {
+    var originTitile = document.title, titleTime;
+    document.addEventListener('visibilitychange', function() {
+        if (document.hidden) {
+            titleArray = originTitile.split('');
+            clearTimeout(titleTime);
+        } else {
+            document.title = originTitile;
+            titleArray = originTitile.split('');
+            titleTime = setTimeout(function() {
+                document.title = originTitile;
+                titleArray = [];
+            },2000);
+        }
+    });
+})();
+</script>
+
+
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/ribbon.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,953 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+    
+<script async defer data-domain="blog.yuanpei.me" src="https://plausible.io/js/plausible.js"></script>
+    
+    <meta charset="utf-8">
+    <!-- HTTP 1.1 -->  
+    <meta http-equiv="pragma" content="no-cache">  
+    <!-- HTTP 1.0 -->  
+    <meta http-equiv="cache-control" content="no-cache">
+    <!-- 微博图床防盗链 --> 
+    <!-- <meta name="referrer" content="no-referrer"/> -->
+    <!--Google站点验证-->
+    
+    <!--百度站点验证-->
+    
+    
+    <!--Google AdSense-->
+    
+    <!--Bing站点验证-->
+    <meta name="msvalidate.01" content="713A48A3FE17D4841C292A6B3942EB4C" />
+    
+    <title>
+        使用C#开发HTTP服务器系列之静态页面 | 一个人的孤落时辰 | 纵有疾风起，人生不言弃
+    </title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+        <meta name="theme-color" content="#3F51B5">
+    
+
+    <meta name="keywords" content="HTTP,服务器,C#,秦元培,技术博客,生活随笔,个人博客,NET,Python,数据挖掘,数据分析,NLP">
+    
+        <meta name="description" content="可以注意到在这里我们首先根据请求方法和请求地址来判断当前客户端是否在请求主页页面，然后我们判断在服务器目录下是否存在index.html文件，如果该文件存在就读取文件并返回给客户端，否则我们将返回给客户端一个404的状态，熟悉Web开发的朋友应该会知道这个状态码表示的是无法找到请求资源，类似地我们还可以想到的状态码有200、501等等，通常来讲，这些状态码的定义是这样的：;这里我的理解是这样的，对页面来讲服务器在读取它以后会返回给客户端，所以对客户端而言这部分响应是完全可见的，而页面中关联的CSS样式和JavaScript脚本则可能是通过浏览器缓存下载到本地，然后再根据相对路径引用并应用到整个页面中来的，而为了区分这些不同类型的资源，我们需要在响应报文中的Content-Type字段中指明内容的类型，所以现在我们就清楚了，首先在请求页面的时候存在大量关联资源，这些资源必须通过响应报文反馈给客户端，其次这些资源由不同的类型具体体现在响应报文的Content-Type字段中;* 链接形式2:&#34;http://localhost:4050/assets/styles/&#34;表示访问指定页面资源，此时读取服务器目录下的/assets/styles/style.index文件;* 链接形式1:&#34;http://localhost:4050/assets/styles/style.css&#34;表示访问指定文件资源，此时读取服务器目录下的/assets/styles/style.css文件;首先我们可以认识到的一点是，网站主页是一个网站默认展示给访问者的页面，所以对服务器而言，它需要知道两件事情，第一客户端当前请求的这个页面是不是主页，第二服务端应该返回什么内容给客户端">
+    
+    <meta name="description" content="可以注意到在这里我们首先根据请求方法和请求地址来判断当前客户端是否在请求主页页面，然后我们判断在服务器目录下是否存在index.html文件，如果该文件存在就读取文件并返回给客户端，否则我们将返回给客户端一个404的状态，熟悉Web开发的朋友应该会知道这个状态码表示的是无法找到请求资源，类似地我们还可以想到的状态码有200、501等等，通常来讲，这些状态码的定义是这样的：;这里我的理解是这样的，对">
+<meta property="og:type" content="article">
+<meta property="og:title" content="使用C#开发HTTP服务器系列之静态页面">
+<meta property="og:url" content="https://qinyuanpei.github.io/posts/3695777215/index.html">
+<meta property="og:site_name" content="一个人的孤落时辰">
+<meta property="og:description" content="可以注意到在这里我们首先根据请求方法和请求地址来判断当前客户端是否在请求主页页面，然后我们判断在服务器目录下是否存在index.html文件，如果该文件存在就读取文件并返回给客户端，否则我们将返回给客户端一个404的状态，熟悉Web开发的朋友应该会知道这个状态码表示的是无法找到请求资源，类似地我们还可以想到的状态码有200、501等等，通常来讲，这些状态码的定义是这样的：;这里我的理解是这样的，对">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://ww1.sinaimg.cn/large/4c36074fly1fzixy9w5q6j211y0lcq5n.jpg">
+<meta property="og:image" content="https://ww1.sinaimg.cn/large/4c36074fly1fzixbba6clj211y0lcwjr.jpg">
+<meta property="og:image" content="https://ww1.sinaimg.cn/large/4c36074fly1fzix88y6xzj211y0lce81.jpg">
+<meta property="article:published_time" content="2016-06-11T15:01:35.000Z">
+<meta property="article:modified_time" content="2021-06-01T04:07:35.805Z">
+<meta property="article:author" content="飞鸿踏雪">
+<meta property="article:tag" content="HTTP">
+<meta property="article:tag" content="服务器">
+<meta property="article:tag" content="C#">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://ww1.sinaimg.cn/large/4c36074fly1fzixy9w5q6j211y0lcq5n.jpg">
+    
+        <link rel="alternate" type="application/atom+xml" title="一个人的孤落时辰" href="/atom.xml">
+    
+    <link rel="shortcut icon" href="/assets/images/favicon.ico">
+    
+        <link rel="manifest" href="/manifest.json">
+    
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master//assets/styles/style.css">
+    <script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/instantclick.min.js"></script>
+    <script>window.lazyScripts=[]</script>
+    <!-- custom head -->
+    
+
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu" class="hide" >
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap" style="background-image:url(/assets/images/brand.jpg)">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/assets/images/avatar.jpg" alt="avatar">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">飞鸿踏雪</h5>
+          <a href="mailto:qinyuanpei@163.com" title="qinyuanpei@163.com" class="mail">qinyuanpei@163.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/"  >
+                <i class="icon icon-lg icon-home"></i>
+                主页
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives"  >
+                <i class="icon icon-lg icon-archives"></i>
+                归档
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags"  >
+                <i class="icon icon-lg icon-tags"></i>
+                标签
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/categories"  >
+                <i class="icon icon-lg icon-th-list"></i>
+                分类
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/books"  >
+                <i class="icon icon-lg icon-bookmark"></i>
+                书单
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/movies"  >
+                <i class="icon icon-lg icon-film"></i>
+                影单
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/works"  >
+                <i class="icon icon-lg icon-code"></i>
+                实验室
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/about"  >
+                <i class="icon icon-lg icon-circle"></i>
+                关于我
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+            <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">使用C#开发HTTP服务器系列之静态页面</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off"
+                placeholder="输入感兴趣的关键字">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+        <a href="https://github.com/qinyuanpei/qinyuanpei.github.io" target="_blank" rel="noopener" class="header-icon waves-effect waves-circle waves-light" id="menuGithub">
+            <i class="icon icon-lg icon-code-fork"></i>
+        </a>
+    </div>
+</header>
+<header class="content-header post-header">
+    <div class="container fade-scale">
+        <h1 class="title">使用C#开发HTTP服务器系列之静态页面</h1>
+        <h5 class="subtitle" id="subtitle">
+            
+            <time datetime="2016-06-11T15:01:35.000Z" itemprop="datePublished" class="page-time">
+  2016-06-11
+</time>
+
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/">编程语言</a></li></ul>
+
+            
+        </h5>
+    </div>
+    
+
+</header>
+
+<div class="container body-wrap">
+    
+    <aside class="post-widget">
+        <nav class="post-toc-wrap" id="post-toc">
+            <h4>目录</h4>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#大意失荆州"><span class="post-toc-number">1.</span> <span class="post-toc-text">大意失荆州</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#龙潜在渊"><span class="post-toc-number">2.</span> <span class="post-toc-text">龙潜在渊</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#风雨过后终见彩虹"><span class="post-toc-number">3.</span> <span class="post-toc-text">风雨过后终见彩虹</span></a></li></ol>
+        </nav>
+    </aside>
+    
+    <article id="post-使用C#开发HTTP服务器系列之静态页面" class="post-article article-type-post fade" itemprop="blogPost">
+
+        <div class="post-card">
+            <h1 class="post-card-title">
+                使用C#开发HTTP服务器系列之静态页面
+            </h1>
+            <div class="post-meta">
+                <time class="post-time" title="2016-06-11 15:01:35" datetime="2016-06-11T15:01:35.000Z"  itemprop="datePublished">2016-06-11</time>
+
+                
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/">编程语言</a></li></ul>
+
+
+
+                
+<span id="lc_counter_container_page_pv" title="文章总阅读量" data-page-url="" data-page-title="使用C#开发HTTP服务器系列之静态页面">
+    <i class="icon icon-eye icon-pr"></i><span id="lc_counter_value_page_pv"></span>
+</span>
+
+
+
+
+
+                
+    <span>
+        <i class="icon icon-clock-o"></i>
+        22 min.
+    </span>
+    
+            </div>
+            <div class="post-content" id="post-content" itemprop="postContent">
+                <p>&emsp;&emsp;各位朋友大家好，我是秦元培，欢迎大家关注我的博客，我的博客地址是<a href="http://qinyuanpei.com" target="_blank" rel="noopener">http://qinyuanpei.com</a>。在这个系列文章的第一篇中，我们着重认识和了解了HTTP协议，并在此基础上实现了一个可交互的Web服务器，即当客户端访问该服务器的时候，服务器能够返回并输出一个简单的“Hello World”。现在这个服务器看起来非常简陋，为此我们需要在这个基础上继续开展工作。今天我们希望为这个服务器增加主页支持，即当我们访问这个服务器的时候，它可以向我们展示一个定制化的服务器主页。通常情况下网站的主页被定义为index.html，而在动态网站技术中它可以被定义为index.php。了解这些将有助于帮助我们认识Web技术的实质，为了方便我们这里的研究，我们以最简单的静态页面为例。</p>
+<a id="more"></a>
+<h1 id="大意失荆州"><a href="#大意失荆州" class="headerlink" title="大意失荆州"></a>大意失荆州</h1><p>&emsp;&emsp;首先我们可以认识到的一点是，网站主页是一个网站默认展示给访问者的页面，所以对服务器而言，它需要知道两件事情，第一客户端当前请求的这个页面是不是主页，第二服务端应该返回什么内容给客户端。对这两个问题，我们在目前设计的这个Web服务器中都可以找到答案的。因为HTTP协议中默认的请求方法是GET，所以根据HttpRequest的实例我们可以非常容易的知道，当前请求的方法类型以及请求地址。我们来看一个简单的客户端请求报文：</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">GET <span class="regexp">/ HTTP/</span><span class="number">1.1</span></span><br><span class="line"><span class="string">Accept:</span> text<span class="regexp">/html, application/</span>xhtml+xml, image<span class="regexp">/jxr, */</span>*</span><br><span class="line">Accept-<span class="string">Language:</span> zh-Hans-CN,zh-Hans;q=<span class="number">0.5</span></span><br><span class="line">User-<span class="string">Agent:</span> Mozilla<span class="regexp">/5.0 (Windows NT 10.0) AppleWebKit/</span><span class="number">537.36</span> (KHTML, like Gecko) Chrome<span class="regexp">/46.0.2486.0 Safari/</span><span class="number">537.36</span> Edge/<span class="number">13.10586</span></span><br><span class="line">Accept-<span class="string">Encoding:</span> gzip, deflate</span><br><span class="line"><span class="string">Host:</span> <span class="string">localhost:</span><span class="number">4040</span></span><br><span class="line"><span class="string">Connection:</span> Keep-Alive</span><br></pre></td></tr></table></figure>
+<p>我们在这里可以非常清晰地看到，客户端当前发出的请求是GET类型，而其请求的地址是”/“，这表示请求页面为主页，而实际上我们将Host字段和这个地址组合起来，就能得到一个完整的地址，这正是我们在HTML结构中编写超链接的时候使用相对地址的原因。好了，在明白了这样两件事情具体的运作机理以后，下面我们来继续编写相关逻辑来实现如何向访问者展示一个网站主页。</p>
+<figure class="highlight arduino"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">override</span> <span class="keyword">void</span> <span class="title">OnGet</span><span class="params">(HttpRequest request)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">//判断请求类型和请求页面</span></span><br><span class="line">    <span class="keyword">if</span>(request.Method == <span class="string">"GET"</span> &amp;&amp; request.URL == <span class="string">"/"</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="comment">//构造响应报文</span></span><br><span class="line">        HttpResponse response;</span><br><span class="line"></span><br><span class="line">        <span class="comment">//判断主页文件是否存在，如存在则读取主页文件否则返回404</span></span><br><span class="line">        <span class="keyword">if</span>(!<span class="built_in">File</span>.Exists(ServerRoot + <span class="string">"index.html"</span>))&#123;</span><br><span class="line">            response = <span class="keyword">new</span> HttpResponse(<span class="string">"&lt;html&gt;&lt;body&gt;&lt;h1&gt;404 - Not Found&lt;/h1&gt;&lt;/body&gt;&lt;/html&gt;"</span>, Encoding.UTF8);</span><br><span class="line">            response.StatusCode = <span class="string">"404"</span>;</span><br><span class="line">            response.Content_Type = <span class="string">"text/html"</span>;</span><br><span class="line">            response.<span class="built_in">Server</span> = <span class="string">"ExampleServer"</span>;</span><br><span class="line">        &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">            response = <span class="keyword">new</span> HttpResponse(<span class="built_in">File</span>.ReadAllBytes(ServerRoot + <span class="string">"index.html"</span>), Encoding.UTF8);</span><br><span class="line">            response.StatusCode = <span class="string">"200"</span>;</span><br><span class="line">            response.Content_Type = <span class="string">"text/html"</span>;</span><br><span class="line">            response.<span class="built_in">Server</span> = <span class="string">"ExampleServer"</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">//发送响应</span></span><br><span class="line">        ProcessResponse(request.Handler, response);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>可以注意到在这里我们首先根据请求方法和请求地址来判断当前客户端是否在请求主页页面，然后我们判断在服务器目录下是否存在index.html文件，如果该文件存在就读取文件并返回给客户端，否则我们将返回给客户端一个404的状态，熟悉Web开发的朋友应该会知道这个状态码表示的是无法找到请求资源，类似地我们还可以想到的状态码有200、501等等，通常来讲，这些状态码的定义是这样的：</p>
+<ul>
+<li>1XX：指示信息-表示请求已接收，继续处理。</li>
+<li>2XX：成功-表示请求已被成功接受、理解和处理。</li>
+<li>3XX: 重定向-表示完成请求需要更进一步的操作。</li>
+<li>4XX：客户端错误-表示请求错误或者无法实现。</li>
+<li>5XX：服务端错误-表示服务器未提供正确的响应。</li>
+</ul>
+<p>具体来讲，常见的状态代码描述如下：</p>
+<table>
+<thead>
+<tr>
+<th>状态码</th>
+<th align="center">状态描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>200 OK</td>
+<td align="center">客户端请求成功</td>
+</tr>
+<tr>
+<td>400 Bad Request</td>
+<td align="center">客户端请求错误且不能被服务器所理解</td>
+</tr>
+<tr>
+<td>401 Unauthorized</td>
+<td align="center">请求未经授权需要使用WWW-Authenticate报头域</td>
+</tr>
+<tr>
+<td>403 Forbidden</td>
+<td align="center">服务器收到请求但拒绝提供服务</td>
+</tr>
+<tr>
+<td>404 Not Found</td>
+<td align="center">请求资源不存在</td>
+</tr>
+<tr>
+<td>500 Internal Server Error</td>
+<td align="center">服务器发生不可预期的错误</td>
+</tr>
+<tr>
+<td>503 Server Unavailable</td>
+<td align="center">服务器当前不能处理客户端的请求</td>
+</tr>
+</tbody></table>
+<p>为了简化需求，我们这里假设服务器目录下只有一个主页文件index.html，实际上像IIS、Apache等大型的服务器软件都是支持多个主页文件的，而且同时支持静态页面和动态页面，所以这里就涉及到一个优先级的问题，无论是在Apache还是IIS中我们可以找到对主页优先级设置的选项。所谓优先级，其实就是对这些主页文件重要性的一种排序，在实际设计的过程中，会优先读取优先级较高的主页文件，如该文件不存在则退而求其次，以此类推。在读取主页文件的时候，我们需要注意的一点是编码类型，因为无论是客户端还是服务端在其各自的头部信息里都声明了它可以接受的编码类型，所以服务器端在响应请求的时候应该注意和客户端保持一致，这样可以避免“鸡同鸭讲”问题的发生，进而提高沟通效率。我们这里在说技术，可是人何尝不是这样啊，我感觉我们生活和工作中90%的时间都被用来沟通了，可是这恰恰说明了沟通的重要性啊。好了，下面我们来测试下我们编写的主页：</p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="https://ww1.sinaimg.cn/large/4c36074fly1fzixy9w5q6j211y0lcq5n.jpg" alt="一个失败的尝试" title="" referrerpolicy="no-referrer">
+                </div>
+                <div class="image-caption">一个失败的尝试</div>
+            </figure>
+
+<h1 id="龙潜在渊"><a href="#龙潜在渊" class="headerlink" title="龙潜在渊"></a>龙潜在渊</h1><p>&emsp;&emsp;咦？这个页面显示的结果怎么和我们期望的不一样啊，看起来这是一个因为样式丢失而引发的错误啊，不仅如此我们发现页面中的图片同样丢失了。首先我们检查下静态页面是否有问题，这个怎么可能嘛？因为这是博主采用Hexo生成的静态页面，所以排除页面本身的问题后，我们不得不开始重新思考我们的设计。我们静下心来思考这样一个问题：在浏览器加载一个页面的过程中难道只有静态页面和服务器发生交互吗？这显然不是啊，因为傻子都知道一个网页最起码有HTML、CSS和JavaScript三部分组成，所以我们决定在Chrome中仔细看看浏览器在加载网页的过程中都发生了什么。按下”F12”打开开发者工具对网页进行监听：</p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="https://ww1.sinaimg.cn/large/4c36074fly1fzixbba6clj211y0lcwjr.jpg" alt="浏览器的小秘密" title="" referrerpolicy="no-referrer">
+                </div>
+                <div class="image-caption">浏览器的小秘密</div>
+            </figure>
+
+<p>&emsp;&emsp;WTF！感觉在这里懵逼了是不是？你没有想到服务器在这里会响应如此多的请求吧？所以我们自作聪明地认为只要响应静态页面的请求就好了，这完全就是在作死啊！这里我的理解是这样的，对页面来讲服务器在读取它以后会返回给客户端，所以对客户端而言这部分响应是完全可见的，而页面中关联的CSS样式和JavaScript脚本则可能是通过浏览器缓存下载到本地，然后再根据相对路径引用并应用到整个页面中来的，而为了区分这些不同类型的资源，我们需要在响应报文中的Content-Type字段中指明内容的类型，所以现在我们就清楚了，首先在请求页面的时候存在大量关联资源，这些资源必须通过响应报文反馈给客户端，其次这些资源由不同的类型具体体现在响应报文的Content-Type字段中。因此，我们在第一段代码的基础上进行修改和完善，最终编写出了下面的代码：</p>
+<figure class="highlight cs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">override</span> <span class="keyword">void</span> <span class="title">OnGet</span>(<span class="params">HttpRequest request</span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(request.Method == <span class="string">"GET"</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="comment"><span class="doctag">///</span>获取客户端请求地址</span></span><br><span class="line"></span><br><span class="line">        <span class="comment"><span class="doctag">///</span>链接形式1:"http://localhost:4050/assets/styles/style.css"表示访问指定文件资源，</span></span><br><span class="line">        <span class="comment"><span class="doctag">///</span>此时读取服务器目录下的/assets/styles/style.css文件。</span></span><br><span class="line"></span><br><span class="line">        <span class="comment"><span class="doctag">///</span>链接形式2:"http://localhost:4050/assets/styles/"表示访问指定页面资源，</span></span><br><span class="line">        <span class="comment"><span class="doctag">///</span>此时读取服务器目录下的/assets/styles/style.index文件。</span></span><br><span class="line"></span><br><span class="line">        <span class="comment">//当文件不存在时应返回404状态码</span></span><br><span class="line">        <span class="keyword">string</span> requestURL = request.URL;</span><br><span class="line">        requestURL = requestURL.Replace(<span class="string">"/"</span>, <span class="string">@"\"</span>).Replace(<span class="string">"\\.."</span>, <span class="string">""</span>);</span><br><span class="line"></span><br><span class="line">        <span class="comment">//判断地址中是否存在扩展名</span></span><br><span class="line">        <span class="keyword">string</span> extension = Path.GetExtension(requestURL);</span><br><span class="line"></span><br><span class="line">        <span class="comment">//根据有无扩展名按照两种不同链接进行处</span></span><br><span class="line">        <span class="keyword">string</span> requestFile = <span class="keyword">string</span>.Empty;</span><br><span class="line">        <span class="keyword">if</span>(extension != <span class="string">""</span>)&#123;</span><br><span class="line">            requestFile = ServerRoot + requestURL;</span><br><span class="line">        &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">            requestFile = ServerRoot + requestURL + <span class="string">"index.html"</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">//构造HTTP响应</span></span><br><span class="line">        HttpResponse response = ResponseWithFile(requestFile);</span><br><span class="line"></span><br><span class="line">        <span class="comment">//发送响应</span></span><br><span class="line">        ProcessResponse(request.Handler, response);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>注意到我在代码中写了两种不同形式的链接的分析：</p>
+<ul>
+<li><p>链接形式1:”<a href="http://localhost:4050/assets/styles/style.css&quot;表示访问指定文件资源，此时读取服务器目录下的/assets/styles/style.css文件。" target="_blank" rel="noopener">http://localhost:4050/assets/styles/style.css&quot;表示访问指定文件资源，此时读取服务器目录下的/assets/styles/style.css文件。</a></p>
+</li>
+<li><p>链接形式2:”<a href="http://localhost:4050/assets/styles/&quot;表示访问指定页面资源，此时读取服务器目录下的/assets/styles/style.index文件。" target="_blank" rel="noopener">http://localhost:4050/assets/styles/&quot;表示访问指定页面资源，此时读取服务器目录下的/assets/styles/style.index文件。</a></p>
+</li>
+</ul>
+<p>&emsp;&emsp;首先我们判断这两种形式是根据扩展名来判断的，这样我们可以获得一个指向目标文件的地址requestFile。这里提供一个辅助方法ResponseWithFile，这是一个从文件中构造响应报文的方法，其返回类型是一个HttpResponse，当文件不存在时将返回给客户端404的错误代码，我们一起来看它具体如何实现：</p>
+<figure class="highlight reasonml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/// &lt;summary&gt;</span></span><br><span class="line"><span class="comment">/// 使用文件来提供HTTP响应</span></span><br><span class="line"><span class="comment">/// &lt;/summary&gt;</span></span><br><span class="line"><span class="comment">/// &lt;param name="fileName"&gt;文件名&lt;/param&gt;</span></span><br><span class="line"><span class="keyword">private</span> HttpResponse <span class="constructor">ResponseWithFile(<span class="params">string</span> <span class="params">fileName</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">//准备HTTP响应报文</span></span><br><span class="line">    HttpResponse response;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//获取文件扩展名以判断内容类型</span></span><br><span class="line">    <span class="built_in">string</span> extension  = Path.<span class="constructor">GetExtension(<span class="params">fileName</span>)</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//获取当前内容类型</span></span><br><span class="line">    <span class="built_in">string</span> contentType = <span class="constructor">GetContentType(<span class="params">extension</span>)</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//如果文件不存在则返回404否则读取文件内容</span></span><br><span class="line">    <span class="keyword">if</span>(!File.<span class="constructor">Exists(<span class="params">fileName</span>)</span>)&#123;</span><br><span class="line">        response = <span class="keyword">new</span> <span class="constructor">HttpResponse(<span class="string">"&lt;html&gt;&lt;body&gt;&lt;h1&gt;404 - Not Found&lt;/h1&gt;&lt;/body&gt;&lt;/html&gt;"</span>, Encoding.UTF8)</span>;</span><br><span class="line">        response.StatusCode = <span class="string">"404"</span>;</span><br><span class="line">        response.Content_Type = <span class="string">"text/html"</span>;</span><br><span class="line">        response.Server = <span class="string">"ExampleServer"</span>;</span><br><span class="line">    &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">        response = <span class="keyword">new</span> <span class="constructor">HttpResponse(File.ReadAllBytes(<span class="params">fileName</span>)</span>, Encoding.UTF8);</span><br><span class="line">        response.StatusCode = <span class="string">"200"</span>;</span><br><span class="line">        response.Content_Type = contentType;</span><br><span class="line">         response.Server = <span class="string">"ExampleServer"</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    /返回数据</span><br><span class="line">    return response;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>同样的，因为在响应报文中我们需要指明资源的类型，所以这里使用一个叫做GetContentType的辅助方法，该方法定义如下，这里仅仅选择了常见的Content-Type类型来实现，有兴趣的朋友可以自行了解更多的内容并在此基础上进行扩展：</p>
+<figure class="highlight cs"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;summary&gt;</span></span></span><br><span class="line"><span class="comment"><span class="doctag">///</span> 根据文件扩展名获取内容类型</span></span><br><span class="line"><span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;/summary&gt;</span></span></span><br><span class="line"><span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;param name="extension"&gt;</span>文件扩展名<span class="doctag">&lt;/param&gt;</span></span></span><br><span class="line"><span class="comment"><span class="doctag">///</span> <span class="doctag">&lt;returns&gt;</span><span class="doctag">&lt;/returns&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">string</span> <span class="title">GetContentType</span>(<span class="params"><span class="keyword">string</span> extension</span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">string</span> reval = <span class="keyword">string</span>.Empty;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span>(<span class="keyword">string</span>.IsNullOrEmpty(extension))</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">switch</span>(extension)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">case</span> <span class="string">".htm"</span>:</span><br><span class="line">            reval = <span class="string">"text/html"</span>;</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        <span class="keyword">case</span> <span class="string">".html"</span>:</span><br><span class="line">            reval = <span class="string">"text/html"</span>;</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        <span class="keyword">case</span> <span class="string">".txt"</span>:</span><br><span class="line">            reval = <span class="string">"text/plain"</span>;</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        <span class="keyword">case</span> <span class="string">".css"</span>:</span><br><span class="line">            reval = <span class="string">"text/css"</span>;</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        <span class="keyword">case</span> <span class="string">".png"</span>:</span><br><span class="line">            reval = <span class="string">"image/png"</span>;</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        <span class="keyword">case</span> <span class="string">".gif"</span>:</span><br><span class="line">            reval = <span class="string">"image/gif"</span>;</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        <span class="keyword">case</span> <span class="string">".jpg"</span>:</span><br><span class="line">            reval = <span class="string">"image/jpg"</span>;</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        <span class="keyword">case</span> <span class="string">".jpeg"</span>:</span><br><span class="line">            reval = <span class="string">"image/jgeg"</span>;</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        <span class="keyword">case</span> <span class="string">".zip"</span>:</span><br><span class="line">            reval = <span class="string">"application/zip"</span>;</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> reval;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="风雨过后终见彩虹"><a href="#风雨过后终见彩虹" class="headerlink" title="风雨过后终见彩虹"></a>风雨过后终见彩虹</h1><p>&emsp;&emsp;好啦，到目前为止，关于静态Web服务器的编写我们基本上告一段落啦！其实这篇文章写的不是特别顺利，因为我几乎是在不断否认自我的情况下，一边调试一边写这篇文章的。整篇文章总结下来其实就两个点，第一，Web服务器在加载一个页面的时候会发起无数个请求报文，除了页面相关的请求报文以外大部分都是和资源相关的请求，所以HTML页面的优化实际上就是从资源加载这个地方入手的。第二，不同的资源有不同的类型，具体表现在响应报文的Content-Type字段上，构造正确的Content-Type能让客户端了解到这是一个什么资源。好了，现在我们可以气定神闲的验证我们的劳动成果啦，这里我以我本地的Hexo生成的静态博客为例演示我的Web服务器，假设我的博客是存放在”D:\Hexo\public”这个路径下，所以我可以直接在Web服务器中设置我的服务器目录：</p>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ExampleServer<span class="built_in"> server </span>= new ExampleServer(<span class="string">"127.0.0.1"</span>,4050);</span><br><span class="line">server.SetServerRoot(<span class="string">"D:\\Hexo\\public"</span>);</span><br><span class="line">server.Start();</span><br></pre></td></tr></table></figure>
+<p>现在打开浏览器就可以看到：</p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="https://ww1.sinaimg.cn/large/4c36074fly1fzix88y6xzj211y0lce81.jpg" alt="Web服务器运行效果" title="" referrerpolicy="no-referrer">
+                </div>
+                <div class="image-caption">Web服务器运行效果</div>
+            </figure>
+
+<p>如此激动人心的时候，让我们踏歌长行、梦想永续，下期见！</p>
+
+                
+
+                
+
+
+<div class="recommended_posts">
+    <h1>推荐阅读</h1>
+    <ul>
+        
+        <li><a href="https://qinyuanpei.github.io/posts/3603924376/">使用C#开发HTTP服务器系列之更简单的实现方式</a></li>
+        
+        <li><a href="https://qinyuanpei.github.io/posts/1424645834/">Unity3D游戏开发之快速打造流行的关卡系统</a></li>
+        
+        <li><a href="https://qinyuanpei.github.io/posts/2015300310/">Referrer还是Referer? 一个迷人的错误</a></li>
+        
+        <li><a href="https://qinyuanpei.github.io/posts/1700650235/">使用C#开发HTTP服务器系列之实现Get和Post</a></li>
+        
+        <li><a href="https://qinyuanpei.github.io/posts/3873710624/">基于特性(Attribute)的实体属性验证方案设计</a></li>
+        
+    </ul>
+</div>
+
+            </div>
+            
+<blockquote class="post-copyright">
+    <div class="content">
+        <p><b>版权声明：</b>
+        <a href="https://qinyuanpei.github.io/posts/3695777215/" rel="external">使用C#开发HTTP服务器系列之静态页面</a>
+        ，由&nbsp;<a href="/about" target="_blank" rel="external">飞鸿踏雪</a>&nbsp;
+        首次发表于&nbsp;<a href="/" target="_blank" rel="external">一个人的孤落时辰</a>&nbsp;
+        ，本文地址为：<a href="https://qinyuanpei.github.io/posts/3695777215/" target="_blank" rel="external">https://qinyuanpei.github.io/posts/3695777215/</a>
+        ，转载请注明<b>作者</b>和<b>出处</b>。</p>
+    </div>
+    <footer>
+        <a href="https://qinyuanpei.github.io">
+            <img src="/assets/images/avatar.jpg" alt="飞鸿踏雪">
+            飞鸿踏雪
+        </a>
+    </footer>
+</blockquote>
+
+
+            
+<div class="page-reward">
+    <a id="rewardBtn" href="javascript:;" class="page-reward-btn waves-effect waves-circle waves-light">赏</a>
+</div>
+
+
+            <div class="post-footer">
+                
+	<ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/C/" rel="tag">C#</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/HTTP/" rel="tag">HTTP</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%9C%8D%E5%8A%A1%E5%99%A8/" rel="tag">服务器</a></li></ul>
+
+                
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://qinyuanpei.github.io/posts/3695777215/&title=《使用C#开发HTTP服务器系列之静态页面》 — 一个人的孤落时辰&pic=https://qinyuanpei.github.ioassets/images/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://qinyuanpei.github.io/posts/3695777215/&title=《使用C#开发HTTP服务器系列之静态页面》 — 一个人的孤落时辰&source=&emsp;&emsp;各位朋友大家好，我是秦元培，欢迎大家关注我的博客，我的博客地址是http://qinyuanpei.com。在这个系列文章的第一篇..." data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://qinyuanpei.github.io/posts/3695777215/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《使用C#开发HTTP服务器系列之静态页面》 — 一个人的孤落时辰&url=https://qinyuanpei.github.io/posts/3695777215/&via=https://qinyuanpei.github.io" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://qinyuanpei.github.io/posts/3695777215/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+      
+      <li>
+        <a class="google share-sns" target="_blank" onClick="show_yp()" data-title=" 生成海报">
+          <i class="icon icon-file-image-o"></i>
+        </a>
+      </li>
+      
+    </ul>
+ </div>
+
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
+            </div>
+        </div>
+
+        
+<nav class="post-nav flex-row flex-justify-between">
+  
+    <div class="waves-block waves-effect prev">
+      <a href="/posts/3637847962/" id="post-prev" class="post-nav-link">
+        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
+        <h4 class="title">使用C#开发HTTP服务器系列之构建RESTful API</h4>
+      </a>
+    </div>
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/posts/3040357134/" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h4 class="title">使用C#开发HTTP服务器系列之Hello World</h4>
+      </a>
+    </div>
+  
+</nav>
+
+
+        
+    <div id="comment"></div>
+<script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+<script src='//unpkg.com/valine/dist/Valine.min.js'></script>
+<script type="text/javascript">
+new Valine({
+    el: '#comment' ,
+    notify: false, 
+    verify: true, 
+    appId: 'JbHqRp2eMrTgIwYpfERH0g79-gzGzoHsz',
+    appKey: 'VsiKvLuiBGvJL1XrAfv7siY2',
+    placeholder: '云中谁寄锦书来，雁字回时，月满西楼。&#10;Tips：如果希望收到我的评论回复，请至少留下你的邮箱哦:)',
+    path:'https://qinyuanpei.github.io/posts/3695777215/', 
+    avatar:'identicon',
+    requiredFields: ['nick','mail']
+});
+</script>
+
+
+
+
+    </article>
+    
+<div id="reward" class="page-modal reward-lay">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <h3 class="reward-title">
+        <i class="icon icon-quote-left"></i>
+        赠人玫瑰，手有余香
+        <i class="icon icon-quote-right"></i>
+    </h3>
+    <div class="reward-content">
+        
+        <div class="reward-code">
+            <img id="rewardCode" src="/assets/images/wechat.png" alt="打赏二维码">
+        </div>
+        
+        <label class="reward-toggle">
+            <input id="rewardToggle" type="checkbox" class="reward-toggle-check"
+                data-wechat="/assets/images/wechat.png" data-alipay="/assets/images/alipay.jpg">
+            <div class="reward-toggle-ctrol">
+                <span class="reward-toggle-item wechat">微信</span>
+                <span class="reward-toggle-label"></span>
+                <span class="reward-toggle-item alipay">支付宝</span>
+            </div>
+        </label>
+        
+    </div>
+</div>
+
+
+    <script type="text/javascript" src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/yoniu.min.js"></script>
+<style type='text/css'>
+	body.active-yp {
+		overflow: hidden;
+	}
+	.yp-fc-btn{
+		display: flex;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		align-items: center;
+		justify-content: space-between;
+		font-size: 13px;
+	}
+	.yp-fc-btn span{
+		cursor: pointer;
+		padding: 2px 10px;
+		color: #4b4b4b;
+		border: #4b4b4b 1px solid;
+		border-radius:5px;
+	}
+	#yp-hide{
+		position: fixed;
+		display: flex;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		justify-content: center;
+		flex-direction: column;
+		left:0;
+		top:0;
+		right:0;
+		bottom:0;
+		background-color:rgba(0,0,0,.5);
+		z-index: 99999;
+		visibility: hidden;
+	}
+	#yoniu-poster{
+		box-sizing: border-box;
+		width: 350px;
+		height: 467.2px;
+		background-color: #fff;
+		margin: 0 auto;
+		padding: 0;
+		line-height: 1.6;
+		text-align:justify;
+	}
+	
+	.yp-img {
+		min-height: 240px;
+		position: relative;
+		display: flex;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		justify-content: flex-end;
+		flex-direction: column;
+		background-position: 50% 50%;
+		background-size: cover;
+		overflow:hidden;
+	}
+	.yp-img>div{
+		padding: 10px 20px;
+	}
+	.yp-name{
+		display: block;
+		color: #fff;
+		font-size: 20px;
+		font-weight: 600;
+		text-shadow: #4b4b4b 0.1em 0.1em 0.2em;
+		margin-top: 10px;
+	}
+	.yp-sort{
+		padding: 3px 10px;
+		font-size: 12px;
+		color: #fff;
+		background: #2e2e2e;
+	}
+	.yp-des{
+		color: #2e2e2e;
+		font-size: 14px;
+		margin: 20px;
+		height: 67.2px;
+	}
+	.yp-qcode{
+		display: flex;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		justify-content: space-between;
+		align-items: center;
+		margin: 10px;
+		padding: 10px 20px;
+		background: #f5f5f5;
+		color: #818181;
+		border-radius: 10px;
+	}
+	.yp-tips{
+		display: flex;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		justify-content: space-between;
+		align-items: center;
+		color: #ccc;
+		margin: 0 10px 10px;
+		font-size: 10px;
+		letter-spacing: 1.5px;
+	}
+	.yp-btns{
+		display: flex;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		align-items: stretch;
+		justify-content: center;
+		width:350px;
+		margin: 0 auto;
+	}
+	.yp-btns>span{
+		display: flex;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		align-items: center;
+		justify-content: center;
+		font-size: 14px;
+		padding: 10px 15px;
+		background:rgba(0,0,0,.2);
+		color: #f5f5f5;
+		cursor: pointer;
+	}
+	.yp-btns>span>a{
+		color: #f5f5f5;
+	}
+	.yp-btns>span>a:hover{
+		text-decoration:none;
+	}
+	#yp-close{
+		font-size: 18px;
+		font-weight: 600;
+	}
+</style>
+<div id="yp-hide">
+    <div id="yoniu-poster">
+        <div class="yp-img" id="yp-img">
+            <div>
+                <span class="yp-sort">编程语言</span>
+                <span class="yp-name">使用C#开发HTTP服务器系列之静态页面</span>
+            </div>
+        </div>
+        <div class="yp-des">    
+            
+                &emsp;&emsp;各位朋友大家好，我是秦元培，欢迎大家关注我的博客，我的博客地址是http://qinyuanpei.com。在这个系列文...
+            
+        </div>
+        <div class="yp-qcode">
+            <span>扫描二维码阅读原文</span>
+            <img id="yp-qcode" width="64px" src="//api.qrserver.com/v1/create-qr-code/?data=https://qinyuanpei.github.io/posts/3695777215/">
+        </div>
+        <div class="yp-tips">
+            <span>一个人的孤落时辰</span>
+            <span><time class="post-time" title="2016-06-11 15:01:35" datetime="2016-06-11T15:01:35.000Z"  itemprop="datePublished">2016-06-11</time>
+</span>
+        </div>
+    </div>
+    <div class="yp-btns">
+        <span id="yp-load-yp" onClick="load_yp()">生成海报</span>
+        <span><a id="yp-download"></a></span>
+        <span id="yp-close" onClick="close_yp()">×</span>
+    </div>
+</div>
+<script type="text/javascript">
+    function show_yp(){
+        window.scrollTo(0, 0);
+        document.body.setAttribute("class","active-yp");
+        let cover = document.getElementsByTagName('img')[1];
+        if (cover != null && typeof(cover) != 'undefined') {
+            document.getElementById('yp-img').style.backgroundImage = `url(${cover.src})`;
+        } else {
+            document.getElementById('yp-img').style.backgroundColor = '#d7dbf0';
+        }
+        document.getElementById("yp-hide").style.visibility = "visible";
+    }
+    function close_yp(){
+        var domClass = document.body.getAttribute("class");
+        domClass = domClass.replace("active-yp","");
+        document.body.setAttribute("class",domClass);
+        document.getElementById("yp-hide").style.visibility = "hidden";
+    }
+    function load_yp(){
+        document.getElementById('yp-load-yp').textContent = '海报生成中...';
+        setTimeout(function() {
+            h2c_();
+        },2000);
+
+    }
+</script>
+
+</div>
+
+        <footer class="footer">
+    <div class="top">
+        
+   <p>
+      <span id="lc_counter_container_site_uv">
+         <i class="icon icon-user"></i><span id="lc_counter_value_site_uv"></span>
+      </span>
+      <span id="lc_counter_container_site_pv">
+         <i class="icon icon-eye"></i><span id="lc_counter_value_site_pv"></span>
+      </span>
+  </p>
+
+
+        <p>
+   <a id="jinrishici-sentence" href="https://www.jinrishici.com/" target="_blank" rel="noopener">加载中</a>
+</p>
+<script src="https://sdk.jinrishici.com/v2/browser/jinrishici.js" charset="utf-8"></script>
+<script>
+   jinrishici.load(function(result) {
+      document.querySelector('#subtitle').innerText = result.data.content;
+      document.querySelector('#jinrishici-sentence').innerText = result.data.content;
+  });
+</script>
+            <!--Todo: 考虑重构为插件 -->
+            <p>
+                
+                    <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+                
+                <span>
+                    <a href="https://github.com/qinyuanpei" target="_blank" rel="license noopener" title="Github">
+                        <i class="icon icon-lg icon-github"></i>
+                    </a>
+                </span>
+                <span>
+                    <a href="https://weibo.com/1278609231/profile" target="_blank" rel="license noopener" title="微博">
+                        <i class="icon icon-lg icon-weibo"></i>
+                    </a>
+                </span>
+                <span>
+                    <a href="https://www.douban.com/people/60029335/" target="_blank" rel="license noopener" title="豆瓣">
+                        <i class="icon icon-lg icon-douban"></i>
+                    </a>
+                </span>
+                <span>
+                    <a href="https://www.zhihu.com/people/qinyuanpei" target="_blank" rel="license noopener" title="知乎">
+                        <i class="icon icon-lg icon-zhihu-square"></i>
+                    </a>
+                </span>
+                <span>
+                    <a href="https://blog.csdn.net/qinyuanpei" target="_blank" rel="license noopener" title="CSDN">
+                        <i class="icon icon-lg">C</i>
+                    </a>
+                </span>
+                <span>
+                    <a href="https://music.163.com/#/user/home?id=47002864" target="_blank" rel="license noopener" title="网易音乐">
+                        <i class="icon icon-lg icon-wangyiyunyinyue"></i>
+                    </a>
+                </span>
+            </p>
+        
+    </div>
+    <div class="bottom">
+        <p><span>飞鸿踏雪 &copy; 2014 - 2021</span><br>
+            
+                
+                Powered by <a href="http://hexo.io/" target="_blank">Hexo</a> & Theme by <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a><br>
+                
+                
+                    <p>Hosted by <a href="https://pages.github.com" target="_blank" rel="noopener" style="font-weight: bold">Github Pages</a></p>
+                
+        </p>
+    </div>
+</footer>
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span
+        class="icon icon-lg icon-chevron-up"></span></a>
+
+    
+
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://qinyuanpei.github.io/posts/3695777215/&title=《使用C#开发HTTP服务器系列之静态页面》 — 一个人的孤落时辰&pic=https://qinyuanpei.github.ioassets/images/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://qinyuanpei.github.io/posts/3695777215/&title=《使用C#开发HTTP服务器系列之静态页面》 — 一个人的孤落时辰&source=&emsp;&emsp;各位朋友大家好，我是秦元培，欢迎大家关注我的博客，我的博客地址是http://qinyuanpei.com。在这个系列文章的第一篇..." data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://qinyuanpei.github.io/posts/3695777215/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《使用C#开发HTTP服务器系列之静态页面》 — 一个人的孤落时辰&url=https://qinyuanpei.github.io/posts/3695777215/&via=https://qinyuanpei.github.io" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://qinyuanpei.github.io/posts/3695777215/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+      
+      <li>
+        <a class="google share-sns" target="_blank" onClick="show_yp()" data-title=" 生成海报">
+          <i class="icon icon-file-image-o"></i>
+        </a>
+      </li>
+      
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="//api.qrserver.com/v1/create-qr-code/?data=https://qinyuanpei.github.io/posts/3695777215/" alt="微信分享二维码">
+</div>
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.6/waves.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/4.2.1/echarts.min.js"></script>
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/echarts-wordcloud.min.js" async></script>
+<script>
+    var BLOG = { ROOT: '/', SHARE: true, REWARD: true };
+
+
+</script>
+
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/main.min.js"></script>
+
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/search.min.js" async></script>
+
+
+
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/heart.min.js" async></script>
+
+
+
+
+
+
+
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/leancloud-counter.min.js"></script>
+<script>
+        (function () {
+            var appId = 'JbHqRp2eMrTgIwYpfERH0g79-gzGzoHsz';
+            var appKey = 'VsiKvLuiBGvJL1XrAfv7siY2';
+            new VisitorCounter().init({
+                appId: appId,       //应用ID, 必输
+                appKey: appKey,      //应用Key, 必输
+                region: '华北',      //华东,华北,国际, 默认华东
+                domain: '',      //自定义域名
+                collectIP: true, //是否收集IP及位置信息, 默认开启
+                collectUA: true  //是否收集UserAgent, 默认开启
+            });
+        })();
+</script>
+
+
+
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/vconsole.min.js"></script>
+<script type="text/javascript">
+    //当地址中存在debug=true时，实例化vConsole
+    if (location.href.indexOf('debug=true') > -1) {
+        var vConsole = new VConsole();
+    }
+</script>
+
+
+    <script>
+    //国内用户自动重定向Coding Pages镜像
+    // var ipInfo = JSON.parse(localStorage.getItem('ipInfo'));
+    // if (ipInfo.country_code == 'CN') {
+    //     location.href = location.href.replace('qinyuanpei.github.io', 'blog.yuanpei.me');
+    // }
+    </script>
+
+
+<script>
+titleArray = [];
+function scrollTitle() {
+    if (titleArray.length == 0) return;
+    titleArray.push(titleArray[0]);
+	titleArray.shift();
+	document.title = titleArray.join("");
+}
+setInterval(scrollTitle, 500);
+(function() {
+    var originTitile = document.title, titleTime;
+    document.addEventListener('visibilitychange', function() {
+        if (document.hidden) {
+            titleArray = originTitile.split('');
+            clearTimeout(titleTime);
+        } else {
+            document.title = originTitile;
+            titleArray = originTitile.split('');
+            titleTime = setTimeout(function() {
+                document.title = originTitile;
+                titleArray = [];
+            },2000);
+        }
+    });
+})();
+</script>
+
+
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/ribbon.min.js"></script>
+</body>
+</html>

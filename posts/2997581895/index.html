@@ -1,0 +1,935 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+    
+<script async defer data-domain="blog.yuanpei.me" src="https://plausible.io/js/plausible.js"></script>
+    
+    <meta charset="utf-8">
+    <!-- HTTP 1.1 -->  
+    <meta http-equiv="pragma" content="no-cache">  
+    <!-- HTTP 1.0 -->  
+    <meta http-equiv="cache-control" content="no-cache">
+    <!-- 微博图床防盗链 --> 
+    <!-- <meta name="referrer" content="no-referrer"/> -->
+    <!--Google站点验证-->
+    
+    <!--百度站点验证-->
+    
+    
+    <!--Google AdSense-->
+    
+    <!--Bing站点验证-->
+    <meta name="msvalidate.01" content="713A48A3FE17D4841C292A6B3942EB4C" />
+    
+    <title>
+        视频是不能P的系列：OpenCV人脸检测 | 一个人的孤落时辰 | 纵有疾风起，人生不言弃
+    </title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+        <meta name="theme-color" content="#3F51B5">
+    
+
+    <meta name="keywords" content="OpenCV,Python,图像处理,人脸检测,秦元培,技术博客,生活随笔,个人博客,NET,Python,数据挖掘,数据分析,NLP">
+    
+        <meta name="description" content="学习OpenCV最好的方式，就是从官方的示例开始，我个人非常推荐的两个教程是 [OpenCV: Cascade Classifier](https://docs.opencv.org/3.4/db/d28/tutorial_cascade_classifier.html) 和 [Python OpenCV Tutorial](https://pythonexamples.org/python-opencv/)，其次是 [浅墨大神](https://blog.csdn.net/poem_qianmo) 的[【OpenCV】入门教程](https://blog.csdn.net/poem_qianmo/category_9262318.html)，不同的是， [浅墨大神](https://blog.csdn.net/poem_qianmo) 的教程主要是使用C++，对于像博主这样的“不学无术”的人，这简直无异于从入门到放弃，所以，建议大家结合自己的实际情况，选择适合自己的“难度”;好了，思绪拉回我们这里，在OpenCV中实现人脸检测，主要分为以下三个步骤，即，首先，定义联级分类器**CascadeClassifier**并载入指定的模型文件;* 第12~14行，通过 [detectMultiScale](https://docs.opencv.org/3.4/d1/de5/classcv_1_1CascadeClassifier.html#aaf8181cb63968136476ec4204ffca498) 方法我们就可以对待检测目标进行检测，关于它的参数，常用的有scaleFactor、minNeighbors、minSize、maxSize，它可以对人脸检测做进一步的细节上控制，对于我们而言，我们更关心检测的结果，这里我们将检测到的人脸区域以矩形的方式绘制出来;这篇博客主要分享了OpenCV在人脸检测方面的简单应用，OpenCV中的CascadeClassifier整合**Haar**、**HOG**和**LBP**三类特性算法，通过预置的模型文件可以实现不同程度的目标检测功能，而在人脸检测的基础上，我们可以通过训练来实现简单的人脸识别，正如今年爆发的新冠疫情让人脸识别出现新的挑战一样，虽然人脸识别的场景正在变得越来越复杂，可作为一个世界上最流行的计算机视觉库，OpenCV中的各种模块、算法还是一如既往的经典;* 第17~19行，主要是为了方面大家观察结果，实际使用中可能会输出为文件或者实时渲染，这里需要关注的重点函数是：[imshow](https://docs.opencv.org/3.4/df/d24/group__highgui__opengl.html#gaae7e90aa3415c68dba22a5ff2cefc25d)，顾名思义，它可以让图片展示在窗口中，类似我们这个示例中的效果">
+    
+    <meta name="description" content="学习OpenCV最好的方式，就是从官方的示例开始，我个人非常推荐的两个教程是 [OpenCV: Cascade Classifier](https:&#x2F;&#x2F;docs.opencv.org&#x2F;3.4&#x2F;db&#x2F;d28&#x2F;tutorial_cascade_classifier.html) 和 [Python OpenCV Tutorial](https:&#x2F;&#x2F;pythonexamples.org&#x2F;python-op">
+<meta property="og:type" content="article">
+<meta property="og:title" content="视频是不能P的系列：OpenCV人脸检测">
+<meta property="og:url" content="https://qinyuanpei.github.io/posts/2997581895/index.html">
+<meta property="og:site_name" content="一个人的孤落时辰">
+<meta property="og:description" content="学习OpenCV最好的方式，就是从官方的示例开始，我个人非常推荐的两个教程是 [OpenCV: Cascade Classifier](https:&#x2F;&#x2F;docs.opencv.org&#x2F;3.4&#x2F;db&#x2F;d28&#x2F;tutorial_cascade_classifier.html) 和 [Python OpenCV Tutorial](https:&#x2F;&#x2F;pythonexamples.org&#x2F;python-op">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://i.loli.net/2020/12/25/DcQRW32aUTBx5lY.png">
+<meta property="og:image" content="https://i.loli.net/2020/12/26/i3OZfYwHvugT6JU.png">
+<meta property="og:image" content="https://i.loli.net/2020/12/26/lN9ZgjuXxfs54cF.jpg">
+<meta property="og:image" content="https://i.loli.net/2020/12/26/Y9Al67cnvtgWmBz.png">
+<meta property="og:image" content="https://i.loli.net/2020/12/26/8QaJlR5XIxLftCo.png">
+<meta property="og:image" content="https://i.loli.net/2020/12/26/CZi4SYOgzsoy8Qk.gif">
+<meta property="article:published_time" content="2020-12-25T22:49:47.000Z">
+<meta property="article:modified_time" content="2021-06-01T04:07:35.817Z">
+<meta property="article:author" content="飞鸿踏雪">
+<meta property="article:tag" content="OpenCV">
+<meta property="article:tag" content="Python">
+<meta property="article:tag" content="图像处理">
+<meta property="article:tag" content="人脸检测">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i.loli.net/2020/12/25/DcQRW32aUTBx5lY.png">
+    
+        <link rel="alternate" type="application/atom+xml" title="一个人的孤落时辰" href="/atom.xml">
+    
+    <link rel="shortcut icon" href="/assets/images/favicon.ico">
+    
+        <link rel="manifest" href="/manifest.json">
+    
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master//assets/styles/style.css">
+    <script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/instantclick.min.js"></script>
+    <script>window.lazyScripts=[]</script>
+    <!-- custom head -->
+    
+
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu" class="hide" >
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap" style="background-image:url(/assets/images/brand.jpg)">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/assets/images/avatar.jpg" alt="avatar">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">飞鸿踏雪</h5>
+          <a href="mailto:qinyuanpei@163.com" title="qinyuanpei@163.com" class="mail">qinyuanpei@163.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/"  >
+                <i class="icon icon-lg icon-home"></i>
+                主页
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives"  >
+                <i class="icon icon-lg icon-archives"></i>
+                归档
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags"  >
+                <i class="icon icon-lg icon-tags"></i>
+                标签
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/categories"  >
+                <i class="icon icon-lg icon-th-list"></i>
+                分类
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/books"  >
+                <i class="icon icon-lg icon-bookmark"></i>
+                书单
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/movies"  >
+                <i class="icon icon-lg icon-film"></i>
+                影单
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/works"  >
+                <i class="icon icon-lg icon-code"></i>
+                实验室
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/about"  >
+                <i class="icon icon-lg icon-circle"></i>
+                关于我
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+            <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">视频是不能P的系列：OpenCV人脸检测</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off"
+                placeholder="输入感兴趣的关键字">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+        <a href="https://github.com/qinyuanpei/qinyuanpei.github.io" target="_blank" rel="noopener" class="header-icon waves-effect waves-circle waves-light" id="menuGithub">
+            <i class="icon icon-lg icon-code-fork"></i>
+        </a>
+    </div>
+</header>
+<header class="content-header post-header">
+    <div class="container fade-scale">
+        <h1 class="title">视频是不能P的系列：OpenCV人脸检测</h1>
+        <h5 class="subtitle" id="subtitle">
+            
+            <time datetime="2020-12-25T22:49:47.000Z" itemprop="datePublished" class="page-time">
+  2020-12-25
+</time>
+
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/">编程语言</a></li></ul>
+
+            
+        </h5>
+    </div>
+    
+
+</header>
+
+<div class="container body-wrap">
+    
+    <aside class="post-widget">
+        <nav class="post-toc-wrap" id="post-toc">
+            <h4>目录</h4>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#第一个入门示例"><span class="post-toc-number">1.</span> <span class="post-toc-text">第一个入门示例</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#柴犬界的“网红”"><span class="post-toc-number">2.</span> <span class="post-toc-text">柴犬界的“网红”</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#视频级PS入门"><span class="post-toc-number">3.</span> <span class="post-toc-text">视频级PS入门</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#本文小结"><span class="post-toc-number">4.</span> <span class="post-toc-text">本文小结</span></a></li></ol>
+        </nav>
+    </aside>
+    
+    <article id="post-视频是不能P的系列：OpenCV人脸检测" class="post-article article-type-post fade" itemprop="blogPost">
+
+        <div class="post-card">
+            <h1 class="post-card-title">
+                视频是不能P的系列：OpenCV人脸检测
+            </h1>
+            <div class="post-meta">
+                <time class="post-time" title="2020-12-25 22:49:47" datetime="2020-12-25T22:49:47.000Z"  itemprop="datePublished">2020-12-25</time>
+
+                
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/">编程语言</a></li></ul>
+
+
+
+                
+<span id="lc_counter_container_page_pv" title="文章总阅读量" data-page-url="" data-page-title="视频是不能P的系列：OpenCV人脸检测">
+    <i class="icon icon-eye icon-pr"></i><span id="lc_counter_value_page_pv"></span>
+</span>
+
+
+
+
+
+                
+    <span>
+        <i class="icon icon-clock-o"></i>
+        25 min.
+    </span>
+    
+            </div>
+            <div class="post-content" id="post-content" itemprop="postContent">
+                <p>恍惚间，2020年已接近尾声，回首过去这一年，无论是疫情、失业还是“996”，均以某种特殊的方式铭刻着这一年的记忆。也许，是这个冬天的西安雾霾更少一点。所以，有时透过中午的一抹冬阳，居然意外地觉得春天的脚步渐渐近了，甚至连圣诞节这种“洋节日”都感到亲切而且期待，我想，这大概是我丧了一段时间的缘故吧！可不管怎样，人们对未来的生活时常有一种“迷之自信”，果然生还还是要继续下去的呀！趁着最近的时间比较充裕，我决定开启一个信息的系列：视频是不能P的。这是互联网上流传的一个老梗了，正所谓“视频是不能P的，所以是真的”。其实，在如今这个亦真亦假的世界里，哪里还有什么东西是不能PS的呢？借助人工智能“改头换面”越来越轻而易举，而这背后关于隐私和伦理的一连串问题随之而来，你越来越难以确认屏幕对面的那个是不是真实的人类。所以，这个系列会以OpenCV作为起点，去探索那些好玩、有趣的视频/图像处理思路，通过技术来证明视频是可以被PS的。而作为这个系列的第一篇，我们将从一个最简单的地方开始，它就是人脸检测。</p>
+<h1 id="第一个入门示例"><a href="#第一个入门示例" class="headerlink" title="第一个入门示例"></a>第一个入门示例</h1><p>学习OpenCV最好的方式，就是从官方的示例开始，我个人非常推荐的两个教程是 <a href="https://docs.opencv.org/3.4/db/d28/tutorial_cascade_classifier.html" target="_blank" rel="noopener">OpenCV: Cascade Classifier</a> 和 <a href="https://pythonexamples.org/python-opencv/" target="_blank" rel="noopener">Python OpenCV Tutorial</a>，其次是 <a href="https://blog.csdn.net/poem_qianmo" target="_blank" rel="noopener">浅墨大神</a> 的<a href="https://blog.csdn.net/poem_qianmo/category_9262318.html" target="_blank" rel="noopener">【OpenCV】入门教程</a>，不同的是， <a href="https://blog.csdn.net/poem_qianmo" target="_blank" rel="noopener">浅墨大神</a> 的教程主要是使用C++，对于像博主这样的“不学无术”的人，这简直无异于从入门到放弃，所以，建议大家结合自己的实际情况，选择适合自己的“难度”。好了，思绪拉回我们这里，在OpenCV中实现人脸检测，主要分为以下三个步骤，即，首先，定义联级分类器<strong>CascadeClassifier</strong>并载入指定的模型文件；其次，对待检测目标进行灰度化和直方图均衡化处理；最后，对灰度图调用<code>detectMultiScale()</code>方法进行检测。下面是一个简化过的入门示例，使用世界上最省心的Python语言进行编写：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> cv2</span><br><span class="line"></span><br><span class="line"><span class="comment"># 步骤1: 定义联级分类器CascadeClassifier并载入指定的模型文件</span></span><br><span class="line">faceCascade = cv2.CascadeClassifier(<span class="string">'./haarcascades/haarcascade_frontalface_alt2.xml'</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 步骤2: 对待检测目标进行灰度化和直方图均衡化处理</span></span><br><span class="line">target = cv2.imread(<span class="string">'target.jpg'</span>)</span><br><span class="line">target_gray = cv2.cvtColor(target, cv2.COLOR_BGR2GRAY)</span><br><span class="line">target_gray = cv2.equalizeHist(target_gray)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 步骤3: 人脸检测</span></span><br><span class="line">faces = faceCascade.detectMultiScale(target_gray)</span><br><span class="line"><span class="keyword">for</span> (x,y,w,h) <span class="keyword">in</span> faces:</span><br><span class="line">    cv2.rectangle(target, (x, y), (x + w, y + h), (<span class="number">0</span>, <span class="number">255</span>, <span class="number">0</span>), <span class="number">2</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 步骤4: 展示结果</span></span><br><span class="line">cv2.imshow(<span class="string">'Face Detection'</span>, target)</span><br><span class="line">cv2.waitKey(<span class="number">0</span>)</span><br><span class="line">cv2.destroyAllWindows()</span><br></pre></td></tr></table></figure>
+<p>正常情况下，你会得到下面的结果，这里选取的素材是经典日剧《半泽直树》：</p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="https://i.loli.net/2020/12/25/DcQRW32aUTBx5lY.png" alt="OpenCV人脸检测效果展示" title="" referrerpolicy="no-referrer">
+                </div>
+                <div class="image-caption">OpenCV人脸检测效果展示</div>
+            </figure>
+
+<p>怎么样？是不是被OpenCV的强大给震惊到了？下面我们针对每个步骤做更详细的说明：</p>
+<ul>
+<li>第1行引入OpenCV，需要我们安装OpenCV的<a href="https://pypi.org/project/opencv-python/" target="_blank" rel="noopener">Python版本</a>。</li>
+<li>第4行实例化级联分类器CascadeClassifier，关于这个级联分类器，它是OpenCV下做目标检测的模块，内置<strong>Haar</strong>、<strong>HOG</strong>和<strong>LBP</strong>三类特性算法，而所谓“级联”，则是指它通过多个强分类器串联实现最终分类的思路。在初始化级联分类器的时候，需要载入指定的模型文件，这些模型文件是官方提前训练好的，可以从<a href="https://github.com/opencv/opencv/tree/master/data/haarcascades" target="_blank" rel="noopener">Github</a>上进行下载，不同的模型文件对应不同的功能，这里使用的<code>haarcascade_frontalface_alt2.xml</code>主要针对面部检测，而像<code>haarcascade_eye_tree_eyeglasses.xml</code>则可以对眼睛进行检测。除此之外，我们还通过训练获得自己的模型文件，当然，这一切都是后话啦！</li>
+<li>第7~9行，我们载入了一张图片素材，并对其进行了灰度化和直方图均衡化处理。这里需要关注的三个函数是：<a href="">imread</a>、<a href="https://docs.opencv.org/3.4/d8/d01/group__imgproc__color__conversions.html#ga397ae87e1288a81d2363b61574eb8cab">cvtColor</a> 和 <a href="https://docs.opencv.org/3.4/d6/dc7/group__imgproc__hist.html#ga7e54091f0c937d49bf84152a16f76d6e" target="_blank" rel="noopener">equalizeHist</a>，它们的作用分别是读取图片、转换颜色和直方图均衡化处理。其中，对人脸检测而言，灰度图是必要的条件，而直方图均衡化则是可选的一个过程。</li>
+<li>第12~14行，通过 <a href="https://docs.opencv.org/3.4/d1/de5/classcv_1_1CascadeClassifier.html#aaf8181cb63968136476ec4204ffca498" target="_blank" rel="noopener">detectMultiScale</a> 方法我们就可以对待检测目标进行检测，关于它的参数，常用的有scaleFactor、minNeighbors、minSize、maxSize，它可以对人脸检测做进一步的细节上控制，对于我们而言，我们更关心检测的结果，这里我们将检测到的人脸区域以矩形的方式绘制出来。</li>
+<li>第17~19行，主要是为了方面大家观察结果，实际使用中可能会输出为文件或者实时渲染，这里需要关注的重点函数是：<a href="https://docs.opencv.org/3.4/df/d24/group__highgui__opengl.html#gaae7e90aa3415c68dba22a5ff2cefc25d" target="_blank" rel="noopener">imshow</a>，顾名思义，它可以让图片展示在窗口中，类似我们这个示例中的效果。</li>
+</ul>
+<h1 id="柴犬界的“网红”"><a href="#柴犬界的“网红”" class="headerlink" title="柴犬界的“网红”"></a>柴犬界的“网红”</h1><p>曾经，有“好事者”分析过微信和QQ的年度表情，表情包文化流行的背后，实际上表达方式多样化的一种体现，例如：“笑哭”这一符号，固然有哭笑不得的含义在里面，可又何尝不是<strong>二十多岁人生总是边哭边笑的真实写照</strong>呢？而“捂脸”这一符号在我看来更多的是一种无可奈何，甚至有一种自我嘲讽的意味在里面。至于“呲牙”，<strong>朴实无华的微笑背后，大抵是看惯了庭前花开花落，可以“不以物喜，不以己悲”地笑对人生吧</strong>！其实，在这许许多多地表情里，我最喜欢的是微博里的“Doge”，这个眉清目秀的“狗头”能表达出各种丰富的含义，相比之下，微信里的“Doge”就有一点拙劣的模仿的意味了，俗话说<strong>“狗头保命”</strong>，在一个互联网信仰缺失的时代，用这样一种表情作为人类的保护色，又是不是一种反讽呢？而大家都知道，这个“Doge”表情，实际上是源于一个叫做<a href="https://baike.baidu.com/item/Homestar%20Runner" target="_blank" rel="noopener">Homestar Runner</a>的网上动画系列，其原型则来源于一只名为<a href="https://baijiahao.baidu.com/s?id=1567521374438179&wfr=spider&for=pc" target="_blank" rel="noopener">Kabosu</a>的柴犬，由于它融合了萌宠和故意搞笑两大特点，因此在网络上迅速走红，并由此衍生出一系列二次创作。</p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="https://i.loli.net/2020/12/26/i3OZfYwHvugT6JU.png" alt="微信年度表情" title="" referrerpolicy="no-referrer">
+                </div>
+                <div class="image-caption">微信年度表情</div>
+            </figure>
+
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="https://i.loli.net/2020/12/26/lN9ZgjuXxfs54cF.jpg" alt="QQ年度表情" title="" referrerpolicy="no-referrer">
+                </div>
+                <div class="image-caption">QQ年度表情</div>
+            </figure>
+
+<p>现在，让我们唤醒身体里的中二灵魂，通过OpenCV让这个柴犬界的网红出现在我们面前。这里的思路是，在检测到人脸后，在人脸区域绘制一个“狗头”表情，为此，我们需要定义一个<code>copyTo()</code>函数，它可以将一张小图(MaskImage)绘制到大图(SrcImage)的指定位置，我们一起来看它的具体实现：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">copyTo</span><span class="params">(srcImage, maskImage, x, y, w, h)</span>:</span></span><br><span class="line">    <span class="comment"># 按照区域大小对maskImage进行缩放</span></span><br><span class="line">    img_h, img_w, _ = maskImage.shape</span><br><span class="line">    img_scale = h / img_h</span><br><span class="line">    new_w = int(img_w * img_scale)</span><br><span class="line">    new_h = int(img_h * img_scale)</span><br><span class="line">    img_resize = cv2.resize(maskImage ,(new_w ,new_h))</span><br><span class="line"></span><br><span class="line">    <span class="comment"># “粘贴”小图到大图的指定位置</span></span><br><span class="line">    <span class="keyword">if</span> (srcImage.shape[<span class="number">2</span>] != maskImage.shape[<span class="number">2</span>]):</span><br><span class="line">        y1, y2 = y, y + img_resize.shape[<span class="number">0</span>]</span><br><span class="line">        x1, x2 = x, x + img_resize.shape[<span class="number">1</span>]</span><br><span class="line">        alpha_s = img_resize[:, :, <span class="number">3</span>] / <span class="number">255.0</span></span><br><span class="line">        alpha_l = <span class="number">1.0</span> - alpha_s</span><br><span class="line">        <span class="keyword">for</span> c <span class="keyword">in</span> range(<span class="number">0</span>, <span class="number">3</span>):</span><br><span class="line">            srcImage[y1:y2, x1:x2, c] = (</span><br><span class="line">                alpha_s * img_resize[:, :, c] + alpha_l * srcImage[y1:y2, x1:x2, c]</span><br><span class="line">            )</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        srcImage[y:y + img_resize.shape[<span class="number">0</span>], x:x + img_resize.shape[<span class="number">1</span>]] = img_resize</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> srcImage</span><br></pre></td></tr></table></figure>
+<p>在这里，我们首先要关注这样一件事情，即OpenCV默认使用的是由R、G、B组成的三通道，可对于像PNG这种格式的图片，它会含有一个Alpha通道。这样，当我们尝试把一张含Alpha通道的小图，“粘贴”到只有R、G、B三个通道的大图上时，就会出现通道数对不上的问题，所以，这个函数实际上对这种情况做了特殊处理。其次，每一个OpenCV中的图片，即Mat，其shape属性是一个由三个元素组成的元组，依次为图片高度、图片宽度和图片通道数。“黏贴”的过程实际上是修改对应位置处的像素信息。好了，现在，我们来修改一下第一版的代码：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 步骤1: 定义联级分类器CascadeClassifier并载入指定的模型文件</span></span><br><span class="line">faceCascade = cv2.CascadeClassifier(<span class="string">'./haarcascades/haarcascade_frontalface_alt2.xml'</span>)</span><br><span class="line"><span class="comment"># cv2.IMREAD_UNCHANGED表示保留Alpha通道信息</span></span><br><span class="line">doge = cv2.imread(<span class="string">'doge-4.png'</span>, cv2.IMREAD_UNCHANGED) </span><br><span class="line"></span><br><span class="line"><span class="comment"># 步骤2: 对待检测目标进行灰度化和直方图均衡化处理</span></span><br><span class="line">target = cv2.imread(<span class="string">'target.jpg'</span>)</span><br><span class="line">target_gray = cv2.cvtColor(target, cv2.COLOR_BGR2GRAY)</span><br><span class="line">target_gray = cv2.equalizeHist(target_gray)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 步骤3: 人脸检测</span></span><br><span class="line">faces = faceCascade.detectMultiScale(target_gray)</span><br><span class="line"><span class="keyword">for</span> (x,y,w,h) <span class="keyword">in</span> faces:</span><br><span class="line">    target = copyTo(target, doge, x, y, w, h) <span class="comment"># 粘贴“狗头”表情至每一个面部区域</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 步骤4: 展示结果</span></span><br><span class="line">cv2.imshow(<span class="string">'Face Detection'</span>, target)</span><br><span class="line">cv2.waitKey(<span class="number">0</span>)</span><br><span class="line">cv2.destroyAllWindows()</span><br></pre></td></tr></table></figure>
+
+<p>此时，我们就可以得到下面的结果：</p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="https://i.loli.net/2020/12/26/Y9Al67cnvtgWmBz.png" alt="全员Doge!" title="" referrerpolicy="no-referrer">
+                </div>
+                <div class="image-caption">全员Doge!</div>
+            </figure>
+
+<p>其实，我本人更喜欢这张，一张充满精神污染意味的图片：</p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="https://i.loli.net/2020/12/26/8QaJlR5XIxLftCo.png" alt="来自神烦狗的精神污染" title="" referrerpolicy="no-referrer">
+                </div>
+                <div class="image-caption">来自神烦狗的精神污染</div>
+            </figure>
+
+<h1 id="视频级PS入门"><a href="#视频级PS入门" class="headerlink" title="视频级PS入门"></a>视频级PS入门</h1><p>OK，相信到这里为止，各位读者朋友，都已经顺着博主的思路实现了图片级别的“PS”，既然我们这个系列叫<strong>做视频是不能P的</strong>，那么大家要问了，视频到底能不能P呢？答案显然是可以，不然博主写这个系列就不是“人脸检测”而是“人肉打脸”啦！下面，我们来继续对今天的这个例子做一点升级。考虑在OpenCV中，<strong>VideoCapture</strong>可以通过摄像头捕捉视频画面，所以，我们只需要把这个“狗头”绘制到每一帧画面上，就可以实现视频级别的PS啦！</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 步骤1: 定义联级分类器CascadeClassifier并载入指定的模型文件</span></span><br><span class="line">faceCascade = cv2.CascadeClassifier(<span class="string">'./haarcascades/haarcascade_frontalface_alt2.xml'</span>)</span><br><span class="line">doge = cv2.imread(<span class="string">'doge-4.png'</span>, cv2.IMREAD_UNCHANGED)</span><br><span class="line">cap = cv2.VideoCapture(<span class="number">0</span>) <span class="comment">#笔记本自带摄像头</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">while</span> (<span class="literal">True</span>):</span><br><span class="line">    ret, frame = cap.read() </span><br><span class="line">    <span class="keyword">if</span> (ret == <span class="literal">False</span>):</span><br><span class="line">        <span class="keyword">break</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># 步骤2: 对待检测目标进行灰度化和直方图均衡化处理</span></span><br><span class="line">    <span class="comment"># 读取视频中每一帧</span></span><br><span class="line">    target = frame</span><br><span class="line">    target_gray = cv2.cvtColor(target, cv2.COLOR_BGR2GRAY)</span><br><span class="line">    target_gray = cv2.equalizeHist(target_gray)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 步骤3: 人脸检测</span></span><br><span class="line">    faces = faceCascade.detectMultiScale(target_gray)</span><br><span class="line">    <span class="keyword">for</span> (x,y,w,h) <span class="keyword">in</span> faces:</span><br><span class="line">        target = copyTo(target, doge, x, y, w, h)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 步骤4: 展示结果</span></span><br><span class="line">    cv2.imshow(<span class="string">'Face Detection'</span>, target)</span><br><span class="line">    <span class="comment"># 按Q退出</span></span><br><span class="line">    <span class="keyword">if</span> cv2.waitKey(<span class="number">1</span>) &amp; <span class="number">0xFF</span> == ord(<span class="string">'q'</span>):</span><br><span class="line">        <span class="keyword">break</span></span><br><span class="line"></span><br><span class="line">cap.release() </span><br><span class="line">cv2.destroyAllWindows()</span><br></pre></td></tr></table></figure>
+
+<p>一起来看看实现的效果吧！可能当你看完这篇博客的时候，你会觉得我写这玩意儿到底有什么用？不好意思，这玩意儿还真有用！它解决了像博主这样腼腆、不敢在公开场合抛头露面的人的困惑。暴走大事件里“王尼玛”一直戴着头罩，所以，很多人都好奇他本人到底长什么样子，如果当时能考虑这个思路的话，是不是可以不用一直戴着头罩。同样地，还有在浪客剑心真人版里饰演志志雄真实的藤原龙也，全身上下缠满绷带的造型其实对演员来说是非常不友好的，如果当时能考虑这个思路的话，是不是演员可以不用受那么大的罪。如果说这些都有些遥远的话，那么，至少在采访后期希望保护受访者隐私的场景下，这个思路是完全可行的，就像大家看到的它可以完全的遮挡住我的脸，而类似的打马赛克等等技术，本质上还是对图像进行处理，甚至美颜相机里的各种特效，底层都离不开OpenCV里的这些算法。怎么样？现在有没有觉得博主其实是一个非常有趣的人，哈哈!</p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="https://i.loli.net/2020/12/26/CZi4SYOgzsoy8Qk.gif" alt="视频级别的“PS”" title="" referrerpolicy="no-referrer">
+                </div>
+                <div class="image-caption">视频级别的“PS”</div>
+            </figure>
+
+<h1 id="本文小结"><a href="#本文小结" class="headerlink" title="本文小结"></a>本文小结</h1><p>这篇博客主要分享了OpenCV在人脸检测方面的简单应用，OpenCV中的CascadeClassifier整合<strong>Haar</strong>、<strong>HOG</strong>和<strong>LBP</strong>三类特性算法，通过预置的模型文件可以实现不同程度的目标检测功能，而在人脸检测的基础上，我们可以通过训练来实现简单的人脸识别，正如今年爆发的新冠疫情让人脸识别出现新的挑战一样，虽然人脸识别的场景正在变得越来越复杂，可作为一个世界上最流行的计算机视觉库，OpenCV中的各种模块、算法还是一如既往的经典。结合imread()、resize()、cvtColor()等等的方法，我们可以将“狗头”表情贴到图片或者视频中的人脸区域，而这个思路可以为人脸遮挡相关的场景做一点探索。</p>
+<p>在一个流行美颜的时代，人们对于别人甚至自己的期望在无限拔高，像博主本人一直不怎么喜欢拍照，有时候我们埋怨别人没有把我们拍得好看一点，可那究竟是你眼中的自己还是别人眼中的自己呢？正如相亲的时候，人们总喜欢把最好的、美化过的一面展示给别人，因为只有这样才能让别人对你产生兴趣，可往往现实的落差会让这种来得快的兴趣消失得更快。所以，我想说，虽然在技术面前万物似乎皆可“PS”，可对于我们自己而言，你是否了解真正的自己呢？关于我博客的写作风格，我一直不确定是要用偏严谨还是偏活泼的方式来表达，因为眼看着被后浪们一点点超越，这实在是种难以言说的感觉，欢迎大家在评论区留下你对博客内容或者观点的想法，祝大家周末愉快，一个人一样要活得浪漫！</p>
+
+                
+
+                
+
+
+<div class="recommended_posts">
+    <h1>推荐阅读</h1>
+    <ul>
+        
+        <li><a href="https://qinyuanpei.github.io/posts/2822230423/">基于Python实现Windows下壁纸切换功能</a></li>
+        
+        <li><a href="https://qinyuanpei.github.io/posts/2829333122/">深入浅出理解Python装饰器</a></li>
+        
+        <li><a href="https://qinyuanpei.github.io/posts/1427872047/">使用Python抽取《半泽直树》原著小说人物关系</a></li>
+        
+        <li><a href="https://qinyuanpei.github.io/posts/3444626340/">博客图片迁移折腾记</a></li>
+        
+        <li><a href="https://qinyuanpei.github.io/posts/1960676615/">使用Python开发插件化应用程序</a></li>
+        
+    </ul>
+</div>
+
+            </div>
+            
+<blockquote class="post-copyright">
+    <div class="content">
+        <p><b>版权声明：</b>
+        <a href="https://qinyuanpei.github.io/posts/2997581895/" rel="external">视频是不能P的系列：OpenCV人脸检测</a>
+        ，由&nbsp;<a href="/about" target="_blank" rel="external">飞鸿踏雪</a>&nbsp;
+        首次发表于&nbsp;<a href="/" target="_blank" rel="external">一个人的孤落时辰</a>&nbsp;
+        ，本文地址为：<a href="https://qinyuanpei.github.io/posts/2997581895/" target="_blank" rel="external">https://qinyuanpei.github.io/posts/2997581895/</a>
+        ，转载请注明<b>作者</b>和<b>出处</b>。</p>
+    </div>
+    <footer>
+        <a href="https://qinyuanpei.github.io">
+            <img src="/assets/images/avatar.jpg" alt="飞鸿踏雪">
+            飞鸿踏雪
+        </a>
+    </footer>
+</blockquote>
+
+
+            
+<div class="page-reward">
+    <a id="rewardBtn" href="javascript:;" class="page-reward-btn waves-effect waves-circle waves-light">赏</a>
+</div>
+
+
+            <div class="post-footer">
+                
+	<ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/OpenCV/" rel="tag">OpenCV</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Python/" rel="tag">Python</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E4%BA%BA%E8%84%B8%E6%A3%80%E6%B5%8B/" rel="tag">人脸检测</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%9B%BE%E5%83%8F%E5%A4%84%E7%90%86/" rel="tag">图像处理</a></li></ul>
+
+                
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://qinyuanpei.github.io/posts/2997581895/&title=《视频是不能P的系列：OpenCV人脸检测》 — 一个人的孤落时辰&pic=https://qinyuanpei.github.ioassets/images/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://qinyuanpei.github.io/posts/2997581895/&title=《视频是不能P的系列：OpenCV人脸检测》 — 一个人的孤落时辰&source=一个人的孤落时辰 | 纵有疾风起，人生不言弃 | 隐约雷鸣，阴霾天空，即使天无雨，我亦留此地。" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://qinyuanpei.github.io/posts/2997581895/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《视频是不能P的系列：OpenCV人脸检测》 — 一个人的孤落时辰&url=https://qinyuanpei.github.io/posts/2997581895/&via=https://qinyuanpei.github.io" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://qinyuanpei.github.io/posts/2997581895/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+      
+      <li>
+        <a class="google share-sns" target="_blank" onClick="show_yp()" data-title=" 生成海报">
+          <i class="icon icon-file-image-o"></i>
+        </a>
+      </li>
+      
+    </ul>
+ </div>
+
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
+            </div>
+        </div>
+
+        
+<nav class="post-nav flex-row flex-justify-between">
+  
+    <div class="waves-block waves-effect prev">
+      <a href="/posts/2621074915/" id="post-prev" class="post-nav-link">
+        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
+        <h4 class="title">温故而知新，由ADO.NET与Dapper所联想到的</h4>
+      </a>
+    </div>
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/posts/3602353334/" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h4 class="title">作为技术宅的我，是这样追鬼滅の刃的</h4>
+      </a>
+    </div>
+  
+</nav>
+
+
+        
+    <div id="comment"></div>
+<script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+<script src='//unpkg.com/valine/dist/Valine.min.js'></script>
+<script type="text/javascript">
+new Valine({
+    el: '#comment' ,
+    notify: false, 
+    verify: true, 
+    appId: 'JbHqRp2eMrTgIwYpfERH0g79-gzGzoHsz',
+    appKey: 'VsiKvLuiBGvJL1XrAfv7siY2',
+    placeholder: '云中谁寄锦书来，雁字回时，月满西楼。&#10;Tips：如果希望收到我的评论回复，请至少留下你的邮箱哦:)',
+    path:'https://qinyuanpei.github.io/posts/2997581895/', 
+    avatar:'identicon',
+    requiredFields: ['nick','mail']
+});
+</script>
+
+
+
+
+    </article>
+    
+<div id="reward" class="page-modal reward-lay">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <h3 class="reward-title">
+        <i class="icon icon-quote-left"></i>
+        赠人玫瑰，手有余香
+        <i class="icon icon-quote-right"></i>
+    </h3>
+    <div class="reward-content">
+        
+        <div class="reward-code">
+            <img id="rewardCode" src="/assets/images/wechat.png" alt="打赏二维码">
+        </div>
+        
+        <label class="reward-toggle">
+            <input id="rewardToggle" type="checkbox" class="reward-toggle-check"
+                data-wechat="/assets/images/wechat.png" data-alipay="/assets/images/alipay.jpg">
+            <div class="reward-toggle-ctrol">
+                <span class="reward-toggle-item wechat">微信</span>
+                <span class="reward-toggle-label"></span>
+                <span class="reward-toggle-item alipay">支付宝</span>
+            </div>
+        </label>
+        
+    </div>
+</div>
+
+
+    <script type="text/javascript" src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/yoniu.min.js"></script>
+<style type='text/css'>
+	body.active-yp {
+		overflow: hidden;
+	}
+	.yp-fc-btn{
+		display: flex;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		align-items: center;
+		justify-content: space-between;
+		font-size: 13px;
+	}
+	.yp-fc-btn span{
+		cursor: pointer;
+		padding: 2px 10px;
+		color: #4b4b4b;
+		border: #4b4b4b 1px solid;
+		border-radius:5px;
+	}
+	#yp-hide{
+		position: fixed;
+		display: flex;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		justify-content: center;
+		flex-direction: column;
+		left:0;
+		top:0;
+		right:0;
+		bottom:0;
+		background-color:rgba(0,0,0,.5);
+		z-index: 99999;
+		visibility: hidden;
+	}
+	#yoniu-poster{
+		box-sizing: border-box;
+		width: 350px;
+		height: 467.2px;
+		background-color: #fff;
+		margin: 0 auto;
+		padding: 0;
+		line-height: 1.6;
+		text-align:justify;
+	}
+	
+	.yp-img {
+		min-height: 240px;
+		position: relative;
+		display: flex;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		justify-content: flex-end;
+		flex-direction: column;
+		background-position: 50% 50%;
+		background-size: cover;
+		overflow:hidden;
+	}
+	.yp-img>div{
+		padding: 10px 20px;
+	}
+	.yp-name{
+		display: block;
+		color: #fff;
+		font-size: 20px;
+		font-weight: 600;
+		text-shadow: #4b4b4b 0.1em 0.1em 0.2em;
+		margin-top: 10px;
+	}
+	.yp-sort{
+		padding: 3px 10px;
+		font-size: 12px;
+		color: #fff;
+		background: #2e2e2e;
+	}
+	.yp-des{
+		color: #2e2e2e;
+		font-size: 14px;
+		margin: 20px;
+		height: 67.2px;
+	}
+	.yp-qcode{
+		display: flex;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		justify-content: space-between;
+		align-items: center;
+		margin: 10px;
+		padding: 10px 20px;
+		background: #f5f5f5;
+		color: #818181;
+		border-radius: 10px;
+	}
+	.yp-tips{
+		display: flex;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		justify-content: space-between;
+		align-items: center;
+		color: #ccc;
+		margin: 0 10px 10px;
+		font-size: 10px;
+		letter-spacing: 1.5px;
+	}
+	.yp-btns{
+		display: flex;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		align-items: stretch;
+		justify-content: center;
+		width:350px;
+		margin: 0 auto;
+	}
+	.yp-btns>span{
+		display: flex;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		align-items: center;
+		justify-content: center;
+		font-size: 14px;
+		padding: 10px 15px;
+		background:rgba(0,0,0,.2);
+		color: #f5f5f5;
+		cursor: pointer;
+	}
+	.yp-btns>span>a{
+		color: #f5f5f5;
+	}
+	.yp-btns>span>a:hover{
+		text-decoration:none;
+	}
+	#yp-close{
+		font-size: 18px;
+		font-weight: 600;
+	}
+</style>
+<div id="yp-hide">
+    <div id="yoniu-poster">
+        <div class="yp-img" id="yp-img">
+            <div>
+                <span class="yp-sort">编程语言</span>
+                <span class="yp-name">视频是不能P的系列：OpenCV人脸检测</span>
+            </div>
+        </div>
+        <div class="yp-des">    
+            
+                恍惚间，2020年已接近尾声，回首过去这一年，无论是疫情、失业还是“996”，均以某种特殊的方式铭刻着这一年的记忆。也许，是这个冬天的西安雾霾更...
+            
+        </div>
+        <div class="yp-qcode">
+            <span>扫描二维码阅读原文</span>
+            <img id="yp-qcode" width="64px" src="//api.qrserver.com/v1/create-qr-code/?data=https://qinyuanpei.github.io/posts/2997581895/">
+        </div>
+        <div class="yp-tips">
+            <span>一个人的孤落时辰</span>
+            <span><time class="post-time" title="2020-12-25 22:49:47" datetime="2020-12-25T22:49:47.000Z"  itemprop="datePublished">2020-12-25</time>
+</span>
+        </div>
+    </div>
+    <div class="yp-btns">
+        <span id="yp-load-yp" onClick="load_yp()">生成海报</span>
+        <span><a id="yp-download"></a></span>
+        <span id="yp-close" onClick="close_yp()">×</span>
+    </div>
+</div>
+<script type="text/javascript">
+    function show_yp(){
+        window.scrollTo(0, 0);
+        document.body.setAttribute("class","active-yp");
+        let cover = document.getElementsByTagName('img')[1];
+        if (cover != null && typeof(cover) != 'undefined') {
+            document.getElementById('yp-img').style.backgroundImage = `url(${cover.src})`;
+        } else {
+            document.getElementById('yp-img').style.backgroundColor = '#d7dbf0';
+        }
+        document.getElementById("yp-hide").style.visibility = "visible";
+    }
+    function close_yp(){
+        var domClass = document.body.getAttribute("class");
+        domClass = domClass.replace("active-yp","");
+        document.body.setAttribute("class",domClass);
+        document.getElementById("yp-hide").style.visibility = "hidden";
+    }
+    function load_yp(){
+        document.getElementById('yp-load-yp').textContent = '海报生成中...';
+        setTimeout(function() {
+            h2c_();
+        },2000);
+
+    }
+</script>
+
+</div>
+
+        <footer class="footer">
+    <div class="top">
+        
+   <p>
+      <span id="lc_counter_container_site_uv">
+         <i class="icon icon-user"></i><span id="lc_counter_value_site_uv"></span>
+      </span>
+      <span id="lc_counter_container_site_pv">
+         <i class="icon icon-eye"></i><span id="lc_counter_value_site_pv"></span>
+      </span>
+  </p>
+
+
+        <p>
+   <a id="jinrishici-sentence" href="https://www.jinrishici.com/" target="_blank" rel="noopener">加载中</a>
+</p>
+<script src="https://sdk.jinrishici.com/v2/browser/jinrishici.js" charset="utf-8"></script>
+<script>
+   jinrishici.load(function(result) {
+      document.querySelector('#subtitle').innerText = result.data.content;
+      document.querySelector('#jinrishici-sentence').innerText = result.data.content;
+  });
+</script>
+            <!--Todo: 考虑重构为插件 -->
+            <p>
+                
+                    <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+                
+                <span>
+                    <a href="https://github.com/qinyuanpei" target="_blank" rel="license noopener" title="Github">
+                        <i class="icon icon-lg icon-github"></i>
+                    </a>
+                </span>
+                <span>
+                    <a href="https://weibo.com/1278609231/profile" target="_blank" rel="license noopener" title="微博">
+                        <i class="icon icon-lg icon-weibo"></i>
+                    </a>
+                </span>
+                <span>
+                    <a href="https://www.douban.com/people/60029335/" target="_blank" rel="license noopener" title="豆瓣">
+                        <i class="icon icon-lg icon-douban"></i>
+                    </a>
+                </span>
+                <span>
+                    <a href="https://www.zhihu.com/people/qinyuanpei" target="_blank" rel="license noopener" title="知乎">
+                        <i class="icon icon-lg icon-zhihu-square"></i>
+                    </a>
+                </span>
+                <span>
+                    <a href="https://blog.csdn.net/qinyuanpei" target="_blank" rel="license noopener" title="CSDN">
+                        <i class="icon icon-lg">C</i>
+                    </a>
+                </span>
+                <span>
+                    <a href="https://music.163.com/#/user/home?id=47002864" target="_blank" rel="license noopener" title="网易音乐">
+                        <i class="icon icon-lg icon-wangyiyunyinyue"></i>
+                    </a>
+                </span>
+            </p>
+        
+    </div>
+    <div class="bottom">
+        <p><span>飞鸿踏雪 &copy; 2014 - 2021</span><br>
+            
+                
+                Powered by <a href="http://hexo.io/" target="_blank">Hexo</a> & Theme by <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a><br>
+                
+                
+                    <p>Hosted by <a href="https://pages.github.com" target="_blank" rel="noopener" style="font-weight: bold">Github Pages</a></p>
+                
+        </p>
+    </div>
+</footer>
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span
+        class="icon icon-lg icon-chevron-up"></span></a>
+
+    
+
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://qinyuanpei.github.io/posts/2997581895/&title=《视频是不能P的系列：OpenCV人脸检测》 — 一个人的孤落时辰&pic=https://qinyuanpei.github.ioassets/images/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://qinyuanpei.github.io/posts/2997581895/&title=《视频是不能P的系列：OpenCV人脸检测》 — 一个人的孤落时辰&source=一个人的孤落时辰 | 纵有疾风起，人生不言弃 | 隐约雷鸣，阴霾天空，即使天无雨，我亦留此地。" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://qinyuanpei.github.io/posts/2997581895/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《视频是不能P的系列：OpenCV人脸检测》 — 一个人的孤落时辰&url=https://qinyuanpei.github.io/posts/2997581895/&via=https://qinyuanpei.github.io" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://qinyuanpei.github.io/posts/2997581895/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+      
+      <li>
+        <a class="google share-sns" target="_blank" onClick="show_yp()" data-title=" 生成海报">
+          <i class="icon icon-file-image-o"></i>
+        </a>
+      </li>
+      
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="//api.qrserver.com/v1/create-qr-code/?data=https://qinyuanpei.github.io/posts/2997581895/" alt="微信分享二维码">
+</div>
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.6/waves.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/4.2.1/echarts.min.js"></script>
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/echarts-wordcloud.min.js" async></script>
+<script>
+    var BLOG = { ROOT: '/', SHARE: true, REWARD: true };
+
+
+</script>
+
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/main.min.js"></script>
+
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/search.min.js" async></script>
+
+
+
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/heart.min.js" async></script>
+
+
+
+
+
+
+
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/leancloud-counter.min.js"></script>
+<script>
+        (function () {
+            var appId = 'JbHqRp2eMrTgIwYpfERH0g79-gzGzoHsz';
+            var appKey = 'VsiKvLuiBGvJL1XrAfv7siY2';
+            new VisitorCounter().init({
+                appId: appId,       //应用ID, 必输
+                appKey: appKey,      //应用Key, 必输
+                region: '华北',      //华东,华北,国际, 默认华东
+                domain: '',      //自定义域名
+                collectIP: true, //是否收集IP及位置信息, 默认开启
+                collectUA: true  //是否收集UserAgent, 默认开启
+            });
+        })();
+</script>
+
+
+
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/vconsole.min.js"></script>
+<script type="text/javascript">
+    //当地址中存在debug=true时，实例化vConsole
+    if (location.href.indexOf('debug=true') > -1) {
+        var vConsole = new VConsole();
+    }
+</script>
+
+
+    <script>
+    //国内用户自动重定向Coding Pages镜像
+    // var ipInfo = JSON.parse(localStorage.getItem('ipInfo'));
+    // if (ipInfo.country_code == 'CN') {
+    //     location.href = location.href.replace('qinyuanpei.github.io', 'blog.yuanpei.me');
+    // }
+    </script>
+
+
+<script>
+titleArray = [];
+function scrollTitle() {
+    if (titleArray.length == 0) return;
+    titleArray.push(titleArray[0]);
+	titleArray.shift();
+	document.title = titleArray.join("");
+}
+setInterval(scrollTitle, 500);
+(function() {
+    var originTitile = document.title, titleTime;
+    document.addEventListener('visibilitychange', function() {
+        if (document.hidden) {
+            titleArray = originTitile.split('');
+            clearTimeout(titleTime);
+        } else {
+            document.title = originTitile;
+            titleArray = originTitile.split('');
+            titleTime = setTimeout(function() {
+                document.title = originTitile;
+                titleArray = [];
+            },2000);
+        }
+    });
+})();
+</script>
+
+
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/ribbon.min.js"></script>
+</body>
+</html>
