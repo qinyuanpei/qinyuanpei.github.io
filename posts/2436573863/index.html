@@ -1,0 +1,944 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+    
+<script async defer data-domain="blog.yuanpei.me" src="https://plausible.io/js/plausible.js"></script>
+    
+    <meta charset="utf-8">
+    <!-- HTTP 1.1 -->  
+    <meta http-equiv="pragma" content="no-cache">  
+    <!-- HTTP 1.0 -->  
+    <meta http-equiv="cache-control" content="no-cache">
+    <!-- 微博图床防盗链 --> 
+    <!-- <meta name="referrer" content="no-referrer"/> -->
+    <!--Google站点验证-->
+    
+    <!--百度站点验证-->
+    
+    
+    <!--Google AdSense-->
+    
+    <!--Bing站点验证-->
+    <meta name="msvalidate.01" content="713A48A3FE17D4841C292A6B3942EB4C" />
+    
+    <title>
+        分享两种实现前端拖拽排序的方案 | 一个人的孤落时辰 | 纵有疾风起，人生不言弃
+    </title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+        <meta name="theme-color" content="#3F51B5">
+    
+
+    <meta name="keywords" content="前端,HTML5,拖拽,秦元培,技术博客,生活随笔,个人博客,NET,Python,数据挖掘,数据分析,NLP">
+    
+        <meta name="description" content="这篇文章主要分享了三种实现列表拖拽排序的方案，在技术选型阶段，主要选择Nestable和Sortable这两种方案，前者对层级节点提供的序列化支持非常好，但经过一番折腾后，发现要想像作者一样用好这个插件，着实是件困难的事情，而且貌似作者已经不再维护这个项目了，最近的代码提交历史大概是6年前，**毕竟属于jQuery的辉煌时代已经过去，何况是一个基于jQuery的插件呢;[Sortable](https://sortablejs.github.io/Sortable/)相比Nestable好的一点就是，它对自己的定位是“一个用于可重新排序的拖放列表的JavaScript库”;最终的结果是我们打算为用户提供自定义的功能，考虑到操作的便利性问题，我们放弃了那种通过上下箭头按钮进行排序的方案，这样就回到了本文的主题，如何在前端中对一组列表进行拖拽排序，最终我们选定了两组方案，它们分别是[Nestable](https://github.com/dbushell/Nestable)和[Sortable](http://sortablejs.github.io/Sortable/);&lt;li class=&#34;dd-item&#34; data-id=&#34;1&#34;&gt;;&lt;li class=&#34;dd-item&#34; data-id=&#34;2&#34;&gt;">
+    
+    <meta name="description" content="这篇文章主要分享了三种实现列表拖拽排序的方案，在技术选型阶段，主要选择Nestable和Sortable这两种方案，前者对层级节点提供的序列化支持非常好，但经过一番折腾后，发现要想像作者一样用好这个插件，着实是件困难的事情，而且貌似作者已经不再维护这个项目了，最近的代码提交历史大概是6年前，**毕竟属于jQuery的辉煌时代已经过去，何况是一个基于jQuery的插件呢;[Sortable](htt">
+<meta property="og:type" content="article">
+<meta property="og:title" content="分享两种实现前端拖拽排序的方案">
+<meta property="og:url" content="https://qinyuanpei.github.io/posts/2436573863/index.html">
+<meta property="og:site_name" content="一个人的孤落时辰">
+<meta property="og:description" content="这篇文章主要分享了三种实现列表拖拽排序的方案，在技术选型阶段，主要选择Nestable和Sortable这两种方案，前者对层级节点提供的序列化支持非常好，但经过一番折腾后，发现要想像作者一样用好这个插件，着实是件困难的事情，而且貌似作者已经不再维护这个项目了，最近的代码提交历史大概是6年前，**毕竟属于jQuery的辉煌时代已经过去，何况是一个基于jQuery的插件呢;[Sortable](htt">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://s2.ax1x.com/2019/04/01/Arjibq.gif">
+<meta property="og:image" content="https://s2.ax1x.com/2019/04/01/ArjeGF.gif">
+<meta property="og:image" content="https://s2.ax1x.com/2019/04/01/ArjKM9.gif">
+<meta property="og:image" content="https://s2.ax1x.com/2019/04/01/ArjMrR.gif">
+<meta property="og:image" content="https://s2.ax1x.com/2019/04/01/ArjQq1.gif">
+<meta property="article:published_time" content="2019-03-31T12:49:37.000Z">
+<meta property="article:modified_time" content="2021-06-03T03:58:21.860Z">
+<meta property="article:author" content="飞鸿踏雪">
+<meta property="article:tag" content="前端">
+<meta property="article:tag" content="HTML5">
+<meta property="article:tag" content="拖拽">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://s2.ax1x.com/2019/04/01/Arjibq.gif">
+    
+        <link rel="alternate" type="application/atom+xml" title="一个人的孤落时辰" href="/atom.xml">
+    
+    <link rel="shortcut icon" href="/assets/images/favicon.ico">
+    
+        <link rel="manifest" href="/manifest.json">
+    
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master//assets/styles/style.css">
+    <script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/instantclick.min.js"></script>
+    <script>window.lazyScripts=[]</script>
+    <!-- custom head -->
+    
+
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu" class="hide" >
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap" style="background-image:url(/assets/images/brand.jpg)">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/assets/images/avatar.jpg" alt="avatar">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">飞鸿踏雪</h5>
+          <a href="mailto:qinyuanpei@163.com" title="qinyuanpei@163.com" class="mail">qinyuanpei@163.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/"  >
+                <i class="icon icon-lg icon-home"></i>
+                主页
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives"  >
+                <i class="icon icon-lg icon-archives"></i>
+                归档
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags"  >
+                <i class="icon icon-lg icon-tags"></i>
+                标签
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/categories"  >
+                <i class="icon icon-lg icon-th-list"></i>
+                分类
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/books"  >
+                <i class="icon icon-lg icon-bookmark"></i>
+                书单
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/movies"  >
+                <i class="icon icon-lg icon-film"></i>
+                影单
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/works"  >
+                <i class="icon icon-lg icon-code"></i>
+                实验室
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/about"  >
+                <i class="icon icon-lg icon-circle"></i>
+                关于我
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+            <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">分享两种实现前端拖拽排序的方案</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off"
+                placeholder="输入感兴趣的关键字">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+        <a href="https://github.com/qinyuanpei/qinyuanpei.github.io" target="_blank" rel="noopener" class="header-icon waves-effect waves-circle waves-light" id="menuGithub">
+            <i class="icon icon-lg icon-code-fork"></i>
+        </a>
+    </div>
+</header>
+<header class="content-header post-header">
+    <div class="container fade-scale">
+        <h1 class="title">分享两种实现前端拖拽排序的方案</h1>
+        <h5 class="subtitle" id="subtitle">
+            
+            <time datetime="2019-03-31T12:49:37.000Z" itemprop="datePublished" class="page-time">
+  2019-03-31
+</time>
+
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/%E5%89%8D%E7%AB%AF%E5%BC%80%E5%8F%91/">前端开发</a></li></ul>
+
+            
+        </h5>
+    </div>
+    
+
+</header>
+
+<div class="container body-wrap">
+    
+    <aside class="post-widget">
+        <nav class="post-toc-wrap" id="post-toc">
+            <h4>目录</h4>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#Nestable方案"><span class="post-toc-number">1.</span> <span class="post-toc-text">Nestable方案</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#Sortable方案"><span class="post-toc-number">2.</span> <span class="post-toc-text">Sortable方案</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#HTML5原生方案"><span class="post-toc-number">3.</span> <span class="post-toc-text">HTML5原生方案</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#本文小结"><span class="post-toc-number">4.</span> <span class="post-toc-text">本文小结</span></a></li></ol>
+        </nav>
+    </aside>
+    
+    <article id="post-分享两种实现前端拖拽排序的方案" class="post-article article-type-post fade" itemprop="blogPost">
+
+        <div class="post-card">
+            <h1 class="post-card-title">
+                分享两种实现前端拖拽排序的方案
+            </h1>
+            <div class="post-meta">
+                <time class="post-time" title="2019-03-31 12:49:37" datetime="2019-03-31T12:49:37.000Z"  itemprop="datePublished">2019-03-31</time>
+
+                
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/%E5%89%8D%E7%AB%AF%E5%BC%80%E5%8F%91/">前端开发</a></li></ul>
+
+
+
+                
+<span id="lc_counter_container_page_pv" title="文章总阅读量" data-page-url="" data-page-title="分享两种实现前端拖拽排序的方案">
+    <i class="icon icon-eye icon-pr"></i><span id="lc_counter_value_page_pv"></span>
+</span>
+
+
+
+
+
+                
+    <span>
+        <i class="icon icon-clock-o"></i>
+        20 min.
+    </span>
+    
+            </div>
+            <div class="post-content" id="post-content" itemprop="postContent">
+                <p>Hi，大家好，在经历了两周多的“写Bug”、“改Bug”死循环后，又一个迭代终于在习以为常的加班生活中结束啦！联想到最近在Github上发起的<a href="https://996.icu/#/zh_CN" target="_blank" rel="noopener">“996.icu”</a>事件，不禁令人由衷地感慨生活不易，所谓”起风了，唯有努力生存“。其实，我反对是加班常态化所导致的无效加班，既然努力工作是为了更好的生活，可如果因此而模糊了工作和生活的界限，这到底是一件好事还是一件坏事呢？想想每个周末被工作群里消息支配的失落感，我希望我有可以自由支配的时间，即使我看起来比别人年轻，即使我下班后依旧孤身一人，因为用时间来换钱这件事情，着实是件性价比不高的事情，货币会一天天地贬值直至我们老去，可那些失去的时间就永远地失去了。好了，”业精于勤荒于嬉“，今天我们来说前端中实现拖拽排序这件事情。</p>
+<p>其实，这件事情说起来挺尴尬的，我们曾经为用户提供过某种<strong>”智能“</strong>的体验，我们通过对用户的行为进行分析，为其推荐了个性化的菜单项，甚至根据用户的使用频率对菜单进行了排序。可事实上用户的反响并不是非常强烈，在经过一段时间的使用后，用户依然觉得这个功能相当地”鸡肋“，这件事情告诉我们一个真相，<strong>即无论是产品设计还是需求研讨，最好不要轻易地代入用户的角色</strong>。最终的结果是我们打算为用户提供自定义的功能，考虑到操作的便利性问题，我们放弃了那种通过上下箭头按钮进行排序的方案，这样就回到了本文的主题，如何在前端中对一组列表进行拖拽排序，最终我们选定了两组方案，它们分别是<a href="https://github.com/dbushell/Nestable" target="_blank" rel="noopener">Nestable</a>和<a href="http://sortablejs.github.io/Sortable/" target="_blank" rel="noopener">Sortable</a>。</p>
+<h1 id="Nestable方案"><a href="#Nestable方案" class="headerlink" title="Nestable方案"></a>Nestable方案</h1><p>Nestable是一个基于jQuery的插件，是一个在Github上开源的项目，据作者声称，这是一个”拖放具有鼠标和触摸兼容性的分层列表”的方案。这里针对触摸兼容性的支持可以忽略不计，因为如今都9012年了，博主依然在做传统前端页面的开发，这里博主最感兴趣的一点是，它可以支持分层列表，换言之，我们的列表元素是可以有层级关系、是可以嵌套的，唯一令人有点不爽的就是它依赖jQuery了，在这样一个连Github和Bootstrap都在努力移除jQuery的时代，没有jQuery的历史包袱，意味着我们可以大胆地去做现代前端应该做的事情。好了，我们来看看Nestable具体是怎么使用的吧！首先，我们定义一个简单的HTML结构：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"dd"</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">ol</span> <span class="attr">class</span>=<span class="string">"dd-list"</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">li</span> <span class="attr">class</span>=<span class="string">"dd-item"</span> <span class="attr">data-id</span>=<span class="string">"1"</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"dd-handle"</span>&gt;</span>Item 1<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">li</span> <span class="attr">class</span>=<span class="string">"dd-item"</span> <span class="attr">data-id</span>=<span class="string">"2"</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"dd-handle"</span>&gt;</span>Item 2<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">li</span> <span class="attr">class</span>=<span class="string">"dd-item"</span> <span class="attr">data-id</span>=<span class="string">"3"</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"dd-handle"</span>&gt;</span>Item 3<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">ol</span> <span class="attr">class</span>=<span class="string">"dd-list"</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">li</span> <span class="attr">class</span>=<span class="string">"dd-item"</span> <span class="attr">data-id</span>=<span class="string">"4"</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"dd-handle"</span>&gt;</span>Item 4<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">li</span> <span class="attr">class</span>=<span class="string">"dd-item"</span> <span class="attr">data-id</span>=<span class="string">"5"</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"dd-handle"</span>&gt;</span>Item 5<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">ol</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">ol</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>接下来，我们可以使用如下的JavaScript代码来初始化整个列表，果然，一股jQuery风扑面而来：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$(<span class="string">'.dd'</span>).nestable(&#123;</span><br><span class="line">  <span class="comment">/* config options */</span></span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<p>然后，我们就可以看到下面的效果：</p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="https://s2.ax1x.com/2019/04/01/Arjibq.gif" alt="nestablejs-demo" title="" referrerpolicy="no-referrer">
+                </div>
+                <div class="image-caption">nestablejs-demo</div>
+            </figure>
+
+<p>怎么样？看起来效果还不错吧！不过博主在前期调研的过程中发现，它对于复杂的层级关系就无能为力啦，可能是博主打开的姿势不对吧！如果希望对列表做更深层次的定制，它需要配置的属性会非常非常的多，而且它有一套内在约束在里面，譬如className、nodeName等等，虽然这些都可以去配置，但要想像作者一样运用得好，依然是需要花费大量时间来学习它的API。</p>
+<p>说到这里，对于Nestable，我唯二喜欢的一个feature是，它可以实时地获取到排序后的节点信息，而且是序列化后的JSON格式哦，因为当我们要保存用户的排序结果时，有这样一个接口简直太棒啦有木有！这里需要说明的是，所有具备类似<strong>data-</strong>属性的节点都可以被序列化，熟悉前端的朋友一定知道，这是一个HTML5中的扩展功能，可以让我们在节点上附带更多的数据信息，在Bootstrap中经常需要用到这一特性。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$(<span class="string">'.dd'</span>).nestable(<span class="string">'serialize'</span>);</span><br></pre></td></tr></table></figure>
+
+<p>继续以这个例子为例，我们将会得到下面的JSON信息：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[&#123;<span class="string">"id"</span>:<span class="number">1</span>&#125;,&#123;<span class="string">"id"</span>:<span class="number">2</span>&#125;,&#123;<span class="string">"id"</span>:<span class="number">3</span>,<span class="string">"children"</span>:[&#123;<span class="string">"id"</span>:<span class="number">4</span>&#125;,&#123;<span class="string">"id"</span>:<span class="number">5</span>&#125;]&#125;]</span><br></pre></td></tr></table></figure>
+<p>不过，遗憾的是，貌似作者已经不打算维护这个项目啦，最后一次维护时间已经是6年前，毕竟属于jQuery的辉煌时代都已经过去，何况是基于jQuery的一个插件呢？可这种频繁修改DOM结构引发浏览器重绘的操作，在大前端时代会消失吗？或许并不会。关于这个项目更多的使用细节，大家可以到它的<a href="https://github.com/dbushell/Nestable" target="_blank" rel="noopener">Github</a>主页去了解。</p>
+<h1 id="Sortable方案"><a href="#Sortable方案" class="headerlink" title="Sortable方案"></a>Sortable方案</h1><p><a href="https://sortablejs.github.io/Sortable/" target="_blank" rel="noopener">Sortable</a>相比Nestable好的一点就是，它对自己的定位是“一个用于可重新排序的拖放列表的JavaScript库”。它不再局限于jQuery这样一个方案上，事实上它支持Vue、React、Angualr、Knockout等将近7个框架，除了支持常规的列表以外，还支持Grid中元素的拖拽，文档相比Nestable要更为完善一点，所以要在项目中使用的话，我个人更推荐Sortable。我们一起来看看如何使用Sortable吧，这里我们选择Bootstrap作为基础样式。首先，我们写一个简单的“列表组”：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">ul</span> <span class="attr">class</span>=<span class="string">"list-group"</span> <span class="attr">id</span>=<span class="string">"items"</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">li</span> <span class="attr">class</span>=<span class="string">"list-group-item"</span> <span class="attr">data-id</span>=<span class="string">"0"</span>&gt;</span></span><br><span class="line">    	Menu1</span><br><span class="line">	<span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">li</span> <span class="attr">class</span>=<span class="string">"list-group-item"</span> <span class="attr">data-id</span>=<span class="string">"1"</span>&gt;</span></span><br><span class="line">    	Menu2</span><br><span class="line">    <span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">li</span> <span class="attr">class</span>=<span class="string">"list-group-item"</span> <span class="attr">data-id</span>=<span class="string">"2"</span>&gt;</span></span><br><span class="line">    	Menu3</span><br><span class="line">    <span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">li</span> <span class="attr">class</span>=<span class="string">"list-group-item"</span> <span class="attr">data-id</span>=<span class="string">"3"</span>&gt;</span></span><br><span class="line">    	Menu4</span><br><span class="line">    <span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">ul</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>接下来，我们通过JavaScript来给这个列表“施加”魔法——巴拉能量：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> ele = <span class="built_in">document</span>.getElementById(<span class="string">'items'</span>);</span><br><span class="line"><span class="keyword">var</span> sortable = Sortable.create(ele);</span><br></pre></td></tr></table></figure>
+
+<p>然后我们就可以发现，这个基于Bootstrap的列表居然可以拖拽啦！</p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="https://s2.ax1x.com/2019/04/01/ArjeGF.gif" alt="sortablejs-demo-1" title="" referrerpolicy="no-referrer">
+                </div>
+                <div class="image-caption">sortablejs-demo-1</div>
+            </figure>
+
+<p>OK，我们继续给这个例子来点魔法，可以让列表元素在拖动的时候高亮显示：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> sortable = Sortable.create(ele, &#123;</span><br><span class="line">	animation: <span class="number">150</span>,</span><br><span class="line">	ghostClass: <span class="string">'blue-backgroun-class'</span></span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<p>可以注意到，拖拽时动画会变得更流畅，被拖拽的元素会以蓝底白字高亮显示：</p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="https://s2.ax1x.com/2019/04/01/ArjKM9.gif" alt="sortablejs-demo-2" title="" referrerpolicy="no-referrer">
+                </div>
+                <div class="image-caption">sortablejs-demo-2</div>
+            </figure>
+
+<p>和Nestable类似，我们可以指定一个回调函数来获得排序后的结果，注意到我们这里指定一个dataIdAttr，它告诉Sortable我们将用哪一个值作为数据的主键，从data-text这个命名就可以看出，它的数据是维护在类似<strong>data-</strong>的属性上的，假设我们这里希望获得排序后的菜单，那么，它的打开方式是这样的：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> ele = <span class="built_in">document</span>.getElementById(<span class="string">'items'</span>);</span><br><span class="line"><span class="keyword">var</span> result = <span class="built_in">document</span>.getElementById(<span class="string">'result'</span>);</span><br><span class="line"><span class="keyword">var</span> sortable = Sortable.create(ele, &#123;</span><br><span class="line">	animation: <span class="number">150</span>,</span><br><span class="line">	dataIdAttr: <span class="string">'data-text'</span>,</span><br><span class="line">	onUpdate: onUpdate,</span><br><span class="line">	ghostClass: <span class="string">'blue-backgroun-class'</span></span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">onUpdate</span>(<span class="params">evt</span>)</span>&#123;</span><br><span class="line">	<span class="keyword">var</span> data = sortable.toArray();</span><br><span class="line">	result.innerText = <span class="string">"当前排序结果为："</span> + <span class="built_in">JSON</span>.stringify(data);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>好了，现在可以看到，随着我们对列表进行拖拽，每次都会获得更新以后的列表数据，显然，我们可以将这个结果存到任何地方，这样就可以按用户定义的方式去加载一个列表。</p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="https://s2.ax1x.com/2019/04/01/ArjMrR.gif" alt="sortablejs-demo-3" title="" referrerpolicy="no-referrer">
+                </div>
+                <div class="image-caption">sortablejs-demo-3</div>
+            </figure>
+
+<p>以上就是Soratble的基本用法，关于更多的使用细节，<a href="https://sortablejs.github.io/Sortable" target="_blank" rel="noopener">官方文档</a>了解一下。</p>
+<h1 id="HTML5原生方案"><a href="#HTML5原生方案" class="headerlink" title="HTML5原生方案"></a>HTML5原生方案</h1><p>OK，说完了Nestable和Sortable这两个第三方的解决方案，下面我们来说说基于HTML5的原生方案。HTML5标准问世以来，有很多有意思的东西被吸收到标准之中，拖放(drag &amp; drop)就是其中之一。在此之前，我们需要写大量的JavaScript代码来实现这个功能。现在，HTML5中原生支持拖放API，我们不妨考虑通过它来实现一个可拖拽的列表，这里我们继续沿用基于Bootstrap的例子。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> dragElement = <span class="literal">null</span>;</span><br><span class="line"><span class="keyword">var</span> source = <span class="built_in">document</span>.querySelectorAll(<span class="string">'.list-group-item'</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span>(<span class="keyword">var</span> i = <span class="number">0</span>; i &lt; source.length; i++)&#123;</span><br><span class="line">    source[i].addEventListener(<span class="string">'dragstart'</span>,<span class="function"><span class="keyword">function</span>(<span class="params">ev</span>)</span>&#123;</span><br><span class="line">        dragElement = <span class="keyword">this</span>;</span><br><span class="line">    &#125;,<span class="literal">false</span>);</span><br><span class="line"></span><br><span class="line">    source[i].addEventListener(<span class="string">'dragenter'</span>, <span class="function"><span class="keyword">function</span>(<span class="params">ev</span>)</span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(dragElement != <span class="keyword">this</span>)&#123;</span><br><span class="line">            <span class="keyword">this</span>.parentNode.insertBefore(dragElement,<span class="keyword">this</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;, <span class="literal">false</span>)</span><br><span class="line"></span><br><span class="line">    source[i].addEventListener(<span class="string">'dragleave'</span>, <span class="function"><span class="keyword">function</span>(<span class="params">ev</span>)</span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(dragElement != <span class="keyword">this</span>)&#123;</span><br><span class="line">            <span class="keyword">if</span>(<span class="keyword">this</span> == <span class="keyword">this</span>.parentNode.lastElementChild || <span class="keyword">this</span> == <span class="keyword">this</span>.parentNode.lastChild)&#123;</span><br><span class="line">                <span class="keyword">this</span>.parentNode.appendChild(dragElement);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;, <span class="literal">false</span>)</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="built_in">document</span>.ondragover = <span class="function"><span class="keyword">function</span>(<span class="params">e</span>)</span>&#123;e.preventDefault();&#125;</span><br><span class="line"><span class="built_in">document</span>.ondrop = <span class="function"><span class="keyword">function</span>(<span class="params">e</span>)</span>&#123;e.preventDefault();&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这里唯一需要注意的地方，就是要给每一个className为list-group-item的元素添加draggable属性，并设置该属性为true，这是使用HTML5拖放API的一个前提，换言之，<strong>只有draggable的元素才可以被拖拽</strong>。那么，HTML5中针对拖放的API有哪些呢？针对拖放事件，我们可以抽象出三种角色，它们分别是：</p>
+<ul>
+<li><p>源对象：即对拖拽的对象。它有dragstart、drag和dragend三个事件。</p>
+</li>
+<li><p>过程对象：即被拖拽的对象，在拖拽过程中经过的中间对象，它有dragenter、dragover和dragleave三个事件。</p>
+</li>
+<li><p>目标对象：即被拖拽的对象，最终所放置的对象，它只有一个drop事件。</p>
+</li>
+</ul>
+<p>而在所有的拖拽事件中，都提供了一个数据传递对象dataTransfer，用于在源对象和目标对象间传递数据。例如，我们可以通过setData()来向dataTransfer存入数据，通过getData()来从dataTransfer读取数据，通过clearData()来清理dataTransfer中的数据。此外，还可以通过setDragImage()、effectAllowed属性 和 dropEffect 属性来设置拖拽过程中的图标、拖放的视觉效果等。这里需要注意的是，<strong>IE浏览器不支持dataTransfer对象</strong>。了解了这下，我们就可以做出一个<strong>”简陋“</strong>的拖拽排序功能：</p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="https://s2.ax1x.com/2019/04/01/ArjQq1.gif" alt="sortablejs-demo-4" title="" referrerpolicy="no-referrer">
+                </div>
+                <div class="image-caption">sortablejs-demo-4</div>
+            </figure>
+
+<h1 id="本文小结"><a href="#本文小结" class="headerlink" title="本文小结"></a>本文小结</h1><p>这篇文章主要分享了三种实现列表拖拽排序的方案，在技术选型阶段，主要选择Nestable和Sortable这两种方案，前者对层级节点提供的序列化支持非常好，但经过一番折腾后，发现要想像作者一样用好这个插件，着实是件困难的事情，而且貌似作者已经不再维护这个项目了，最近的代码提交历史大概是6年前，<strong>毕竟属于jQuery的辉煌时代已经过去，何况是一个基于jQuery的插件呢？所以，个人不建议在正式项目中使用Nestable。</strong>相比之下，Sortable的定位要更高一点，<strong>它不再局限于某个UI框架上，理论上任何前端项目都可以使用，从文档的完整性和易用性上，都要比Nestable要更胜一筹</strong>。原本一开始打算写这两种方案的，后来觉得HTML5中提供了拖拽相关的API接口，这种方式不失为一种解决方案。虽然提到HTML5就让人联想到兼容性，可都2019年了，连浓眉大眼的微软(巨硬)都开始在Edge里使用Chrome内核了，兼容性问题还算是个问题吗？所以，这篇文章实际上介绍了三种解决方案，具体使用哪一种，大家可以根据实际情况来决定，好啦，这篇博客就写到这里，谢谢大家，晚安！</p>
+
+                
+
+                
+
+
+<div class="recommended_posts">
+    <h1>推荐阅读</h1>
+    <ul>
+        
+        <li><a href="https://qinyuanpei.github.io/posts/1397717193/">zTree删除/拖拽子节点保留父节点分组样式</a></li>
+        
+        <li><a href="https://qinyuanpei.github.io/posts/70687890/">Unity3D游戏开发之编辑器扩展程序开发实例</a></li>
+        
+        <li><a href="https://qinyuanpei.github.io/posts/2038378679/">HTML5游戏开发技术基础整理</a></li>
+        
+        <li><a href="https://qinyuanpei.github.io/posts/115524443/">漫谈应用程序重试策略及其实现</a></li>
+        
+        <li><a href="https://qinyuanpei.github.io/posts/1166840790/">从React专利事件看开源软件许可</a></li>
+        
+    </ul>
+</div>
+
+            </div>
+            
+<blockquote class="post-copyright">
+    <div class="content">
+        <p><b>版权声明：</b>
+        <a href="https://qinyuanpei.github.io/posts/2436573863/" rel="external">分享两种实现前端拖拽排序的方案</a>
+        ，由&nbsp;<a href="/about" target="_blank" rel="external">飞鸿踏雪</a>&nbsp;
+        首次发表于&nbsp;<a href="/" target="_blank" rel="external">一个人的孤落时辰</a>&nbsp;
+        ，本文地址为：<a href="https://qinyuanpei.github.io/posts/2436573863/" target="_blank" rel="external">https://qinyuanpei.github.io/posts/2436573863/</a>
+        ，转载请注明<b>作者</b>和<b>出处</b>。</p>
+    </div>
+    <footer>
+        <a href="https://qinyuanpei.github.io">
+            <img src="/assets/images/avatar.jpg" alt="飞鸿踏雪">
+            飞鸿踏雪
+        </a>
+    </footer>
+</blockquote>
+
+
+            
+<div class="page-reward">
+    <a id="rewardBtn" href="javascript:;" class="page-reward-btn waves-effect waves-circle waves-light">赏</a>
+</div>
+
+
+            <div class="post-footer">
+                
+	<ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/HTML5/" rel="tag">HTML5</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%89%8D%E7%AB%AF/" rel="tag">前端</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%8B%96%E6%8B%BD/" rel="tag">拖拽</a></li></ul>
+
+                
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://qinyuanpei.github.io/posts/2436573863/&title=《分享两种实现前端拖拽排序的方案》 — 一个人的孤落时辰&pic=https://qinyuanpei.github.ioassets/images/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://qinyuanpei.github.io/posts/2436573863/&title=《分享两种实现前端拖拽排序的方案》 — 一个人的孤落时辰&source=一个人的孤落时辰 | 纵有疾风起，人生不言弃 | 隐约雷鸣，阴霾天空，即使天无雨，我亦留此地。" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://qinyuanpei.github.io/posts/2436573863/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《分享两种实现前端拖拽排序的方案》 — 一个人的孤落时辰&url=https://qinyuanpei.github.io/posts/2436573863/&via=https://qinyuanpei.github.io" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://qinyuanpei.github.io/posts/2436573863/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+      
+      <li>
+        <a class="google share-sns" target="_blank" onClick="show_yp()" data-title=" 生成海报">
+          <i class="icon icon-file-image-o"></i>
+        </a>
+      </li>
+      
+    </ul>
+ </div>
+
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
+            </div>
+        </div>
+
+        
+<nav class="post-nav flex-row flex-justify-between">
+  
+    <div class="waves-block waves-effect prev">
+      <a href="/posts/1397717193/" id="post-prev" class="post-nav-link">
+        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
+        <h4 class="title">zTree删除/拖拽子节点保留父节点分组样式</h4>
+      </a>
+    </div>
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/posts/1122710277/" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h4 class="title">《阿里巴巴Java开发手册》读书笔记</h4>
+      </a>
+    </div>
+  
+</nav>
+
+
+        
+    <div id="comment"></div>
+<script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+<script src='//unpkg.com/valine/dist/Valine.min.js'></script>
+<script type="text/javascript">
+new Valine({
+    el: '#comment' ,
+    notify: false, 
+    verify: true, 
+    appId: 'JbHqRp2eMrTgIwYpfERH0g79-gzGzoHsz',
+    appKey: 'VsiKvLuiBGvJL1XrAfv7siY2',
+    placeholder: '云中谁寄锦书来，雁字回时，月满西楼。&#10;Tips：如果希望收到我的评论回复，请至少留下你的邮箱哦:)',
+    path:'https://qinyuanpei.github.io/posts/2436573863/', 
+    avatar:'identicon',
+    requiredFields: ['nick','mail']
+});
+</script>
+
+
+
+
+    </article>
+    
+<div id="reward" class="page-modal reward-lay">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <h3 class="reward-title">
+        <i class="icon icon-quote-left"></i>
+        赠人玫瑰，手有余香
+        <i class="icon icon-quote-right"></i>
+    </h3>
+    <div class="reward-content">
+        
+        <div class="reward-code">
+            <img id="rewardCode" src="/assets/images/wechat.png" alt="打赏二维码">
+        </div>
+        
+        <label class="reward-toggle">
+            <input id="rewardToggle" type="checkbox" class="reward-toggle-check"
+                data-wechat="/assets/images/wechat.png" data-alipay="/assets/images/alipay.jpg">
+            <div class="reward-toggle-ctrol">
+                <span class="reward-toggle-item wechat">微信</span>
+                <span class="reward-toggle-label"></span>
+                <span class="reward-toggle-item alipay">支付宝</span>
+            </div>
+        </label>
+        
+    </div>
+</div>
+
+
+    <script type="text/javascript" src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/yoniu.min.js"></script>
+<style type='text/css'>
+	body.active-yp {
+		overflow: hidden;
+	}
+	.yp-fc-btn{
+		display: flex;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		align-items: center;
+		justify-content: space-between;
+		font-size: 13px;
+	}
+	.yp-fc-btn span{
+		cursor: pointer;
+		padding: 2px 10px;
+		color: #4b4b4b;
+		border: #4b4b4b 1px solid;
+		border-radius:5px;
+	}
+	#yp-hide{
+		position: fixed;
+		display: flex;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		justify-content: center;
+		flex-direction: column;
+		left:0;
+		top:0;
+		right:0;
+		bottom:0;
+		background-color:rgba(0,0,0,.5);
+		z-index: 99999;
+		visibility: hidden;
+	}
+	#yoniu-poster{
+		box-sizing: border-box;
+		width: 350px;
+		height: 467.2px;
+		background-color: #fff;
+		margin: 0 auto;
+		padding: 0;
+		line-height: 1.6;
+		text-align:justify;
+	}
+	
+	.yp-img {
+		min-height: 240px;
+		position: relative;
+		display: flex;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		justify-content: flex-end;
+		flex-direction: column;
+		background-position: 50% 50%;
+		background-size: cover;
+		overflow:hidden;
+	}
+	.yp-img>div{
+		padding: 10px 20px;
+	}
+	.yp-name{
+		display: block;
+		color: #fff;
+		font-size: 20px;
+		font-weight: 600;
+		text-shadow: #4b4b4b 0.1em 0.1em 0.2em;
+		margin-top: 10px;
+	}
+	.yp-sort{
+		padding: 3px 10px;
+		font-size: 12px;
+		color: #fff;
+		background: #2e2e2e;
+	}
+	.yp-des{
+		color: #2e2e2e;
+		font-size: 14px;
+		margin: 20px;
+		height: 67.2px;
+	}
+	.yp-qcode{
+		display: flex;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		justify-content: space-between;
+		align-items: center;
+		margin: 10px;
+		padding: 10px 20px;
+		background: #f5f5f5;
+		color: #818181;
+		border-radius: 10px;
+	}
+	.yp-tips{
+		display: flex;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		justify-content: space-between;
+		align-items: center;
+		color: #ccc;
+		margin: 0 10px 10px;
+		font-size: 10px;
+		letter-spacing: 1.5px;
+	}
+	.yp-btns{
+		display: flex;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		align-items: stretch;
+		justify-content: center;
+		width:350px;
+		margin: 0 auto;
+	}
+	.yp-btns>span{
+		display: flex;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		align-items: center;
+		justify-content: center;
+		font-size: 14px;
+		padding: 10px 15px;
+		background:rgba(0,0,0,.2);
+		color: #f5f5f5;
+		cursor: pointer;
+	}
+	.yp-btns>span>a{
+		color: #f5f5f5;
+	}
+	.yp-btns>span>a:hover{
+		text-decoration:none;
+	}
+	#yp-close{
+		font-size: 18px;
+		font-weight: 600;
+	}
+</style>
+<div id="yp-hide">
+    <div id="yoniu-poster">
+        <div class="yp-img" id="yp-img">
+            <div>
+                <span class="yp-sort">前端开发</span>
+                <span class="yp-name">分享两种实现前端拖拽排序的方案</span>
+            </div>
+        </div>
+        <div class="yp-des">    
+            
+                Hi，大家好，在经历了两周多的“写Bug”、“改Bug”死循环后，又一个迭代终于在习以为常的加班生活中结束啦！联想到最近在Github上发起的“...
+            
+        </div>
+        <div class="yp-qcode">
+            <span>扫描二维码阅读原文</span>
+            <img id="yp-qcode" width="64px" src="//api.qrserver.com/v1/create-qr-code/?data=https://qinyuanpei.github.io/posts/2436573863/">
+        </div>
+        <div class="yp-tips">
+            <span>一个人的孤落时辰</span>
+            <span><time class="post-time" title="2019-03-31 12:49:37" datetime="2019-03-31T12:49:37.000Z"  itemprop="datePublished">2019-03-31</time>
+</span>
+        </div>
+    </div>
+    <div class="yp-btns">
+        <span id="yp-load-yp" onClick="load_yp()">生成海报</span>
+        <span><a id="yp-download"></a></span>
+        <span id="yp-close" onClick="close_yp()">×</span>
+    </div>
+</div>
+<script type="text/javascript">
+    function show_yp(){
+        window.scrollTo(0, 0);
+        document.body.setAttribute("class","active-yp");
+        let cover = document.getElementsByTagName('img')[1];
+        if (cover != null && typeof(cover) != 'undefined') {
+            document.getElementById('yp-img').style.backgroundImage = `url(${cover.src})`;
+        } else {
+            document.getElementById('yp-img').style.backgroundColor = '#d7dbf0';
+        }
+        document.getElementById("yp-hide").style.visibility = "visible";
+    }
+    function close_yp(){
+        var domClass = document.body.getAttribute("class");
+        domClass = domClass.replace("active-yp","");
+        document.body.setAttribute("class",domClass);
+        document.getElementById("yp-hide").style.visibility = "hidden";
+    }
+    function load_yp(){
+        document.getElementById('yp-load-yp').textContent = '海报生成中...';
+        setTimeout(function() {
+            h2c_();
+        },2000);
+
+    }
+</script>
+
+</div>
+
+        <footer class="footer">
+    <div class="top">
+        
+   <p>
+      <span id="lc_counter_container_site_uv">
+         <i class="icon icon-user"></i><span id="lc_counter_value_site_uv"></span>
+      </span>
+      <span id="lc_counter_container_site_pv">
+         <i class="icon icon-eye"></i><span id="lc_counter_value_site_pv"></span>
+      </span>
+  </p>
+
+
+        <p>
+   <a id="jinrishici-sentence" href="https://www.jinrishici.com/" target="_blank" rel="noopener">加载中</a>
+</p>
+<script src="https://sdk.jinrishici.com/v2/browser/jinrishici.js" charset="utf-8"></script>
+<script>
+   jinrishici.load(function(result) {
+      document.querySelector('#subtitle').innerText = result.data.content;
+      document.querySelector('#jinrishici-sentence').innerText = result.data.content;
+  });
+</script>
+            <!--Todo: 考虑重构为插件 -->
+            <p>
+                
+                    <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+                
+                <span>
+                    <a href="https://github.com/qinyuanpei" target="_blank" rel="license noopener" title="Github">
+                        <i class="icon icon-lg icon-github"></i>
+                    </a>
+                </span>
+                <span>
+                    <a href="https://weibo.com/1278609231/profile" target="_blank" rel="license noopener" title="微博">
+                        <i class="icon icon-lg icon-weibo"></i>
+                    </a>
+                </span>
+                <span>
+                    <a href="https://www.douban.com/people/60029335/" target="_blank" rel="license noopener" title="豆瓣">
+                        <i class="icon icon-lg icon-douban"></i>
+                    </a>
+                </span>
+                <span>
+                    <a href="https://www.zhihu.com/people/qinyuanpei" target="_blank" rel="license noopener" title="知乎">
+                        <i class="icon icon-lg icon-zhihu-square"></i>
+                    </a>
+                </span>
+                <span>
+                    <a href="https://blog.csdn.net/qinyuanpei" target="_blank" rel="license noopener" title="CSDN">
+                        <i class="icon icon-lg">C</i>
+                    </a>
+                </span>
+                <span>
+                    <a href="https://music.163.com/#/user/home?id=47002864" target="_blank" rel="license noopener" title="网易音乐">
+                        <i class="icon icon-lg icon-wangyiyunyinyue"></i>
+                    </a>
+                </span>
+            </p>
+        
+    </div>
+    <div class="bottom">
+        <p><span>飞鸿踏雪 &copy; 2014 - 2021</span><br>
+            
+                
+                Powered by <a href="http://hexo.io/" target="_blank">Hexo</a> & Theme by <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a><br>
+                
+                
+                    <p>Hosted by <a href="https://pages.github.com" target="_blank" rel="noopener" style="font-weight: bold">Github Pages</a></p>
+                
+        </p>
+    </div>
+</footer>
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span
+        class="icon icon-lg icon-chevron-up"></span></a>
+
+    
+
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://qinyuanpei.github.io/posts/2436573863/&title=《分享两种实现前端拖拽排序的方案》 — 一个人的孤落时辰&pic=https://qinyuanpei.github.ioassets/images/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://qinyuanpei.github.io/posts/2436573863/&title=《分享两种实现前端拖拽排序的方案》 — 一个人的孤落时辰&source=一个人的孤落时辰 | 纵有疾风起，人生不言弃 | 隐约雷鸣，阴霾天空，即使天无雨，我亦留此地。" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://qinyuanpei.github.io/posts/2436573863/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《分享两种实现前端拖拽排序的方案》 — 一个人的孤落时辰&url=https://qinyuanpei.github.io/posts/2436573863/&via=https://qinyuanpei.github.io" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://qinyuanpei.github.io/posts/2436573863/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+      
+      <li>
+        <a class="google share-sns" target="_blank" onClick="show_yp()" data-title=" 生成海报">
+          <i class="icon icon-file-image-o"></i>
+        </a>
+      </li>
+      
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="//api.qrserver.com/v1/create-qr-code/?data=https://qinyuanpei.github.io/posts/2436573863/" alt="微信分享二维码">
+</div>
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.6/waves.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/4.2.1/echarts.min.js"></script>
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/echarts-wordcloud.min.js" async></script>
+<script>
+    var BLOG = { ROOT: '/', SHARE: true, REWARD: true };
+
+
+</script>
+
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/main.min.js"></script>
+
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/search.min.js" async></script>
+
+
+
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/heart.min.js" async></script>
+
+
+
+
+
+
+
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/leancloud-counter.min.js"></script>
+<script>
+        (function () {
+            var appId = 'JbHqRp2eMrTgIwYpfERH0g79-gzGzoHsz';
+            var appKey = 'VsiKvLuiBGvJL1XrAfv7siY2';
+            new VisitorCounter().init({
+                appId: appId,       //应用ID, 必输
+                appKey: appKey,      //应用Key, 必输
+                region: '华北',      //华东,华北,国际, 默认华东
+                domain: '',      //自定义域名
+                collectIP: true, //是否收集IP及位置信息, 默认开启
+                collectUA: true  //是否收集UserAgent, 默认开启
+            });
+        })();
+</script>
+
+
+
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/vconsole.min.js"></script>
+<script type="text/javascript">
+    //当地址中存在debug=true时，实例化vConsole
+    if (location.href.indexOf('debug=true') > -1) {
+        var vConsole = new VConsole();
+    }
+</script>
+
+
+    <script>
+    //国内用户自动重定向Coding Pages镜像
+    // var ipInfo = JSON.parse(localStorage.getItem('ipInfo'));
+    // if (ipInfo.country_code == 'CN') {
+    //     location.href = location.href.replace('qinyuanpei.github.io', 'blog.yuanpei.me');
+    // }
+    </script>
+
+
+<script>
+titleArray = [];
+function scrollTitle() {
+    if (titleArray.length == 0) return;
+    titleArray.push(titleArray[0]);
+	titleArray.shift();
+	document.title = titleArray.join("");
+}
+setInterval(scrollTitle, 500);
+(function() {
+    var originTitile = document.title, titleTime;
+    document.addEventListener('visibilitychange', function() {
+        if (document.hidden) {
+            titleArray = originTitile.split('');
+            clearTimeout(titleTime);
+        } else {
+            document.title = originTitile;
+            titleArray = originTitile.split('');
+            titleTime = setTimeout(function() {
+                document.title = originTitile;
+                titleArray = [];
+            },2000);
+        }
+    });
+})();
+</script>
+
+
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/ribbon.min.js"></script>
+</body>
+</html>
