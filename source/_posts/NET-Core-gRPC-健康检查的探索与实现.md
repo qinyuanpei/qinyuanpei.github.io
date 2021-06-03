@@ -27,21 +27,21 @@ syntax = "proto3";
 package grpc.health.v1;
 
 message HealthCheckRequest {
-	string service = 1;
+  string service = 1;
 }
 
 message HealthCheckResponse {
-	enum ServingStatus {
-		UNKNOWN = 0;
-		SERVING = 1;
-		NOT_SERVING = 2;
+  enum ServingStatus {
+    UNKNOWN = 0;
+    SERVING = 1;
+    NOT_SERVING = 2;
 	}
-	ServingStatus status = 1;
+  ServingStatus status = 1;
 }
 
 service Health {
-	rpc Check(HealthCheckRequest) returns (HealthCheckResponse);
-	rpc Watch(HealthCheckRequest) returns (stream HealthCheckResponse);
+  rpc Check(HealthCheckRequest) returns (HealthCheckResponse);
+  rpc Watch(HealthCheckRequest) returns (stream HealthCheckResponse);
 }
 ```
 
