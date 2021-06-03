@@ -1,0 +1,945 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+    
+<script async defer data-domain="blog.yuanpei.me" src="https://plausible.io/js/plausible.js"></script>
+    
+    <meta charset="utf-8">
+    <!-- HTTP 1.1 -->  
+    <meta http-equiv="pragma" content="no-cache">  
+    <!-- HTTP 1.0 -->  
+    <meta http-equiv="cache-control" content="no-cache">
+    <!-- 微博图床防盗链 --> 
+    <!-- <meta name="referrer" content="no-referrer"/> -->
+    <!--Google站点验证-->
+    
+    <!--百度站点验证-->
+    
+    
+    <!--Google AdSense-->
+    
+    <!--Bing站点验证-->
+    <meta name="msvalidate.01" content="713A48A3FE17D4841C292A6B3942EB4C" />
+    
+    <title>
+        使用 HttpMessageHandler 实现 HttpClient 请求管道自定义 | 一个人的孤落时辰 | 纵有疾风起，人生不言弃
+    </title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+        <meta name="theme-color" content="#3F51B5">
+    
+
+    <meta name="keywords" content="扩展,HttpClient,Mock,管道,秦元培,技术博客,生活随笔,个人博客,NET,Python,数据挖掘,数据分析,NLP">
+    
+        <meta name="description" content="protected override async Task&lt;HttpResponseMessage&gt; SendAsync(HttpRequestMessage request, CancellationToken cancellationToken);我想，或许可以这样理解，一种可以对 请求消息(**HttpRequestMessage**) 和 响应消息(**HttpResponseMessage**) 进行处理，同时多个 `HttpMessageHandler` 可以组成一个完整的消息处理通道的中间件;而在这里，这个负责单一的消息处理功能的 `Handler` 其实就是 `HttpMessageHandler`，因为它不单单可以对请求消息(**HttpRequestMessage**)进行处理，同时还可以对响应消息(**HttpResponseMessage**)进行处理;博主认为，它是一种可以对 请求消息(**HttpRequestMessage**) 和 响应消息(**HttpResponseMessage**) 进行处理，同时多个 `HttpMessageHandler` 可以组成一个完整的消息处理通道的中间件;最近，博主偶然间在 [博客园](https://www.cnblogs.com) 看到一篇文章：[ASP.NET Core 扩展库之 Http 请求模拟](https://www.cnblogs.com/xfrog/p/14703251.html)，它里面介绍了一种利用 [HttpMessageHandler](https://docs.microsoft.com/zh-cn/dotnet/api/system.net.http.httpmessagehandler">
+    
+    <meta name="description" content="protected override async Task SendAsync(HttpRequestMessage request, CancellationToken cancellationToken);我想，或许可以这样理解，一种可以对 请求消息(**HttpRequestMessage**) 和 响应消息(**HttpResponseMessage**) 进行处理，同时多个 &#96;HttpM">
+<meta property="og:type" content="article">
+<meta property="og:title" content="使用 HttpMessageHandler 实现 HttpClient 请求管道自定义">
+<meta property="og:url" content="https://qinyuanpei.github.io/posts/2070070822/index.html">
+<meta property="og:site_name" content="一个人的孤落时辰">
+<meta property="og:description" content="protected override async Task SendAsync(HttpRequestMessage request, CancellationToken cancellationToken);我想，或许可以这样理解，一种可以对 请求消息(**HttpRequestMessage**) 和 响应消息(**HttpResponseMessage**) 进行处理，同时多个 &#96;HttpM">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://i.loli.net/2021/04/28/AwLZDdqXc5KERky.png">
+<meta property="og:image" content="https://i.loli.net/2021/04/29/URNWavrVgyzMAxe.png">
+<meta property="og:image" content="https://i.loli.net/2021/04/29/aORFS3ZQEw8pNbT.png">
+<meta property="og:image" content="https://i.loli.net/2021/04/30/OaUyhNF7XYsA8mI.png">
+<meta property="og:image" content="https://i.loli.net/2021/04/30/k9lX12aSpcr8ReV.png">
+<meta property="article:published_time" content="2021-04-28T20:25:47.000Z">
+<meta property="article:modified_time" content="2021-06-03T03:48:39.657Z">
+<meta property="article:author" content="飞鸿踏雪">
+<meta property="article:tag" content="扩展">
+<meta property="article:tag" content="HttpClient">
+<meta property="article:tag" content="Mock">
+<meta property="article:tag" content="管道">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i.loli.net/2021/04/28/AwLZDdqXc5KERky.png">
+    
+        <link rel="alternate" type="application/atom+xml" title="一个人的孤落时辰" href="/atom.xml">
+    
+    <link rel="shortcut icon" href="/assets/images/favicon.ico">
+    
+        <link rel="manifest" href="/manifest.json">
+    
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master//assets/styles/style.css">
+    <script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/instantclick.min.js"></script>
+    <script>window.lazyScripts=[]</script>
+    <!-- custom head -->
+    
+
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu" class="hide" >
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap" style="background-image:url(/assets/images/brand.jpg)">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/assets/images/avatar.jpg" alt="avatar">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">飞鸿踏雪</h5>
+          <a href="mailto:qinyuanpei@163.com" title="qinyuanpei@163.com" class="mail">qinyuanpei@163.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/"  >
+                <i class="icon icon-lg icon-home"></i>
+                主页
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives"  >
+                <i class="icon icon-lg icon-archives"></i>
+                归档
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags"  >
+                <i class="icon icon-lg icon-tags"></i>
+                标签
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/categories"  >
+                <i class="icon icon-lg icon-th-list"></i>
+                分类
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/books"  >
+                <i class="icon icon-lg icon-bookmark"></i>
+                书单
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/movies"  >
+                <i class="icon icon-lg icon-film"></i>
+                影单
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/works"  >
+                <i class="icon icon-lg icon-code"></i>
+                实验室
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/about"  >
+                <i class="icon icon-lg icon-circle"></i>
+                关于我
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+            <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">使用 HttpMessageHandler 实现 HttpClient 请求管道自定义</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off"
+                placeholder="输入感兴趣的关键字">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+        <a href="https://github.com/qinyuanpei/qinyuanpei.github.io" target="_blank" rel="noopener" class="header-icon waves-effect waves-circle waves-light" id="menuGithub">
+            <i class="icon icon-lg icon-code-fork"></i>
+        </a>
+    </div>
+</header>
+<header class="content-header post-header">
+    <div class="container fade-scale">
+        <h1 class="title">使用 HttpMessageHandler 实现 HttpClient 请求管道自定义</h1>
+        <h5 class="subtitle" id="subtitle">
+            
+            <time datetime="2021-04-28T20:25:47.000Z" itemprop="datePublished" class="page-time">
+  2021-04-28
+</time>
+
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/">编程语言</a></li></ul>
+
+            
+        </h5>
+    </div>
+    
+
+</header>
+
+<div class="container body-wrap">
+    
+    <aside class="post-widget">
+        <nav class="post-toc-wrap" id="post-toc">
+            <h4>目录</h4>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#什么是-HttpMessageHandler？"><span class="post-toc-number">1.</span> <span class="post-toc-text">什么是 HttpMessageHandler？</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#实现自定义请求管道"><span class="post-toc-number">2.</span> <span class="post-toc-text">实现自定义请求管道</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#日志记录"><span class="post-toc-number">2.1.</span> <span class="post-toc-text">日志记录</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#请求重试"><span class="post-toc-number">2.2.</span> <span class="post-toc-text">请求重试</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#接口模拟"><span class="post-toc-number">2.3.</span> <span class="post-toc-text">接口模拟</span></a></li></ol></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#本文小结"><span class="post-toc-number">3.</span> <span class="post-toc-text">本文小结</span></a></li></ol>
+        </nav>
+    </aside>
+    
+    <article id="post-使用 HttpMessageHandler 实现 HttpClient 请求管道自定义" class="post-article article-type-post fade" itemprop="blogPost">
+
+        <div class="post-card">
+            <h1 class="post-card-title">
+                使用 HttpMessageHandler 实现 HttpClient 请求管道自定义
+            </h1>
+            <div class="post-meta">
+                <time class="post-time" title="2021-04-28 20:25:47" datetime="2021-04-28T20:25:47.000Z"  itemprop="datePublished">2021-04-28</time>
+
+                
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/">编程语言</a></li></ul>
+
+
+
+                
+<span id="lc_counter_container_page_pv" title="文章总阅读量" data-page-url="" data-page-title="使用 HttpMessageHandler 实现 HttpClient 请求管道自定义">
+    <i class="icon icon-eye icon-pr"></i><span id="lc_counter_value_page_pv"></span>
+</span>
+
+
+
+
+
+                
+    <span>
+        <i class="icon icon-clock-o"></i>
+        26 min.
+    </span>
+    
+            </div>
+            <div class="post-content" id="post-content" itemprop="postContent">
+                <p>最近，博主偶然间在 <a href="https://www.cnblogs.com" target="_blank" rel="noopener">博客园</a> 看到一篇文章：<a href="https://www.cnblogs.com/xfrog/p/14703251.html" target="_blank" rel="noopener">ASP.NET Core 扩展库之 Http 请求模拟</a>，它里面介绍了一种利用 <a href="https://docs.microsoft.com/zh-cn/dotnet/api/system.net.http.httpmessagehandler?view=net-5.0" target="_blank" rel="noopener">HttpMessageHandler</a> 来实现 Http 请求模拟的方案。在日常工作中，我们总是不可避免地要和第三方的服务或者接口打交道，尤其是当我们需要面对“<strong>联调</strong>”这样一件事情的时候。通常，我们可以通过类似 <a href="https://github.com/ymfe/yapi" target="_blank" rel="noopener">YAPI</a> 这样的工具来对尚在开发中的接口进行模拟。可是，因为这种方式会让我们的测试代码依赖于一个外部工具，所以，从严格意义上讲，它其实应该属于“<strong>集成测试</strong>”的范畴。在接触前端开发的过程中，对于其中的 <a href="http://mockjs.com/" target="_blank" rel="noopener">Mock.js</a> 印象深刻。故而，当看到 .NET 中有类似实现的时候，好奇心驱使我对其中的核心，即 <code>HttpMessageHandler</code> 产生了浓厚的兴趣。平时，我们更多的是使用 <a href="https://github.com/moq/moq4" target="_blank" rel="noopener">Moq</a> 这样的库来模拟某一个对象的行为，而对一个 Http 请求进行模拟，可以说是开天辟地头一遭。带着这些问题出发，就有了今天这篇博客，通过 <code>HttpMessageHandler</code> 实现 <code>HttpClient</code> 请求管道的自定义。</p>
+<h1 id="什么是-HttpMessageHandler？"><a href="#什么是-HttpMessageHandler？" class="headerlink" title="什么是 HttpMessageHandler？"></a>什么是 HttpMessageHandler？</h1><p>相信大家读过我提到的文章以后，都能找到这里面最核心的一个点：<code>HttpMessageHandler</code>。于是，我们今天要面对的第一个问题就是，什么是 <code>HttpMessageHandler</code>？此时，我们需要一张历久弥新的示意图，来自 <a href="https://www.asp.net/media/4071077/aspnet-web-api-poster.pdf" target="_blank" rel="noopener">微软官方</a>。这里，我们重点关注的是 <code>DelegatingHandler</code>，它继承自 <code>HttpMessageHandler</code>。通过这张图，我们能够获得哪些信息呢？</p>
+<p>我认为，主要有以下几点：<strong>第一，HttpMessageHandler 处于整个 Http 请求管道的第一梯队，每一个路由匹配的请求都会从这里“进入”和“离开”；第二，HttpMessageHandler 可以是全局配置或者针对某个特定的路由，只要这个路由被匹配到就会执行；第三，HttpMessageHandler 可以直接构造 Http 响应并且返回，跳过剩余的管道流程</strong>。不知道大家看到这里会想到什么？坦白讲，我联想到了.NET Core 中的中间件，而唯一不同的地方或许是，中间件是 ASP.NET Core 里的概念，这里则是 ASP.NET Web API 里的概念。尤其是第三点，它对于我们的意义非常重大，因为它，我们才可以做到对一个 Http 请求进行模拟。</p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="https://i.loli.net/2021/04/28/AwLZDdqXc5KERky.png" alt="HttpMessageHandler 与 ASP.NET Web API" title="" referrerpolicy="no-referrer">
+                </div>
+                <div class="image-caption">HttpMessageHandler 与 ASP.NET Web API</div>
+            </figure>
+
+<p>而事实上，在 ASP.NET Web API 的设计中，它是由一组 <code>HttpMessageHandler</code> 经过“首尾相连”而成，这种管道式的设计使得框架本身具有很高的扩展性。虽然，作为一个服务端框架，ASP.NET Web API 最主要的作用是就是“<strong>处理请求、响应回复</strong>”，可具体采用的处理策略会因具体场景的不同而不同。所以，管道式设计的本质，就是让某一个 <code>Handler</code> 只负责某个单一的消息处理功能，在根据具体场景的不同，选择需要的 <code>Handler</code> 并将其串联成一个完整的消息处理通道。而在这里，这个负责单一的消息处理功能的 <code>Handler</code> 其实就是 <code>HttpMessageHandler</code>，因为它不单单可以对请求消息(<strong>HttpRequestMessage</strong>)进行处理，同时还可以对响应消息(<strong>HttpResponseMessage</strong>)进行处理。此时，我们就不难理解 <code>HttpMessageHandler</code> 的定义：</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">class</span> <span class="title">HttpMessageHandler</span> : <span class="title">IDisposable</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="title">HttpMessageHandler</span>(<span class="params"></span>)</span>;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">Dispose</span>(<span class="params"></span>)</span>;</span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">Dispose</span>(<span class="params"><span class="keyword">bool</span> disposing</span>)</span>;</span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">internal</span> <span class="keyword">virtual</span> HttpResponseMessage <span class="title">Send</span>(<span class="params"></span></span></span><br><span class="line"><span class="function"><span class="params">      HttpRequestMessage request, </span></span></span><br><span class="line"><span class="function"><span class="params">      CancellationToken cancellationToken</span></span></span><br><span class="line"><span class="function"><span class="params">    </span>)</span>;</span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">internal</span> <span class="keyword">abstract</span> Task&lt;HttpResponseMessage&gt; <span class="title">SendAsync</span>(<span class="params"></span></span></span><br><span class="line"><span class="function"><span class="params">      HttpRequestMessage request, </span></span></span><br><span class="line"><span class="function"><span class="params">      CancellationToken cancellationToken</span></span></span><br><span class="line"><span class="function"><span class="params">    </span>)</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>也许，你会忍不住问这样一个问题：<code>DelegatingHandler</code> 和 <code>HttpMessageHandler</code> 的区别是什么？ 其实，只要你稍微仔细一点，你就会发现，两者最大的区别是 <code>DelegatingHandler</code> 里新增一个叫做 <code>InnerHandler</code> 的成员，它本身就是一个 <code>HttpMessageHandler</code>。所以，聪明的你又联想到什么呢？我想，或许是一个叫做 <code>RequestDelegate</code> 的委托，还记得我们写中间件是一直都少不了的 <code>Next</code> 吗？不得不说，这里越来越有中间件的味道了。你可以立马想到的一件事情是，除了最后一个 <code>Handler</code> 是 <code>HttpMessageHandler</code> 以外，剩下的前面的所有的 <code>Handler</code> 都是 <code>DelegatingHandler</code>。为什么这样说呢？因为前面的 <code>n-1</code> 个 <code>Handler</code> 都需要串联下一个 <code>Handler</code>，只有第 <code>n</code> 个 <code>Handler</code>可以允许短路，所以，大概就相当于 <code>Use()</code> 和 <code>Run()</code> 的区别？</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">class</span> <span class="title">DelegatingHandler</span> : <span class="title">HttpMessageHandler</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="title">DelegatingHandler</span>(<span class="params"></span>)</span>;</span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="title">DelegatingHandler</span>(<span class="params">HttpMessageHandler innerHandler</span>)</span>;</span><br><span class="line">    <span class="comment">// InnerHandler是实现管道式设计的关键</span></span><br><span class="line">    <span class="keyword">public</span> HttpMessageHandler? InnerHandler &#123; <span class="keyword">get</span>; <span class="keyword">set</span>; &#125;</span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">override</span> <span class="keyword">void</span> <span class="title">Dispose</span>(<span class="params"><span class="keyword">bool</span> disposing</span>)</span>;</span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">internal</span> <span class="keyword">override</span> HttpResponseMessage <span class="title">Send</span>(<span class="params"></span></span></span><br><span class="line"><span class="function"><span class="params">      HttpRequestMessage request, </span></span></span><br><span class="line"><span class="function"><span class="params">      CancellationToken cancellationToken</span></span></span><br><span class="line"><span class="function"><span class="params">    </span>)</span>;</span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">internal</span> <span class="keyword">override</span> Task&lt;HttpResponseMessage&gt; <span class="title">SendAsync</span>(<span class="params"></span></span></span><br><span class="line"><span class="function"><span class="params">      HttpRequestMessage request, </span></span></span><br><span class="line"><span class="function"><span class="params">      CancellationToken cancellationToken</span></span></span><br><span class="line"><span class="function"><span class="params">    </span>)</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>所以，此时此刻，你能否为 <code>HttpMessageHandler</code> 下一个清晰的定义呢？我想，或许可以这样理解，一种可以对 请求消息(<strong>HttpRequestMessage</strong>) 和 响应消息(<strong>HttpResponseMessage</strong>) 进行处理，同时多个 <code>HttpMessageHandler</code> 可以组成一个完整的消息处理通道的中间件。屏幕前的你又是如何理解的呢？欢迎大家在评论区留言，留下你对于 <code>HttpMessageHandler</code> 的想法或者认识。</p>
+<h1 id="实现自定义请求管道"><a href="#实现自定义请求管道" class="headerlink" title="实现自定义请求管道"></a>实现自定义请求管道</h1><p>好了，搞清楚 <code>HttpMessageHandler</code> 是什么以后，我们就可以考虑自定义请求管道的实现啦！让我们从一个最简单的示例开始，假设我们这里定义了两个自定义的 <code>Handler</code>，它们分别是： <code>HandlerA</code> 和 <code>HandlerB</code>，我们应该如何将其应用到具体的 <code>HttpClient</code>上呢？</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Handler A</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">HandlerA</span> : <span class="title">DelegatingHandler</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">readonly</span> ILogger&lt;HandlerA&gt; _logger;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">HandlerA</span>(<span class="params">ILogger&lt;HandlerA&gt; logger</span>)</span> &#123; _logger = logger; &#125;</span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">override</span> Task&lt;HttpResponseMessage&gt; <span class="title">SendAsync</span>(<span class="params"></span></span></span><br><span class="line"><span class="function"><span class="params">      HttpRequestMessage request, </span></span></span><br><span class="line"><span class="function"><span class="params">      CancellationToken cancellationToken</span></span></span><br><span class="line"><span class="function"><span class="params">    </span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        _logger.LogInformation(<span class="string">"This is Handler A"</span>);</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">base</span>.SendAsync(request, cancellationToken);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Handler B</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">HandlerB</span> : <span class="title">DelegatingHandler</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">readonly</span> ILogger&lt;HandlerB&gt; _logger;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">HandlerB</span>(<span class="params">ILogger&lt;HandlerB&gt; logger</span>)</span> &#123; _logger = logger; &#125;</span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">override</span> Task&lt;HttpResponseMessage&gt; <span class="title">SendAsync</span>(<span class="params"></span></span></span><br><span class="line"><span class="function"><span class="params">      HttpRequestMessage request, </span></span></span><br><span class="line"><span class="function"><span class="params">      CancellationToken cancellationToken</span></span></span><br><span class="line"><span class="function"><span class="params">    </span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        _logger.LogInformation(<span class="string">"This is Handler B"</span>);</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">base</span>.SendAsync(request, cancellationToken);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这里，我们考虑两种场景，依赖注入 和 非依赖注入。对于依赖注入的场景，我们只需要调用<code>AddHttpMessageHandler()</code>方法按顺序注册即可，不需要处理<code>InnerHandler</code>，这里遵循先注册后使用的原则；对于非依赖注入的场景，需要处理<code>InnerHandler</code>，并在构造<code>HttpClient</code>的时候作为参数传入。</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 依赖注入</span></span><br><span class="line"><span class="keyword">var</span> services = <span class="keyword">new</span> ServiceCollection();</span><br><span class="line">services.AddTransient&lt;HandlerA&gt;();</span><br><span class="line">services.AddTransient&lt;HandlerB&gt;();</span><br><span class="line">services.AddHttpClient(<span class="string">"MyClient"</span>, options =&gt; &#123;</span><br><span class="line">  options.BaseAddress = <span class="keyword">new</span> Uri(<span class="string">"https://blog.yuanpei.me/"</span>);</span><br><span class="line">&#125;)</span><br><span class="line">  .AddHttpMessageHandler&lt;HandlerA&gt;()</span><br><span class="line">  .AddHttpMessageHandler&lt;HandlerB&gt;();</span><br><span class="line"></span><br><span class="line"><span class="comment">// 非依赖注入</span></span><br><span class="line"><span class="keyword">var</span> handler = <span class="keyword">new</span> HandlerA() &#123; InnerHandler = <span class="keyword">new</span> HandlerB() &#125;;</span><br><span class="line"><span class="keyword">var</span> client = <span class="keyword">new</span> HttpClient(handler)</span><br></pre></td></tr></table></figure>
+
+<p>此时，我们就可以得到下面的结果，可以注意到的是，两个<code>Handler</code>的执行顺序与注册顺序一致：</p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="https://i.loli.net/2021/04/29/URNWavrVgyzMAxe.png" alt="Handler执行顺序与注册顺序" title="" referrerpolicy="no-referrer">
+                </div>
+                <div class="image-caption">Handler执行顺序与注册顺序</div>
+            </figure>
+
+<p>好了，热身环节到此结束！下面，我们来开始实战，这里展示的是 <code>HttpMessageHandler</code> 在日志记录、请求重试 和 接口模拟等方面的应用。</p>
+<h2 id="日志记录"><a href="#日志记录" class="headerlink" title="日志记录"></a>日志记录</h2><p>对于 Http 请求的日志，我们希望记录请求的Url、Http动词、请求时长等信息，而这一点，在一个大量接入第三方接口的系统或者是以 Http 驱动的微服务架构中，常常是不可或缺的一环，对于我们排查故障、监控服务非常有用。</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">override</span> <span class="keyword">async</span> Task&lt;HttpResponseMessage&gt; <span class="title">SendAsync</span>(<span class="params">HttpRequestMessage request, CancellationToken cancellationToken</span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">var</span> correlationId = GetCorrelationId(request);</span><br><span class="line">    <span class="keyword">using</span> (_logger.BeginScope(<span class="string">$"correlationId=<span class="subst">&#123;correlationId&#125;</span>"</span>))</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">var</span> sw = Stopwatch.StartNew();</span><br><span class="line"></span><br><span class="line">        _logger.LogInformation(<span class="string">$"Start Processing HTTP Request <span class="subst">&#123;request.Method&#125;</span> <span class="subst">&#123;request.RequestUri&#125;</span> [Correlation: <span class="subst">&#123;correlationId&#125;</span>]"</span>);</span><br><span class="line">        <span class="keyword">var</span> response = <span class="keyword">base</span>.Send(request, cancellationToken);</span><br><span class="line">         _logger.LogInformation(<span class="string">$"End Processing HTTP Request in <span class="subst">&#123;sw.ElapsedMilliseconds&#125;</span>ms <span class="subst">&#123;response.StatusCode&#125;</span>, [Correlation: <span class="subst">&#123;correlationId&#125;</span>]"</span>);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> response;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// GetCorrelationId</span></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">string</span> <span class="title">GetCorrelationId</span>(<span class="params">HttpRequestMessage request</span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (request.Headers.TryGetValues(<span class="string">"X-Correlation-ID"</span>, <span class="keyword">out</span> <span class="keyword">var</span> values))</span><br><span class="line">        <span class="keyword">return</span> values.First();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">var</span> correlationId = Guid.NewGuid().ToString();</span><br><span class="line">    request.Headers.Add(<span class="string">"X-Correlation-ID"</span>, correlationId);</span><br><span class="line">    <span class="keyword">return</span> correlationId;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>此时，我们可以得到下面的结果：</p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="https://i.loli.net/2021/04/29/aORFS3ZQEw8pNbT.png" alt="HttpMessageHandler 实现日志记录" title="" referrerpolicy="no-referrer">
+                </div>
+                <div class="image-caption">HttpMessageHandler 实现日志记录</div>
+            </figure>
+
+<h2 id="请求重试"><a href="#请求重试" class="headerlink" title="请求重试"></a>请求重试</h2><p>我们知道，一个系统中接入的外部因素越多，则整个系统的稳定性越低。而国内的产品通常都喜欢”大而全”的”万物互联”，所以，最实际的问题，其实就是调用一个第三方的接口，如何保证其可靠性。所以，考虑请求的故障恢复就显得非常有意义，为此，我们可以引入<code>Polly</code>，在实现<code>SendAsync()</code>方法的时候，通过<code>Polly</code>中的超时、重试等机制对其做一层包装：</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">RetryableHttpMessageHandler</span> : <span class="title">DelegatingHandler</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">readonly</span> ILogger&lt;RetryableHttpMessageHandler&gt; _logger;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">readonly</span> IAsyncPolicy&lt;HttpResponseMessage&gt; _retryPolicy;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">RetryableHttpMessageHandler</span>(<span class="params"></span></span></span><br><span class="line"><span class="function"><span class="params">        ILogger&lt;RetryableHttpMessageHandler&gt; logger</span></span></span><br><span class="line"><span class="function"><span class="params">    </span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        _logger = logger;</span><br><span class="line">        _retryPolicy = Policy&lt;HttpResponseMessage&gt;</span><br><span class="line">            .Handle&lt;HttpRequestException&gt;()</span><br><span class="line">            .Or&lt;TimeoutException&gt;()</span><br><span class="line">            .OrResult(x =&gt; (<span class="keyword">int</span>)x.StatusCode &gt;= <span class="number">400</span>)</span><br><span class="line">            .RetryAsync(<span class="number">3</span>, (ret, index) =&gt;</span><br><span class="line">            &#123;</span><br><span class="line">                _logger.LogInformation(<span class="string">$"调用接口异常：<span class="subst">&#123;ret.Exception?.Message&#125;</span>，状态码：<span class="subst">&#123;ret.Result.StatusCode&#125;</span>, 正在进行第<span class="subst">&#123;index&#125;</span>次重试"</span>);</span><br><span class="line">            &#125;);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">override</span> Task&lt;HttpResponseMessage&gt; <span class="title">SendAsync</span>(<span class="params"></span></span></span><br><span class="line"><span class="function"><span class="params">      HttpRequestMessage request, </span></span></span><br><span class="line"><span class="function"><span class="params">      CancellationToken cancellationToken</span></span></span><br><span class="line"><span class="function"><span class="params">    </span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        <span class="keyword">return</span> _retryPolicy.ExecuteAsync(() =&gt; <span class="keyword">base</span>.SendAsync(request, cancellationToken));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>同样地，我们这里通过<code>HttpClient</code>来请求指定的接口。因为，下面的接口实际上是不存在的。所以，理论上它会返回<code>404</code>这个状态码。而我们的重试策略是，在发生<code>HttpRequestException</code>或者<code>TimeoutException</code>异常以及 Http 响应的状态码大于 400 时，自动触发 3 次重试。</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> client = _clientFactory.CreateClient(<span class="string">"ApiMock"</span>);</span><br><span class="line"><span class="keyword">var</span> response = <span class="keyword">await</span> client.GetAsync(<span class="string">"/api/fail"</span>);</span><br></pre></td></tr></table></figure>
+
+<p>此时，我们可以得到下面的结果：</p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="https://i.loli.net/2021/04/30/OaUyhNF7XYsA8mI.png" alt="HttpMessageHandler 实现请求重试" title="" referrerpolicy="no-referrer">
+                </div>
+                <div class="image-caption">HttpMessageHandler 实现请求重试</div>
+            </figure>
+
+<p>可以发现，不多不少刚好是 3 次。除了重试以外，<code>Polly</code>还支持类似超时、断路器等等不同的策略，甚至可以将它们组合起来使用，这些都属于<a href="https://github.com/App-vNext/Polly" target="_blank" rel="noopener">Polly</a>的内容，不作为本文的重点内容来讲解，感兴趣的朋友可以查阅这篇文章：<a href="https://www.cnblogs.com/willick/p/polly.html" target="_blank" rel="noopener">.NET 开源项目 Polly 介绍</a>。需要说明的是，微软官方提供的 <code>Microsoft.Extensions.Http.Polly</code>，它在<code>IHttpClientBuilder</code>上添加了一个名为<code>AddPolicyHandler()</code>的扩展方法，这里的例子可以被简化为下面这样，它和我们这里举的例子是完全一致的：</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 定义重试策略</span></span><br><span class="line"><span class="keyword">var</span> retryPolicy = Policy&lt;HttpResponseMessage&gt;</span><br><span class="line">    .Handle&lt;HttpRequestException&gt;()</span><br><span class="line">    .Or&lt;TimeoutException&gt;()</span><br><span class="line">    .OrResult(x =&gt; (<span class="keyword">int</span>)x.StatusCode &gt;= <span class="number">400</span>)</span><br><span class="line">    .RetryAsync(<span class="number">3</span>, (ret, index) =&gt;</span><br><span class="line">    &#123;</span><br><span class="line">        Console.WriteLine(<span class="string">$"调用接口异常：<span class="subst">&#123;ret.Exception?.Message&#125;</span>，状态码：<span class="subst">&#123;ret.Result.StatusCode&#125;</span>, 正在进行第<span class="subst">&#123;index&#125;</span>次重试"</span>);</span><br><span class="line">    &#125;);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 注册HttpClient并指定重试策略</span></span><br><span class="line">services.AddHttpClient(<span class="string">"ApiMock"</span>, options =&gt; &#123; </span><br><span class="line">  options.BaseAddress = <span class="keyword">new</span> Uri(<span class="string">"https://blog.yuanpei.me"</span>);</span><br><span class="line">&#125;)</span><br><span class="line">  .AddPolicyHandler(retryPolicy);</span><br></pre></td></tr></table></figure>
+
+
+<h2 id="接口模拟"><a href="#接口模拟" class="headerlink" title="接口模拟"></a>接口模拟</h2><p>在集成第三方接口时，在双方确定好接口以后，接口消费方会有一段时间的“黒写”时期。因为在接口提供方的接口没有正式提供前，接口消费方始终只能通过“<strong>模拟</strong>”的方式来进行测试。考虑到单元测试对 <a href="https://github.com/ymfe/yapi" target="_blank" rel="noopener">YAPI</a> 存在耦合，所以，接口模拟同样是一件意义非凡的事情。这里的思路是利用 <code>HttpMessageHandler</code> 的“<strong>短路</strong>”功能，即构造一个 <code>HttpResponseMessage</code> 并返回。</p>
+<p>首先，我们定义一个<code>MockItem</code>类型，它含有两个委托类型的属性<code>RouteSelector</code>和<code>Executor</code>。其中，前者用来匹配路由，而后者则用来处理接口返回值。</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">MockItem</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">public</span> Func&lt;HttpRequestMessage, <span class="keyword">bool</span>&gt; RouteSelector &#123; <span class="keyword">get</span>; <span class="keyword">set</span>; &#125;</span><br><span class="line">    <span class="keyword">public</span> Func&lt;HttpRequestMessage, HttpResponseMessage, Task&gt; Executor &#123; <span class="keyword">get</span>; <span class="keyword">set</span>; &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>接下来，我们需要定义相应的<code>Handler</code>，这里是<code>ApiMockHttpMessageHandler</code>：</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">ApiMockHttpMessageHandler</span>: <span class="title">DelegatingHandler</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">readonly</span> ILogger&lt;ApiMockHttpMessageHandler&gt; _logger;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">readonly</span> IEnumerable&lt;MockItem&gt; _routes;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">ApiMockHttpMessageHandler</span>(<span class="params"></span></span></span><br><span class="line"><span class="function"><span class="params">        ILogger&lt;ApiMockHttpMessageHandler&gt; logger,</span></span></span><br><span class="line"><span class="function"><span class="params">        IEnumerable&lt;MockItem&gt; routes</span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        _logger = logger;</span><br><span class="line">        _routes = routes;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">override</span> <span class="keyword">async</span> Task&lt;HttpResponseMessage&gt; <span class="title">SendAsync</span>(<span class="params"></span></span></span><br><span class="line"><span class="function"><span class="params">      HttpRequestMessage request, </span></span></span><br><span class="line"><span class="function"><span class="params">      CancellationToken cancellationToken</span></span></span><br><span class="line"><span class="function"><span class="params">    </span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        <span class="comment">// 匹配路由并调用其Executor属性</span></span><br><span class="line">        <span class="keyword">var</span> route = _routes.FirstOrDefault(x =&gt; x.RouteSelector?.Invoke(request));</span><br><span class="line">        <span class="keyword">if</span> (route != <span class="literal">null</span>)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">var</span> response = <span class="keyword">new</span> HttpResponseMessage();</span><br><span class="line">            <span class="keyword">await</span> route.Executor?.Invoke(request, response);</span><br><span class="line">            <span class="keyword">return</span> response;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">base</span>.Send(request, cancellationToken);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>我们的思路是，对于所有注入到<code>Ioc</code>容器中的<code>MockItem</code>，检查其路由是否匹配，如果路由匹配，则通过其指定的<code>Executor</code>对<code>HttpResponseMessage</code>进行加工并返回。为了更加方便地在<code>Ioc</code>容器中进行注入，我们为<code>IServiceCollection</code>编写了相应的扩展方法：</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> IServiceCollection AddMock&lt;TReturn&gt;(</span><br><span class="line">    <span class="keyword">this</span> IServiceCollection services, </span><br><span class="line">    <span class="keyword">string</span> url, HttpMethod method, TReturn @<span class="keyword">return</span></span><br><span class="line">)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">var</span> mockItem = <span class="keyword">new</span> MockItem();</span><br><span class="line">    mockItem.Executor = BuildExecutor&lt;TReturn&gt;(@<span class="keyword">return</span>);</span><br><span class="line">    mockItem.RouteSelector = BuildRouteSelector(url, method);</span><br><span class="line">    <span class="keyword">return</span> services.AddTransient&lt;MockItem&gt;(sp =&gt; mockItem);</span><br><span class="line">&#125;</span><br><span class="line">    </span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> IServiceCollection AddMock&lt;TReturn&gt;(</span><br><span class="line">    <span class="keyword">this</span> IServiceCollection services, </span><br><span class="line">    Func&lt;HttpRequestMessage, <span class="keyword">bool</span>&gt; routeSelector, </span><br><span class="line">    Func&lt;HttpRequestMessage, HttpResponseMessage, Task&gt; executor</span><br><span class="line">)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">var</span> mockItem = <span class="keyword">new</span> MockItem();</span><br><span class="line">    mockItem.Executor = executor;</span><br><span class="line">    mockItem.RouteSelector = routeSelector;</span><br><span class="line">    <span class="keyword">return</span> services.AddTransient&lt;MockItem&gt;(sp =&gt; mockItem);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">static</span> Func&lt;HttpRequestMessage, <span class="keyword">bool</span>&gt; <span class="title">BuildRouteSelector</span>(<span class="params"></span></span></span><br><span class="line"><span class="function"><span class="params">    <span class="keyword">string</span> url, HttpMethod method</span></span></span><br><span class="line"><span class="function"><span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    Func&lt;HttpRequestMessage, <span class="keyword">bool</span>&gt; selector = request =&gt;</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">if</span> (url == <span class="string">"*"</span>) <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">        <span class="keyword">return</span> url.ToLower() == res.RequestUri.AbsolutePath.ToLower() &amp;&amp; method == res.Method;</span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> selector;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> Func&lt;HttpRequestMessage, HttpResponseMessage, Task&gt; BuildExecutor&lt;TReturn&gt;(TReturn @<span class="keyword">return</span>)</span><br><span class="line">&#123;</span><br><span class="line">    Func&lt;HttpRequestMessage, HttpResponseMessage, Task&gt; executor = (request, response) =&gt;</span><br><span class="line">    &#123;</span><br><span class="line">        response.StatusCode = System.Net.HttpStatusCode.OK;</span><br><span class="line">        <span class="keyword">if</span> (@<span class="keyword">return</span> <span class="keyword">is</span> HttpStatusCode)</span><br><span class="line">            response.StatusCode = (HttpStatusCode)Enum.Parse(</span><br><span class="line">                <span class="keyword">typeof</span>(HttpStatusCode),</span><br><span class="line">                @<span class="keyword">return</span>.ToString()</span><br><span class="line">            );</span><br><span class="line">        <span class="keyword">else</span> <span class="keyword">if</span> (@<span class="keyword">return</span> <span class="keyword">is</span> Exception)</span><br><span class="line">            <span class="keyword">throw</span> @<span class="keyword">return</span> <span class="keyword">as</span> Exception;</span><br><span class="line">        <span class="keyword">else</span> <span class="keyword">if</span> (@<span class="keyword">return</span> <span class="keyword">is</span> <span class="keyword">string</span>)</span><br><span class="line">            response.Content = <span class="keyword">new</span> StringContent(@<span class="keyword">return</span> <span class="keyword">as</span> <span class="keyword">string</span>);</span><br><span class="line">        <span class="keyword">else</span></span><br><span class="line">            response.Content = <span class="keyword">new</span> StringContent(@<span class="keyword">return</span> == <span class="literal">null</span> ? </span><br><span class="line">                <span class="string">""</span> : JsonConvert.SerializeObject(@<span class="keyword">return</span>)</span><br><span class="line">            );</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> Task.CompletedTask;</span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> executor;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>此时，我们就可以在单元测试中对接口进行模拟，这样就实现了真正意义上的单元测试：</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> services = <span class="keyword">new</span> ServiceCollection();</span><br><span class="line"></span><br><span class="line"><span class="comment">// 添加 HttpClient并注册ApiMockHttpMessageHandler</span></span><br><span class="line">services.AddHttpClient(<span class="string">"ApiMock"</span>, options =&gt; &#123; </span><br><span class="line">  options.BaseAddress = <span class="keyword">new</span> Uri(<span class="string">"https://blog.yuanpei.me"</span>);</span><br><span class="line">&#125;)</span><br><span class="line">  .AddHttpMessageHandler&lt;ApiMockHttpMessageHandler&gt;();</span><br><span class="line"></span><br><span class="line"><span class="comment">// 添加3个模拟接口</span></span><br><span class="line">services.AddMock(<span class="string">"/api/status"</span>, HttpMethod.Get, HttpStatusCode.OK);</span><br><span class="line">services.AddMock(<span class="string">"/api/query"</span>, HttpMethod.Post, <span class="keyword">new</span> Exception(<span class="string">"帅哥你谁啊"</span>));</span><br><span class="line">services.AddMock(<span class="string">"/api/order"</span>, HttpMethod.Get, <span class="keyword">new</span> &#123; </span><br><span class="line">  OrderId = <span class="string">"OR09874"</span>, </span><br><span class="line">  CreatedBy = <span class="string">"张三"</span></span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> serviceProvider = services.BuildServiceProvider();</span><br><span class="line"><span class="keyword">var</span> httpClientFactory = serviceProvider.GetRequiredService&lt;IHttpClientFactory&gt;();</span><br><span class="line"><span class="keyword">var</span> httpClient = httpClientFactory.CreateClient(<span class="string">"ApiMock"</span>);</span><br><span class="line"><span class="comment">// 调用/api/order接口</span></span><br><span class="line"><span class="keyword">var</span> response = <span class="keyword">await</span> httpClient.GetAsync(<span class="string">"/api/order"</span>);</span><br></pre></td></tr></table></figure>
+<p>下图是模拟接口返回的结果，与我们期望的完全一致：</p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="https://i.loli.net/2021/04/30/k9lX12aSpcr8ReV.png" alt="HttpMessageHandler 实现接口模拟" title="" referrerpolicy="no-referrer">
+                </div>
+                <div class="image-caption">HttpMessageHandler 实现接口模拟</div>
+            </figure>
+
+<h1 id="本文小结"><a href="#本文小结" class="headerlink" title="本文小结"></a>本文小结</h1><p>古人云：<strong>他山之石，可以攻玉</strong>。原本被接口模拟(<strong>Mock</strong>)所吸引的博主，意外地收获了 <code>HttpMessageHandler</code> 这个令人兴奋的知识点。博主认为，它是一种可以对 请求消息(<strong>HttpRequestMessage</strong>) 和 响应消息(<strong>HttpResponseMessage</strong>) 进行处理，同时多个 <code>HttpMessageHandler</code> 可以组成一个完整的消息处理通道的中间件。在此基础上，我们实现了诸如<strong>日志记录</strong>、<strong>请求重试</strong>、<strong>接口模拟</strong>等等的扩展性功能。除此以外，它还可以应用到 <strong>Http认证头处理</strong> 、<strong>客户端负载均衡</strong>等方面。</p>
+<p>其实，从 ASP.NET、OWIN、Nancy、ASP.NET Core 这样一路走过来，你会发现，管道的概念一直都存在，无非是以不同的形式存在着，譬如 ASP.NET Core 里的中间件，其实是替代了曾经的 <code>HttpHandler</code> 和 <code>HttpModule</code>，就像时间一直都在那里，不快不慢，觉得物是人非、喜新厌旧的多半还是我们。对我而言，写到这里，最大的感慨或许是，曾经试图实现的类似 <code>Servlet</code> 的 Http Server ，现在想起来还是太年轻、太朴实了，可年轻或者朴实，难道不好吗？好了，以上就是这篇博客的全部内容了，如果你觉得这篇博客对你有所帮助或者启发，希望你可以毫不吝啬地给个一键三连。如果你对这篇博客里的内容有意见或者建议，欢迎你评论区留下你的足迹和声音，谢谢大家！</p>
+
+                
+
+                
+
+
+<div class="recommended_posts">
+    <h1>推荐阅读</h1>
+    <ul>
+        
+        <li><a href="https://qinyuanpei.github.io/posts/3019914405/">Unity3D游戏开发之Unity3D场景编辑器扩展开发</a></li>
+        
+        <li><a href="https://qinyuanpei.github.io/posts/380519286/">声明式RESTful客户端WebApiClient在项目中的应用</a></li>
+        
+        <li><a href="https://qinyuanpei.github.io/posts/70687890/">Unity3D游戏开发之编辑器扩展程序开发实例</a></li>
+        
+        <li><a href="https://qinyuanpei.github.io/posts/3619320289/">ABP vNext 的实体与服务扩展技巧分享</a></li>
+        
+    </ul>
+</div>
+
+            </div>
+            
+<blockquote class="post-copyright">
+    <div class="content">
+        <p><b>版权声明：</b>
+        <a href="https://qinyuanpei.github.io/posts/2070070822/" rel="external">使用 HttpMessageHandler 实现 HttpClient 请求管道自定义</a>
+        ，由&nbsp;<a href="/about" target="_blank" rel="external">飞鸿踏雪</a>&nbsp;
+        首次发表于&nbsp;<a href="/" target="_blank" rel="external">一个人的孤落时辰</a>&nbsp;
+        ，本文地址为：<a href="https://qinyuanpei.github.io/posts/2070070822/" target="_blank" rel="external">https://qinyuanpei.github.io/posts/2070070822/</a>
+        ，转载请注明<b>作者</b>和<b>出处</b>。</p>
+    </div>
+    <footer>
+        <a href="https://qinyuanpei.github.io">
+            <img src="/assets/images/avatar.jpg" alt="飞鸿踏雪">
+            飞鸿踏雪
+        </a>
+    </footer>
+</blockquote>
+
+
+            
+<div class="page-reward">
+    <a id="rewardBtn" href="javascript:;" class="page-reward-btn waves-effect waves-circle waves-light">赏</a>
+</div>
+
+
+            <div class="post-footer">
+                
+	<ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/HttpClient/" rel="tag">HttpClient</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Mock/" rel="tag">Mock</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%89%A9%E5%B1%95/" rel="tag">扩展</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%AE%A1%E9%81%93/" rel="tag">管道</a></li></ul>
+
+                
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://qinyuanpei.github.io/posts/2070070822/&title=《使用 HttpMessageHandler 实现 HttpClient 请求管道自定义》 — 一个人的孤落时辰&pic=https://qinyuanpei.github.ioassets/images/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://qinyuanpei.github.io/posts/2070070822/&title=《使用 HttpMessageHandler 实现 HttpClient 请求管道自定义》 — 一个人的孤落时辰&source=一个人的孤落时辰 | 纵有疾风起，人生不言弃 | 隐约雷鸣，阴霾天空，即使天无雨，我亦留此地。" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://qinyuanpei.github.io/posts/2070070822/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《使用 HttpMessageHandler 实现 HttpClient 请求管道自定义》 — 一个人的孤落时辰&url=https://qinyuanpei.github.io/posts/2070070822/&via=https://qinyuanpei.github.io" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://qinyuanpei.github.io/posts/2070070822/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+      
+      <li>
+        <a class="google share-sns" target="_blank" onClick="show_yp()" data-title=" 生成海报">
+          <i class="icon icon-file-image-o"></i>
+        </a>
+      </li>
+      
+    </ul>
+ </div>
+
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
+            </div>
+        </div>
+
+        
+<nav class="post-nav flex-row flex-justify-between">
+  
+    <div class="waves-block waves-effect prev">
+      <a href="/posts/2136925853/" id="post-prev" class="post-nav-link">
+        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
+        <h4 class="title">假如时间有温度</h4>
+      </a>
+    </div>
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/posts/3619320289/" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h4 class="title">ABP vNext 的实体与服务扩展技巧分享</h4>
+      </a>
+    </div>
+  
+</nav>
+
+
+        
+    <div id="comment"></div>
+<script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+<script src='//unpkg.com/valine/dist/Valine.min.js'></script>
+<script type="text/javascript">
+new Valine({
+    el: '#comment' ,
+    notify: false, 
+    verify: true, 
+    appId: 'JbHqRp2eMrTgIwYpfERH0g79-gzGzoHsz',
+    appKey: 'VsiKvLuiBGvJL1XrAfv7siY2',
+    placeholder: '云中谁寄锦书来，雁字回时，月满西楼。&#10;Tips：如果希望收到我的评论回复，请至少留下你的邮箱哦:)',
+    path:'https://qinyuanpei.github.io/posts/2070070822/', 
+    avatar:'identicon',
+    requiredFields: ['nick','mail']
+});
+</script>
+
+
+
+
+    </article>
+    
+<div id="reward" class="page-modal reward-lay">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <h3 class="reward-title">
+        <i class="icon icon-quote-left"></i>
+        赠人玫瑰，手有余香
+        <i class="icon icon-quote-right"></i>
+    </h3>
+    <div class="reward-content">
+        
+        <div class="reward-code">
+            <img id="rewardCode" src="/assets/images/wechat.png" alt="打赏二维码">
+        </div>
+        
+        <label class="reward-toggle">
+            <input id="rewardToggle" type="checkbox" class="reward-toggle-check"
+                data-wechat="/assets/images/wechat.png" data-alipay="/assets/images/alipay.jpg">
+            <div class="reward-toggle-ctrol">
+                <span class="reward-toggle-item wechat">微信</span>
+                <span class="reward-toggle-label"></span>
+                <span class="reward-toggle-item alipay">支付宝</span>
+            </div>
+        </label>
+        
+    </div>
+</div>
+
+
+    <script type="text/javascript" src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/yoniu.min.js"></script>
+<style type='text/css'>
+	body.active-yp {
+		overflow: hidden;
+	}
+	.yp-fc-btn{
+		display: flex;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		align-items: center;
+		justify-content: space-between;
+		font-size: 13px;
+	}
+	.yp-fc-btn span{
+		cursor: pointer;
+		padding: 2px 10px;
+		color: #4b4b4b;
+		border: #4b4b4b 1px solid;
+		border-radius:5px;
+	}
+	#yp-hide{
+		position: fixed;
+		display: flex;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		justify-content: center;
+		flex-direction: column;
+		left:0;
+		top:0;
+		right:0;
+		bottom:0;
+		background-color:rgba(0,0,0,.5);
+		z-index: 99999;
+		visibility: hidden;
+	}
+	#yoniu-poster{
+		box-sizing: border-box;
+		width: 350px;
+		height: 467.2px;
+		background-color: #fff;
+		margin: 0 auto;
+		padding: 0;
+		line-height: 1.6;
+		text-align:justify;
+	}
+	
+	.yp-img {
+		min-height: 240px;
+		position: relative;
+		display: flex;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		justify-content: flex-end;
+		flex-direction: column;
+		background-position: 50% 50%;
+		background-size: cover;
+		overflow:hidden;
+	}
+	.yp-img>div{
+		padding: 10px 20px;
+	}
+	.yp-name{
+		display: block;
+		color: #fff;
+		font-size: 20px;
+		font-weight: 600;
+		text-shadow: #4b4b4b 0.1em 0.1em 0.2em;
+		margin-top: 10px;
+	}
+	.yp-sort{
+		padding: 3px 10px;
+		font-size: 12px;
+		color: #fff;
+		background: #2e2e2e;
+	}
+	.yp-des{
+		color: #2e2e2e;
+		font-size: 14px;
+		margin: 20px;
+		height: 67.2px;
+	}
+	.yp-qcode{
+		display: flex;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		justify-content: space-between;
+		align-items: center;
+		margin: 10px;
+		padding: 10px 20px;
+		background: #f5f5f5;
+		color: #818181;
+		border-radius: 10px;
+	}
+	.yp-tips{
+		display: flex;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		justify-content: space-between;
+		align-items: center;
+		color: #ccc;
+		margin: 0 10px 10px;
+		font-size: 10px;
+		letter-spacing: 1.5px;
+	}
+	.yp-btns{
+		display: flex;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		align-items: stretch;
+		justify-content: center;
+		width:350px;
+		margin: 0 auto;
+	}
+	.yp-btns>span{
+		display: flex;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		align-items: center;
+		justify-content: center;
+		font-size: 14px;
+		padding: 10px 15px;
+		background:rgba(0,0,0,.2);
+		color: #f5f5f5;
+		cursor: pointer;
+	}
+	.yp-btns>span>a{
+		color: #f5f5f5;
+	}
+	.yp-btns>span>a:hover{
+		text-decoration:none;
+	}
+	#yp-close{
+		font-size: 18px;
+		font-weight: 600;
+	}
+</style>
+<div id="yp-hide">
+    <div id="yoniu-poster">
+        <div class="yp-img" id="yp-img">
+            <div>
+                <span class="yp-sort">编程语言</span>
+                <span class="yp-name">使用 HttpMessageHandler 实现 HttpClient 请求管道自定义</span>
+            </div>
+        </div>
+        <div class="yp-des">    
+            
+                最近，博主偶然间在 博客园 看到一篇文章：ASP.NET Core 扩展库之 Http 请求模拟，它里面介绍了一种利用 HttpMessageH...
+            
+        </div>
+        <div class="yp-qcode">
+            <span>扫描二维码阅读原文</span>
+            <img id="yp-qcode" width="64px" src="//api.qrserver.com/v1/create-qr-code/?data=https://qinyuanpei.github.io/posts/2070070822/">
+        </div>
+        <div class="yp-tips">
+            <span>一个人的孤落时辰</span>
+            <span><time class="post-time" title="2021-04-28 20:25:47" datetime="2021-04-28T20:25:47.000Z"  itemprop="datePublished">2021-04-28</time>
+</span>
+        </div>
+    </div>
+    <div class="yp-btns">
+        <span id="yp-load-yp" onClick="load_yp()">生成海报</span>
+        <span><a id="yp-download"></a></span>
+        <span id="yp-close" onClick="close_yp()">×</span>
+    </div>
+</div>
+<script type="text/javascript">
+    function show_yp(){
+        window.scrollTo(0, 0);
+        document.body.setAttribute("class","active-yp");
+        let cover = document.getElementsByTagName('img')[1];
+        if (cover != null && typeof(cover) != 'undefined') {
+            document.getElementById('yp-img').style.backgroundImage = `url(${cover.src})`;
+        } else {
+            document.getElementById('yp-img').style.backgroundColor = '#d7dbf0';
+        }
+        document.getElementById("yp-hide").style.visibility = "visible";
+    }
+    function close_yp(){
+        var domClass = document.body.getAttribute("class");
+        domClass = domClass.replace("active-yp","");
+        document.body.setAttribute("class",domClass);
+        document.getElementById("yp-hide").style.visibility = "hidden";
+    }
+    function load_yp(){
+        document.getElementById('yp-load-yp').textContent = '海报生成中...';
+        setTimeout(function() {
+            h2c_();
+        },2000);
+
+    }
+</script>
+
+</div>
+
+        <footer class="footer">
+    <div class="top">
+        
+   <p>
+      <span id="lc_counter_container_site_uv">
+         <i class="icon icon-user"></i><span id="lc_counter_value_site_uv"></span>
+      </span>
+      <span id="lc_counter_container_site_pv">
+         <i class="icon icon-eye"></i><span id="lc_counter_value_site_pv"></span>
+      </span>
+  </p>
+
+
+        <p>
+   <a id="jinrishici-sentence" href="https://www.jinrishici.com/" target="_blank" rel="noopener">加载中</a>
+</p>
+<script src="https://sdk.jinrishici.com/v2/browser/jinrishici.js" charset="utf-8"></script>
+<script>
+   jinrishici.load(function(result) {
+      document.querySelector('#subtitle').innerText = result.data.content;
+      document.querySelector('#jinrishici-sentence').innerText = result.data.content;
+  });
+</script>
+            <!--Todo: 考虑重构为插件 -->
+            <p>
+                
+                    <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+                
+                <span>
+                    <a href="https://github.com/qinyuanpei" target="_blank" rel="license noopener" title="Github">
+                        <i class="icon icon-lg icon-github"></i>
+                    </a>
+                </span>
+                <span>
+                    <a href="https://weibo.com/1278609231/profile" target="_blank" rel="license noopener" title="微博">
+                        <i class="icon icon-lg icon-weibo"></i>
+                    </a>
+                </span>
+                <span>
+                    <a href="https://www.douban.com/people/60029335/" target="_blank" rel="license noopener" title="豆瓣">
+                        <i class="icon icon-lg icon-douban"></i>
+                    </a>
+                </span>
+                <span>
+                    <a href="https://www.zhihu.com/people/qinyuanpei" target="_blank" rel="license noopener" title="知乎">
+                        <i class="icon icon-lg icon-zhihu-square"></i>
+                    </a>
+                </span>
+                <span>
+                    <a href="https://blog.csdn.net/qinyuanpei" target="_blank" rel="license noopener" title="CSDN">
+                        <i class="icon icon-lg">C</i>
+                    </a>
+                </span>
+                <span>
+                    <a href="https://music.163.com/#/user/home?id=47002864" target="_blank" rel="license noopener" title="网易音乐">
+                        <i class="icon icon-lg icon-wangyiyunyinyue"></i>
+                    </a>
+                </span>
+            </p>
+        
+    </div>
+    <div class="bottom">
+        <p><span>飞鸿踏雪 &copy; 2014 - 2021</span><br>
+            
+                
+                Powered by <a href="http://hexo.io/" target="_blank">Hexo</a> & Theme by <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a><br>
+                
+                
+                    <p>Hosted by <a href="https://pages.github.com" target="_blank" rel="noopener" style="font-weight: bold">Github Pages</a></p>
+                
+        </p>
+    </div>
+</footer>
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span
+        class="icon icon-lg icon-chevron-up"></span></a>
+
+    
+
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://qinyuanpei.github.io/posts/2070070822/&title=《使用 HttpMessageHandler 实现 HttpClient 请求管道自定义》 — 一个人的孤落时辰&pic=https://qinyuanpei.github.ioassets/images/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://qinyuanpei.github.io/posts/2070070822/&title=《使用 HttpMessageHandler 实现 HttpClient 请求管道自定义》 — 一个人的孤落时辰&source=一个人的孤落时辰 | 纵有疾风起，人生不言弃 | 隐约雷鸣，阴霾天空，即使天无雨，我亦留此地。" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://qinyuanpei.github.io/posts/2070070822/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《使用 HttpMessageHandler 实现 HttpClient 请求管道自定义》 — 一个人的孤落时辰&url=https://qinyuanpei.github.io/posts/2070070822/&via=https://qinyuanpei.github.io" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://qinyuanpei.github.io/posts/2070070822/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+      
+      <li>
+        <a class="google share-sns" target="_blank" onClick="show_yp()" data-title=" 生成海报">
+          <i class="icon icon-file-image-o"></i>
+        </a>
+      </li>
+      
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="//api.qrserver.com/v1/create-qr-code/?data=https://qinyuanpei.github.io/posts/2070070822/" alt="微信分享二维码">
+</div>
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.6/waves.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/4.2.1/echarts.min.js"></script>
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/echarts-wordcloud.min.js" async></script>
+<script>
+    var BLOG = { ROOT: '/', SHARE: true, REWARD: true };
+
+
+</script>
+
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/main.min.js"></script>
+
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/search.min.js" async></script>
+
+
+
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/heart.min.js" async></script>
+
+
+
+
+
+
+
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/leancloud-counter.min.js"></script>
+<script>
+        (function () {
+            var appId = 'JbHqRp2eMrTgIwYpfERH0g79-gzGzoHsz';
+            var appKey = 'VsiKvLuiBGvJL1XrAfv7siY2';
+            new VisitorCounter().init({
+                appId: appId,       //应用ID, 必输
+                appKey: appKey,      //应用Key, 必输
+                region: '华北',      //华东,华北,国际, 默认华东
+                domain: '',      //自定义域名
+                collectIP: true, //是否收集IP及位置信息, 默认开启
+                collectUA: true  //是否收集UserAgent, 默认开启
+            });
+        })();
+</script>
+
+
+
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/vconsole.min.js"></script>
+<script type="text/javascript">
+    //当地址中存在debug=true时，实例化vConsole
+    if (location.href.indexOf('debug=true') > -1) {
+        var vConsole = new VConsole();
+    }
+</script>
+
+
+    <script>
+    //国内用户自动重定向Coding Pages镜像
+    // var ipInfo = JSON.parse(localStorage.getItem('ipInfo'));
+    // if (ipInfo.country_code == 'CN') {
+    //     location.href = location.href.replace('qinyuanpei.github.io', 'blog.yuanpei.me');
+    // }
+    </script>
+
+
+<script>
+titleArray = [];
+function scrollTitle() {
+    if (titleArray.length == 0) return;
+    titleArray.push(titleArray[0]);
+	titleArray.shift();
+	document.title = titleArray.join("");
+}
+setInterval(scrollTitle, 500);
+(function() {
+    var originTitile = document.title, titleTime;
+    document.addEventListener('visibilitychange', function() {
+        if (document.hidden) {
+            titleArray = originTitile.split('');
+            clearTimeout(titleTime);
+        } else {
+            document.title = originTitile;
+            titleArray = originTitile.split('');
+            titleTime = setTimeout(function() {
+                document.title = originTitile;
+                titleArray = [];
+            },2000);
+        }
+    });
+})();
+</script>
+
+
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/ribbon.min.js"></script>
+</body>
+</html>

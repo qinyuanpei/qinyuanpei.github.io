@@ -1,0 +1,894 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+    
+<script async defer data-domain="blog.yuanpei.me" src="https://plausible.io/js/plausible.js"></script>
+    
+    <meta charset="utf-8">
+    <!-- HTTP 1.1 -->  
+    <meta http-equiv="pragma" content="no-cache">  
+    <!-- HTTP 1.0 -->  
+    <meta http-equiv="cache-control" content="no-cache">
+    <!-- 微博图床防盗链 --> 
+    <!-- <meta name="referrer" content="no-referrer"/> -->
+    <!--Google站点验证-->
+    
+    <!--百度站点验证-->
+    
+    
+    <!--Google AdSense-->
+    
+    <!--Bing站点验证-->
+    <meta name="msvalidate.01" content="713A48A3FE17D4841C292A6B3942EB4C" />
+    
+    <title>
+        使用Mecanim动画系统来控制2D动画 | 一个人的孤落时辰 | 纵有疾风起，人生不言弃
+    </title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+        <meta name="theme-color" content="#3F51B5">
+    
+
+    <meta name="keywords" content="Unity3D,Mecanim,动画,秦元培,技术博客,生活随笔,个人博客,NET,Python,数据挖掘,数据分析,NLP">
+    
+        <meta name="description" content="通过前面的学习，我们知道Unity2D使用的Mecanim动画系统主要是通过改变游戏体的属性来实现某种特定的动画效果的，例如我们这里的动画是通过改变角色精灵附加的SpriteRenderer组件的Sprite属性来实现的，因此从本质上来说Unity2D的动画控制器是一种属性动画;void FlipSrite();&lt;img src=&#34;http://img.blog.csdn.net/20150301180533660&#34; alt=&#34;为Idle动画添加帧&#34; /&gt;;&lt;img src=&#34;http://img.blog.csdn.net/20150301180634110&#34; alt=&#34;Idle动画效果演示&#34; /&gt;;private void SpriteMove()">
+    
+    <meta name="description" content="通过前面的学习，我们知道Unity2D使用的Mecanim动画系统主要是通过改变游戏体的属性来实现某种特定的动画效果的，例如我们这里的动画是通过改变角色精灵附加的SpriteRenderer组件的Sprite属性来实现的，因此从本质上来说Unity2D的动画控制器是一种属性动画;void FlipSrite();;;private void SpriteMove()">
+<meta property="og:type" content="article">
+<meta property="og:title" content="使用Mecanim动画系统来控制2D动画">
+<meta property="og:url" content="https://qinyuanpei.github.io/posts/2583252123/index.html">
+<meta property="og:site_name" content="一个人的孤落时辰">
+<meta property="og:description" content="通过前面的学习，我们知道Unity2D使用的Mecanim动画系统主要是通过改变游戏体的属性来实现某种特定的动画效果的，例如我们这里的动画是通过改变角色精灵附加的SpriteRenderer组件的Sprite属性来实现的，因此从本质上来说Unity2D的动画控制器是一种属性动画;void FlipSrite();;;private void SpriteMove()">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://img.blog.csdn.net/20150301180418811">
+<meta property="og:image" content="http://img.blog.csdn.net/20150301180502756">
+<meta property="og:image" content="http://img.blog.csdn.net/20150301180533660">
+<meta property="og:image" content="http://img.blog.csdn.net/20150301180634110">
+<meta property="og:image" content="http://img.blog.csdn.net/20150301180705294">
+<meta property="og:image" content="http://img.blog.csdn.net/20150301180829879">
+<meta property="article:published_time" content="2015-02-11T13:35:58.000Z">
+<meta property="article:modified_time" content="2021-06-03T03:48:39.657Z">
+<meta property="article:author" content="飞鸿踏雪">
+<meta property="article:tag" content="Unity3D">
+<meta property="article:tag" content="Mecanim">
+<meta property="article:tag" content="动画">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://img.blog.csdn.net/20150301180418811">
+    
+        <link rel="alternate" type="application/atom+xml" title="一个人的孤落时辰" href="/atom.xml">
+    
+    <link rel="shortcut icon" href="/assets/images/favicon.ico">
+    
+        <link rel="manifest" href="/manifest.json">
+    
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master//assets/styles/style.css">
+    <script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/instantclick.min.js"></script>
+    <script>window.lazyScripts=[]</script>
+    <!-- custom head -->
+    
+
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu" class="hide" >
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap" style="background-image:url(/assets/images/brand.jpg)">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/assets/images/avatar.jpg" alt="avatar">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">飞鸿踏雪</h5>
+          <a href="mailto:qinyuanpei@163.com" title="qinyuanpei@163.com" class="mail">qinyuanpei@163.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/"  >
+                <i class="icon icon-lg icon-home"></i>
+                主页
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives"  >
+                <i class="icon icon-lg icon-archives"></i>
+                归档
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags"  >
+                <i class="icon icon-lg icon-tags"></i>
+                标签
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/categories"  >
+                <i class="icon icon-lg icon-th-list"></i>
+                分类
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/books"  >
+                <i class="icon icon-lg icon-bookmark"></i>
+                书单
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/movies"  >
+                <i class="icon icon-lg icon-film"></i>
+                影单
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/works"  >
+                <i class="icon icon-lg icon-code"></i>
+                实验室
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/about"  >
+                <i class="icon icon-lg icon-circle"></i>
+                关于我
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+            <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">使用Mecanim动画系统来控制2D动画</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off"
+                placeholder="输入感兴趣的关键字">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+        <a href="https://github.com/qinyuanpei/qinyuanpei.github.io" target="_blank" rel="noopener" class="header-icon waves-effect waves-circle waves-light" id="menuGithub">
+            <i class="icon icon-lg icon-code-fork"></i>
+        </a>
+    </div>
+</header>
+<header class="content-header post-header">
+    <div class="container fade-scale">
+        <h1 class="title">使用Mecanim动画系统来控制2D动画</h1>
+        <h5 class="subtitle" id="subtitle">
+            
+            <time datetime="2015-02-11T13:35:58.000Z" itemprop="datePublished" class="page-time">
+  2015-02-11
+</time>
+
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91/">游戏开发</a></li></ul>
+
+            
+        </h5>
+    </div>
+    
+
+</header>
+
+<div class="container body-wrap">
+    
+    <article id="post-使用Mecanim动画系统来控制2D动画" class="post-article article-type-post fade" itemprop="blogPost">
+
+        <div class="post-card">
+            <h1 class="post-card-title">
+                使用Mecanim动画系统来控制2D动画
+            </h1>
+            <div class="post-meta">
+                <time class="post-time" title="2015-02-11 13:35:58" datetime="2015-02-11T13:35:58.000Z"  itemprop="datePublished">2015-02-11</time>
+
+                
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91/">游戏开发</a></li></ul>
+
+
+
+                
+<span id="lc_counter_container_page_pv" title="文章总阅读量" data-page-url="" data-page-title="使用Mecanim动画系统来控制2D动画">
+    <i class="icon icon-eye icon-pr"></i><span id="lc_counter_value_page_pv"></span>
+</span>
+
+
+
+
+
+                
+    <span>
+        <i class="icon icon-clock-o"></i>
+        17 min.
+    </span>
+    
+            </div>
+            <div class="post-content" id="post-content" itemprop="postContent">
+                <p>各位朋友，大家好，我是秦元培，欢迎大家关注我的博客，我的博客地址是<a href="http://blog.csdn.net/qinyuanpei" target="_blank" rel="noopener">http://blog.csdn.net/qinyuanpei</a>。今天我想和大家分享的话题是在Unity3D中使用Mecanim动画系统来控制2D动画。</p>
+<a id="more"></a>
+
+<p>相信在大家的印象中，Mecanim动画系统主要运用在3D动画中，因为Mecanim动画系统提供了像动画重定向、人体骨骼动画等3D动画的特性，那么Unity3D的Mecanim动画系统能不能用来控制2D动画呢？如果在以前，博主和大家的理解是一样的，认为Mecanim只能运用到3D动画中，对于2D动画只能使用传统的逐帧动画和骨骼动画。可是前不久有位朋友问我，为什么不使用动画组件来控制2D动画呢？博主心想啊，这Mecanim动画系统真的能控制2D动画吗？经过博主查找大量资料和亲身实践，发现Mecanim是可以用来控制2D动画的，而且由于状态机的引入，我们对动画状态的控制会变得更为简单，从写代码的角度来看，这样可以减少我们的代码量便于维护。那么好了，今天我们就来一起学习下如何使用Mecanim动画系统来控制2D动画吧！</p>
+<p>#传统2D动画的实现方式<br>在Unity3D中传统2D动画的实现方式是基于逐帧动画的原理实现的，这种实现方式在Unity3D没有推出Unity2D前甚至在Unity2D推出后相当长的一段时间内，基本上我们最为常用的实现方式，博主在刚开始学习Unity3D的时候通常是以2D形式来展开的，因为博主认为2D和3D在原理上基本是相通的，如果我们掌握了2D游戏的基本原理，那么在实现3D游戏的时候就会相对容易些。我们来看看一个最简单的2D动画的脚本实现：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F;精灵渲染器</span><br><span class="line">private SpriteRenderer mRenderer;</span><br><span class="line">&#x2F;&#x2F;精灵集合</span><br><span class="line">public Sprite[] Sprites;</span><br><span class="line">&#x2F;&#x2F;FPS,即每秒钟的画面帧数</span><br><span class="line">public float FPS &#x3D; 24;</span><br><span class="line">&#x2F;&#x2F;精灵索引</span><br><span class="line">private int index &#x3D; 0;</span><br><span class="line">&#x2F;&#x2F;当前时间</span><br><span class="line">private float currentTime &#x3D; 0;</span><br><span class="line"></span><br><span class="line">void Start () </span><br><span class="line">&#123;</span><br><span class="line">    mRenderer &#x3D; GetComponent&lt;SpriteRenderer&gt;();</span><br><span class="line">&#125;</span><br><span class="line">	</span><br><span class="line">void Update () </span><br><span class="line">&#123;</span><br><span class="line">    &#x2F;&#x2F;获取当前时间</span><br><span class="line">    currentTime +&#x3D; Time.deltaTime;</span><br><span class="line">    &#x2F;&#x2F;如果达到了更新画面的时间</span><br><span class="line">    if(currentTime &gt;&#x3D; 1 &#x2F; FPS)</span><br><span class="line">    &#123;</span><br><span class="line">        &#x2F;&#x2F;使索引增加</span><br><span class="line">        index +&#x3D; 1;</span><br><span class="line">        &#x2F;&#x2F;清除时间记录</span><br><span class="line">        currentTime &#x3D; 0;</span><br><span class="line">        &#x2F;&#x2F;当索引更新到最后一帧时,索引重置</span><br><span class="line">        if(index &gt;&#x3D; Sprites.Length)</span><br><span class="line">        &#123;</span><br><span class="line">            index &#x3D; 0;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    &#x2F;&#x2F;更新画面</span><br><span class="line">    mRenderer.sprite &#x3D; Sprites[index];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>通过分析，我们可以发现这段脚本存在以下问题：</p>
+<ul>
+<li>动画维护困难：每增加一个动画就需要添加一个数组，不仅增加了动画的维护难度，同时降低了脚本的效率。</li>
+<li>状态维护困难：因为在Update方法里实现的是一个动画，因此当我们需要在各个动画状态间进行切换的时候，我们需要使用更多的代码来维护相关逻辑。</li>
+</ul>
+<p>#使用Mecanim动画系统的实现方式<br>为了解决传统的2D动画实现方式中存在的动画维护困难、状态维护困难这两个问题，我们需要一种更好的方案来实现2D动画的控制，这种方案需要提供较为方便的动画维护功能，即各个动画是独立的，当改变了某一个动画时，其余的动画不会发生改变。其次，这种方案需要提供较为方便的状态维护功能，即各个动画状态切换是方便的，我们可以更好地从这一种状态切换到另一种状态。关于动画状态切换，大家可以去了解下有限状态机(FSM)的概念，这里我们不做深入的探究，这里我们选择Unity3D的Mecanim动画系统，因为Mecanim动画系统正好解决了这两个问题。好了，下面我们来一起学习一个2D动画的实例：<br>首先我们在场景中创建一个名为PlayerController的空物体，然后在该物体的下面增加一个精灵组件(Sprite),并将其命名为PlayerSprite，这样做的好处是Unity3D将为我们自动创建较为规范的命名。好了，现在我们选择PlayerController这个物体，然后通过Window-&gt;Animation菜单打开Animation窗口：</p>
+<img src="http://img.blog.csdn.net/20150301180418811" alt="创建第一个动画" />
+
+<p>首先我们点击AddCurve按钮，此时将弹出一个对话框让我们保存动画文件，这里我们存储为<a href="mailto:Player@Idle.anim">Player@Idle.anim</a>,并将其保存在项目目录下的Animations\Player目录下，这样可以方便我们维护和查找特定的动画文件。在保存完动画文件后，此时会弹出如下的界面，我们选择PlayerSprite节点下的SpriteRenderer，然后选择Sprite，因为这里我们的2D动画主要是通过改变SpriteRenderer的Sprite属性来实现的，最后我们点击Sprite节点后面的加号来完成对象的选取。此时会在动画窗口中显示时间轴和刻度线，我们将在这里完成动画的编辑。大家可以注意到默认情况下，动画面板添加了两帧，即第1帧和最后一帧，其总时间是1秒，同时我们注意到这里有一个采样率(Sample),其实这就是当前动画的FPS了。好了，现在我们开始制作第一个动画：</p>
+<img src="http://img.blog.csdn.net/20150301180502756" alt="动画序列" />
+
+<p>在资源文件夹中，我们可以找到当前动画的图片素材，注意到这个图片中总共有12帧画面，因此我们可以按照0.05s的间隔来分配整个时间轴，所以我们可以这样添加帧：</p>
+<img src="http://img.blog.csdn.net/20150301180533660" alt="为Idle动画添加帧" />
+
+<p>好了，现在我们就完成了一个Idle动画的制作，现在打开角色的动画控制器PlayerController，这是Unity3D为我们自动创建的一个动画控制器，因为我们现在只有一个Idle动画，所以在Animaotr窗口中我们可以看到只有一个Idle状态，现在我们将这个状态设为默认状态。好了，现在我们可以直接运行游戏，发现在场景中角色开始循环播放Idle动画了。好了，现在让我们重复刚才的步骤，来完成角色的其余动画。</p>
+<img src="http://img.blog.csdn.net/20150301180634110" alt="Idle动画效果演示" />
+
+<p>经过一番努力，我们现在已经完成了角色所有动画的制作，现在我们来设计角色的动画状态机：</p>
+<img src="http://img.blog.csdn.net/20150301180705294" alt="玩家角色控制器设计" />
+
+<p>设计好角色的动画状态机后我们开始来编写脚本，以实现角色动画的控制：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br></pre></td><td class="code"><pre><span class="line">using UnityEngine;</span><br><span class="line">using System.Collections;</span><br><span class="line"></span><br><span class="line">public class PlayerController : MonoBehaviour &#123;</span><br><span class="line"></span><br><span class="line">    public enum PlayerState</span><br><span class="line">    &#123;</span><br><span class="line">        Idle,</span><br><span class="line">        Move,</span><br><span class="line">        LightAttack,</span><br><span class="line">        WeightAttack</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public PlayerState State&#x3D;PlayerState.Idle;</span><br><span class="line">    &#x2F;&#x2F;玩家移动速度</span><br><span class="line">    public float WalkSpeed &#x3D; 0.75f;</span><br><span class="line">    public float RunSpeed &#x3D; 1.5f;</span><br><span class="line">    &#x2F;&#x2F;玩家跳跃力的强度</span><br><span class="line">    public float JumpForce &#x3D; 200f;</span><br><span class="line"></span><br><span class="line">    &#x2F;&#x2F;位置限制</span><br><span class="line">    public float MinX &#x3D; -5.80f;</span><br><span class="line">    public float MaxX &#x3D;  5.80f;</span><br><span class="line">    public float MinY &#x3D; -1.80f;</span><br><span class="line">    public float MaxY &#x3D;  0.35f;</span><br><span class="line"></span><br><span class="line">    &#x2F;&#x2F;玩家朝向，默认朝右</span><br><span class="line">    public bool isFaceRight &#x3D; true;</span><br><span class="line"></span><br><span class="line">    &#x2F;&#x2F;动画组件</span><br><span class="line">    private Animator mAnim;</span><br><span class="line">    &#x2F;&#x2F;2D刚体</span><br><span class="line">    private Rigidbody2D mRig2D;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    void Start () </span><br><span class="line">    &#123;</span><br><span class="line">        mAnim&#x3D;GetComponent&lt;Animator&gt;();</span><br><span class="line">        mRig2D&#x3D;GetComponent&lt;Rigidbody2D&gt;();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    void Update()</span><br><span class="line">    &#123;</span><br><span class="line">        SpriteMove();</span><br><span class="line">        SpriteAttack();</span><br><span class="line">        SpriteJump();</span><br><span class="line">        SpriteIdle();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    &#x2F;&#x2F;&#x2F; &lt;summary&gt;</span><br><span class="line">    &#x2F;&#x2F;&#x2F; 精灵Idle</span><br><span class="line">    &#x2F;&#x2F;&#x2F; &lt;&#x2F;summary&gt;</span><br><span class="line">    private void SpriteIdle()</span><br><span class="line">    &#123;</span><br><span class="line">        &#x2F;&#x2F;当玩家无任何操作时恢复到Idle状态</span><br><span class="line">        if (!Input.anyKey)</span><br><span class="line">        &#123;</span><br><span class="line">            mAnim.SetBool(&quot;Jump&quot;, false);</span><br><span class="line">            mAnim.SetBool(&quot;Attack&quot;, false);</span><br><span class="line">            mAnim.SetBool(&quot;BigAttack&quot;, false);</span><br><span class="line">            mAnim.SetBool(&quot;Skill&quot;, false);</span><br><span class="line">            mAnim.SetBool(&quot;BigSkill&quot;, false);</span><br><span class="line">            State&#x3D;PlayerState.Idle;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    &#x2F;&#x2F;&#x2F; &lt;summary&gt;</span><br><span class="line">    &#x2F;&#x2F;&#x2F; 精灵攻击</span><br><span class="line">    &#x2F;&#x2F;&#x2F; &lt;&#x2F;summary&gt;</span><br><span class="line">    private void SpriteAttack()</span><br><span class="line">    &#123;</span><br><span class="line">        &#x2F;&#x2F;轻击，键位J</span><br><span class="line">        if(Input.GetKey(KeyCode.J))</span><br><span class="line">        &#123;</span><br><span class="line">            mAnim.SetBool(&quot;Attack&quot;, true);</span><br><span class="line">            State&#x3D;PlayerState.LightAttack;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        &#x2F;&#x2F;重击，键位K</span><br><span class="line">        if(Input.GetKey(KeyCode.K))</span><br><span class="line">        &#123;</span><br><span class="line">            mAnim.SetBool(&quot;BigAttack&quot;, true);</span><br><span class="line">            State&#x3D;PlayerState.WeightAttack;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    &#x2F;&#x2F;&#x2F; &lt;summary&gt;</span><br><span class="line">    &#x2F;&#x2F;&#x2F; 精灵跳跃</span><br><span class="line">    &#x2F;&#x2F;&#x2F; &lt;&#x2F;summary&gt;</span><br><span class="line">    private void SpriteJump()</span><br><span class="line">    &#123;</span><br><span class="line">        if (Input.GetKey(KeyCode.I))</span><br><span class="line">        &#123;</span><br><span class="line">            mAnim.SetBool(&quot;Jump&quot;, true);</span><br><span class="line">            mRig2D.AddForce(new Vector2(0, Time.deltaTime * JumpForce), ForceMode2D.Impulse);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    private void SpriteMove()</span><br><span class="line">    &#123;</span><br><span class="line">        float h &#x3D; Input.GetAxis(&quot;Horizontal&quot;);</span><br><span class="line">        float v &#x3D; Input.GetAxis(&quot;Vertical&quot;);</span><br><span class="line"></span><br><span class="line">        Vector2 mPos &#x3D; mRig2D.position;</span><br><span class="line"></span><br><span class="line">        mAnim.SetFloat(&quot;Speed&quot;, Mathf.Sqrt(h * h + v * v));</span><br><span class="line"></span><br><span class="line">        float mPosX, mPosY;</span><br><span class="line"></span><br><span class="line">        if (Mathf.Sqrt(h * h + v * v) &gt; 0.5f)&#123;</span><br><span class="line">            mPosX &#x3D; mPos.x + h * Time.deltaTime * RunSpeed;</span><br><span class="line">            mPosY &#x3D; mPos.y + v * Time.deltaTime * RunSpeed;</span><br><span class="line">        &#125;else&#123;</span><br><span class="line">            mPosX &#x3D; mPos.x + h * Time.deltaTime * WalkSpeed;</span><br><span class="line">            mPosY &#x3D; mPos.y + v * Time.deltaTime * WalkSpeed;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">        mRig2D.MovePosition(new Vector2(mPosX, mPosY));</span><br><span class="line"></span><br><span class="line">        if (h &gt; 0 &amp;&amp; !isFaceRight)</span><br><span class="line">        &#123;</span><br><span class="line">            FlipSrite();</span><br><span class="line">        &#125;</span><br><span class="line">        else if (h &lt; 0 &amp;&amp; isFaceRight)</span><br><span class="line">        &#123;</span><br><span class="line">            FlipSrite();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    void FlipSrite()</span><br><span class="line">    &#123;</span><br><span class="line">        if(isFaceRight)&#123;</span><br><span class="line">            transform.rotation&#x3D;Quaternion.Euler(0,180,0);</span><br><span class="line">            isFaceRight&#x3D;false;</span><br><span class="line">        &#125;else&#123;</span><br><span class="line">            transform.rotation&#x3D;Quaternion.Euler(0,0,0);</span><br><span class="line">            isFaceRight&#x3D;true;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>好了，现在我们可以来看看最终的效果，博主这里是想利用这些素材来制作一个横板过关的游戏，可是因为文章篇幅有限，所以这部分内容只能留到以后再和大家分享了。</p>
+<img src="http://img.blog.csdn.net/20150301180829879" alt="最终效果演示"/>
+
+<p>#Mecanim动画系统应用扩展<br>好了，到现在为止，基于Mecanim动画系统的2D动画控制基本上讲解完了。下面我们说说Mecaanim动画系统应用扩展。通过前面的学习，我们知道Unity2D使用的Mecanim动画系统主要是通过改变游戏体的属性来实现某种特定的动画效果的，例如我们这里的动画是通过改变角色精灵附加的SpriteRenderer组件的Sprite属性来实现的，因此从本质上来说Unity2D的动画控制器是一种属性动画。总体来说，Unity2D可以实现以下类型的动画：</p>
+<ul>
+<li>位移动画：通过Transform组件的Position属性实现</li>
+<li>旋转动画：通过Transform组件的Rotation属性实现</li>
+<li>伸缩动画：通过Transform组件的Scale属性实现</li>
+<li>渐变动画：通过更改指定组件的颜色或材质实现</li>
+<li>脚本动画：通过更改指定脚本的变量或字段实现</li>
+</ul>
+<p>好了，这就是今天这篇文章的全部内容了，希望大家喜欢！</p>
+
+                
+
+                
+
+
+<div class="recommended_posts">
+    <h1>推荐阅读</h1>
+    <ul>
+        
+        <li><a href="https://qinyuanpei.github.io/posts/1176959868/">Unity3D塔防游戏开发项目讲解(下)</a></li>
+        
+        <li><a href="https://qinyuanpei.github.io/posts/3019914405/">Unity3D游戏开发之Unity3D场景编辑器扩展开发</a></li>
+        
+        <li><a href="https://qinyuanpei.github.io/posts/1082185388/">Unity3D游戏开发之使用disunity提取Unity3D游戏资源</a></li>
+        
+        <li><a href="https://qinyuanpei.github.io/posts/1150143610/">在Unity3D中使用uGUI实现3D旋转特效</a></li>
+        
+        <li><a href="https://qinyuanpei.github.io/posts/316230277/">EasyAR尝鲜系列教程之视频播放功能的实现</a></li>
+        
+    </ul>
+</div>
+
+            </div>
+            
+<blockquote class="post-copyright">
+    <div class="content">
+        <p><b>版权声明：</b>
+        <a href="https://qinyuanpei.github.io/posts/2583252123/" rel="external">使用Mecanim动画系统来控制2D动画</a>
+        ，由&nbsp;<a href="/about" target="_blank" rel="external">飞鸿踏雪</a>&nbsp;
+        首次发表于&nbsp;<a href="/" target="_blank" rel="external">一个人的孤落时辰</a>&nbsp;
+        ，本文地址为：<a href="https://qinyuanpei.github.io/posts/2583252123/" target="_blank" rel="external">https://qinyuanpei.github.io/posts/2583252123/</a>
+        ，转载请注明<b>作者</b>和<b>出处</b>。</p>
+    </div>
+    <footer>
+        <a href="https://qinyuanpei.github.io">
+            <img src="/assets/images/avatar.jpg" alt="飞鸿踏雪">
+            飞鸿踏雪
+        </a>
+    </footer>
+</blockquote>
+
+
+            
+<div class="page-reward">
+    <a id="rewardBtn" href="javascript:;" class="page-reward-btn waves-effect waves-circle waves-light">赏</a>
+</div>
+
+
+            <div class="post-footer">
+                
+	<ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Mecanim/" rel="tag">Mecanim</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Unity3D/" rel="tag">Unity3D</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%8A%A8%E7%94%BB/" rel="tag">动画</a></li></ul>
+
+                
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://qinyuanpei.github.io/posts/2583252123/&title=《使用Mecanim动画系统来控制2D动画》 — 一个人的孤落时辰&pic=https://qinyuanpei.github.ioassets/images/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://qinyuanpei.github.io/posts/2583252123/&title=《使用Mecanim动画系统来控制2D动画》 — 一个人的孤落时辰&source=各位朋友，大家好，我是秦元培，欢迎大家关注我的博客，我的博客地址是http://blog.csdn.net/qinyuanpei。今天我想和大家分享的话题..." data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://qinyuanpei.github.io/posts/2583252123/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《使用Mecanim动画系统来控制2D动画》 — 一个人的孤落时辰&url=https://qinyuanpei.github.io/posts/2583252123/&via=https://qinyuanpei.github.io" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://qinyuanpei.github.io/posts/2583252123/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+      
+      <li>
+        <a class="google share-sns" target="_blank" onClick="show_yp()" data-title=" 生成海报">
+          <i class="icon icon-file-image-o"></i>
+        </a>
+      </li>
+      
+    </ul>
+ </div>
+
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
+            </div>
+        </div>
+
+        
+<nav class="post-nav flex-row flex-justify-between">
+  
+    <div class="waves-block waves-effect prev">
+      <a href="/posts/1930050594/" id="post-prev" class="post-nav-link">
+        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
+        <h4 class="title">互联网黑洞读书笔记(2)</h4>
+      </a>
+    </div>
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/posts/1940333895/" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h4 class="title">脚本语言编程：Lua脚本编程入门</h4>
+      </a>
+    </div>
+  
+</nav>
+
+
+        
+    <div id="comment"></div>
+<script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+<script src='//unpkg.com/valine/dist/Valine.min.js'></script>
+<script type="text/javascript">
+new Valine({
+    el: '#comment' ,
+    notify: false, 
+    verify: true, 
+    appId: 'JbHqRp2eMrTgIwYpfERH0g79-gzGzoHsz',
+    appKey: 'VsiKvLuiBGvJL1XrAfv7siY2',
+    placeholder: '云中谁寄锦书来，雁字回时，月满西楼。&#10;Tips：如果希望收到我的评论回复，请至少留下你的邮箱哦:)',
+    path:'https://qinyuanpei.github.io/posts/2583252123/', 
+    avatar:'identicon',
+    requiredFields: ['nick','mail']
+});
+</script>
+
+
+
+
+    </article>
+    
+<div id="reward" class="page-modal reward-lay">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <h3 class="reward-title">
+        <i class="icon icon-quote-left"></i>
+        赠人玫瑰，手有余香
+        <i class="icon icon-quote-right"></i>
+    </h3>
+    <div class="reward-content">
+        
+        <div class="reward-code">
+            <img id="rewardCode" src="/assets/images/wechat.png" alt="打赏二维码">
+        </div>
+        
+        <label class="reward-toggle">
+            <input id="rewardToggle" type="checkbox" class="reward-toggle-check"
+                data-wechat="/assets/images/wechat.png" data-alipay="/assets/images/alipay.jpg">
+            <div class="reward-toggle-ctrol">
+                <span class="reward-toggle-item wechat">微信</span>
+                <span class="reward-toggle-label"></span>
+                <span class="reward-toggle-item alipay">支付宝</span>
+            </div>
+        </label>
+        
+    </div>
+</div>
+
+
+    <script type="text/javascript" src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/yoniu.min.js"></script>
+<style type='text/css'>
+	body.active-yp {
+		overflow: hidden;
+	}
+	.yp-fc-btn{
+		display: flex;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		align-items: center;
+		justify-content: space-between;
+		font-size: 13px;
+	}
+	.yp-fc-btn span{
+		cursor: pointer;
+		padding: 2px 10px;
+		color: #4b4b4b;
+		border: #4b4b4b 1px solid;
+		border-radius:5px;
+	}
+	#yp-hide{
+		position: fixed;
+		display: flex;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		justify-content: center;
+		flex-direction: column;
+		left:0;
+		top:0;
+		right:0;
+		bottom:0;
+		background-color:rgba(0,0,0,.5);
+		z-index: 99999;
+		visibility: hidden;
+	}
+	#yoniu-poster{
+		box-sizing: border-box;
+		width: 350px;
+		height: 467.2px;
+		background-color: #fff;
+		margin: 0 auto;
+		padding: 0;
+		line-height: 1.6;
+		text-align:justify;
+	}
+	
+	.yp-img {
+		min-height: 240px;
+		position: relative;
+		display: flex;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		justify-content: flex-end;
+		flex-direction: column;
+		background-position: 50% 50%;
+		background-size: cover;
+		overflow:hidden;
+	}
+	.yp-img>div{
+		padding: 10px 20px;
+	}
+	.yp-name{
+		display: block;
+		color: #fff;
+		font-size: 20px;
+		font-weight: 600;
+		text-shadow: #4b4b4b 0.1em 0.1em 0.2em;
+		margin-top: 10px;
+	}
+	.yp-sort{
+		padding: 3px 10px;
+		font-size: 12px;
+		color: #fff;
+		background: #2e2e2e;
+	}
+	.yp-des{
+		color: #2e2e2e;
+		font-size: 14px;
+		margin: 20px;
+		height: 67.2px;
+	}
+	.yp-qcode{
+		display: flex;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		justify-content: space-between;
+		align-items: center;
+		margin: 10px;
+		padding: 10px 20px;
+		background: #f5f5f5;
+		color: #818181;
+		border-radius: 10px;
+	}
+	.yp-tips{
+		display: flex;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		justify-content: space-between;
+		align-items: center;
+		color: #ccc;
+		margin: 0 10px 10px;
+		font-size: 10px;
+		letter-spacing: 1.5px;
+	}
+	.yp-btns{
+		display: flex;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		align-items: stretch;
+		justify-content: center;
+		width:350px;
+		margin: 0 auto;
+	}
+	.yp-btns>span{
+		display: flex;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		align-items: center;
+		justify-content: center;
+		font-size: 14px;
+		padding: 10px 15px;
+		background:rgba(0,0,0,.2);
+		color: #f5f5f5;
+		cursor: pointer;
+	}
+	.yp-btns>span>a{
+		color: #f5f5f5;
+	}
+	.yp-btns>span>a:hover{
+		text-decoration:none;
+	}
+	#yp-close{
+		font-size: 18px;
+		font-weight: 600;
+	}
+</style>
+<div id="yp-hide">
+    <div id="yoniu-poster">
+        <div class="yp-img" id="yp-img">
+            <div>
+                <span class="yp-sort">游戏开发</span>
+                <span class="yp-name">使用Mecanim动画系统来控制2D动画</span>
+            </div>
+        </div>
+        <div class="yp-des">    
+            
+                各位朋友，大家好，我是秦元培，欢迎大家关注我的博客，我的博客地址是http://blog.csdn.net/qinyuanpei。今天我想和大家...
+            
+        </div>
+        <div class="yp-qcode">
+            <span>扫描二维码阅读原文</span>
+            <img id="yp-qcode" width="64px" src="//api.qrserver.com/v1/create-qr-code/?data=https://qinyuanpei.github.io/posts/2583252123/">
+        </div>
+        <div class="yp-tips">
+            <span>一个人的孤落时辰</span>
+            <span><time class="post-time" title="2015-02-11 13:35:58" datetime="2015-02-11T13:35:58.000Z"  itemprop="datePublished">2015-02-11</time>
+</span>
+        </div>
+    </div>
+    <div class="yp-btns">
+        <span id="yp-load-yp" onClick="load_yp()">生成海报</span>
+        <span><a id="yp-download"></a></span>
+        <span id="yp-close" onClick="close_yp()">×</span>
+    </div>
+</div>
+<script type="text/javascript">
+    function show_yp(){
+        window.scrollTo(0, 0);
+        document.body.setAttribute("class","active-yp");
+        let cover = document.getElementsByTagName('img')[1];
+        if (cover != null && typeof(cover) != 'undefined') {
+            document.getElementById('yp-img').style.backgroundImage = `url(${cover.src})`;
+        } else {
+            document.getElementById('yp-img').style.backgroundColor = '#d7dbf0';
+        }
+        document.getElementById("yp-hide").style.visibility = "visible";
+    }
+    function close_yp(){
+        var domClass = document.body.getAttribute("class");
+        domClass = domClass.replace("active-yp","");
+        document.body.setAttribute("class",domClass);
+        document.getElementById("yp-hide").style.visibility = "hidden";
+    }
+    function load_yp(){
+        document.getElementById('yp-load-yp').textContent = '海报生成中...';
+        setTimeout(function() {
+            h2c_();
+        },2000);
+
+    }
+</script>
+
+</div>
+
+        <footer class="footer">
+    <div class="top">
+        
+   <p>
+      <span id="lc_counter_container_site_uv">
+         <i class="icon icon-user"></i><span id="lc_counter_value_site_uv"></span>
+      </span>
+      <span id="lc_counter_container_site_pv">
+         <i class="icon icon-eye"></i><span id="lc_counter_value_site_pv"></span>
+      </span>
+  </p>
+
+
+        <p>
+   <a id="jinrishici-sentence" href="https://www.jinrishici.com/" target="_blank" rel="noopener">加载中</a>
+</p>
+<script src="https://sdk.jinrishici.com/v2/browser/jinrishici.js" charset="utf-8"></script>
+<script>
+   jinrishici.load(function(result) {
+      document.querySelector('#subtitle').innerText = result.data.content;
+      document.querySelector('#jinrishici-sentence').innerText = result.data.content;
+  });
+</script>
+            <!--Todo: 考虑重构为插件 -->
+            <p>
+                
+                    <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+                
+                <span>
+                    <a href="https://github.com/qinyuanpei" target="_blank" rel="license noopener" title="Github">
+                        <i class="icon icon-lg icon-github"></i>
+                    </a>
+                </span>
+                <span>
+                    <a href="https://weibo.com/1278609231/profile" target="_blank" rel="license noopener" title="微博">
+                        <i class="icon icon-lg icon-weibo"></i>
+                    </a>
+                </span>
+                <span>
+                    <a href="https://www.douban.com/people/60029335/" target="_blank" rel="license noopener" title="豆瓣">
+                        <i class="icon icon-lg icon-douban"></i>
+                    </a>
+                </span>
+                <span>
+                    <a href="https://www.zhihu.com/people/qinyuanpei" target="_blank" rel="license noopener" title="知乎">
+                        <i class="icon icon-lg icon-zhihu-square"></i>
+                    </a>
+                </span>
+                <span>
+                    <a href="https://blog.csdn.net/qinyuanpei" target="_blank" rel="license noopener" title="CSDN">
+                        <i class="icon icon-lg">C</i>
+                    </a>
+                </span>
+                <span>
+                    <a href="https://music.163.com/#/user/home?id=47002864" target="_blank" rel="license noopener" title="网易音乐">
+                        <i class="icon icon-lg icon-wangyiyunyinyue"></i>
+                    </a>
+                </span>
+            </p>
+        
+    </div>
+    <div class="bottom">
+        <p><span>飞鸿踏雪 &copy; 2014 - 2021</span><br>
+            
+                
+                Powered by <a href="http://hexo.io/" target="_blank">Hexo</a> & Theme by <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a><br>
+                
+                
+                    <p>Hosted by <a href="https://pages.github.com" target="_blank" rel="noopener" style="font-weight: bold">Github Pages</a></p>
+                
+        </p>
+    </div>
+</footer>
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span
+        class="icon icon-lg icon-chevron-up"></span></a>
+
+    
+
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://qinyuanpei.github.io/posts/2583252123/&title=《使用Mecanim动画系统来控制2D动画》 — 一个人的孤落时辰&pic=https://qinyuanpei.github.ioassets/images/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://qinyuanpei.github.io/posts/2583252123/&title=《使用Mecanim动画系统来控制2D动画》 — 一个人的孤落时辰&source=各位朋友，大家好，我是秦元培，欢迎大家关注我的博客，我的博客地址是http://blog.csdn.net/qinyuanpei。今天我想和大家分享的话题..." data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://qinyuanpei.github.io/posts/2583252123/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《使用Mecanim动画系统来控制2D动画》 — 一个人的孤落时辰&url=https://qinyuanpei.github.io/posts/2583252123/&via=https://qinyuanpei.github.io" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://qinyuanpei.github.io/posts/2583252123/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+      
+      <li>
+        <a class="google share-sns" target="_blank" onClick="show_yp()" data-title=" 生成海报">
+          <i class="icon icon-file-image-o"></i>
+        </a>
+      </li>
+      
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="//api.qrserver.com/v1/create-qr-code/?data=https://qinyuanpei.github.io/posts/2583252123/" alt="微信分享二维码">
+</div>
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.6/waves.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/4.2.1/echarts.min.js"></script>
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/echarts-wordcloud.min.js" async></script>
+<script>
+    var BLOG = { ROOT: '/', SHARE: true, REWARD: true };
+
+
+</script>
+
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/main.min.js"></script>
+
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/search.min.js" async></script>
+
+
+
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/heart.min.js" async></script>
+
+
+
+
+
+
+
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/leancloud-counter.min.js"></script>
+<script>
+        (function () {
+            var appId = 'JbHqRp2eMrTgIwYpfERH0g79-gzGzoHsz';
+            var appKey = 'VsiKvLuiBGvJL1XrAfv7siY2';
+            new VisitorCounter().init({
+                appId: appId,       //应用ID, 必输
+                appKey: appKey,      //应用Key, 必输
+                region: '华北',      //华东,华北,国际, 默认华东
+                domain: '',      //自定义域名
+                collectIP: true, //是否收集IP及位置信息, 默认开启
+                collectUA: true  //是否收集UserAgent, 默认开启
+            });
+        })();
+</script>
+
+
+
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/vconsole.min.js"></script>
+<script type="text/javascript">
+    //当地址中存在debug=true时，实例化vConsole
+    if (location.href.indexOf('debug=true') > -1) {
+        var vConsole = new VConsole();
+    }
+</script>
+
+
+    <script>
+    //国内用户自动重定向Coding Pages镜像
+    // var ipInfo = JSON.parse(localStorage.getItem('ipInfo'));
+    // if (ipInfo.country_code == 'CN') {
+    //     location.href = location.href.replace('qinyuanpei.github.io', 'blog.yuanpei.me');
+    // }
+    </script>
+
+
+<script>
+titleArray = [];
+function scrollTitle() {
+    if (titleArray.length == 0) return;
+    titleArray.push(titleArray[0]);
+	titleArray.shift();
+	document.title = titleArray.join("");
+}
+setInterval(scrollTitle, 500);
+(function() {
+    var originTitile = document.title, titleTime;
+    document.addEventListener('visibilitychange', function() {
+        if (document.hidden) {
+            titleArray = originTitile.split('');
+            clearTimeout(titleTime);
+        } else {
+            document.title = originTitile;
+            titleArray = originTitile.split('');
+            titleTime = setTimeout(function() {
+                document.title = originTitile;
+                titleArray = [];
+            },2000);
+        }
+    });
+})();
+</script>
+
+
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/ribbon.min.js"></script>
+</body>
+</html>

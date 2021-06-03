@@ -1,0 +1,908 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+    
+<script async defer data-domain="blog.yuanpei.me" src="https://plausible.io/js/plausible.js"></script>
+    
+    <meta charset="utf-8">
+    <!-- HTTP 1.1 -->  
+    <meta http-equiv="pragma" content="no-cache">  
+    <!-- HTTP 1.0 -->  
+    <meta http-equiv="cache-control" content="no-cache">
+    <!-- 微博图床防盗链 --> 
+    <!-- <meta name="referrer" content="no-referrer"/> -->
+    <!--Google站点验证-->
+    
+    <!--百度站点验证-->
+    
+    
+    <!--Google AdSense-->
+    
+    <!--Bing站点验证-->
+    <meta name="msvalidate.01" content="713A48A3FE17D4841C292A6B3942EB4C" />
+    
+    <title>
+        从[复活]和[暂停/恢复]谈游戏数据配置管理 | 一个人的孤落时辰 | 纵有疾风起，人生不言弃
+    </title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+        <meta name="theme-color" content="#3F51B5">
+    
+
+    <meta name="keywords" content="游戏,数据,状态,秦元培,技术博客,生活随笔,个人博客,NET,Python,数据挖掘,数据分析,NLP">
+    
+        <meta name="description" content="本文将从游戏中的&#34;复活&#34;和&#34;暂停/恢复&#34;这两个应用场景的角度来谈谈在游戏开发中如何对游戏中的数据进行管理和配置;首先我们来从游戏当中的两个常见的应用场景:&#34;复活&#34;和&#34;暂停/恢复&#34;来看看游戏数据配置和管理的重要性;动态数据是指在游戏中会不断变化的数据，比如玩家的得分、玩家的生命值、玩家的经验值等等;可是如果我们将玩家的属性全部都设为Public，我们可能不得不去面对在编辑器窗口中为每一个属性去赋值，因为一旦我们试图调整游戏双方力量的平衡时，这将是我们不得不去面对的问题，更为致命的玩家的属性并不是永远不变的，比如在RPG游戏中玩家的生命值等属性会随着角色等级的提升而不断增加;首先游戏暂停后，场景内所有的物体都会停止运动，此时游戏中每个物体的状态都发生了变化，不过因为在Unity3D中控制游戏暂停/的恢复主要是通过调整Time.timeScale的值来实现的">
+    
+    <meta name="description" content="本文将从游戏中的&quot;复活&quot;和&quot;暂停&#x2F;恢复&quot;这两个应用场景的角度来谈谈在游戏开发中如何对游戏中的数据进行管理和配置;首先我们来从游戏当中的两个常见的应用场景:&quot;复活&quot;和&quot;暂停&#x2F;恢复&quot;来看看游戏数据配置和管理的重要性;动态数据是指在游戏中会不断变化的数据，比如玩家的得分、玩家的生命值、玩家的经验值等等;可是如果我们将玩家的属性全部都设为Public，我们可能不得不去面对在编辑器窗口中为每一个属性去赋值，">
+<meta property="og:type" content="article">
+<meta property="og:title" content="从[复活]和[暂停&#x2F;恢复]谈游戏数据配置管理">
+<meta property="og:url" content="https://qinyuanpei.github.io/posts/3356910090/index.html">
+<meta property="og:site_name" content="一个人的孤落时辰">
+<meta property="og:description" content="本文将从游戏中的&quot;复活&quot;和&quot;暂停&#x2F;恢复&quot;这两个应用场景的角度来谈谈在游戏开发中如何对游戏中的数据进行管理和配置;首先我们来从游戏当中的两个常见的应用场景:&quot;复活&quot;和&quot;暂停&#x2F;恢复&quot;来看看游戏数据配置和管理的重要性;动态数据是指在游戏中会不断变化的数据，比如玩家的得分、玩家的生命值、玩家的经验值等等;可是如果我们将玩家的属性全部都设为Public，我们可能不得不去面对在编辑器窗口中为每一个属性去赋值，">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://ww1.sinaimg.cn/large/4c36074fly1fz05dfu1kyj20ih0ihaef.jpg">
+<meta property="og:image" content="http://7wy477.com1.z0.glb.clouddn.com/imgs_RainBlood">
+<meta property="og:image" content="https://ww1.sinaimg.cn/large/4c36074fly1fz01z0gczpj20m70dd11a.jpg">
+<meta property="article:published_time" content="2015-03-27T02:12:58.000Z">
+<meta property="article:modified_time" content="2021-06-03T03:48:39.657Z">
+<meta property="article:author" content="飞鸿踏雪">
+<meta property="article:tag" content="游戏">
+<meta property="article:tag" content="数据">
+<meta property="article:tag" content="状态">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://ww1.sinaimg.cn/large/4c36074fly1fz05dfu1kyj20ih0ihaef.jpg">
+    
+        <link rel="alternate" type="application/atom+xml" title="一个人的孤落时辰" href="/atom.xml">
+    
+    <link rel="shortcut icon" href="/assets/images/favicon.ico">
+    
+        <link rel="manifest" href="/manifest.json">
+    
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master//assets/styles/style.css">
+    <script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/instantclick.min.js"></script>
+    <script>window.lazyScripts=[]</script>
+    <!-- custom head -->
+    
+
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu" class="hide" >
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap" style="background-image:url(/assets/images/brand.jpg)">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/assets/images/avatar.jpg" alt="avatar">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">飞鸿踏雪</h5>
+          <a href="mailto:qinyuanpei@163.com" title="qinyuanpei@163.com" class="mail">qinyuanpei@163.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/"  >
+                <i class="icon icon-lg icon-home"></i>
+                主页
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives"  >
+                <i class="icon icon-lg icon-archives"></i>
+                归档
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags"  >
+                <i class="icon icon-lg icon-tags"></i>
+                标签
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/categories"  >
+                <i class="icon icon-lg icon-th-list"></i>
+                分类
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/books"  >
+                <i class="icon icon-lg icon-bookmark"></i>
+                书单
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/movies"  >
+                <i class="icon icon-lg icon-film"></i>
+                影单
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/works"  >
+                <i class="icon icon-lg icon-code"></i>
+                实验室
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/about"  >
+                <i class="icon icon-lg icon-circle"></i>
+                关于我
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+            <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">从[复活]和[暂停/恢复]谈游戏数据配置管理</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off"
+                placeholder="输入感兴趣的关键字">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+        <a href="https://github.com/qinyuanpei/qinyuanpei.github.io" target="_blank" rel="noopener" class="header-icon waves-effect waves-circle waves-light" id="menuGithub">
+            <i class="icon icon-lg icon-code-fork"></i>
+        </a>
+    </div>
+</header>
+<header class="content-header post-header">
+    <div class="container fade-scale">
+        <h1 class="title">从[复活]和[暂停/恢复]谈游戏数据配置管理</h1>
+        <h5 class="subtitle" id="subtitle">
+            
+            <time datetime="2015-03-27T02:12:58.000Z" itemprop="datePublished" class="page-time">
+  2015-03-27
+</time>
+
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91/">游戏开发</a></li></ul>
+
+            
+        </h5>
+    </div>
+    
+
+</header>
+
+<div class="container body-wrap">
+    
+    <aside class="post-widget">
+        <nav class="post-toc-wrap" id="post-toc">
+            <h4>目录</h4>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#为什么要谈游戏数据的配置和管理"><span class="post-toc-number">1.</span> <span class="post-toc-text">为什么要谈游戏数据的配置和管理</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#从应用场景来看游戏数据的配置与管理"><span class="post-toc-number">2.</span> <span class="post-toc-text">从应用场景来看游戏数据的配置与管理</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#应用场景——“复活”"><span class="post-toc-number">2.1.</span> <span class="post-toc-text">应用场景——“复活”</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#应用场景——“暂停-恢复”"><span class="post-toc-number">2.2.</span> <span class="post-toc-text">应用场景——“暂停&#x2F;恢复”</span></a></li></ol></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#游戏数据配置和管理的思路和方法"><span class="post-toc-number">3.</span> <span class="post-toc-text">游戏数据配置和管理的思路和方法</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#静态数据"><span class="post-toc-number">3.1.</span> <span class="post-toc-text">静态数据</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#动态数据"><span class="post-toc-number">3.2.</span> <span class="post-toc-text">动态数据</span></a></li></ol></li></ol>
+        </nav>
+    </aside>
+    
+    <article id="post-从复活和暂停恢复谈游戏数据配置管理" class="post-article article-type-post fade" itemprop="blogPost">
+
+        <div class="post-card">
+            <h1 class="post-card-title">
+                从[复活]和[暂停/恢复]谈游戏数据配置管理
+            </h1>
+            <div class="post-meta">
+                <time class="post-time" title="2015-03-27 02:12:58" datetime="2015-03-27T02:12:58.000Z"  itemprop="datePublished">2015-03-27</time>
+
+                
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91/">游戏开发</a></li></ul>
+
+
+
+                
+<span id="lc_counter_container_page_pv" title="文章总阅读量" data-page-url="" data-page-title="从[复活]和[暂停/恢复]谈游戏数据配置管理">
+    <i class="icon icon-eye icon-pr"></i><span id="lc_counter_value_page_pv"></span>
+</span>
+
+
+
+
+
+                
+    <span>
+        <i class="icon icon-clock-o"></i>
+        25 min.
+    </span>
+    
+            </div>
+            <div class="post-content" id="post-content" itemprop="postContent">
+                <p>&emsp;&emsp;随着游戏制作技术的不断发展，在经历了从2D到3D、从单机到网游、从PC游戏到移动游戏的种种演变后，玩家对于游戏质量的要求越来越高，游戏制作的难度相应地增加，整个游戏研发的体系开始变得庞大而复杂，由此就产生了游戏数据配置和管理的相关问题。本文将从游戏中的”复活”和”暂停/恢复”这两个应用场景的角度来谈谈在游戏开发中如何对游戏中的数据进行管理和配置。</p>
+<a id="more"></a>
+
+<h1 id="为什么要谈游戏数据的配置和管理"><a href="#为什么要谈游戏数据的配置和管理" class="headerlink" title="为什么要谈游戏数据的配置和管理"></a>为什么要谈游戏数据的配置和管理</h1><p>&emsp;&emsp;不知道大家是不是会和博主有一样的想法，就是当你回头来思考游戏开发的时候，你常常会发现，如果忽略游戏的画面、情节、特效等等这些游戏中的可视化的东西，那么其实游戏从本质上来说就是一个大型的有限状态机(FSM)，而我们通常所做的事情基本就是在维护这个有限状态机里面的各种状态，从游戏加载到游戏开始、从游戏开始到游戏中各种事件的发生再到各种事件影响到整个有限状态机的状态，我们通常所做的事情无外乎是在维护各种状态。这种感觉在RPG游戏中可能会更明显些，因为在RPG中玩家可能是在场景中行走或者奔跑、可能是在和场景中的某个NPC进行对话、可能是在和面前的敌人进行战斗、可能是在和杂货店的老板讨价还价……可以说在整个游戏当中无时无刻不在进行游戏状态的切换，那么在不同的状态间切换的时候，什么最为重要呢？答案是数据。什么是数据呢？玩家的生命值、魔法值、战斗力、防御力，物品的用途、价格、数量，游戏的剧情、对话、音乐等等这些都是数据。当我们在状态间进行切换的时候，其实真正改变的就是这些数据。由此可见，面对复杂而庞大的游戏体系，如何对游戏中的数据进行配置和管理是一件值得我们去思考的问题。</p>
+<h1 id="从应用场景来看游戏数据的配置与管理"><a href="#从应用场景来看游戏数据的配置与管理" class="headerlink" title="从应用场景来看游戏数据的配置与管理"></a>从应用场景来看游戏数据的配置与管理</h1><p>&emsp;&emsp;首先我们来从游戏当中的两个常见的应用场景:”复活”和”暂停/恢复”来看看游戏数据配置和管理的重要性。<br>这里以博主的一款<a href="https://github.com/qinyuanpei/ProfileGameShow/tree/master/Unity3D_RunningGirl" target="_blank" rel="noopener">跑酷游戏</a>为例：</p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="https://ww1.sinaimg.cn/large/4c36074fly1fz05dfu1kyj20ih0ihaef.jpg" alt="游戏截图" title="" referrerpolicy="no-referrer">
+                </div>
+                <div class="image-caption">游戏截图</div>
+            </figure>
+
+<h2 id="应用场景——“复活”"><a href="#应用场景——“复活”" class="headerlink" title="应用场景——“复活”"></a>应用场景——“复活”</h2><p>&emsp;&emsp;”复活”是一个在游戏中特别常见的功能，复活这一设定的好处在于无需重新开始游戏就能再次回到游戏当中，当然这只是我们最为直观的一个感受，更为深刻的原因是，游戏者巧妙地利用了玩家在游戏任务失败那一刻的心理。现在生活中每一个人都喜欢胜利，这种心理到了游戏世界中同样是适用的，因为游戏的目的无非就是让玩家有种成就感以获得快乐。可是当游戏任务失败的时候，玩家会竭尽全力不断尝试去打败Boss以获得游戏的胜利，因此在游戏中有这样一个设定，可以引导玩家在游戏中形成消费的习惯，这样游戏就能从玩家身上盈利。好了，我们来看看一个基本的”复活”的逻辑吧！</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">private void Update()</span><br><span class="line">&#123;</span><br><span class="line">    &#x2F;&#x2F;如果玩家的生命值大于0则游戏正常进行</span><br><span class="line">    if(Player.Hp&gt;0)</span><br><span class="line">    &#123; </span><br><span class="line">       &#x2F;&#x2F;游戏状态为Normal</span><br><span class="line">       GameManager.Instance.GameState&#x3D;GameStateEnum.Normal;</span><br><span class="line">       &#x2F;&#x2F;执行正常的游戏逻辑</span><br><span class="line">       DoNormalEvent();</span><br><span class="line">    &#125;else</span><br><span class="line">    &#123;</span><br><span class="line">       &#x2F;&#x2F;游戏状态为Over</span><br><span class="line">       GameManager.Instance.GameState&#x3D;GameStateEnum.Over;</span><br><span class="line">       &#x2F;&#x2F;显示GameOver</span><br><span class="line">       ShowGameOver();</span><br><span class="line">       &#x2F;&#x2F;玩家复活</span><br><span class="line">       ReLive()</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;玩家复活需要做两件事情：</p>
+<ul>
+<li>将游戏的状态从Over调整到Normal</li>
+<li>将玩家的状态从死亡调整到正常</li>
+</ul>
+<p>&emsp;&emsp;调整游戏的状态特别容易，因为GameManager是一个典型的单例模式，因此我们可以直接将GameState从Over变成Noral。可是对于玩家状态的调整，我们却遇到了困难。问题出在什么地方呢？问题出在我们将玩家的生命值等一系列属性都写在了PlayerController这个类中，如果我们将玩家的属性全部都设为Private，那么我们将无法从外部来调整这些属性。比如我们想让玩家满血复活，可是因为这些属性都是私有的，我们无法从外部访问，所以我们在给玩家恢复生命值的时候，无法获得玩家当前的生命值以及最大生命值。可是如果我们将玩家的属性全部都设为Public，我们可能不得不去面对在编辑器窗口中为每一个属性去赋值，因为一旦我们试图调整游戏双方力量的平衡时，这将是我们不得不去面对的问题，更为致命的玩家的属性并不是永远不变的，比如在RPG游戏中玩家的生命值等属性会随着角色等级的提升而不断增加。因此不管我们将这些属性设为Public还是Private，我们都无法保证每次访问到的这些数据都是最新的数据。换句话说，我们不能想当然地在脚本中将玩家的属性写成一个不变的值，因为这些数据随时都在发生着变化，当然如果像敌人和Boss这种数值相对稳定的情况，我们可以直接在脚本中将其写成一个固定值，不过我并不推荐大家这样做。由此可见，游戏中数据配置和管理的一个重要作用是维持各个状态间的正常切换。如图是雨血前传.蜃楼中的复活界面，每次复活需要消耗一个复活玉：</p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="http://7wy477.com1.z0.glb.clouddn.com/imgs_RainBlood" alt="雨血" title="2015-03-27" referrerpolicy="no-referrer">
+                </div>
+                <div class="image-caption">2015-03-27</div>
+            </figure>
+
+<p>&emsp;&emsp;那么博主在这款跑酷游戏里面是怎样做这个复活的呢？因为博主当时在设计这个游戏的时候考虑不周，直接将玩家的生命值写成了100，所以在复活玩家时候，同样是先将游戏的状态调整过来，然后再将相关的GUI窗口隐藏，然后将玩家的生命值重新设置为100，重新生成玩家就好了。正是因为感觉这段时间做游戏缺乏一种良好的游戏架构，所以每次游戏做到最后都是自己把逼到了绝路上，留给了自己一个自己都不想再去维护的烂摊子，这样显然是不好的，所以以后需要在正式动手写代码前做好规划，相信这样就能够保证游戏的质量了吧！任何东西学习到一定阶段都会遭遇瓶颈，尽管打破这种瓶颈的过程是痛苦的，可是如果不去打破它，那么你永远都只能停留在这个位置。</p>
+<h2 id="应用场景——“暂停-恢复”"><a href="#应用场景——“暂停-恢复”" class="headerlink" title="应用场景——“暂停/恢复”"></a>应用场景——“暂停/恢复”</h2><p>&emsp;&emsp;和”复活”一样，”暂停/恢复”同样是一个在游戏中常见的功能，该功能是给了玩家暂时离开游戏的一种选择，可以保证玩家在做其它事情的时候不会影响到游戏的进程。比如在仙剑奇侠传、古剑奇谭等游戏中，玩家可以按下ESC键调出游戏设置界面，在玩家进入游戏设置界面的这段时间，游戏世界里的时间似乎是静止的，场景中的敌人不会因为玩家在查看系统设置界面就去主动偷袭玩家，因为这种情况下游戏是暂停的。而当玩家退出系统设置界面后，游戏恢复为正常状态。到了移动互联网时代，游戏中出现”暂停/恢复”的情况更为普遍，这是由移动互联网时代人们玩游戏更注重休闲和娱乐这样的性质来决定的。记得天天酷跑刚刚在微信上线的那段时间，我身边好多同学都在上课的时候玩，可是因为这游戏一跑起来就根本停不下来，所以经常是一次游戏玩下来一节课就结束了。博主不提倡这样啊，玩游戏归玩游戏，可是什么事情都要有个度啊，不然就会变成玩物丧志。好了，我们分析这个案例的目的无非就是想告诉大家在游戏里增加这样一个”暂停/恢复”的功能还是十分必要的。好了，现在我们来分析下在这个应用场景中发生状态转换的时候都会牵扯到那些数据吧！</p>
+<p>&emsp;&emsp;首先游戏暂停后，场景内所有的物体都会停止运动，此时游戏中每个物体的状态都发生了变化，不过因为在Unity3D中控制游戏暂停/的恢复主要是通过调整Time.timeScale的值来实现的。当Time.timeScale取值为0时，游戏暂停；当Time.timeScale取值为1时，游戏恢复正常。不过需要注意的是Time.timeScale会对Unity3D中所有的时间产生影响如FixedUpdate()、协程、Destroy()、动画组件等等，所以如果对暂停后的游戏状态有特殊要求的话，建议还是通过其它的方法来实现吧！这里没有提到Update()和LaterUpdate()这是因为这两个方法不会受到影响。我们来看这样一段代码：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F;游戏是否暂停</span><br><span class="line">private bool isPause&#x3D;false;</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F;暂停&#x2F;恢复游戏的方法</span><br><span class="line">private void Resume()</span><br><span class="line">&#123;</span><br><span class="line">    if(!isPause)&#123;</span><br><span class="line">       Time.timeScale&#x3D;0;</span><br><span class="line">       isPause&#x3D;true;</span><br><span class="line">    &#125;else&#123;</span><br><span class="line">       Time.timeScale&#x3D;1;</span><br><span class="line">       isPause&#x3D;false;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;通过这段代码我们就能够实现一个基本的游戏”暂停/恢复”的功能。在游戏管理类GameManager中我们定义了一个玩家的得分。正常情况下，当玩家没有死亡的时候会在GUI中更新玩家的得分，而玩家的得分是直接采用在Update()中累加的方式实现的，因此玩家的得分会在游戏暂停后继续更新，这当然是不符合实际情况的，因此可以在这个增量前乘上一个Time.deltaTime就可以解决这个问题了。博主举这个例子无非就是想告诉大家使用这种方法来暂停游戏会存在这样的问题，希望大家以后注意啊！</p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="https://ww1.sinaimg.cn/large/4c36074fly1fz01z0gczpj20m70dd11a.jpg" alt="跑酷游戏复活界面" title="" referrerpolicy="no-referrer">
+                </div>
+                <div class="image-caption">跑酷游戏复活界面</div>
+            </figure>
+
+<h1 id="游戏数据配置和管理的思路和方法"><a href="#游戏数据配置和管理的思路和方法" class="headerlink" title="游戏数据配置和管理的思路和方法"></a>游戏数据配置和管理的思路和方法</h1><p>&emsp;&emsp;既然我们在今天的的文章中主要阐述的就是游戏数据配置和管理，那么下面我们就来说说游戏数据配置和管理的常见的思路和方法。根据游戏中数据变动的相对大小，我们将游戏中的数据分为静态数据和动态数据两类。</p>
+<h2 id="静态数据"><a href="#静态数据" class="headerlink" title="静态数据"></a>静态数据</h2><p>&emsp;&emsp;静态数据是指在游戏中基本不变或者不需要变动的数据。比如游戏中Boss的等级和生命值一般都是确定的，因此这种类型的数据可以称为静态数据。同样地，游戏中NPC对话的内容是一种静态数据，因为NPC的对话内容是在设计剧情的时候就设计好的无需再对它进行修改。那么对于静态数据，我们可以考虑下列方法：</p>
+<ul>
+<li>将静态数据作为常量定义在一个类中，这样做的好处是无需对每一个脚本进行修改。</li>
+<li>将静态数据存储在文件当中，这样做的好处是可以对数据进行管理，缺点是需要针对不同的文件编写解析接口，游戏开发中常用的数据存储形式有：Json、Xml、Excel、CSV等。</li>
+<li>将静态数据存储在数据库当中，如SQLIite等，可是这样做的缺点同样很明显，从本地读取数据库会消耗大量的资源，而且数据库文件一旦丢失，整个游戏都将无法运行。</li>
+</ul>
+<h2 id="动态数据"><a href="#动态数据" class="headerlink" title="动态数据"></a>动态数据</h2><p>&emsp;&emsp;动态数据是指在游戏中会不断变化的数据，比如玩家的得分、玩家的生命值、玩家的经验值等等。动态数据的处理方式除作为常量写在类中以外，其它的都和静态数据是一样的，在此就不再多说了。</p>
+<p>#总结<br>&emsp;&emsp;可能今天这篇文章显得唠叨些，甚至从技术的角度来看，这篇文章都没有讲到什么有价值的技术要点。可是在博主看来，不管一项技术有多么伟大，如果没有良好的架构或者说结构，那么当这个项目的规模到了一定程度以后，这个项目就会出现问题。因为根据破窗户理论，当你看到窗户破了而不去及时修补的话，那么时间一长你破掉的就是整个房子了。回顾博主这么长时间的游戏开发，其实做过的好多游戏到最后之所以没有做完，都是因为到最后项目基本失控、变成了一个连自己都不愿意去维护的项目，这样的情况是可怕的。平时是你一个人做项目，可能你觉得这些都没有什么，可是当你和别人一起去完成这样一个项目的时候，你的这些问题都会成为整个团队的问题。博主一直想知道自己做游戏和团队在一起做游戏会有什么不同，因为博主感觉自己在这一块确实不是掌握得很好。虽然说架构这种事情你做多了才会有经验，可是你现在发现了问题，为什么不在现在改掉呢？架构真的很重要，致那些因为架构死去的项目，真正的项目应该死在实践中，因为架构的问题最终变得不可收拾的，这件事情本身就是可耻的。好了，今天就说这么多了。</p>
+
+                
+
+                
+
+
+<div class="recommended_posts">
+    <h1>推荐阅读</h1>
+    <ul>
+        
+        <li><a href="https://qinyuanpei.github.io/posts/1118169753/">《仙剑奇侠传六》游戏感言</a></li>
+        
+        <li><a href="https://qinyuanpei.github.io/posts/906436376/">当Unity3D游戏开发遇上Excel</a></li>
+        
+        <li><a href="https://qinyuanpei.github.io/posts/2151871792/">浅议 EF Core 分库分表及多租户架构的实现</a></li>
+        
+        <li><a href="https://qinyuanpei.github.io/posts/1424645834/">Unity3D游戏开发之快速打造流行的关卡系统</a></li>
+        
+        <li><a href="https://qinyuanpei.github.io/posts/183718218/">SDL游戏开发系列第一话：Hello SDL</a></li>
+        
+    </ul>
+</div>
+
+            </div>
+            
+<blockquote class="post-copyright">
+    <div class="content">
+        <p><b>版权声明：</b>
+        <a href="https://qinyuanpei.github.io/posts/3356910090/" rel="external">从[复活]和[暂停/恢复]谈游戏数据配置管理</a>
+        ，由&nbsp;<a href="/about" target="_blank" rel="external">飞鸿踏雪</a>&nbsp;
+        首次发表于&nbsp;<a href="/" target="_blank" rel="external">一个人的孤落时辰</a>&nbsp;
+        ，本文地址为：<a href="https://qinyuanpei.github.io/posts/3356910090/" target="_blank" rel="external">https://qinyuanpei.github.io/posts/3356910090/</a>
+        ，转载请注明<b>作者</b>和<b>出处</b>。</p>
+    </div>
+    <footer>
+        <a href="https://qinyuanpei.github.io">
+            <img src="/assets/images/avatar.jpg" alt="飞鸿踏雪">
+            飞鸿踏雪
+        </a>
+    </footer>
+</blockquote>
+
+
+            
+<div class="page-reward">
+    <a id="rewardBtn" href="javascript:;" class="page-reward-btn waves-effect waves-circle waves-light">赏</a>
+</div>
+
+
+            <div class="post-footer">
+                
+	<ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%95%B0%E6%8D%AE/" rel="tag">数据</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%B8%B8%E6%88%8F/" rel="tag">游戏</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%8A%B6%E6%80%81/" rel="tag">状态</a></li></ul>
+
+                
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://qinyuanpei.github.io/posts/3356910090/&title=《从[复活]和[暂停/恢复]谈游戏数据配置管理》 — 一个人的孤落时辰&pic=https://qinyuanpei.github.ioassets/images/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://qinyuanpei.github.io/posts/3356910090/&title=《从[复活]和[暂停/恢复]谈游戏数据配置管理》 — 一个人的孤落时辰&source=&emsp;&emsp;随着游戏制作技术的不断发展，在经历了从2D到3D、从单机到网游、从PC游戏到移动游戏的种种演变后，玩家对于游戏质量的要求越来越高，..." data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://qinyuanpei.github.io/posts/3356910090/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《从[复活]和[暂停/恢复]谈游戏数据配置管理》 — 一个人的孤落时辰&url=https://qinyuanpei.github.io/posts/3356910090/&via=https://qinyuanpei.github.io" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://qinyuanpei.github.io/posts/3356910090/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+      
+      <li>
+        <a class="google share-sns" target="_blank" onClick="show_yp()" data-title=" 生成海报">
+          <i class="icon icon-file-image-o"></i>
+        </a>
+      </li>
+      
+    </ul>
+ </div>
+
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
+            </div>
+        </div>
+
+        
+<nav class="post-nav flex-row flex-justify-between">
+  
+    <div class="waves-block waves-effect prev">
+      <a href="/posts/70687890/" id="post-prev" class="post-nav-link">
+        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
+        <h4 class="title">Unity3D游戏开发之编辑器扩展程序开发实例</h4>
+      </a>
+    </div>
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/posts/828223375/" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h4 class="title">为Hexo开发一个网易云音乐的文章插件</h4>
+      </a>
+    </div>
+  
+</nav>
+
+
+        
+    <div id="comment"></div>
+<script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+<script src='//unpkg.com/valine/dist/Valine.min.js'></script>
+<script type="text/javascript">
+new Valine({
+    el: '#comment' ,
+    notify: false, 
+    verify: true, 
+    appId: 'JbHqRp2eMrTgIwYpfERH0g79-gzGzoHsz',
+    appKey: 'VsiKvLuiBGvJL1XrAfv7siY2',
+    placeholder: '云中谁寄锦书来，雁字回时，月满西楼。&#10;Tips：如果希望收到我的评论回复，请至少留下你的邮箱哦:)',
+    path:'https://qinyuanpei.github.io/posts/3356910090/', 
+    avatar:'identicon',
+    requiredFields: ['nick','mail']
+});
+</script>
+
+
+
+
+    </article>
+    
+<div id="reward" class="page-modal reward-lay">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <h3 class="reward-title">
+        <i class="icon icon-quote-left"></i>
+        赠人玫瑰，手有余香
+        <i class="icon icon-quote-right"></i>
+    </h3>
+    <div class="reward-content">
+        
+        <div class="reward-code">
+            <img id="rewardCode" src="/assets/images/wechat.png" alt="打赏二维码">
+        </div>
+        
+        <label class="reward-toggle">
+            <input id="rewardToggle" type="checkbox" class="reward-toggle-check"
+                data-wechat="/assets/images/wechat.png" data-alipay="/assets/images/alipay.jpg">
+            <div class="reward-toggle-ctrol">
+                <span class="reward-toggle-item wechat">微信</span>
+                <span class="reward-toggle-label"></span>
+                <span class="reward-toggle-item alipay">支付宝</span>
+            </div>
+        </label>
+        
+    </div>
+</div>
+
+
+    <script type="text/javascript" src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/yoniu.min.js"></script>
+<style type='text/css'>
+	body.active-yp {
+		overflow: hidden;
+	}
+	.yp-fc-btn{
+		display: flex;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		align-items: center;
+		justify-content: space-between;
+		font-size: 13px;
+	}
+	.yp-fc-btn span{
+		cursor: pointer;
+		padding: 2px 10px;
+		color: #4b4b4b;
+		border: #4b4b4b 1px solid;
+		border-radius:5px;
+	}
+	#yp-hide{
+		position: fixed;
+		display: flex;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		justify-content: center;
+		flex-direction: column;
+		left:0;
+		top:0;
+		right:0;
+		bottom:0;
+		background-color:rgba(0,0,0,.5);
+		z-index: 99999;
+		visibility: hidden;
+	}
+	#yoniu-poster{
+		box-sizing: border-box;
+		width: 350px;
+		height: 467.2px;
+		background-color: #fff;
+		margin: 0 auto;
+		padding: 0;
+		line-height: 1.6;
+		text-align:justify;
+	}
+	
+	.yp-img {
+		min-height: 240px;
+		position: relative;
+		display: flex;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		justify-content: flex-end;
+		flex-direction: column;
+		background-position: 50% 50%;
+		background-size: cover;
+		overflow:hidden;
+	}
+	.yp-img>div{
+		padding: 10px 20px;
+	}
+	.yp-name{
+		display: block;
+		color: #fff;
+		font-size: 20px;
+		font-weight: 600;
+		text-shadow: #4b4b4b 0.1em 0.1em 0.2em;
+		margin-top: 10px;
+	}
+	.yp-sort{
+		padding: 3px 10px;
+		font-size: 12px;
+		color: #fff;
+		background: #2e2e2e;
+	}
+	.yp-des{
+		color: #2e2e2e;
+		font-size: 14px;
+		margin: 20px;
+		height: 67.2px;
+	}
+	.yp-qcode{
+		display: flex;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		justify-content: space-between;
+		align-items: center;
+		margin: 10px;
+		padding: 10px 20px;
+		background: #f5f5f5;
+		color: #818181;
+		border-radius: 10px;
+	}
+	.yp-tips{
+		display: flex;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		justify-content: space-between;
+		align-items: center;
+		color: #ccc;
+		margin: 0 10px 10px;
+		font-size: 10px;
+		letter-spacing: 1.5px;
+	}
+	.yp-btns{
+		display: flex;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		align-items: stretch;
+		justify-content: center;
+		width:350px;
+		margin: 0 auto;
+	}
+	.yp-btns>span{
+		display: flex;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		align-items: center;
+		justify-content: center;
+		font-size: 14px;
+		padding: 10px 15px;
+		background:rgba(0,0,0,.2);
+		color: #f5f5f5;
+		cursor: pointer;
+	}
+	.yp-btns>span>a{
+		color: #f5f5f5;
+	}
+	.yp-btns>span>a:hover{
+		text-decoration:none;
+	}
+	#yp-close{
+		font-size: 18px;
+		font-weight: 600;
+	}
+</style>
+<div id="yp-hide">
+    <div id="yoniu-poster">
+        <div class="yp-img" id="yp-img">
+            <div>
+                <span class="yp-sort">游戏开发</span>
+                <span class="yp-name">从[复活]和[暂停/恢复]谈游戏数据配置管理</span>
+            </div>
+        </div>
+        <div class="yp-des">    
+            
+                &emsp;&emsp;随着游戏制作技术的不断发展，在经历了从2D到3D、从单机到网游、从PC游戏到移动游戏的种种演变后，玩家对于游戏质量的要求...
+            
+        </div>
+        <div class="yp-qcode">
+            <span>扫描二维码阅读原文</span>
+            <img id="yp-qcode" width="64px" src="//api.qrserver.com/v1/create-qr-code/?data=https://qinyuanpei.github.io/posts/3356910090/">
+        </div>
+        <div class="yp-tips">
+            <span>一个人的孤落时辰</span>
+            <span><time class="post-time" title="2015-03-27 02:12:58" datetime="2015-03-27T02:12:58.000Z"  itemprop="datePublished">2015-03-27</time>
+</span>
+        </div>
+    </div>
+    <div class="yp-btns">
+        <span id="yp-load-yp" onClick="load_yp()">生成海报</span>
+        <span><a id="yp-download"></a></span>
+        <span id="yp-close" onClick="close_yp()">×</span>
+    </div>
+</div>
+<script type="text/javascript">
+    function show_yp(){
+        window.scrollTo(0, 0);
+        document.body.setAttribute("class","active-yp");
+        let cover = document.getElementsByTagName('img')[1];
+        if (cover != null && typeof(cover) != 'undefined') {
+            document.getElementById('yp-img').style.backgroundImage = `url(${cover.src})`;
+        } else {
+            document.getElementById('yp-img').style.backgroundColor = '#d7dbf0';
+        }
+        document.getElementById("yp-hide").style.visibility = "visible";
+    }
+    function close_yp(){
+        var domClass = document.body.getAttribute("class");
+        domClass = domClass.replace("active-yp","");
+        document.body.setAttribute("class",domClass);
+        document.getElementById("yp-hide").style.visibility = "hidden";
+    }
+    function load_yp(){
+        document.getElementById('yp-load-yp').textContent = '海报生成中...';
+        setTimeout(function() {
+            h2c_();
+        },2000);
+
+    }
+</script>
+
+</div>
+
+        <footer class="footer">
+    <div class="top">
+        
+   <p>
+      <span id="lc_counter_container_site_uv">
+         <i class="icon icon-user"></i><span id="lc_counter_value_site_uv"></span>
+      </span>
+      <span id="lc_counter_container_site_pv">
+         <i class="icon icon-eye"></i><span id="lc_counter_value_site_pv"></span>
+      </span>
+  </p>
+
+
+        <p>
+   <a id="jinrishici-sentence" href="https://www.jinrishici.com/" target="_blank" rel="noopener">加载中</a>
+</p>
+<script src="https://sdk.jinrishici.com/v2/browser/jinrishici.js" charset="utf-8"></script>
+<script>
+   jinrishici.load(function(result) {
+      document.querySelector('#subtitle').innerText = result.data.content;
+      document.querySelector('#jinrishici-sentence').innerText = result.data.content;
+  });
+</script>
+            <!--Todo: 考虑重构为插件 -->
+            <p>
+                
+                    <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+                
+                <span>
+                    <a href="https://github.com/qinyuanpei" target="_blank" rel="license noopener" title="Github">
+                        <i class="icon icon-lg icon-github"></i>
+                    </a>
+                </span>
+                <span>
+                    <a href="https://weibo.com/1278609231/profile" target="_blank" rel="license noopener" title="微博">
+                        <i class="icon icon-lg icon-weibo"></i>
+                    </a>
+                </span>
+                <span>
+                    <a href="https://www.douban.com/people/60029335/" target="_blank" rel="license noopener" title="豆瓣">
+                        <i class="icon icon-lg icon-douban"></i>
+                    </a>
+                </span>
+                <span>
+                    <a href="https://www.zhihu.com/people/qinyuanpei" target="_blank" rel="license noopener" title="知乎">
+                        <i class="icon icon-lg icon-zhihu-square"></i>
+                    </a>
+                </span>
+                <span>
+                    <a href="https://blog.csdn.net/qinyuanpei" target="_blank" rel="license noopener" title="CSDN">
+                        <i class="icon icon-lg">C</i>
+                    </a>
+                </span>
+                <span>
+                    <a href="https://music.163.com/#/user/home?id=47002864" target="_blank" rel="license noopener" title="网易音乐">
+                        <i class="icon icon-lg icon-wangyiyunyinyue"></i>
+                    </a>
+                </span>
+            </p>
+        
+    </div>
+    <div class="bottom">
+        <p><span>飞鸿踏雪 &copy; 2014 - 2021</span><br>
+            
+                
+                Powered by <a href="http://hexo.io/" target="_blank">Hexo</a> & Theme by <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a><br>
+                
+                
+                    <p>Hosted by <a href="https://pages.github.com" target="_blank" rel="noopener" style="font-weight: bold">Github Pages</a></p>
+                
+        </p>
+    </div>
+</footer>
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span
+        class="icon icon-lg icon-chevron-up"></span></a>
+
+    
+
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://qinyuanpei.github.io/posts/3356910090/&title=《从[复活]和[暂停/恢复]谈游戏数据配置管理》 — 一个人的孤落时辰&pic=https://qinyuanpei.github.ioassets/images/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://qinyuanpei.github.io/posts/3356910090/&title=《从[复活]和[暂停/恢复]谈游戏数据配置管理》 — 一个人的孤落时辰&source=&emsp;&emsp;随着游戏制作技术的不断发展，在经历了从2D到3D、从单机到网游、从PC游戏到移动游戏的种种演变后，玩家对于游戏质量的要求越来越高，..." data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://qinyuanpei.github.io/posts/3356910090/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《从[复活]和[暂停/恢复]谈游戏数据配置管理》 — 一个人的孤落时辰&url=https://qinyuanpei.github.io/posts/3356910090/&via=https://qinyuanpei.github.io" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://qinyuanpei.github.io/posts/3356910090/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+      
+      <li>
+        <a class="google share-sns" target="_blank" onClick="show_yp()" data-title=" 生成海报">
+          <i class="icon icon-file-image-o"></i>
+        </a>
+      </li>
+      
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="//api.qrserver.com/v1/create-qr-code/?data=https://qinyuanpei.github.io/posts/3356910090/" alt="微信分享二维码">
+</div>
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.6/waves.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/4.2.1/echarts.min.js"></script>
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/echarts-wordcloud.min.js" async></script>
+<script>
+    var BLOG = { ROOT: '/', SHARE: true, REWARD: true };
+
+
+</script>
+
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/main.min.js"></script>
+
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/search.min.js" async></script>
+
+
+
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/heart.min.js" async></script>
+
+
+
+
+
+
+
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/leancloud-counter.min.js"></script>
+<script>
+        (function () {
+            var appId = 'JbHqRp2eMrTgIwYpfERH0g79-gzGzoHsz';
+            var appKey = 'VsiKvLuiBGvJL1XrAfv7siY2';
+            new VisitorCounter().init({
+                appId: appId,       //应用ID, 必输
+                appKey: appKey,      //应用Key, 必输
+                region: '华北',      //华东,华北,国际, 默认华东
+                domain: '',      //自定义域名
+                collectIP: true, //是否收集IP及位置信息, 默认开启
+                collectUA: true  //是否收集UserAgent, 默认开启
+            });
+        })();
+</script>
+
+
+
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/vconsole.min.js"></script>
+<script type="text/javascript">
+    //当地址中存在debug=true时，实例化vConsole
+    if (location.href.indexOf('debug=true') > -1) {
+        var vConsole = new VConsole();
+    }
+</script>
+
+
+    <script>
+    //国内用户自动重定向Coding Pages镜像
+    // var ipInfo = JSON.parse(localStorage.getItem('ipInfo'));
+    // if (ipInfo.country_code == 'CN') {
+    //     location.href = location.href.replace('qinyuanpei.github.io', 'blog.yuanpei.me');
+    // }
+    </script>
+
+
+<script>
+titleArray = [];
+function scrollTitle() {
+    if (titleArray.length == 0) return;
+    titleArray.push(titleArray[0]);
+	titleArray.shift();
+	document.title = titleArray.join("");
+}
+setInterval(scrollTitle, 500);
+(function() {
+    var originTitile = document.title, titleTime;
+    document.addEventListener('visibilitychange', function() {
+        if (document.hidden) {
+            titleArray = originTitile.split('');
+            clearTimeout(titleTime);
+        } else {
+            document.title = originTitile;
+            titleArray = originTitile.split('');
+            titleTime = setTimeout(function() {
+                document.title = originTitile;
+                titleArray = [];
+            },2000);
+        }
+    });
+})();
+</script>
+
+
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/ribbon.min.js"></script>
+</body>
+</html>
