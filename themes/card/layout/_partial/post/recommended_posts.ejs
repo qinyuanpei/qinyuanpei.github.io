@@ -17,15 +17,6 @@
         let relatedPosts = pageTags.map(x=>sitePosts.filter(y=>y.title != page.title  && (y.tags.indexOf(x) != -1 || y.date.format('MM/DD') == page.date.format('MM/DD')))).reduce((prev,next)=>{
             return prev.concat(next);
         },[]);
-        if (relatedPosts.length != limit) {
-            let pageCategories = page.categories.map(x=>x.name);
-            console.log(pageCategories);
-            let sameCategoryPosts = pageCategories.map(x=>sitePosts.filter(y=>y.title != page.title  && (y.categories.indexOf(x) != -1 || y.date.format('MM/DD') == page.date.format('MM/DD')))).reduce((prev,next)=>{
-                return prev.concat(next);
-            },[]);
-            console.log(sameCategoryPosts);
-            relatedPosts = relatedPosts.concat(sameCategoryPosts);
-        }
         if (relatedPosts.length == 0) {
             return shuffle(site.posts.toArray()).slice(0, limit);
         }
