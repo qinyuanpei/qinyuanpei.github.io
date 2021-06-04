@@ -1,0 +1,884 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+    
+<script async defer data-domain="blog.yuanpei.me" src="https://plausible.io/js/plausible.js"></script>
+    
+    <meta charset="utf-8">
+    <!-- HTTP 1.1 -->  
+    <meta http-equiv="pragma" content="no-cache">  
+    <!-- HTTP 1.0 -->  
+    <meta http-equiv="cache-control" content="no-cache">
+    <!-- 微博图床防盗链 --> 
+    <!-- <meta name="referrer" content="no-referrer"/> -->
+    <!--Google站点验证-->
+    
+    <!--百度站点验证-->
+    
+    
+    <!--Google AdSense-->
+    
+    <!--Bing站点验证-->
+    <meta name="msvalidate.01" content="713A48A3FE17D4841C292A6B3942EB4C" />
+    
+    <title>
+        Unity3D游戏开发之从Unity3D项目版本控制说起 | 一个人的孤落时辰 | 纵有疾风起，人生不言弃
+    </title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+        <meta name="theme-color" content="#3F51B5">
+    
+
+    <meta name="keywords" content="Unity3D,版本控制,SVN,Github,秦元培,技术博客,生活随笔,个人博客,NET,Python,数据挖掘,数据分析,NLP">
+    
+        <meta name="description" content="Unity3D的[Asset Server](http://unity3d.com/unity/team/assetserver/)是一个Unity3D内部集成的版本控制软件，它和我们熟知的SVN类似，适合在小团队内进行版本控制，这是一个收费软件，尽管在某些方面它甚至比SVN还要方便，不过在实际的项目中使用这个的还是比较少的，所以如果大家对这个感兴趣，可以从这里了解它的具体情况，这里我们不打算介绍这个软件的使用;因此为了方便版本控制软件对文件进行比对，常常需要项目变动的这些因素转化为文本形式，如果熟悉Github的朋友应该知道，Github中判断两个文件的差异就是根据文本(代码)来比较的，因此在Unity3D中使用版本控制同样需要遵循这个原则，好在Unity3D在管理Unity3D项目时已经考虑到了这一点，通常在对Unity3D项目进行版本控制的时候，我们需要做这样的事情：;使用Github进行版本控制时可以在Git仓库中添加一个.gitignore文件来对项目中需要同步的文件进行过滤，在文章开始我们已经知道Unity3D项目的版本控制主要针对Assets和ProjectSetting这两个文件，因此.gitignore的内容可以这样填写:;在Unity3D中进行版本控制主要针对Assets和ProjectSetting这两个文件夹，因为除此以外的文件和文件夹都是Unity3D在运行过程中产生的临时文件，这些文件会在使用Unity3D打开项目后重新生成，因此无需对这些文件或文件夹进行版本控制;* Unity3D中的资源默认是以二进制的形式进行组织的，这种组织方式对版本控制来说是不合适的，因此需要通过通过Edit-&gt;Project Settings-&gt;Editor菜单打开编辑器设置选项，将Asset Serialization下的Mode设为Force Text">
+    
+    <meta name="description" content="Unity3D的[Asset Server](http:&#x2F;&#x2F;unity3d.com&#x2F;unity&#x2F;team&#x2F;assetserver&#x2F;)是一个Unity3D内部集成的版本控制软件，它和我们熟知的SVN类似，适合在小团队内进行版本控制，这是一个收费软件，尽管在某些方面它甚至比SVN还要方便，不过在实际的项目中使用这个的还是比较少的，所以如果大家对这个感兴趣，可以从这里了解它的具体情况，这里我们不打算介绍">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Unity3D游戏开发之从Unity3D项目版本控制说起">
+<meta property="og:url" content="https://qinyuanpei.github.io/posts/1320325685/index.html">
+<meta property="og:site_name" content="一个人的孤落时辰">
+<meta property="og:description" content="Unity3D的[Asset Server](http:&#x2F;&#x2F;unity3d.com&#x2F;unity&#x2F;team&#x2F;assetserver&#x2F;)是一个Unity3D内部集成的版本控制软件，它和我们熟知的SVN类似，适合在小团队内进行版本控制，这是一个收费软件，尽管在某些方面它甚至比SVN还要方便，不过在实际的项目中使用这个的还是比较少的，所以如果大家对这个感兴趣，可以从这里了解它的具体情况，这里我们不打算介绍">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://ww1.sinaimg.cn/large/None.jpg">
+<meta property="og:image" content="https://ww1.sinaimg.cn/large/4c36074fly1fz68ju6tshj20ec0c4gmg.jpg">
+<meta property="article:published_time" content="2015-07-02T09:35:42.000Z">
+<meta property="article:modified_time" content="2021-06-04T03:53:39.969Z">
+<meta property="article:author" content="飞鸿踏雪">
+<meta property="article:tag" content="Unity3D">
+<meta property="article:tag" content="版本控制">
+<meta property="article:tag" content="SVN">
+<meta property="article:tag" content="Github">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://ww1.sinaimg.cn/large/None.jpg">
+    
+        <link rel="alternate" type="application/atom+xml" title="一个人的孤落时辰" href="/atom.xml">
+    
+    <link rel="shortcut icon" href="/assets/images/favicon.ico">
+    
+        <link rel="manifest" href="/manifest.json">
+    
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master//assets/styles/style.css">
+    <script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/instantclick.min.js"></script>
+    <script>window.lazyScripts=[]</script>
+    <!-- custom head -->
+    
+
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu" class="hide" >
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap" style="background-image:url(/assets/images/brand.jpg)">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/assets/images/avatar.jpg" alt="avatar">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">飞鸿踏雪</h5>
+          <a href="mailto:qinyuanpei@163.com" title="qinyuanpei@163.com" class="mail">qinyuanpei@163.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/"  >
+                <i class="icon icon-lg icon-home"></i>
+                主页
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives"  >
+                <i class="icon icon-lg icon-archives"></i>
+                归档
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags"  >
+                <i class="icon icon-lg icon-tags"></i>
+                标签
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/categories"  >
+                <i class="icon icon-lg icon-th-list"></i>
+                分类
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/books"  >
+                <i class="icon icon-lg icon-bookmark"></i>
+                书单
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/movies"  >
+                <i class="icon icon-lg icon-film"></i>
+                影单
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/works"  >
+                <i class="icon icon-lg icon-code"></i>
+                实验室
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/about"  >
+                <i class="icon icon-lg icon-circle"></i>
+                关于我
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+            <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">Unity3D游戏开发之从Unity3D项目版本控制说起</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off"
+                placeholder="输入感兴趣的关键字">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+        <a href="https://github.com/qinyuanpei/qinyuanpei.github.io" target="_blank" rel="noopener" class="header-icon waves-effect waves-circle waves-light" id="menuGithub">
+            <i class="icon icon-lg icon-code-fork"></i>
+        </a>
+    </div>
+</header>
+<header class="content-header post-header">
+    <div class="container fade-scale">
+        <h1 class="title">Unity3D游戏开发之从Unity3D项目版本控制说起</h1>
+        <h5 class="subtitle" id="subtitle">
+            
+            <time datetime="2015-07-02T09:35:42.000Z" itemprop="datePublished" class="page-time">
+  2015-07-02
+</time>
+
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Unity3D/">Unity3D</a></li></ul>
+
+            
+        </h5>
+    </div>
+    
+
+</header>
+
+<div class="container body-wrap">
+    
+    <aside class="post-widget">
+        <nav class="post-toc-wrap" id="post-toc">
+            <h4>目录</h4>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#为什么要进行版本控制？"><span class="post-toc-number">1.</span> <span class="post-toc-text">为什么要进行版本控制？</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#怎样在Unity3D中进行版本控制？"><span class="post-toc-number">2.</span> <span class="post-toc-text">怎样在Unity3D中进行版本控制？</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#使用Asset-Server进行版本控制"><span class="post-toc-number">2.1.</span> <span class="post-toc-text">使用Asset Server进行版本控制</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#使用Github进行版本控制"><span class="post-toc-number">2.2.</span> <span class="post-toc-text">使用Github进行版本控制</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#使用SVN进行版本控制"><span class="post-toc-number">2.3.</span> <span class="post-toc-text">使用SVN进行版本控制</span></a></li></ol></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#小结"><span class="post-toc-number">3.</span> <span class="post-toc-text">小结</span></a></li></ol>
+        </nav>
+    </aside>
+    
+    <article id="post-Unity3D游戏开发之从Unity3D项目版本控制说起" class="post-article article-type-post fade" itemprop="blogPost">
+
+        <div class="post-card">
+            <h1 class="post-card-title">
+                Unity3D游戏开发之从Unity3D项目版本控制说起
+            </h1>
+            <div class="post-meta">
+                <time class="post-time" title="2015-07-02 09:35:42" datetime="2015-07-02T09:35:42.000Z"  itemprop="datePublished">2015-07-02</time>
+
+                
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Unity3D/">Unity3D</a></li></ul>
+
+
+
+                
+<span id="lc_counter_container_page_pv" title="文章总阅读量" data-page-url="" data-page-title="Unity3D游戏开发之从Unity3D项目版本控制说起">
+    <i class="icon icon-eye icon-pr"></i><span id="lc_counter_value_page_pv"></span>
+</span>
+
+
+
+
+
+                
+    <span>
+        <i class="icon icon-clock-o"></i>
+        11 min.
+    </span>
+    
+            </div>
+            <div class="post-content" id="post-content" itemprop="postContent">
+                <p>&emsp;&emsp;各位朋友，大家好，欢迎大家关注我的博客，我是秦元培，我的独立博客地址是<a href="http://qinyuanpei.com" target="_blank" rel="noopener">http://qinyuanpei.com</a>、CSDN博客地址是<a href="http://blog.csdn.net/qinyuanpei" target="_blank" rel="noopener">http://blog.csdn.net/qinyuanpei</a>。今天我想和大家聊聊Unity3D游戏项目的版本控制。</p>
+<a id="more"></a>
+
+<h1 id="为什么要进行版本控制？"><a href="#为什么要进行版本控制？" class="headerlink" title="为什么要进行版本控制？"></a>为什么要进行版本控制？</h1><p>&emsp;&emsp;当我一个人写代码的时候，在我的脑海中是不存在版本控制这个概念的，因为我对整个项目的代码如数家珍。可是当我和一群人在一起写代码的时候，我可能并不会清楚团队中有谁修改了哪一行代码，即使是一个变量的名称或者是一个函数的名称，在我毫不知情的情况下，可能这样的修改会使得程序无法运行，这个时候我需要版本控制；尽管Unity3D是一个适合小团队开发的游戏引擎，可是即使再小的团队同样会有不同的分工，当大家需要将各自的工作合并到一个完整的项目中的时候，这个时候我需要版本控制；当我需要了解团队成员实际的编程能力的时候，最好的方法是让他们参与到一个项目的开发中，这样我可以从他提交代码的情况了解他的工作能力，这个时候我需要版本控制；当我希望时时刻刻对项目进行备份，并在某一个关键的时刻将项目恢复到一个正确的状态的时候，复制、黏贴不会让这个工作变得简单，这个时候我需要版本控制。</p>
+<h1 id="怎样在Unity3D中进行版本控制？"><a href="#怎样在Unity3D中进行版本控制？" class="headerlink" title="怎样在Unity3D中进行版本控制？"></a>怎样在Unity3D中进行版本控制？</h1><p>&emsp;&emsp;在Unity3D中进行版本控制主要针对Assets和ProjectSetting这两个文件夹，因为除此以外的文件和文件夹都是Unity3D在运行过程中产生的临时文件，这些文件会在使用Unity3D打开项目后重新生成，因此无需对这些文件或文件夹进行版本控制。好了，在了解了Unity3D版本控制中需要关注的主要内容后，接下来我们要关注的是怎样让版本控制的软件对我们提交的内容进行差异化识别，我们知道版本控制的一个核心任务就是将服务器上的文件和本地的文件进行比对，找出哪些文件是最新生成的、哪些文件是被修改过的等等。因此为了方便版本控制软件对文件进行比对，常常需要项目变动的这些因素转化为文本形式，如果熟悉Github的朋友应该知道，Github中判断两个文件的差异就是根据文本(代码)来比较的，因此在Unity3D中使用版本控制同样需要遵循这个原则，好在Unity3D在管理Unity3D项目时已经考虑到了这一点，通常在对Unity3D项目进行版本控制的时候，我们需要做这样的事情：</p>
+<ul>
+<li><p>通过Edit-&gt;Project Settings-&gt;Editor菜单打开编辑器设置选项，将Version Control选项下的Mode设为Visual Meta Files，这样Unity3D将为项目中的每个文件或者每个文件夹生成对应的.Meta文件。该文件是一个文本文件，记录了对应文件的相关信息，版本控制软件可以以此来对文件版本进行对比和合并操作。</p>
+</li>
+<li><p>Unity3D中的资源默认是以二进制的形式进行组织的，这种组织方式对版本控制来说是不合适的，因此需要通过通过Edit-&gt;Project Settings-&gt;Editor菜单打开编辑器设置选项，将Asset Serialization下的Mode设为Force Text。</p>
+</li>
+<li><p>通过Edit-&gt;Prefences-&gt;External Tools找到Revision Control Diff/Merge选项，在安装了版本控制软件后可以在这里找到相关的选项，以博主为例，博主使用的是TortoiseSVN，这里的选项是TortoiseMegre。目前Unity3D支持的版本控制软件有SourceGear DiffMerge、TKDiff、P4Megre、TortoiseMegre、WinMegre、PlasticSCM Megre。</p>
+</li>
+</ul>
+<p><img src="https://ww1.sinaimg.cn/large/None.jpg" alt="编辑器设置">      <img src="https://ww1.sinaimg.cn/large/4c36074fly1fz68ju6tshj20ec0c4gmg.jpg" alt="编辑器设置"></p>
+<p>&emsp;&emsp;好了，在完成以上准备工作后，我们就可以开始进行Unity3D项目的版本控制了，目前在Unity3D中我们主要有以下三种方式来对Unity3D项目进行版本控制：</p>
+<h2 id="使用Asset-Server进行版本控制"><a href="#使用Asset-Server进行版本控制" class="headerlink" title="使用Asset Server进行版本控制"></a>使用Asset Server进行版本控制</h2><p>&emsp;&emsp;Unity3D的<a href="http://unity3d.com/unity/team/assetserver/" target="_blank" rel="noopener">Asset Server</a>是一个Unity3D内部集成的版本控制软件，它和我们熟知的SVN类似，适合在小团队内进行版本控制，这是一个收费软件，尽管在某些方面它甚至比SVN还要方便，不过在实际的项目中使用这个的还是比较少的，所以如果大家对这个感兴趣，可以从这里了解它的具体情况，这里我们不打算介绍这个软件的使用。</p>
+<p><a href="http://blog.csdn.net/amazonzx/article/details/7980117" target="_blank" rel="noopener">Unity3D游戏制作（四）——Asset Server搭建</a></p>
+<p><a href="http://tieba.baidu.com/p/2419391804" target="_blank" rel="noopener">【教程】Asset Server（联合开发）</a></p>
+<h2 id="使用Github进行版本控制"><a href="#使用Github进行版本控制" class="headerlink" title="使用Github进行版本控制"></a>使用Github进行版本控制</h2><p>&emsp;&emsp;使用Github进行版本控制时可以在Git仓库中添加一个.gitignore文件来对项目中需要同步的文件进行过滤，在文章开始我们已经知道Unity3D项目的版本控制主要针对Assets和ProjectSetting这两个文件，因此.gitignore的内容可以这样填写:</p>
+<figure class="highlight gams"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">Library/</span><br><span class="line">Temp/</span><br><span class="line"><span class="comment">*.sln</span></span><br><span class="line"><span class="comment">*.csproj</span></span><br><span class="line"><span class="comment">*.sln</span></span><br><span class="line"><span class="comment">*.userprefs</span></span><br><span class="line"><span class="comment">*.unityproj</span></span><br><span class="line"><span class="comment">*.DS_Store</span></span><br></pre></td></tr></table></figure>
+
+<p>&emsp;&emsp;这样每次提交文件的时候Github将忽略这些文件的更改。关于Github的使用及其相关命令可以查看这里：</p>
+<p><a href="http://www.cnblogs.com/lwzz/archive/2013/02/23/2921426.html" target="_blank" rel="noopener">总结自己的Git常用命令</a></p>
+<p><a href="http://www.ruanyifeng.com/blog/2014/06/git_remote.html" target="_blank" rel="noopener">Git远程操作详解</a></p>
+<p>&emsp;&emsp;Github中每个仓库的容量限制为1G，适合小项目的版本控制，对于大型项目的版本控制应该考虑使用SVN。</p>
+<h2 id="使用SVN进行版本控制"><a href="#使用SVN进行版本控制" class="headerlink" title="使用SVN进行版本控制"></a>使用SVN进行版本控制</h2><p>&emsp;&emsp;使用SVN进行版本控制时可以通过右键菜单将某些文件和文件夹添加到忽略的文件列表中，这样SVN在每次提交文件的时候将忽略这些文件的更改。这块儿其实和Github的.gitignore是相同的。SVN常用的软件组合是 TortoiseSVN(客户端)+VisualSVN Server(服务端)，具体内容请参考这2篇文章：<a href="http://www.cnblogs.com/armyfai/p/3985660.html" target="_blank" rel="noopener">SVN使用教程总结</a>和<a href="http://blog.chinaunix.net/uid-27004869-id-4112057.html" target="_blank" rel="noopener">客户端TortoiseSVN的安装及使用方法 </a></p>
+<h1 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h1><p>&emsp;&emsp;不管使用什么版本控制软件，建立相关的代码提交规范和流程控制规范都是必要的，因此在团队中应该有一个人负责对团队成员提交的代码进行审核和规范化，这样可以减少因为因为代码提交而产生的各种问题。好了，今天这篇文章先写到这里了，希望大家喜欢！</p>
+
+                
+
+                
+
+
+<div class="recommended_posts">
+    <h1>推荐阅读</h1>
+    <ul>
+        
+        <li><a href="https://qinyuanpei.github.io/posts/305484621/">C#中的扩展方法学习总结</a></li>
+        
+        <li><a href="https://qinyuanpei.github.io/posts/3120185261/">EasyAR尝鲜系列教程之Hello EasyAR</a></li>
+        
+        <li><a href="https://qinyuanpei.github.io/posts/1156673678/">EasyAR尝鲜系列教程之自定义Marker的实现</a></li>
+        
+        <li><a href="https://qinyuanpei.github.io/posts/316230277/">EasyAR尝鲜系列教程之视频播放功能的实现</a></li>
+        
+        <li><a href="https://qinyuanpei.github.io/posts/1176959868/">Unity3D塔防游戏开发项目讲解(下)</a></li>
+        
+    </ul>
+</div>
+
+            </div>
+            
+<blockquote class="post-copyright">
+    <div class="content">
+        <p><b>版权声明：</b>
+        <a href="https://qinyuanpei.github.io/posts/1320325685/" rel="external">Unity3D游戏开发之从Unity3D项目版本控制说起</a>
+        ，由&nbsp;<a href="/about" target="_blank" rel="external">飞鸿踏雪</a>&nbsp;
+        首次发表于&nbsp;<a href="/" target="_blank" rel="external">一个人的孤落时辰</a>&nbsp;
+        ，本文地址为：<a href="https://qinyuanpei.github.io/posts/1320325685/" target="_blank" rel="external">https://qinyuanpei.github.io/posts/1320325685/</a>
+        ，转载请注明<b>作者</b>和<b>出处</b>。</p>
+    </div>
+    <footer>
+        <a href="https://qinyuanpei.github.io">
+            <img src="/assets/images/avatar.jpg" alt="飞鸿踏雪">
+            飞鸿踏雪
+        </a>
+    </footer>
+</blockquote>
+
+
+            
+<div class="page-reward">
+    <a id="rewardBtn" href="javascript:;" class="page-reward-btn waves-effect waves-circle waves-light">赏</a>
+</div>
+
+
+            <div class="post-footer">
+                
+	<ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Github/" rel="tag">Github</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/SVN/" rel="tag">SVN</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Unity3D/" rel="tag">Unity3D</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%89%88%E6%9C%AC%E6%8E%A7%E5%88%B6/" rel="tag">版本控制</a></li></ul>
+
+                
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://qinyuanpei.github.io/posts/1320325685/&title=《Unity3D游戏开发之从Unity3D项目版本控制说起》 — 一个人的孤落时辰&pic=https://qinyuanpei.github.ioassets/images/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://qinyuanpei.github.io/posts/1320325685/&title=《Unity3D游戏开发之从Unity3D项目版本控制说起》 — 一个人的孤落时辰&source=&emsp;&emsp;各位朋友，大家好，欢迎大家关注我的博客，我是秦元培，我的独立博客地址是http://qinyuanpei.com、CSDN博客地址..." data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://qinyuanpei.github.io/posts/1320325685/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Unity3D游戏开发之从Unity3D项目版本控制说起》 — 一个人的孤落时辰&url=https://qinyuanpei.github.io/posts/1320325685/&via=https://qinyuanpei.github.io" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://qinyuanpei.github.io/posts/1320325685/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+      
+      <li>
+        <a class="google share-sns" target="_blank" onClick="show_yp()" data-title=" 生成海报">
+          <i class="icon icon-file-image-o"></i>
+        </a>
+      </li>
+      
+    </ul>
+ </div>
+
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
+            </div>
+        </div>
+
+        
+<nav class="post-nav flex-row flex-justify-between">
+  
+    <div class="waves-block waves-effect prev">
+      <a href="/posts/582264328/" id="post-prev" class="post-nav-link">
+        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
+        <h4 class="title">Unity3D游戏开发之SQLite让数据库开发更简单</h4>
+      </a>
+    </div>
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/posts/1059499448/" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h4 class="title">Unity3D游戏开发之路：一月工作总结</h4>
+      </a>
+    </div>
+  
+</nav>
+
+
+        
+    <div id="comment"></div>
+<script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+<script src='//unpkg.com/valine/dist/Valine.min.js'></script>
+<script type="text/javascript">
+new Valine({
+    el: '#comment' ,
+    notify: false, 
+    verify: true, 
+    appId: 'JbHqRp2eMrTgIwYpfERH0g79-gzGzoHsz',
+    appKey: 'VsiKvLuiBGvJL1XrAfv7siY2',
+    placeholder: '云中谁寄锦书来，雁字回时，月满西楼。&#10;Tips：如果希望收到我的评论回复，请至少留下你的邮箱哦:)',
+    path:'https://qinyuanpei.github.io/posts/1320325685/', 
+    avatar:'identicon',
+    requiredFields: ['nick','mail']
+});
+</script>
+
+
+
+
+    </article>
+    
+<div id="reward" class="page-modal reward-lay">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <h3 class="reward-title">
+        <i class="icon icon-quote-left"></i>
+        赠人玫瑰，手有余香
+        <i class="icon icon-quote-right"></i>
+    </h3>
+    <div class="reward-content">
+        
+        <div class="reward-code">
+            <img id="rewardCode" src="/assets/images/wechat.png" alt="打赏二维码">
+        </div>
+        
+        <label class="reward-toggle">
+            <input id="rewardToggle" type="checkbox" class="reward-toggle-check"
+                data-wechat="/assets/images/wechat.png" data-alipay="/assets/images/alipay.jpg">
+            <div class="reward-toggle-ctrol">
+                <span class="reward-toggle-item wechat">微信</span>
+                <span class="reward-toggle-label"></span>
+                <span class="reward-toggle-item alipay">支付宝</span>
+            </div>
+        </label>
+        
+    </div>
+</div>
+
+
+    <script type="text/javascript" src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/yoniu.min.js"></script>
+<style type='text/css'>
+	body.active-yp {
+		overflow: hidden;
+	}
+	.yp-fc-btn{
+		display: flex;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		align-items: center;
+		justify-content: space-between;
+		font-size: 13px;
+	}
+	.yp-fc-btn span{
+		cursor: pointer;
+		padding: 2px 10px;
+		color: #4b4b4b;
+		border: #4b4b4b 1px solid;
+		border-radius:5px;
+	}
+	#yp-hide{
+		position: fixed;
+		display: flex;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		justify-content: center;
+		flex-direction: column;
+		left:0;
+		top:0;
+		right:0;
+		bottom:0;
+		background-color:rgba(0,0,0,.5);
+		z-index: 99999;
+		visibility: hidden;
+	}
+	#yoniu-poster{
+		box-sizing: border-box;
+		width: 350px;
+		height: 467.2px;
+		background-color: #fff;
+		margin: 0 auto;
+		padding: 0;
+		line-height: 1.6;
+		text-align:justify;
+	}
+	
+	.yp-img {
+		min-height: 240px;
+		position: relative;
+		display: flex;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		justify-content: flex-end;
+		flex-direction: column;
+		background-position: 50% 50%;
+		background-size: cover;
+		overflow:hidden;
+	}
+	.yp-img>div{
+		padding: 10px 20px;
+	}
+	.yp-name{
+		display: block;
+		color: #fff;
+		font-size: 20px;
+		font-weight: 600;
+		text-shadow: #4b4b4b 0.1em 0.1em 0.2em;
+		margin-top: 10px;
+	}
+	.yp-sort{
+		padding: 3px 10px;
+		font-size: 12px;
+		color: #fff;
+		background: #2e2e2e;
+	}
+	.yp-des{
+		color: #2e2e2e;
+		font-size: 14px;
+		margin: 20px;
+		height: 67.2px;
+	}
+	.yp-qcode{
+		display: flex;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		justify-content: space-between;
+		align-items: center;
+		margin: 10px;
+		padding: 10px 20px;
+		background: #f5f5f5;
+		color: #818181;
+		border-radius: 10px;
+	}
+	.yp-tips{
+		display: flex;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		justify-content: space-between;
+		align-items: center;
+		color: #ccc;
+		margin: 0 10px 10px;
+		font-size: 10px;
+		letter-spacing: 1.5px;
+	}
+	.yp-btns{
+		display: flex;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		align-items: stretch;
+		justify-content: center;
+		width:350px;
+		margin: 0 auto;
+	}
+	.yp-btns>span{
+		display: flex;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		align-items: center;
+		justify-content: center;
+		font-size: 14px;
+		padding: 10px 15px;
+		background:rgba(0,0,0,.2);
+		color: #f5f5f5;
+		cursor: pointer;
+	}
+	.yp-btns>span>a{
+		color: #f5f5f5;
+	}
+	.yp-btns>span>a:hover{
+		text-decoration:none;
+	}
+	#yp-close{
+		font-size: 18px;
+		font-weight: 600;
+	}
+</style>
+<div id="yp-hide">
+    <div id="yoniu-poster">
+        <div class="yp-img" id="yp-img">
+            <div>
+                <span class="yp-sort">Unity3D</span>
+                <span class="yp-name">Unity3D游戏开发之从Unity3D项目版本控制说起</span>
+            </div>
+        </div>
+        <div class="yp-des">    
+            
+                &emsp;&emsp;各位朋友，大家好，欢迎大家关注我的博客，我是秦元培，我的独立博客地址是http://qinyuanpei.com、CSD...
+            
+        </div>
+        <div class="yp-qcode">
+            <span>扫描二维码阅读原文</span>
+            <img id="yp-qcode" width="64px" src="//api.qrserver.com/v1/create-qr-code/?data=https://qinyuanpei.github.io/posts/1320325685/">
+        </div>
+        <div class="yp-tips">
+            <span>一个人的孤落时辰</span>
+            <span><time class="post-time" title="2015-07-02 09:35:42" datetime="2015-07-02T09:35:42.000Z"  itemprop="datePublished">2015-07-02</time>
+</span>
+        </div>
+    </div>
+    <div class="yp-btns">
+        <span id="yp-load-yp" onClick="load_yp()">生成海报</span>
+        <span><a id="yp-download"></a></span>
+        <span id="yp-close" onClick="close_yp()">×</span>
+    </div>
+</div>
+<script type="text/javascript">
+    function show_yp(){
+        window.scrollTo(0, 0);
+        document.body.setAttribute("class","active-yp");
+        let cover = document.getElementsByTagName('img')[1];
+        if (cover != null && typeof(cover) != 'undefined') {
+            document.getElementById('yp-img').style.backgroundImage = `url(${cover.src})`;
+        } else {
+            document.getElementById('yp-img').style.backgroundColor = '#d7dbf0';
+        }
+        document.getElementById("yp-hide").style.visibility = "visible";
+    }
+    function close_yp(){
+        var domClass = document.body.getAttribute("class");
+        domClass = domClass.replace("active-yp","");
+        document.body.setAttribute("class",domClass);
+        document.getElementById("yp-hide").style.visibility = "hidden";
+    }
+    function load_yp(){
+        document.getElementById('yp-load-yp').textContent = '海报生成中...';
+        setTimeout(function() {
+            h2c_();
+        },2000);
+
+    }
+</script>
+
+</div>
+
+        <footer class="footer">
+    <div class="top">
+        
+   <p>
+      <span id="lc_counter_container_site_uv">
+         <i class="icon icon-user"></i><span id="lc_counter_value_site_uv"></span>
+      </span>
+      <span id="lc_counter_container_site_pv">
+         <i class="icon icon-eye"></i><span id="lc_counter_value_site_pv"></span>
+      </span>
+  </p>
+
+
+        <p>
+   <a id="jinrishici-sentence" href="https://www.jinrishici.com/" target="_blank" rel="noopener">加载中</a>
+</p>
+<script src="https://sdk.jinrishici.com/v2/browser/jinrishici.js" charset="utf-8"></script>
+<script>
+   jinrishici.load(function(result) {
+      document.querySelector('#subtitle').innerText = result.data.content;
+      document.querySelector('#jinrishici-sentence').innerText = result.data.content;
+  });
+</script>
+            <!--Todo: 考虑重构为插件 -->
+            <p>
+                
+                    <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+                
+                <span>
+                    <a href="https://github.com/qinyuanpei" target="_blank" rel="license noopener" title="Github">
+                        <i class="icon icon-lg icon-github"></i>
+                    </a>
+                </span>
+                <span>
+                    <a href="https://weibo.com/1278609231/profile" target="_blank" rel="license noopener" title="微博">
+                        <i class="icon icon-lg icon-weibo"></i>
+                    </a>
+                </span>
+                <span>
+                    <a href="https://www.douban.com/people/60029335/" target="_blank" rel="license noopener" title="豆瓣">
+                        <i class="icon icon-lg icon-douban"></i>
+                    </a>
+                </span>
+                <span>
+                    <a href="https://www.zhihu.com/people/qinyuanpei" target="_blank" rel="license noopener" title="知乎">
+                        <i class="icon icon-lg icon-zhihu-square"></i>
+                    </a>
+                </span>
+                <span>
+                    <a href="https://blog.csdn.net/qinyuanpei" target="_blank" rel="license noopener" title="CSDN">
+                        <i class="icon icon-lg">C</i>
+                    </a>
+                </span>
+                <span>
+                    <a href="https://music.163.com/#/user/home?id=47002864" target="_blank" rel="license noopener" title="网易音乐">
+                        <i class="icon icon-lg icon-wangyiyunyinyue"></i>
+                    </a>
+                </span>
+            </p>
+        
+    </div>
+    <div class="bottom">
+        <p><span>飞鸿踏雪 &copy; 2014 - 2021</span><br>
+            
+                
+                Powered by <a href="http://hexo.io/" target="_blank">Hexo</a> & Theme by <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a><br>
+                
+                
+                    <p>Hosted by <a href="https://pages.github.com" target="_blank" rel="noopener" style="font-weight: bold">Github Pages</a></p>
+                
+        </p>
+    </div>
+</footer>
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span
+        class="icon icon-lg icon-chevron-up"></span></a>
+
+    
+
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://qinyuanpei.github.io/posts/1320325685/&title=《Unity3D游戏开发之从Unity3D项目版本控制说起》 — 一个人的孤落时辰&pic=https://qinyuanpei.github.ioassets/images/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://qinyuanpei.github.io/posts/1320325685/&title=《Unity3D游戏开发之从Unity3D项目版本控制说起》 — 一个人的孤落时辰&source=&emsp;&emsp;各位朋友，大家好，欢迎大家关注我的博客，我是秦元培，我的独立博客地址是http://qinyuanpei.com、CSDN博客地址..." data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://qinyuanpei.github.io/posts/1320325685/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《Unity3D游戏开发之从Unity3D项目版本控制说起》 — 一个人的孤落时辰&url=https://qinyuanpei.github.io/posts/1320325685/&via=https://qinyuanpei.github.io" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://qinyuanpei.github.io/posts/1320325685/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+      
+      <li>
+        <a class="google share-sns" target="_blank" onClick="show_yp()" data-title=" 生成海报">
+          <i class="icon icon-file-image-o"></i>
+        </a>
+      </li>
+      
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="//api.qrserver.com/v1/create-qr-code/?data=https://qinyuanpei.github.io/posts/1320325685/" alt="微信分享二维码">
+</div>
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.6/waves.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/4.2.1/echarts.min.js"></script>
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/echarts-wordcloud.min.js" async></script>
+<script>
+    var BLOG = { ROOT: '/', SHARE: true, REWARD: true };
+
+
+</script>
+
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/main.min.js"></script>
+
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/search.min.js" async></script>
+
+
+
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/heart.min.js" async></script>
+
+
+
+
+
+
+
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/leancloud-counter.min.js"></script>
+<script>
+        (function () {
+            var appId = 'JbHqRp2eMrTgIwYpfERH0g79-gzGzoHsz';
+            var appKey = 'VsiKvLuiBGvJL1XrAfv7siY2';
+            new VisitorCounter().init({
+                appId: appId,       //应用ID, 必输
+                appKey: appKey,      //应用Key, 必输
+                region: '华北',      //华东,华北,国际, 默认华东
+                domain: '',      //自定义域名
+                collectIP: true, //是否收集IP及位置信息, 默认开启
+                collectUA: true  //是否收集UserAgent, 默认开启
+            });
+        })();
+</script>
+
+
+
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/vconsole.min.js"></script>
+<script type="text/javascript">
+    //当地址中存在debug=true时，实例化vConsole
+    if (location.href.indexOf('debug=true') > -1) {
+        var vConsole = new VConsole();
+    }
+</script>
+
+
+    <script>
+    //国内用户自动重定向Coding Pages镜像
+    // var ipInfo = JSON.parse(localStorage.getItem('ipInfo'));
+    // if (ipInfo.country_code == 'CN') {
+    //     location.href = location.href.replace('qinyuanpei.github.io', 'blog.yuanpei.me');
+    // }
+    </script>
+
+
+<script>
+titleArray = [];
+function scrollTitle() {
+    if (titleArray.length == 0) return;
+    titleArray.push(titleArray[0]);
+	titleArray.shift();
+	document.title = titleArray.join("");
+}
+setInterval(scrollTitle, 500);
+(function() {
+    var originTitile = document.title, titleTime;
+    document.addEventListener('visibilitychange', function() {
+        if (document.hidden) {
+            titleArray = originTitile.split('');
+            clearTimeout(titleTime);
+        } else {
+            document.title = originTitile;
+            titleArray = originTitile.split('');
+            titleTime = setTimeout(function() {
+                document.title = originTitile;
+                titleArray = [];
+            },2000);
+        }
+    });
+})();
+</script>
+
+
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/ribbon.min.js"></script>
+</body>
+</html>
