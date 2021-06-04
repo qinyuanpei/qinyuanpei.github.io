@@ -205,6 +205,7 @@ public static void AddGrpcHealthCheck<TService>(this IServiceCollection services
 }
 ```
 其中，`RegisterConsul()`方法负责告诉`Consul`，某个服务对应的IP和端口号分别是多少，采用什么样的方式进行健康检查。
+
 不过，由于`Consul`默认不支持`gRPC`的健康检查，所以，我们使用了更为常见的基于`TCP`方式的健康检查。你可以认为，只要服务器连接畅通，`gRPC`服务就是健康的。
 
 ```csharp

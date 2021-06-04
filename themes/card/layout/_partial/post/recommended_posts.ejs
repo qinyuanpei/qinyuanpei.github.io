@@ -9,14 +9,24 @@
 
     function recommended_posts(page, site, limit = 5) {
         page.tags = page.tags || []
+        page.categories = page.categories || []
         if (page.tags.length == 0) return [];
         let pageTags = page.tags.map(x=>x.name);
+        let pageCates = page.categories.map(x=>x.name);
         let sitePosts = site.posts.toArray().map(x=> {
-            return {tags:x.tags.toArray().map(y=>y.name), title:x.title, permalink:x.permalink, date:x.date}
+            return {tags:x.tags.toArray().map(y=>y.name), categories:x.categories.toArray().map(y=>y.name), title:x.title, permalink:x.permalink, date:x.date}
         });
-        let relatedPosts = pageTags.map(x=>sitePosts.filter(y=>y.title != page.title  && (y.tags.indexOf(x) != -1 || y.date.format('MM/DD') == page.date.format('MM/DD')))).reduce((prev,next)=>{
+        let postsByTag = pageTags.map(x=>sitePosts.filter(y=>y.title != page.title  && (y.tags.indexOf(x) != -1 || y.date.format('MM/DD') == page.date.format('MM/DD')))).reduce((prev,next)=>{
             return prev.concat(next);
         },[]);
+        let postsByCate = pageCates.map(x=>sitePosts.filter(y=>y.title != page.title  && (y.categories.indexOf(x) != -1 || y.date.format('MM/DD') == page.date.format('MM/DD')))).reduce((prev,next)=>{
+            return prev.concat(next);
+        },[]);
+        var relatedPosts = postsByTag.concat(postsByCate);
+        console.log(relatedPosts.length)
+        if (relatedPosts.length >= limit) {
+            return Array.from(new Set(relatedPosts)).slice(0, limit)
+        }
         if (relatedPosts.length == 0) {
             return shuffle(site.posts.toArray()).slice(0, limit);
         }
