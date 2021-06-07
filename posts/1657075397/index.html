@@ -1,0 +1,958 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+    
+<script async defer data-domain="blog.yuanpei.me" src="https://plausible.io/js/plausible.js"></script>
+    
+    <meta charset="utf-8">
+    <!-- HTTP 1.1 -->  
+    <meta http-equiv="pragma" content="no-cache">  
+    <!-- HTTP 1.0 -->  
+    <meta http-equiv="cache-control" content="no-cache">
+    <!-- 微博图床防盗链 --> 
+    <!-- <meta name="referrer" content="no-referrer"/> -->
+    <!--Google站点验证-->
+    
+    <!--百度站点验证-->
+    
+    
+    <!--Google AdSense-->
+    
+    <!--Bing站点验证-->
+    <meta name="msvalidate.01" content="713A48A3FE17D4841C292A6B3942EB4C" />
+    
+    <title>
+        ASP.NET Core gRPC 健康检查的探索与实现 | 一个人的孤落时辰 | 纵有疾风起，人生不言弃
+    </title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+        <meta name="theme-color" content="#3F51B5">
+    
+
+    <meta name="keywords" content="gRPC,微服务,健康检查,Consul,秦元培,技术博客,生活随笔,个人博客,NET,Python,数据挖掘,数据分析,NLP">
+    
+        <meta name="description" content="本文探索并实现了`gRPC`服务健康检查，主要提供了两种思路：基于`IHostedService` + `Timer`的轮询的方案 以及 基于`Consul`的集服务注册、服务发现、健康检查于一身的方案;而在这里，由于`Consul`里注册了所有`gRPC`服务的终结点信息，所以，我们更容易想到的，其实是客户端的负载均衡，具体怎么实现呢;这里，我们通过集成它的`SDK`来实现`gRPC`服务的服务注册、服务发现、健康检查，从某种程度上来讲，它无形中帮助我们实现了客户端的负载均衡，因为我们可以将每一个服务的终结点都注册到`Consul`中，而`Consul`的健康检查则可以定时移除那些不可用的服务;在 [gRPC](https://github.com/grpc/grpc) 的 [官方规范](https://github.com/grpc/grpc/blob/master/doc/health-checking.md) 中，提供了一份`Protocol Buffers`的声明文件，它规定了一个健康检查服务必须实现`Check()`和`Watch()`两个方法;[gRPC 服务成功注册到 Consul 中](https://i.loli.net/2021/06/02/eTBj7Iqn256GXKw.png)">
+    
+    <meta name="description" content="本文探索并实现了&#96;gRPC&#96;服务健康检查，主要提供了两种思路：基于&#96;IHostedService&#96; + &#96;Timer&#96;的轮询的方案 以及 基于&#96;Consul&#96;的集服务注册、服务发现、健康检查于一身的方案;而在这里，由于&#96;Consul&#96;里注册了所有&#96;gRPC&#96;服务的终结点信息，所以，我们更容易想到的，其实是客户端的负载均衡，具体怎么实现呢;这里，我们通过集成它的&#96;SDK&#96;来实现&#96;gRPC&#96;服务的服务">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ASP.NET Core gRPC 健康检查的探索与实现">
+<meta property="og:url" content="https://qinyuanpei.github.io/posts/1657075397/index.html">
+<meta property="og:site_name" content="一个人的孤落时辰">
+<meta property="og:description" content="本文探索并实现了&#96;gRPC&#96;服务健康检查，主要提供了两种思路：基于&#96;IHostedService&#96; + &#96;Timer&#96;的轮询的方案 以及 基于&#96;Consul&#96;的集服务注册、服务发现、健康检查于一身的方案;而在这里，由于&#96;Consul&#96;里注册了所有&#96;gRPC&#96;服务的终结点信息，所以，我们更容易想到的，其实是客户端的负载均衡，具体怎么实现呢;这里，我们通过集成它的&#96;SDK&#96;来实现&#96;gRPC&#96;服务的服务">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://i.loli.net/2021/06/02/oVS3YkPIncr2xM9.jpg">
+<meta property="og:image" content="https://i.loli.net/2021/06/02/vx2QLUoMzXaWpZY.png">
+<meta property="og:image" content="https://i.loli.net/2021/06/02/Gjb9XhpRCI7g2w5.png">
+<meta property="og:image" content="https://i.loli.net/2021/06/02/eTBj7Iqn256GXKw.png">
+<meta property="og:image" content="https://i.loli.net/2021/06/03/xlhMjJ1ZcN3nwBe.png">
+<meta property="og:image" content="https://i.loli.net/2021/06/03/gGMaVKquDbtdWUN.png">
+<meta property="article:published_time" content="2021-06-01T11:37:36.000Z">
+<meta property="article:modified_time" content="2021-06-07T01:03:32.213Z">
+<meta property="article:author" content="飞鸿踏雪">
+<meta property="article:tag" content="gRPC">
+<meta property="article:tag" content="微服务">
+<meta property="article:tag" content="健康检查">
+<meta property="article:tag" content="Consul">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i.loli.net/2021/06/02/oVS3YkPIncr2xM9.jpg">
+    
+        <link rel="alternate" type="application/atom+xml" title="一个人的孤落时辰" href="/atom.xml">
+    
+    <link rel="shortcut icon" href="/assets/images/favicon.ico">
+    
+        <link rel="manifest" href="/manifest.json">
+    
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master//assets/styles/style.css">
+    <script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/instantclick.min.js"></script>
+    <script>window.lazyScripts=[]</script>
+    <!-- custom head -->
+    
+
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu" class="hide" >
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap" style="background-image:url(/assets/images/brand.jpg)">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/assets/images/avatar.jpg" alt="avatar">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">飞鸿踏雪</h5>
+          <a href="mailto:qinyuanpei@163.com" title="qinyuanpei@163.com" class="mail">qinyuanpei@163.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/"  >
+                <i class="icon icon-lg icon-home"></i>
+                主页
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives"  >
+                <i class="icon icon-lg icon-archives"></i>
+                归档
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags"  >
+                <i class="icon icon-lg icon-tags"></i>
+                标签
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/categories"  >
+                <i class="icon icon-lg icon-th-list"></i>
+                分类
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/books"  >
+                <i class="icon icon-lg icon-bookmark"></i>
+                书单
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/movies"  >
+                <i class="icon icon-lg icon-film"></i>
+                影单
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/works"  >
+                <i class="icon icon-lg icon-code"></i>
+                实验室
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/about"  >
+                <i class="icon icon-lg icon-circle"></i>
+                关于我
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+            <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">ASP.NET Core gRPC 健康检查的探索与实现</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off"
+                placeholder="输入感兴趣的关键字">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+        <a href="https://github.com/qinyuanpei/qinyuanpei.github.io" target="_blank" rel="noopener" class="header-icon waves-effect waves-circle waves-light" id="menuGithub">
+            <i class="icon icon-lg icon-code-fork"></i>
+        </a>
+    </div>
+</header>
+<header class="content-header post-header">
+    <div class="container fade-scale">
+        <h1 class="title">ASP.NET Core gRPC 健康检查的探索与实现</h1>
+        <h5 class="subtitle" id="subtitle">
+            
+            <time datetime="2021-06-01T11:37:36.000Z" itemprop="datePublished" class="page-time">
+  2021-06-01
+</time>
+
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/">编程语言</a></li></ul>
+
+            
+        </h5>
+    </div>
+    
+
+</header>
+
+<div class="container body-wrap">
+    
+    <aside class="post-widget">
+        <nav class="post-toc-wrap" id="post-toc">
+            <h4>目录</h4>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#基于-IHostedService-的实现方式"><span class="post-toc-number">1.</span> <span class="post-toc-text">基于 IHostedService 的实现方式</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#基于-Consul-的实现方式"><span class="post-toc-number">2.</span> <span class="post-toc-text">基于 Consul 的实现方式</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#关于-gRPC-的引申话题"><span class="post-toc-number">3.</span> <span class="post-toc-text">关于 gRPC 的引申话题</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#gRPC-客户端的负载均衡"><span class="post-toc-number">3.1.</span> <span class="post-toc-text">gRPC 客户端的负载均衡</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#gRPC-接口的测试工具"><span class="post-toc-number">3.2.</span> <span class="post-toc-text">gRPC 接口的测试工具</span></a></li></ol></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#本文小结"><span class="post-toc-number">4.</span> <span class="post-toc-text">本文小结</span></a></li></ol>
+        </nav>
+    </aside>
+    
+    <article id="post-NET-Core-gRPC-健康检查的探索与实现" class="post-article article-type-post fade" itemprop="blogPost">
+
+        <div class="post-card">
+            <h1 class="post-card-title">
+                ASP.NET Core gRPC 健康检查的探索与实现
+            </h1>
+            <div class="post-meta">
+                <time class="post-time" title="2021-06-01 11:37:36" datetime="2021-06-01T11:37:36.000Z"  itemprop="datePublished">2021-06-01</time>
+
+                
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/">编程语言</a></li></ul>
+
+
+
+                
+<span id="lc_counter_container_page_pv" title="文章总阅读量" data-page-url="" data-page-title="ASP.NET Core gRPC 健康检查的探索与实现">
+    <i class="icon icon-eye icon-pr"></i><span id="lc_counter_value_page_pv"></span>
+</span>
+
+
+
+
+
+                
+    <span>
+        <i class="icon icon-clock-o"></i>
+        26 min.
+    </span>
+    
+            </div>
+            <div class="post-content" id="post-content" itemprop="postContent">
+                <p>各位朋友，大家好，欢迎大家关注我的博客。在上一篇 <a href="https://blog.yuanpei.me/posts/1679688265/" target="_blank" rel="noopener">博客</a> 中，博主和大家分享了<code>gRPC</code>的拦截器在日志记录方面的简单应用，今天我们继续来探索<code>gRPC</code>在构建微服务架构方面的可能性。其实，从博主个人的理解而言，不管我们的微服务架构是采用<code>RPC</code>方式还是采用<code>RESTful</code>方式，我们最终要面对的问题本质上都是一样的，博主这里将其归纳为：服务划分、服务编写 和 服务治理。首先，服务划分决定了每一个服务的上下文边界以及服务颗粒度大小，如果按照领域驱动设计(<strong>DDD</strong>)的思想来描述微服务，我认为它更接近于限界上下文(<strong>BoundedContext</strong>)的概念。其次，服务编写决定了每一个服务的具体实现方式，譬如是采用无状态的<code>RESTful</code>风格的<code>API</code>，还是采用强类型的、基于代理的<code>RPC</code>风格的<code>API</code>。最后，服务治理是微服务架构中永远避不开的话题，服务注册、服务发现、健康检查、日志监控等等一切的话题，其实都是在围绕着<strong>服务治理</strong>而展开，尤其是当我们编写了一个又一个的服务以后，此时该如何管理这些浩如“<strong>星</strong>”海的服务呢？所以，在今天这篇博客中，博主想和大家一起探索下<code>gRPC</code>的健康检查，希望能给大家带来一点启发。</p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="https://i.loli.net/2021/06/02/oVS3YkPIncr2xM9.jpg" alt="健康检查-服务注册-服务发现示意图" title="" referrerpolicy="no-referrer">
+                </div>
+                <div class="image-caption">健康检查-服务注册-服务发现示意图</div>
+            </figure>
+
+<p>关于“健康检查”，大家都知道的一点是，它起到一种“防微杜渐”的作用。不知道大家还记不记得，语文课本里的经典故事《扁鹊见蔡桓公》，扁鹊一直在告知蔡桓公其病情如何，而蔡桓公讳疾忌医，直至病入骨髓、不治而亡。其实，对应到我们的领域知识，后端依赖的各种服务譬如数据库、消息队列、Redis、API等等，都需要这样一个“<strong>扁鹊</strong>”来实时地“<strong>望闻问切</strong>”，当发现问题的时候及时地采取相应措施，不要像“<strong>蔡桓公</strong>”一样病入骨髓，等到整个系统都瘫痪了，这时候火急火燎地去“救火”，难免会和蔡桓公一样，发出“悔之晚矣”的喟叹。当我们决定使用<code>gRPC</code>来构建微服务架构的时候，我们如何确保这些服务一直是可用的呢？所以，提供一种针对<code>gRPC</code>服务的健康检查方案就会显得非常迫切。这里，博主主要为大家介绍两种实现方式，它们分别是：基于<code>IHostedService</code>的实现方式 以及 基于<code>Consul</code>的实现方式。</p>
+<h1 id="基于-IHostedService-的实现方式"><a href="#基于-IHostedService-的实现方式" class="headerlink" title="基于 IHostedService 的实现方式"></a>基于 IHostedService 的实现方式</h1><p>第一种方式，主要是利用<code>IHostedService</code>可以在程序后台执行的特点，搭配<code>Timer</code>就可以实现定时轮询。在 <a href="https://github.com/grpc/grpc" target="_blank" rel="noopener">gRPC</a> 的 <a href="https://github.com/grpc/grpc/blob/master/doc/health-checking.md" target="_blank" rel="noopener">官方规范</a> 中，提供了一份<code>Protocol Buffers</code>的声明文件，它规定了一个健康检查服务必须实现<code>Check()</code>和<code>Watch()</code>两个方法。既然是官方定义好的规范，建议大家不要修改这份声明文件，我们直接沿用即可：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">syntax = "proto3";</span><br><span class="line"></span><br><span class="line">package grpc.health.v1;</span><br><span class="line"></span><br><span class="line">message HealthCheckRequest &#123;</span><br><span class="line">  string service = 1;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">message HealthCheckResponse &#123;</span><br><span class="line">  enum ServingStatus &#123;</span><br><span class="line">    UNKNOWN = 0;</span><br><span class="line">    SERVING = 1;</span><br><span class="line">    NOT_SERVING = 2;</span><br><span class="line">  &#125;</span><br><span class="line">  ServingStatus status = 1;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">service Health &#123;</span><br><span class="line">  rpc Check(HealthCheckRequest) returns (HealthCheckResponse);</span><br><span class="line">  rpc Watch(HealthCheckRequest) returns (stream HealthCheckResponse);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>接下来，我们需要实现对应的<code>HealthCheckService</code>:</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">public class HealthCheckService : Health.HealthBase</span><br><span class="line">&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">override</span> Task&lt;HealthCheckResponse&gt; <span class="title">Check</span>(<span class="params"></span></span></span><br><span class="line"><span class="function"><span class="params">      HealthCheckRequest request, </span></span></span><br><span class="line"><span class="function"><span class="params">      ServerCallContext context</span></span></span><br><span class="line"><span class="function"><span class="params">    </span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        <span class="comment">// <span class="doctag">TODO:</span> 在这里添加更多的细节</span></span><br><span class="line">        <span class="keyword">return</span> Task.FromResult(<span class="keyword">new</span> HealthCheckResponse() &#123; </span><br><span class="line">            Status = HealthCheckResponse.Types.ServingStatus.Serving </span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">override</span> <span class="keyword">async</span> Task <span class="title">Watch</span>(<span class="params"></span></span></span><br><span class="line"><span class="function"><span class="params">      HealthCheckRequest request, </span></span></span><br><span class="line"><span class="function"><span class="params">      IServerStreamWriter&lt;HealthCheckResponse&gt; responseStream, </span></span></span><br><span class="line"><span class="function"><span class="params">      ServerCallContext context</span></span></span><br><span class="line"><span class="function"><span class="params">    </span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        <span class="comment">// <span class="doctag">TODO:</span> 在这里添加更多的细节</span></span><br><span class="line">        <span class="keyword">await</span> responseStream.WriteAsync(<span class="keyword">new</span> HealthCheckResponse()&#123;</span><br><span class="line">            Status = HealthCheckResponse.Types.ServingStatus.Serving </span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>接下来，我们需要实现<code>HostedHealthCheckService</code>，它实现了<code>IHostedService</code>接口，并在其中调用<code>HealthCheckService</code>:</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">HostedHealthCheckService</span> : <span class="title">IHostedService</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">private</span> Timer _timer = <span class="literal">null</span>;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">readonly</span> ILogger&lt;HostedHealthCheckService&gt; _logger;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">HostedHealthCheckService</span>(<span class="params">ILogger&lt;HostedHealthCheckService&gt; logger</span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        _logger = logger;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Task <span class="title">StartAsync</span>(<span class="params">CancellationToken cancellationToken</span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        _logger.LogInformation(<span class="string">$"<span class="subst">&#123;<span class="keyword">nameof</span>(HostedHealthCheckService)&#125;</span> start running...."</span>);</span><br><span class="line">        _timer = <span class="keyword">new</span> Timer(DoCheck, <span class="literal">null</span>, TimeSpan.Zero, TimeSpan.FromSeconds(<span class="number">5</span>));</span><br><span class="line">        <span class="keyword">return</span> Task.CompletedTask;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Task <span class="title">StopAsync</span>(<span class="params">CancellationToken cancellationToken</span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        _logger.LogInformation(<span class="string">$"<span class="subst">&#123;<span class="keyword">nameof</span>(HostedHealthCheckService)&#125;</span> stop running...."</span>);</span><br><span class="line">        _timer?.Change(Timeout.Infinite, <span class="number">0</span>);</span><br><span class="line">        <span class="keyword">return</span> Task.CompletedTask;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">DoCheck</span>(<span class="params"><span class="keyword">object</span> state</span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        <span class="keyword">using</span> <span class="keyword">var</span> channel = GrpcChannel.ForAddress(<span class="string">"https://localhost:5001"</span>); ;</span><br><span class="line">        <span class="keyword">var</span> client = <span class="keyword">new</span> Health.HealthClient(channel);</span><br><span class="line">        client.Check(<span class="keyword">new</span> HealthCheckRequest() &#123; Service = <span class="string">"https://localhost:5001"</span> &#125;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>接下来，是大家非常熟悉的<strong>依赖注入</strong>环节：</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// ConfigureServices</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">ConfigureServices</span>(<span class="params">IServiceCollection services</span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    services.AddGrpc(options =&gt; options.Interceptors.Add&lt;GrpcServerLoggingInterceptor&gt;());</span><br><span class="line">    services.AddHostedService&lt;HostedHealthCheckService&gt;();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Configure</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">Configure</span>(<span class="params">IApplicationBuilder app, IWebHostEnvironment env</span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    app.UseEndpoints(endpoints =&gt;</span><br><span class="line">    &#123;</span><br><span class="line">        endpoints.MapGrpcService&lt;HealthCheckService&gt;();</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>如果大家对上一篇博客中的拦截器还有印象，对于下面的结果应该会感到非常亲切：</p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="https://i.loli.net/2021/06/02/vx2QLUoMzXaWpZY.png" alt="基于 IHostedService 的 gRPC 健康检查" title="" referrerpolicy="no-referrer">
+                </div>
+                <div class="image-caption">基于 IHostedService 的 gRPC 健康检查</div>
+            </figure>
+
+<p>除此以外，我们还可以直接安装第三方库：<code>Grpc.HealthCheck</code>。此时，我们需要继承<code>HealthServiceImpl</code>类并重写其中的<code>Check()</code>和<code>Watch()</code>方法:</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">HealthCheckService</span> : <span class="title">HealthServiceImpl</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">override</span> Task&lt;HealthCheckResponse&gt; <span class="title">Check</span>(<span class="params"></span></span></span><br><span class="line"><span class="function"><span class="params">      HealthCheckRequest request, </span></span></span><br><span class="line"><span class="function"><span class="params">      ServerCallContext context</span></span></span><br><span class="line"><span class="function"><span class="params">    </span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        <span class="comment">// <span class="doctag">TODO:</span> 在这里添加更多的细节</span></span><br><span class="line">        <span class="keyword">return</span> Task.FromResult(<span class="keyword">new</span> HealthCheckResponse()</span><br><span class="line">        &#123;</span><br><span class="line">            Status = HealthCheckResponse.Types.ServingStatus.Serving</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">override</span> <span class="keyword">async</span> Task <span class="title">Watch</span>(<span class="params"></span></span></span><br><span class="line"><span class="function"><span class="params">      HealthCheckRequest request, </span></span></span><br><span class="line"><span class="function"><span class="params">      IServerStreamWriter&lt;HealthCheckResponse&gt; responseStream, </span></span></span><br><span class="line"><span class="function"><span class="params">      ServerCallContext context</span></span></span><br><span class="line"><span class="function"><span class="params">    </span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        <span class="comment">// <span class="doctag">TODO:</span> 在这里添加更多的细节</span></span><br><span class="line">        <span class="keyword">await</span> responseStream.WriteAsync(<span class="keyword">new</span> HealthCheckResponse()</span><br><span class="line">        &#123;</span><br><span class="line">            Status = HealthCheckResponse.Types.ServingStatus.Serving</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>接下来，我们只需要在<code>HostedHealthCheckService</code>调用它即可，这个非常简单。</p>
+<p>故，无需博主多言，相信屏幕前的你都能写得出来，如果写不出来，参考博主给出得实现即可(逃！</p>
+<h1 id="基于-Consul-的实现方式"><a href="#基于-Consul-的实现方式" class="headerlink" title="基于 Consul 的实现方式"></a>基于 Consul 的实现方式</h1><p><a href="https://www.consul.io/" target="_blank" rel="noopener">Consul</a> 是一个由 <a href="https://www.hashicorp.com/about" target="_blank" rel="noopener">HashiCorp</a> 提供的产品，它提供了服务注册、服务发现、健康检查、键值存储等等的特性。这里，我们通过集成它的<code>SDK</code>来实现<code>gRPC</code>服务的服务注册、服务发现、健康检查，从某种程度上来讲，它无形中帮助我们实现了客户端的负载均衡，因为我们可以将每一个服务的终结点都注册到<code>Consul</code>中，而<code>Consul</code>的健康检查则可以定时移除那些不可用的服务。所以，客户端获得的终结点实际上都是可用的终结点。</p>
+<p>首先，我们需要安装第三方库：<code>Consul</code>。接下来，我们可需要通过<code>Docker</code>安装一下<code>Consul</code>:</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">docker pull consul</span><br><span class="line">docker run --name consul -d -p 8500:8500 consul</span><br></pre></td></tr></table></figure>
+
+<p>默认情况下，<code>Consul</code>的端口号为：8500，我们可以直接访问：<code>http://localhost:8500</code>：</p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="https://i.loli.net/2021/06/02/Gjb9XhpRCI7g2w5.png" alt="Consul 界面效果展示" title="" referrerpolicy="no-referrer">
+                </div>
+                <div class="image-caption">Consul 界面效果展示</div>
+            </figure>
+
+<p>接下来，为了让<code>Startup</code>类看起来清爽一点，首先，我们先来写一点扩展方法：</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 为指定的gRPC服务添加健康检查</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> AddGrpcHealthCheck&lt;TService&gt;(<span class="keyword">this</span> IServiceCollection services)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">var</span> configuration = services.BuildServiceProvider().GetService&lt;IConfiguration&gt;();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 注册ConsulClient</span></span><br><span class="line">    services.AddSingleton&lt;IConsulClient, ConsulClient&gt;(_ =&gt; <span class="keyword">new</span> ConsulClient(consulConfig =&gt;</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">var</span> baseUrl = configuration.GetValue&lt;<span class="keyword">string</span>&gt;(<span class="string">"Consul:BaseUrl"</span>);</span><br><span class="line">        consulConfig.Address = <span class="keyword">new</span> Uri(baseUrl);</span><br><span class="line">    &#125;));</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 注册gRPC服务</span></span><br><span class="line">    RegisterConsul&lt;TService&gt;(services).Wait();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>其中，<code>RegisterConsul()</code>方法负责告诉<code>Consul</code>，某个服务对应的IP和端口号分别是多少，采用什么样的方式进行健康检查。</p>
+<p>不过，由于<code>Consul</code>默认不支持<code>gRPC</code>的健康检查，所以，我们使用了更为常见的基于<code>TCP</code>方式的健康检查。你可以认为，只要服务器连接畅通，<code>gRPC</code>服务就是健康的。</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 注册指定服务到Consul</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">async</span> Task RegisterConsul&lt;TService&gt;(IServiceCollection services)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">var</span> serverHost = GetLocalIP();</span><br><span class="line">    <span class="keyword">var</span> serverPort = services.BuildServiceProvider().GetService&lt;IConfiguration&gt;().GetValue&lt;<span class="keyword">int</span>&gt;(<span class="string">"gRPC:Port"</span>);</span><br><span class="line">    <span class="keyword">await</span> RegisterConsul&lt;TService&gt;(services, serverHost, serverPort);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 注册指定服务到Consul</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">async</span> Task RegisterConsul&lt;TService&gt;(</span><br><span class="line">  IServiceCollection services, </span><br><span class="line">  <span class="keyword">string</span> serverHost, </span><br><span class="line">  <span class="keyword">int</span> serverPort</span><br><span class="line">)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">var</span> client = services.BuildServiceProvider().GetService&lt;IConsulClient&gt;();</span><br><span class="line">    <span class="keyword">var</span> registerID = <span class="string">$"<span class="subst">&#123;<span class="keyword">typeof</span>(TService).Name&#125;</span>-<span class="subst">&#123;serverHost&#125;</span>:<span class="subst">&#123;serverPort&#125;</span>"</span>;</span><br><span class="line">    <span class="keyword">await</span> client.Agent.ServiceDeregister(registerID);</span><br><span class="line">    <span class="keyword">var</span> result = <span class="keyword">await</span> client.Agent.ServiceRegister(<span class="keyword">new</span> AgentServiceRegistration()</span><br><span class="line">    &#123;</span><br><span class="line">        ID = registerID,</span><br><span class="line">        Name = <span class="keyword">typeof</span>(TService).Name,</span><br><span class="line">        Address = serverHost,</span><br><span class="line">        Port = serverPort,</span><br><span class="line">        Check = <span class="keyword">new</span> AgentServiceCheck</span><br><span class="line">        &#123;</span><br><span class="line">            TCP = <span class="string">$"<span class="subst">&#123;serverHost&#125;</span>:<span class="subst">&#123;serverPort&#125;</span>"</span>,</span><br><span class="line">            Status = HealthStatus.Passing,</span><br><span class="line">            DeregisterCriticalServiceAfter = TimeSpan.FromSeconds(<span class="number">10</span>),</span><br><span class="line">            Interval = TimeSpan.FromSeconds(<span class="number">10</span>),</span><br><span class="line">            Timeout = TimeSpan.FromSeconds(<span class="number">5</span>)</span><br><span class="line">        &#125;,</span><br><span class="line">        Tags = <span class="keyword">new</span> <span class="keyword">string</span>[] &#123; <span class="string">"gRpc"</span> &#125;</span><br><span class="line">    &#125;) ;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>对于<code>Consul</code>中的健康检查，更常用的是基于<code>HTTP</code>的健康检查，简单来说，就是我们提供一个接口，供<code>Consul</code>来调用，我们可以去设置请求的头(Header)、消息体(Body)、方法(Method)等等。所以，对于这里的实现，你还可以替换为更一般的实现，即提供一个API接口，然后在这个接口中调用<code>gRPC</code>的客户端。除此以外，如果你擅长写脚本，<code>Consul</code>同样支持脚本级别的健康检查。</p>
+<p>在这里，博主水平扩展(复制)了两套服务，它们分别被部署在<code>5001</code>和<code>6001</code>两个端口上，通过<code>Consul</code>能达到什么效果呢？我们一起来看一下：</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// ConfigureServices</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">ConfigureServices</span>(<span class="params">IServiceCollection services</span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    services.AddGrpc(options =&gt; options.Interceptors.Add&lt;GrpcServerLoggingInterceptor&gt;());</span><br><span class="line">    services.AddGrpcHealthCheck&lt;GreeterService&gt;();</span><br><span class="line">    services.AddGrpcHealthCheck&lt;CalculatorService&gt;();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Configure</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">Configure</span>(<span class="params">IApplicationBuilder app, IWebHostEnvironment env</span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    app.UseEndpoints(endpoints =&gt;</span><br><span class="line">    &#123;</span><br><span class="line">        endpoints.MapGrpcService&lt;GreeterService&gt;();</span><br><span class="line">        endpoints.MapGrpcService&lt;CalculatorService&gt;();</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>OK，此时，我们注意到<code>Consul</code>中有两个服务注册进去，它们分别是：<code>GreeterService</code> 和 <code>CalculatorService</code>：</p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="https://i.loli.net/2021/06/02/eTBj7Iqn256GXKw.png" alt="gRPC 服务成功注册到 Consul 中" title="" referrerpolicy="no-referrer">
+                </div>
+                <div class="image-caption">gRPC 服务成功注册到 Consul 中</div>
+            </figure>
+
+<p>以其中一个<code>CalculatorService</code>为例，我们可以注意到，它的确注册了<code>5001</code>和<code>6001</code>两个实例：</p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="https://i.loli.net/2021/06/03/xlhMjJ1ZcN3nwBe.png" alt="CalculatorService 的两个实例" title="" referrerpolicy="no-referrer">
+                </div>
+                <div class="image-caption">CalculatorService 的两个实例</div>
+            </figure>
+
+<p>至此，我们就完成了基于<code>Consul</code>的健康检查，在这里，图中的绿色标记表示服务可用。</p>
+<h1 id="关于-gRPC-的引申话题"><a href="#关于-gRPC-的引申话题" class="headerlink" title="关于 gRPC 的引申话题"></a>关于 gRPC 的引申话题</h1><p>其实，写到这里的时候，这篇博客就该接近尾声啦，因为对于 gRPC 健康检查的探索基本都已找到答案，可我还是想聊一聊关于 gRPC 的引申话题。理由特别简单，就是在我看来，接下来要讲的这点内容，完全撑不起一篇博客的篇幅，索性就在这篇博客里顺带一提。我打算分享两个话题，<strong>其一，是 gRPC 客户端的负载均衡；其二，是 gRPC 接口的测试工具。</strong></p>
+<h2 id="gRPC-客户端的负载均衡"><a href="#gRPC-客户端的负载均衡" class="headerlink" title="gRPC 客户端的负载均衡"></a>gRPC 客户端的负载均衡</h2><p>截止到目前为止，结合<code>Consul</code>我们已经实现了服务注册和服务发现两个功能。通过调研我们可以发现，针对服务器端的<code>gRPC</code>的负载均衡，目前主要有<code>Nginx</code>和<code>Envoy</code>两种方案，这两种相方案对要更复杂一点，博主目前所在的公司，在<code>gRPC</code>的负载均衡上感觉是个空白，这算是博主想要研究<code>gRPC</code>的一个主要原因。而在这里，由于<code>Consul</code>里注册了所有<code>gRPC</code>服务的终结点信息，所以，我们更容易想到的，其实是客户端的负载均衡，具体怎么实现呢？我们一起看一下：</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 从Consul中获取服务终结点信息</span></span><br><span class="line"><span class="keyword">var</span> consulClient = serviceProvider.GetService&lt;IConsulClient&gt;();</span><br><span class="line"><span class="keyword">var</span> serviceName = <span class="keyword">typeof</span>(TGrpcClient).Name.Replace(<span class="string">"Client"</span>, <span class="string">"Service"</span>);</span><br><span class="line"><span class="keyword">var</span> services = <span class="keyword">await</span> consulClient.Health.Service(serviceName, <span class="keyword">string</span>.Empty, <span class="literal">true</span>);</span><br><span class="line"><span class="keyword">var</span> serviceUrls = services.Response.Select(s =&gt; <span class="string">$"<span class="subst">&#123;s.Service.Address&#125;</span>:<span class="subst">&#123;s.Service.Port&#125;</span>"</span>).ToList();</span><br><span class="line"><span class="keyword">if</span> (serviceUrls == <span class="literal">null</span> || !serviceUrls.Any())</span><br><span class="line">    <span class="keyword">throw</span> <span class="keyword">new</span> Exception(<span class="string">$"Please make sure service <span class="subst">&#123;serviceName&#125;</span> is registered in consul"</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 构造Channel和Client</span></span><br><span class="line"><span class="keyword">var</span> serviceUrl = serviceUrls[<span class="keyword">new</span> Random().Next(<span class="number">0</span>, serviceUrls.Count - <span class="number">1</span>)];</span><br><span class="line"><span class="keyword">var</span> channel = GrpcChannel.ForAddress(<span class="string">$"https://<span class="subst">&#123;serviceUrl&#125;</span>"</span>);</span><br><span class="line"><span class="keyword">var</span> client = <span class="keyword">new</span> <span class="keyword">var</span> client = <span class="keyword">new</span> Calculator.CalculatorClient(channel);</span><br><span class="line"><span class="keyword">await</span> client.CalcAsync(<span class="keyword">new</span> CalculatorRequest() &#123; Num1 = <span class="number">10</span>, Op = <span class="string">"+"</span>, Num2 = <span class="number">12</span> &#125;);</span><br></pre></td></tr></table></figure>
+
+<p>可以看出，基本思路就是从<code>Consul</code>里拿到对应服务的终结点信息，然后构造出<code>GrpcChannel</code>，再通过<code>GrpcChannel</code>构造出Client即可。</p>
+<p>不过，博主觉得这个过程有一点繁琐，我们有没有办法让这些细节隐藏起来呢？于是，我们有了下面的改进方案：</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">async</span> Task&lt;TGrpcClient&gt; GetGrpcClientAsync&lt;TGrpcClient&gt;(</span><br><span class="line">  <span class="keyword">this</span> IServiceProvider serviceProvider</span><br><span class="line">)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">var</span> consulClient = serviceProvider.GetService&lt;IConsulClient&gt;();</span><br><span class="line">    <span class="keyword">var</span> serviceName = <span class="keyword">typeof</span>(TGrpcClient).Name.Replace(<span class="string">"Client"</span>, <span class="string">"Service"</span>);</span><br><span class="line">    <span class="keyword">var</span> services = <span class="keyword">await</span> consulClient.Health.Service(serviceName, <span class="keyword">string</span>.Empty, <span class="literal">true</span>);</span><br><span class="line">    <span class="keyword">var</span> serviceUrls = services.Response.Select(s =&gt; <span class="string">$"<span class="subst">&#123;s.Service.Address&#125;</span>:<span class="subst">&#123;s.Service.Port&#125;</span>"</span>).ToList();</span><br><span class="line">    <span class="keyword">if</span> (serviceUrls == <span class="literal">null</span> || !serviceUrls.Any())</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> Exception(<span class="string">$"Please make sure service <span class="subst">&#123;serviceName&#125;</span> is registered in consul"</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">var</span> serviceUrl = serviceUrls[<span class="keyword">new</span> Random().Next(<span class="number">0</span>, serviceUrls.Count - <span class="number">1</span>)];</span><br><span class="line">    <span class="keyword">var</span> channel = GrpcChannel.ForAddress(<span class="string">$"https://<span class="subst">&#123;serviceUrl&#125;</span>"</span>);</span><br><span class="line">    <span class="keyword">var</span> constructorInfo = <span class="keyword">typeof</span>(TGrpcClient).GetConstructor(<span class="keyword">new</span> Type[] &#123; <span class="keyword">typeof</span>(GrpcChannel) &#125;);</span><br><span class="line">    <span class="keyword">if</span> (constructorInfo == <span class="literal">null</span>)</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> Exception(<span class="string">$"Please make sure <span class="subst">&#123;<span class="keyword">typeof</span>(TGrpcClient).Name&#125;</span> is a gRpc client"</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">var</span> clientInstance = (TGrpcClient)constructorInfo.Invoke(<span class="keyword">new</span> <span class="keyword">object</span>[] &#123; channel &#125;);</span><br><span class="line">    <span class="keyword">return</span> clientInstance;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>现在，有没有觉得简单一点？完美！</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> client = <span class="keyword">await</span> serviceProvider.GetGrpcClientAsync&lt;CalculatorClient&gt;();</span><br><span class="line"><span class="keyword">await</span> client.CalcAsync(<span class="keyword">new</span> CalculatorRequest() &#123; Num1 = <span class="number">1</span>, Num2 = <span class="number">2</span>, Op = <span class="string">"+"</span> &#125;);</span><br></pre></td></tr></table></figure>
+
+<h2 id="gRPC-接口的测试工具"><a href="#gRPC-接口的测试工具" class="headerlink" title="gRPC 接口的测试工具"></a>gRPC 接口的测试工具</h2><p>我猜，大多数看到这个标题会一脸鄙夷，心里大概会想，就测试工具这种东西值得特地写出来吗？诚然，以前写API接口的时候，大家都是用 <a href="https://www.postman.com/downloads/" target="_blank" rel="noopener">Postman</a> 或者 <a href="https://www.apifox.cn/" target="_blank" rel="noopener">Apifox</a> 这样的工具来进行测试的，可是突然有一天你要调试一个<code>gRPC</code>的接口，你总不能每次都调用客户端啊，所以，这里要给大家推荐两个<code>gRPC</code>接口的测试工具，它们分别是: <a href="https://github.com/fullstorydev/grpcurl" target="_blank" rel="noopener">grpcurl</a> 和 <a href="https://github.com/fullstorydev/grpcui" target="_blank" rel="noopener">grpcui</a>，它们都出自同一个人 <a href="https://github.com/fullstorydev" target="_blank" rel="noopener">FullStory</a> 之手，基于Go语言开发，简单介绍下使用方法：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">// grpcurl</span><br><span class="line">brew install grpcurl</span><br><span class="line"></span><br><span class="line">// grpcui</span><br><span class="line">go get github.com/fullstorydev/grpcui/...</span><br><span class="line">go install github.com/fullstorydev/grpcui/cmd/grpcui</span><br></pre></td></tr></table></figure>
+
+<p>虽然这个说明简单而直白，可我还是没能装好，我不得不祭出Docker这个神器，果然它不会令我失望：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run -e GRPCUI_SERVER=localhost:5001 -p 8080:8080 wongnai/grpcui</span><br></pre></td></tr></table></figure>
+
+<p>这里有两个重要的参数，其中，<code>8080</code>是<code>grpcui</code>的服务地址，可以按个人喜好进行修改，<code>GRPCUI_SERVER</code>是<code>gRPC</code>服务地址，该工具运行效果如下：</p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="https://i.loli.net/2021/06/03/gGMaVKquDbtdWUN.png" alt="gRPCUI 接口测试工具" title="" referrerpolicy="no-referrer">
+                </div>
+                <div class="image-caption">gRPCUI 接口测试工具</div>
+            </figure>
+
+<p>对于使用者来说，我们只需要选择服务(service)、方法(rpc)、然后填入参数即可，个人感觉非常方便。</p>
+<h1 id="本文小结"><a href="#本文小结" class="headerlink" title="本文小结"></a>本文小结</h1><p>本文探索并实现了<code>gRPC</code>服务健康检查，主要提供了两种思路：基于<code>IHostedService</code> + <code>Timer</code>的轮询的方案 以及 基于<code>Consul</code>的集服务注册、服务发现、健康检查于一身的方案。特别地，对于后者而言，我们可以顺理成章地联想到客户端的负载均衡，其原理是：<code>Consul</code>中注册了所有<code>gRPC</code>服务的终结点信息，通过<code>IConsulClient</code>可以拿到所有可用的终结点信息，只要以此为基础来构建<code>GrpcChannel</code>即可。根据这个原理，我们引申出了<code>gRPC</code>客户端负载均衡的相关话题，这里我们采用的是随机选择一个终结点信息的做法，事实上，按照一般负载均衡的理论，我们还可以采取轮询、加权、Hash等等的算法，大家可以按照自己的业务场景来选择合适的方法。最后，我们简单介绍了下<code>gRPC</code>接口测试方面的内容，它可以帮助我们更高效地编写、验证<code>gRPC</code>接口。好了，以上就是这篇博客的全部内容啦，欢迎大家在评论区留言、参与讨论，谢谢大家！</p>
+
+                
+
+                
+
+
+<div class="recommended_posts">
+    <h1>推荐阅读</h1>
+    <ul>
+        
+        <li><a href="https://qinyuanpei.github.io/posts/1679688265/">ASP.NET Core gRPC 拦截器的使用技巧分享</a></li>
+        
+        <li><a href="https://qinyuanpei.github.io/posts/2462008667/">关于电影《暗杀》背后的故事和想法</a></li>
+        
+        <li><a href="https://qinyuanpei.github.io/posts/3670340170/">ABP vNext 对接 Ant Design Vue 实现分页查询</a></li>
+        
+        <li><a href="https://qinyuanpei.github.io/posts/3619320289/">ABP vNext 的实体与服务扩展技巧分享</a></li>
+        
+        <li><a href="https://qinyuanpei.github.io/posts/3959327595/">C#中Socket通信编程的同步实现</a></li>
+        
+    </ul>
+</div>
+
+            </div>
+            
+<blockquote class="post-copyright">
+    <div class="content">
+        <p><b>版权声明：</b>
+        <a href="https://qinyuanpei.github.io/posts/1657075397/" rel="external">ASP.NET Core gRPC 健康检查的探索与实现</a>
+        ，由&nbsp;<a href="/about" target="_blank" rel="external">飞鸿踏雪</a>&nbsp;
+        首次发表于&nbsp;<a href="/" target="_blank" rel="external">一个人的孤落时辰</a>&nbsp;
+        ，本文地址为：<a href="https://qinyuanpei.github.io/posts/1657075397/" target="_blank" rel="external">https://qinyuanpei.github.io/posts/1657075397/</a>
+        ，转载请注明<b>作者</b>和<b>出处</b>。</p>
+    </div>
+    <footer>
+        <a href="https://qinyuanpei.github.io">
+            <img src="/assets/images/avatar.jpg" alt="飞鸿踏雪">
+            飞鸿踏雪
+        </a>
+    </footer>
+</blockquote>
+
+
+            
+<div class="page-reward">
+    <a id="rewardBtn" href="javascript:;" class="page-reward-btn waves-effect waves-circle waves-light">赏</a>
+</div>
+
+
+            <div class="post-footer">
+                
+	<ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Consul/" rel="tag">Consul</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/gRPC/" rel="tag">gRPC</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%81%A5%E5%BA%B7%E6%A3%80%E6%9F%A5/" rel="tag">健康检查</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1/" rel="tag">微服务</a></li></ul>
+
+                
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://qinyuanpei.github.io/posts/1657075397/&title=《ASP.NET Core gRPC 健康检查的探索与实现》 — 一个人的孤落时辰&pic=https://qinyuanpei.github.ioassets/images/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://qinyuanpei.github.io/posts/1657075397/&title=《ASP.NET Core gRPC 健康检查的探索与实现》 — 一个人的孤落时辰&source=一个人的孤落时辰 | 纵有疾风起，人生不言弃 | 隐约雷鸣，阴霾天空，即使天无雨，我亦留此地。" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://qinyuanpei.github.io/posts/1657075397/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《ASP.NET Core gRPC 健康检查的探索与实现》 — 一个人的孤落时辰&url=https://qinyuanpei.github.io/posts/1657075397/&via=https://qinyuanpei.github.io" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://qinyuanpei.github.io/posts/1657075397/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+      
+      <li>
+        <a class="google share-sns" target="_blank" onClick="show_yp()" data-title=" 生成海报">
+          <i class="icon icon-file-image-o"></i>
+        </a>
+      </li>
+      
+    </ul>
+ </div>
+
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
+            </div>
+        </div>
+
+        
+<nav class="post-nav flex-row flex-justify-between flex-row-reverse">
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/posts/1679688265/" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h4 class="title">ASP.NET Core gRPC 拦截器的使用技巧分享</h4>
+      </a>
+    </div>
+  
+</nav>
+
+
+        
+    <div id="comment"></div>
+<script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+<script src='//unpkg.com/valine/dist/Valine.min.js'></script>
+<script type="text/javascript">
+new Valine({
+    el: '#comment' ,
+    notify: false, 
+    verify: true, 
+    appId: 'JbHqRp2eMrTgIwYpfERH0g79-gzGzoHsz',
+    appKey: 'VsiKvLuiBGvJL1XrAfv7siY2',
+    placeholder: '云中谁寄锦书来，雁字回时，月满西楼。&#10;Tips：如果希望收到我的评论回复，请至少留下你的邮箱哦:)',
+    path:'https://qinyuanpei.github.io/posts/1657075397/', 
+    avatar:'identicon',
+    requiredFields: ['nick','mail']
+});
+</script>
+
+
+
+
+    </article>
+    
+<div id="reward" class="page-modal reward-lay">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <h3 class="reward-title">
+        <i class="icon icon-quote-left"></i>
+        赠人玫瑰，手有余香
+        <i class="icon icon-quote-right"></i>
+    </h3>
+    <div class="reward-content">
+        
+        <div class="reward-code">
+            <img id="rewardCode" src="/assets/images/wechat.png" alt="打赏二维码">
+        </div>
+        
+        <label class="reward-toggle">
+            <input id="rewardToggle" type="checkbox" class="reward-toggle-check"
+                data-wechat="/assets/images/wechat.png" data-alipay="/assets/images/alipay.jpg">
+            <div class="reward-toggle-ctrol">
+                <span class="reward-toggle-item wechat">微信</span>
+                <span class="reward-toggle-label"></span>
+                <span class="reward-toggle-item alipay">支付宝</span>
+            </div>
+        </label>
+        
+    </div>
+</div>
+
+
+    <script type="text/javascript" src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/yoniu.min.js"></script>
+<style type='text/css'>
+	body.active-yp {
+		overflow: hidden;
+	}
+	.yp-fc-btn{
+		display: flex;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		align-items: center;
+		justify-content: space-between;
+		font-size: 13px;
+	}
+	.yp-fc-btn span{
+		cursor: pointer;
+		padding: 2px 10px;
+		color: #4b4b4b;
+		border: #4b4b4b 1px solid;
+		border-radius:5px;
+	}
+	#yp-hide{
+		position: fixed;
+		display: flex;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		justify-content: center;
+		flex-direction: column;
+		left:0;
+		top:0;
+		right:0;
+		bottom:0;
+		background-color:rgba(0,0,0,.5);
+		z-index: 99999;
+		visibility: hidden;
+	}
+	#yoniu-poster{
+		box-sizing: border-box;
+		width: 350px;
+		height: 467.2px;
+		background-color: #fff;
+		margin: 0 auto;
+		padding: 0;
+		line-height: 1.6;
+		text-align:justify;
+	}
+	
+	.yp-img {
+		min-height: 240px;
+		position: relative;
+		display: flex;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		justify-content: flex-end;
+		flex-direction: column;
+		background-position: 50% 50%;
+		background-size: cover;
+		overflow:hidden;
+	}
+	.yp-img>div{
+		padding: 10px 20px;
+	}
+	.yp-name{
+		display: block;
+		color: #fff;
+		font-size: 20px;
+		font-weight: 600;
+		text-shadow: #4b4b4b 0.1em 0.1em 0.2em;
+		margin-top: 10px;
+	}
+	.yp-sort{
+		padding: 3px 10px;
+		font-size: 12px;
+		color: #fff;
+		background: #2e2e2e;
+	}
+	.yp-des{
+		color: #2e2e2e;
+		font-size: 14px;
+		margin: 20px;
+		height: 67.2px;
+	}
+	.yp-qcode{
+		display: flex;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		justify-content: space-between;
+		align-items: center;
+		margin: 10px;
+		padding: 10px 20px;
+		background: #f5f5f5;
+		color: #818181;
+		border-radius: 10px;
+	}
+	.yp-tips{
+		display: flex;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		justify-content: space-between;
+		align-items: center;
+		color: #ccc;
+		margin: 0 10px 10px;
+		font-size: 10px;
+		letter-spacing: 1.5px;
+	}
+	.yp-btns{
+		display: flex;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		align-items: stretch;
+		justify-content: center;
+		width:350px;
+		margin: 0 auto;
+	}
+	.yp-btns>span{
+		display: flex;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		align-items: center;
+		justify-content: center;
+		font-size: 14px;
+		padding: 10px 15px;
+		background:rgba(0,0,0,.2);
+		color: #f5f5f5;
+		cursor: pointer;
+	}
+	.yp-btns>span>a{
+		color: #f5f5f5;
+	}
+	.yp-btns>span>a:hover{
+		text-decoration:none;
+	}
+	#yp-close{
+		font-size: 18px;
+		font-weight: 600;
+	}
+</style>
+<div id="yp-hide">
+    <div id="yoniu-poster">
+        <div class="yp-img" id="yp-img">
+            <div>
+                <span class="yp-sort">编程语言</span>
+                <span class="yp-name">ASP.NET Core gRPC 健康检查的探索与实现</span>
+            </div>
+        </div>
+        <div class="yp-des">    
+            
+                各位朋友，大家好，欢迎大家关注我的博客。在上一篇 博客 中，博主和大家分享了gRPC的拦截器在日志记录方面的简单应用，今天我们继续来探索gRPC...
+            
+        </div>
+        <div class="yp-qcode">
+            <span>扫描二维码阅读原文</span>
+            <img id="yp-qcode" width="64px" src="//api.qrserver.com/v1/create-qr-code/?data=https://qinyuanpei.github.io/posts/1657075397/">
+        </div>
+        <div class="yp-tips">
+            <span>一个人的孤落时辰</span>
+            <span><time class="post-time" title="2021-06-01 11:37:36" datetime="2021-06-01T11:37:36.000Z"  itemprop="datePublished">2021-06-01</time>
+</span>
+        </div>
+    </div>
+    <div class="yp-btns">
+        <span id="yp-load-yp" onClick="load_yp()">生成海报</span>
+        <span><a id="yp-download"></a></span>
+        <span id="yp-close" onClick="close_yp()">×</span>
+    </div>
+</div>
+<script type="text/javascript">
+    function show_yp(){
+        window.scrollTo(0, 0);
+        document.body.setAttribute("class","active-yp");
+        let cover = document.getElementsByTagName('img')[1];
+        if (cover != null && typeof(cover) != 'undefined') {
+            document.getElementById('yp-img').style.backgroundImage = `url(${cover.src})`;
+        } else {
+            document.getElementById('yp-img').style.backgroundColor = '#d7dbf0';
+        }
+        document.getElementById("yp-hide").style.visibility = "visible";
+    }
+    function close_yp(){
+        var domClass = document.body.getAttribute("class");
+        domClass = domClass.replace("active-yp","");
+        document.body.setAttribute("class",domClass);
+        document.getElementById("yp-hide").style.visibility = "hidden";
+    }
+    function load_yp(){
+        document.getElementById('yp-load-yp').textContent = '海报生成中...';
+        setTimeout(function() {
+            h2c_();
+        },2000);
+
+    }
+</script>
+
+</div>
+
+        <footer class="footer">
+    <div class="top">
+        
+   <p>
+      <span id="lc_counter_container_site_uv">
+         <i class="icon icon-user"></i><span id="lc_counter_value_site_uv"></span>
+      </span>
+      <span id="lc_counter_container_site_pv">
+         <i class="icon icon-eye"></i><span id="lc_counter_value_site_pv"></span>
+      </span>
+  </p>
+
+
+        <p>
+   <a id="jinrishici-sentence" href="https://www.jinrishici.com/" target="_blank" rel="noopener">加载中</a>
+</p>
+<script src="https://sdk.jinrishici.com/v2/browser/jinrishici.js" charset="utf-8"></script>
+<script>
+   jinrishici.load(function(result) {
+      document.querySelector('#subtitle').innerText = result.data.content;
+      document.querySelector('#jinrishici-sentence').innerText = result.data.content;
+  });
+</script>
+            <!--Todo: 考虑重构为插件 -->
+            <p>
+                
+                    <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+                
+                <span>
+                    <a href="https://github.com/qinyuanpei" target="_blank" rel="license noopener" title="Github">
+                        <i class="icon icon-lg icon-github"></i>
+                    </a>
+                </span>
+                <span>
+                    <a href="https://weibo.com/1278609231/profile" target="_blank" rel="license noopener" title="微博">
+                        <i class="icon icon-lg icon-weibo"></i>
+                    </a>
+                </span>
+                <span>
+                    <a href="https://www.douban.com/people/60029335/" target="_blank" rel="license noopener" title="豆瓣">
+                        <i class="icon icon-lg icon-douban"></i>
+                    </a>
+                </span>
+                <span>
+                    <a href="https://www.zhihu.com/people/qinyuanpei" target="_blank" rel="license noopener" title="知乎">
+                        <i class="icon icon-lg icon-zhihu-square"></i>
+                    </a>
+                </span>
+                <span>
+                    <a href="https://blog.csdn.net/qinyuanpei" target="_blank" rel="license noopener" title="CSDN">
+                        <i class="icon icon-lg">C</i>
+                    </a>
+                </span>
+                <span>
+                    <a href="https://music.163.com/#/user/home?id=47002864" target="_blank" rel="license noopener" title="网易音乐">
+                        <i class="icon icon-lg icon-wangyiyunyinyue"></i>
+                    </a>
+                </span>
+            </p>
+        
+    </div>
+    <div class="bottom">
+        <p><span>飞鸿踏雪 &copy; 2014 - 2021</span><br>
+            
+                
+                Powered by <a href="http://hexo.io/" target="_blank">Hexo</a> & Theme by <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a><br>
+                
+                
+                    <p>Hosted by <a href="https://pages.github.com" target="_blank" rel="noopener" style="font-weight: bold">Github Pages</a></p>
+                
+        </p>
+    </div>
+</footer>
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span
+        class="icon icon-lg icon-chevron-up"></span></a>
+
+    
+
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://qinyuanpei.github.io/posts/1657075397/&title=《ASP.NET Core gRPC 健康检查的探索与实现》 — 一个人的孤落时辰&pic=https://qinyuanpei.github.ioassets/images/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://qinyuanpei.github.io/posts/1657075397/&title=《ASP.NET Core gRPC 健康检查的探索与实现》 — 一个人的孤落时辰&source=一个人的孤落时辰 | 纵有疾风起，人生不言弃 | 隐约雷鸣，阴霾天空，即使天无雨，我亦留此地。" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://qinyuanpei.github.io/posts/1657075397/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《ASP.NET Core gRPC 健康检查的探索与实现》 — 一个人的孤落时辰&url=https://qinyuanpei.github.io/posts/1657075397/&via=https://qinyuanpei.github.io" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://qinyuanpei.github.io/posts/1657075397/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+      
+      <li>
+        <a class="google share-sns" target="_blank" onClick="show_yp()" data-title=" 生成海报">
+          <i class="icon icon-file-image-o"></i>
+        </a>
+      </li>
+      
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="//api.qrserver.com/v1/create-qr-code/?data=https://qinyuanpei.github.io/posts/1657075397/" alt="微信分享二维码">
+</div>
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.6/waves.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/4.2.1/echarts.min.js"></script>
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/echarts-wordcloud.min.js" async></script>
+<script>
+    var BLOG = { ROOT: '/', SHARE: true, REWARD: true };
+
+
+</script>
+
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/main.min.js"></script>
+
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/search.min.js" async></script>
+
+
+
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/heart.min.js" async></script>
+
+
+
+
+
+
+
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/leancloud-counter.min.js"></script>
+<script>
+        (function () {
+            var appId = 'JbHqRp2eMrTgIwYpfERH0g79-gzGzoHsz';
+            var appKey = 'VsiKvLuiBGvJL1XrAfv7siY2';
+            new VisitorCounter().init({
+                appId: appId,       //应用ID, 必输
+                appKey: appKey,      //应用Key, 必输
+                region: '华北',      //华东,华北,国际, 默认华东
+                domain: '',      //自定义域名
+                collectIP: true, //是否收集IP及位置信息, 默认开启
+                collectUA: true  //是否收集UserAgent, 默认开启
+            });
+        })();
+</script>
+
+
+
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/vconsole.min.js"></script>
+<script type="text/javascript">
+    //当地址中存在debug=true时，实例化vConsole
+    if (location.href.indexOf('debug=true') > -1) {
+        var vConsole = new VConsole();
+    }
+</script>
+
+
+    <script>
+    //国内用户自动重定向Coding Pages镜像
+    // var ipInfo = JSON.parse(localStorage.getItem('ipInfo'));
+    // if (ipInfo.country_code == 'CN') {
+    //     location.href = location.href.replace('qinyuanpei.github.io', 'blog.yuanpei.me');
+    // }
+    </script>
+
+
+<script>
+titleArray = [];
+function scrollTitle() {
+    if (titleArray.length == 0) return;
+    titleArray.push(titleArray[0]);
+	titleArray.shift();
+	document.title = titleArray.join("");
+}
+setInterval(scrollTitle, 500);
+(function() {
+    var originTitile = document.title, titleTime;
+    document.addEventListener('visibilitychange', function() {
+        if (document.hidden) {
+            titleArray = originTitile.split('');
+            clearTimeout(titleTime);
+        } else {
+            document.title = originTitile;
+            titleArray = originTitile.split('');
+            titleTime = setTimeout(function() {
+                document.title = originTitile;
+                titleArray = [];
+            },2000);
+        }
+    });
+})();
+</script>
+
+
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/ribbon.min.js"></script>
+</body>
+</html>
