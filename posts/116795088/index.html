@@ -1,0 +1,917 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+    
+<script async defer data-domain="blog.yuanpei.me" src="https://plausible.io/js/plausible.js"></script>
+    
+    <meta charset="utf-8">
+    <!-- HTTP 1.1 -->  
+    <meta http-equiv="pragma" content="no-cache">  
+    <!-- HTTP 1.0 -->  
+    <meta http-equiv="cache-control" content="no-cache">
+    <!-- 微博图床防盗链 --> 
+    <!-- <meta name="referrer" content="no-referrer"/> -->
+    <!--Google站点验证-->
+    
+    <!--百度站点验证-->
+    
+    
+    <!--Google AdSense-->
+    
+    <!--Bing站点验证-->
+    <meta name="msvalidate.01" content="713A48A3FE17D4841C292A6B3942EB4C" />
+    
+    <title>
+        .NET Core POCOController在动态Web API中的应用 | 一个人的孤落时辰 | 纵有疾风起，人生不言弃
+    </title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+        <meta name="theme-color" content="#3F51B5">
+    
+
+    <meta name="keywords" content="技巧,.NET Core,API,Web,秦元培,技术博客,生活随笔,个人博客,NET,Python,数据挖掘,数据分析,NLP">
+    
+        <meta name="description" content="POCOController是ASP.NET Core中提供的一个新特性，按照约定大于配置的原则，在ASP.NET Core项目中，所有带有Controller后缀的类，或者是使用了[Controller]标记的类，即使它没有像模板中一样继承Controller类，ASP.NET Core依然会将其识别为Controller，并拥有和普通Controller一样的功能，说到这里，你是不是有点兴奋了呢，因为我们在ASP.NET里花了大力气去做类似的事情，因为ASP.NET里一个普通的类是没有办法成为Controller的，即使通过Castle的Dynamic Proxy黑科技，我们依然需要去Hack整个MVC框架创建、筛选Controller和Action的过程;所以，我们希望在提供默认路由的基础上，使用者可以自由配置路由风格，所以，我们需要通过这个接口来构造路由信息，值得一提的是，我们可以在这个过程中设置ApiExplorer是否可见，为接口参数设置合适的绑定模型等等，所以，我们会使用HttpGet/HttpPost等来标记接口的调用方式，使用Route来标记用户自定义的路由信息，使用FromBody/FromQuery等来标记参数的绑定信息，有了这些配合Swagger简直是无往不胜，并非是开发人员不愿意写文档，而是因为文档的更新速度往往赶不上需求的变化速度，一旦文档落后于实际业务，这样的文档实际是没有意义的，我真的讨厌所有人都来找你问接口的地址、参数这些东西，如果你写完了一个Service，写好对应的方法注释，然后你就有了一个可用的Web API，和一个可用的在线文档，何乐而不为呢;这篇博客延续了上一篇博客中关于动态Controller的设想，而借助于.NET Core框架提供的良好特性，它以一种更为简洁的方式被实现了，核心的内容有两个点，其一是ControllerFeatureProvider，它能决定MVC会不会把一个普通的类当做控制器;如你所见，我们采用了一种简单粗暴的方式，任何非Public、非抽象、非泛型并且实现了IDynamicController接口的类型，都可以被认为是一个Controller，原谅我起了这样一个直白而普通的接口名称，因为一开始做的时候，真的就是想延续动态Web Api这个想法而已，所以，大家明白就好了，不用太过纠结这个接口的名字，甚至你还可以通过Attribute来打上标记，反正都是为了辨别哪些类型可以被当做控制器;通过我们上一篇文章里动态路由的整个过程，大家就知道有多麻烦了啊，可在.NET Core里要实现一个泛型的控制器就非常容易了啊，因为我们只需要告诉ControllerFeatureProvider，这是一个控制器，并且控制器的类型就是这个泛型参数T，所以，综上所述，ControllerFeatureProvider主要做两个事情，第一，判定一个类型能不能算作Controller">
+    
+    <meta name="description" content="POCOController是ASP.NET Core中提供的一个新特性，按照约定大于配置的原则，在ASP.NET Core项目中，所有带有Controller后缀的类，或者是使用了[Controller]标记的类，即使它没有像模板中一样继承Controller类，ASP.NET Core依然会将其识别为Controller，并拥有和普通Controller一样的功能，说到这里，你是不是有点兴奋了">
+<meta property="og:type" content="article">
+<meta property="og:title" content=".NET Core POCOController在动态Web API中的应用">
+<meta property="og:url" content="https://qinyuanpei.github.io/posts/116795088/index.html">
+<meta property="og:site_name" content="一个人的孤落时辰">
+<meta property="og:description" content="POCOController是ASP.NET Core中提供的一个新特性，按照约定大于配置的原则，在ASP.NET Core项目中，所有带有Controller后缀的类，或者是使用了[Controller]标记的类，即使它没有像模板中一样继承Controller类，ASP.NET Core依然会将其识别为Controller，并拥有和普通Controller一样的功能，说到这里，你是不是有点兴奋了">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://ww1.sinaimg.cn/large/4c36074fly1g5j4wxhvuaj20kw0c075r.jpg">
+<meta property="og:image" content="https://ww1.sinaimg.cn/large/4c36074fly1g5k84kvuzqj21hc0s03zo.jpg">
+<meta property="article:published_time" content="2019-08-01T16:44:59.000Z">
+<meta property="article:modified_time" content="2021-06-07T05:34:21.397Z">
+<meta property="article:author" content="飞鸿踏雪">
+<meta property="article:tag" content="技巧">
+<meta property="article:tag" content=".NET Core">
+<meta property="article:tag" content="API">
+<meta property="article:tag" content="Web">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://ww1.sinaimg.cn/large/4c36074fly1g5j4wxhvuaj20kw0c075r.jpg">
+    
+        <link rel="alternate" type="application/atom+xml" title="一个人的孤落时辰" href="/atom.xml">
+    
+    <link rel="shortcut icon" href="/assets/images/favicon.ico">
+    
+        <link rel="manifest" href="/manifest.json">
+    
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master//assets/styles/style.css">
+    <script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/instantclick.min.js"></script>
+    <script>window.lazyScripts=[]</script>
+    <!-- custom head -->
+    
+
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu" class="hide" >
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap" style="background-image:url(/assets/images/brand.jpg)">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/assets/images/avatar.jpg" alt="avatar">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">飞鸿踏雪</h5>
+          <a href="mailto:qinyuanpei@163.com" title="qinyuanpei@163.com" class="mail">qinyuanpei@163.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/"  >
+                <i class="icon icon-lg icon-home"></i>
+                主页
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives"  >
+                <i class="icon icon-lg icon-archives"></i>
+                归档
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags"  >
+                <i class="icon icon-lg icon-tags"></i>
+                标签
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/categories"  >
+                <i class="icon icon-lg icon-th-list"></i>
+                分类
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/books"  >
+                <i class="icon icon-lg icon-bookmark"></i>
+                书单
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/movies"  >
+                <i class="icon icon-lg icon-film"></i>
+                影单
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="https://qinyuanpei.github.io/poems/"  >
+                <i class="icon icon-lg icon-folder-open"></i>
+                诗集
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/works"  >
+                <i class="icon icon-lg icon-code"></i>
+                实验室
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/about"  >
+                <i class="icon icon-lg icon-circle"></i>
+                关于我
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+            <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">.NET Core POCOController在动态Web API中的应用</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off"
+                placeholder="输入感兴趣的关键字">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+        <a href="https://github.com/qinyuanpei/qinyuanpei.github.io" target="_blank" rel="noopener" class="header-icon waves-effect waves-circle waves-light" id="menuGithub">
+            <i class="icon icon-lg icon-code-fork"></i>
+        </a>
+    </div>
+</header>
+<header class="content-header post-header">
+    <div class="container fade-scale">
+        <h1 class="title">.NET Core POCOController在动态Web API中的应用</h1>
+        <h5 class="subtitle" id="subtitle">
+            
+            <time datetime="2019-08-01T16:44:59.000Z" itemprop="datePublished" class="page-time">
+  2019-08-01
+</time>
+
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/">编程语言</a></li></ul>
+
+            
+        </h5>
+    </div>
+    
+
+</header>
+
+<div class="container body-wrap">
+    
+    <aside class="post-widget">
+        <nav class="post-toc-wrap" id="post-toc">
+            <h4>目录</h4>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#什么是POCOController"><span class="post-toc-number">1.</span> <span class="post-toc-text">什么是POCOController</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#ControllerFeatureProvider"><span class="post-toc-number">2.</span> <span class="post-toc-text">ControllerFeatureProvider</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#IApplicationModelConvention"><span class="post-toc-number">3.</span> <span class="post-toc-text">IApplicationModelConvention</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#ConfigureApiExplorer"><span class="post-toc-number">3.1.</span> <span class="post-toc-text">ConfigureApiExplorer()</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#ConfigureSelector"><span class="post-toc-number">3.2.</span> <span class="post-toc-text">ConfigureSelector()</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#ConfigureParameters"><span class="post-toc-number">3.3.</span> <span class="post-toc-text">ConfigureParameters()</span></a></li></ol></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#集成Swagger和WebApiClient"><span class="post-toc-number">4.</span> <span class="post-toc-text">集成Swagger和WebApiClient</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#本文小结"><span class="post-toc-number">5.</span> <span class="post-toc-text">本文小结</span></a></li></ol>
+        </nav>
+    </aside>
+    
+    <article id="post-NET-Core-POCOController在动态Web-API中的应用" class="post-article article-type-post fade" itemprop="blogPost">
+
+        <div class="post-card">
+            <h1 class="post-card-title">
+                .NET Core POCOController在动态Web API中的应用
+            </h1>
+            <div class="post-meta">
+                <time class="post-time" title="2019-08-01 16:44:59" datetime="2019-08-01T16:44:59.000Z"  itemprop="datePublished">2019-08-01</time>
+
+                
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/">编程语言</a></li></ul>
+
+
+
+                
+<span id="lc_counter_container_page_pv" title="文章总阅读量" data-page-url="" data-page-title=".NET Core POCOController在动态Web API中的应用">
+    <i class="icon icon-eye icon-pr"></i><span id="lc_counter_value_page_pv"></span>
+</span>
+
+
+
+
+
+                
+    <span>
+        <i class="icon icon-clock-o"></i>
+        35 min.
+    </span>
+    
+            </div>
+            <div class="post-content" id="post-content" itemprop="postContent">
+                <p>Hi，大家好，我是Payne，欢迎大家关注我的博客，我的博客地址是：<a href="https://blog.yuanpei.me" target="_blank" rel="noopener"><a href="https://blog.yuanpei.me" target="_blank" rel="noopener">https://blog.yuanpei.me</a></a>。在上一篇文章中，我和大家分享了ASP.NET中动态Web API的实现，这种方案的现实意义是，它可以让我们把任意一个接口转换为Web API，所以，不单单局限在文章里提到的WCF迁移到Web API，任意领域驱动开发(DDD)中的服务层，甚至是更为普遍的传统三层，都可以通过这种方式快速构建前后端分离的应用。可能大家会觉得直接把Service层暴露为API，会引发一系列关于鉴权、参数设置(FromQuery/FromBody)等等的问题，甚至更极端的想法是，这样和手写的没什么区别，通过中间件反射能达到相同的目的，就像我们每天都在写各种接口，经常有人告诉我们说，不要在Controller层写太重的业务逻辑，所以，我们的做法就是不断地在Service层里增加新接口，然后再把Service层通过Controller层暴露出来，这样子真的是对的吗？</p>
+<p>可我个人相信，技术总是在不断向前发展的，大家觉得RESTful完全够用啦，结果GraphQL突然发现了。大家写了这么多年后端，其实一直都在绕着数据转，可如果数据库本身就支持RESTful风格的接口，或者是数据库本身就支持某种ORM，我们后端会立马变得无趣起来。其实，在ASP.NET Core中已经提供了这种特性，这就是我们今天要说的POCOController，所以，这也许是个正确的思路，对吧？为什么Service层本身不能就是Controller层呢？通过今天这篇文章，或许你会接受这种想法，因为POCOController，就是弱化Controller本身的特殊性，一个Controller未必需要继承自Controller，或者在名称中含有<strong>Controller</strong>相关的字眼，如果Controller同普通的类没有区别会怎么样呢？答案就是Service层和Controller层的界限越来越模糊。扪心自问，我们真的需要中间这一层封装吗？</p>
+<h1 id="什么是POCOController"><a href="#什么是POCOController" class="headerlink" title="什么是POCOController"></a>什么是POCOController</h1><p>POCOController是ASP.NET Core中提供的一个新特性，按照约定大于配置的原则，在ASP.NET Core项目中，所有带有Controller后缀的类，或者是使用了[Controller]标记的类，即使它没有像模板中一样继承Controller类，ASP.NET Core依然会将其识别为Controller，并拥有和普通Controller一样的功能，说到这里，你是不是有点兴奋了呢，因为我们在ASP.NET里花了大力气去做类似的事情，因为ASP.NET里一个普通的类是没有办法成为Controller的，即使通过Castle的Dynamic Proxy黑科技，我们依然需要去Hack整个MVC框架创建、筛选Controller和Action的过程。可在ASP.NET Core里这一切居然变成了一个新的feature，所以，我预感到这篇文章应该不会像上一篇文章那么长，果然9102有9102的好处呢……好了，现在我们来写一个POCOController：</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">MessageController</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">string</span> <span class="title">Echo</span>(<span class="params"><span class="keyword">string</span> receiver</span>)</span></span><br><span class="line"><span class="function"></span>   &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">$"Hello, <span class="subst">&#123;receiver&#125;</span>"</span>;</span><br><span class="line">   &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>接下来，我们通过浏览器访问：<a href="http://localhost:6363/Message/Echo?receiver=PayneQin，我们就会发现一件非常神奇的事情，那就是，我们并没有真的在写一个Controller，它没有继承Controller类，虽然它的名字里带着Controller的后缀，可它确实实现了一个Controller所具备的功能，因为它返回了我们期望的信息。" target="_blank" rel="noopener">http://localhost:6363/Message/Echo?receiver=PayneQin，我们就会发现一件非常神奇的事情，那就是，我们并没有真的在写一个Controller，它没有继承Controller类，虽然它的名字里带着Controller的后缀，可它确实实现了一个Controller所具备的功能，因为它返回了我们期望的信息。</a></p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="https://ww1.sinaimg.cn/large/4c36074fly1g5j4wxhvuaj20kw0c075r.jpg" alt="欢迎来到POCOController的世界" title="" referrerpolicy="no-referrer">
+                </div>
+                <div class="image-caption">欢迎来到POCOController的世界</div>
+            </figure>
+
+<p>可以注意到，这个Controller使用起来和普通的Controller是没有任何区别的，这正是我们想要的结果。对于.NET Core而言，一个普通的类想要成为POCOController，只需要满足以下任意一个条件：第一，继承自Microsoft.AspNetCore.Mvc.Controller类，无论是否带有Controller后缀，都可以作为POCOController。第二，不继承自Microsoft.AspNetCore.Mvc.Controller类，同时引用了Microsoft.AspNetCore.Mvc相关的程序集。在这里，博主一开始就犯了这个错误，因为博主建的是一个Web API类型的项目。</p>
+<h1 id="ControllerFeatureProvider"><a href="#ControllerFeatureProvider" class="headerlink" title="ControllerFeatureProvider"></a>ControllerFeatureProvider</h1><p>那么，为什么ASP.NET Core里可以实现如此炫酷的功能呢？这里要介绍到ControllerFeatureProvider。在.NET Core中，微软引入了应用程序部件的概念，顾名思义，它是对应用程序资源的一种抽象，通过这些应用程序部件， .NET Core提供了发现和加载MVC组件，如控制器、视图(View)、标记(TagHelper)、Razor等等的功能。在MVC中，这些功能由ApplicationPartManager对象来进行管理，它维护着一个叫做FeatureProviders的列表，以上这些功能分别对应一个Feature，所以，当我们希望引入一个新的功能的时候，只需要实现IApplicationFeatureProvider<T>接口即可，而这里的ControllerFeatureProvider显然是提供“控制器”相关的Feature，它有一个最为关键的接口IsController(TypeInfo)。</p>
+<p>回到一开始的话题，微软定义了一个类成为POCOController的规则，实际上我们同样可以定义自己的规则，譬如ABP框架中限定的接口约束是实现IAppService这个接口，那么我们就可以把一个程序集或者多个程序集里的类型识别为控制器，这就是POCOController的奥秘所在。在比如我们的项目中难免会有大量CRUD的垃圾需求，区别仅仅是它访问不同的仓储，我们可能会想写一个泛型的控制器来处理，可惜在过去的ASP.NET里，实现这一切并不太容易。为什么说不大容易呢？通过我们上一篇文章里动态路由的整个过程，大家就知道有多麻烦了啊，可在.NET Core里要实现一个泛型的控制器就非常容易了啊，因为我们只需要告诉ControllerFeatureProvider，这是一个控制器，并且控制器的类型就是这个泛型参数T，所以，综上所述，ControllerFeatureProvider主要做两个事情，第一，判定一个类型能不能算作Controller；第二，对程序集里的类型进行筛选和过滤。下面，我们顺着这个思路来实现我们自己的ControllerFeatureProvider。</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">DynamicControllerFeatureProvider</span> : <span class="title">ControllerFeatureProvider</span> </span><br><span class="line">&#123;</span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">override</span> <span class="keyword">bool</span> <span class="title">IsController</span> (<span class="params">TypeInfo typeInfo</span>)</span> &#123;</span><br><span class="line">    	<span class="keyword">var</span> type = typeInfo.AsType ();</span><br><span class="line">        <span class="keyword">if</span> (!<span class="keyword">typeof</span> (IDynamicController).IsAssignableFrom (type) ||</span><br><span class="line">            !typeInfo.IsPublic || typeInfo.IsAbstract || typeInfo.IsGenericType) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    	<span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>如你所见，我们采用了一种简单粗暴的方式，任何非Public、非抽象、非泛型并且实现了IDynamicController接口的类型，都可以被认为是一个Controller，原谅我起了这样一个直白而普通的接口名称，因为一开始做的时候，真的就是想延续动态Web Api这个想法而已，所以，大家明白就好了，不用太过纠结这个接口的名字，甚至你还可以通过Attribute来打上标记，反正都是为了辨别哪些类型可以被当做控制器。</p>
+<h1 id="IApplicationModelConvention"><a href="#IApplicationModelConvention" class="headerlink" title="IApplicationModelConvention"></a>IApplicationModelConvention</h1><p>OK，现在我们已经告诉.NET Core，怎么样去把一个类型识别为Controller。因为MVC中有一些所谓“约定大于配置”的东西，比如默认的路由规则是{area}/{controller}/{action}/{id}，相信从ASP.NET时代一起走过来的各位，对这个东西应该很熟悉啦，因为最早App_Start里会有RouteConfig和WebApiConfig这两个东西。我们在做ASP.NET版本的动态Web API的实现的时候，实际上就是配置了这样一个固定的路由，所以，理论上现在即使我们不讲下面这部分内容，现在我们已经实现了动态Controller。可如果我们希望对路由进行全局配置，我们就不得不关注这个接口。简而言之，通过这个接口，我们可以修改MVC里约定俗成的这套规则，譬如在路由中带个版本号前缀，或者根据命名空间去生成某种规则的路由，我们都可以考虑去实现这个接口。一般情况下，我们会通过重写Apply()方法来达到修改路由的目的。</p>
+<p>在这篇文章里，我们希望在MVC这套默认路由的基础上，增加对特性路由的支持。说到这里，我们又会回到一个旧话题，即基于配置的路由和基于特性的路由这两种路由。前者是MVC里的路由设计的基础，而后者是Web API里提出并在RESTful风格API的设计中发扬光大。所以，我们希望在提供默认路由的基础上，使用者可以自由配置路由风格，所以，我们需要通过这个接口来构造路由信息，值得一提的是，我们可以在这个过程中设置ApiExplorer是否可见，为接口参数设置合适的绑定模型等等，所以，我们会使用HttpGet/HttpPost等来标记接口的调用方式，使用Route来标记用户自定义的路由信息，使用FromBody/FromQuery等来标记参数的绑定信息，有了这些配合Swagger简直是无往不胜，并非是开发人员不愿意写文档，而是因为文档的更新速度往往赶不上需求的变化速度，一旦文档落后于实际业务，这样的文档实际是没有意义的，我真的讨厌所有人都来找你问接口的地址、参数这些东西，如果你写完了一个Service，写好对应的方法注释，然后你就有了一个可用的Web API，和一个可用的在线文档，何乐而不为呢？</p>
+<p>下面，是博主实现的一个动态路由，它主要涉及到ConfigureApiExplorer()、ConfigureSelector()和ConfigureParameters()这三个部分的实现，我们一起来看下面的代码，ASP.NET Core版本相比ASP.NET版本，少了像Castle DynamicProxy这样的黑科技，因此它的实现会更加纯粹一点。</p>
+<h2 id="ConfigureApiExplorer"><a href="#ConfigureApiExplorer" class="headerlink" title="ConfigureApiExplorer()"></a>ConfigureApiExplorer()</h2><p>首先，是对ApiExplorer进行配置。通过ApiExplorer，我们可以控制Controller级别和Action级别的Web API的可见性。一般情况下的用法是在Controller或者Action上添加ApiExplorerSettings标记，而在这里，我们只需要给ControllerModel和ActionModel的ApiExplorer属性赋值即可。</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">ConfigureApiExplorer</span> (<span class="params">ControllerModel controller</span>) </span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">string</span>.IsNullOrEmpty (controller.ApiExplorer.GroupName))</span><br><span class="line">        controller.ApiExplorer.GroupName = controller.ControllerName;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (controller.ApiExplorer.IsVisible == <span class="literal">null</span>)</span><br><span class="line">        controller.ApiExplorer.IsVisible = <span class="literal">true</span>;</span><br><span class="line"></span><br><span class="line">   controller.Actions.ToList ().ForEach (action =&gt; ConfigureApiExplorer (action));</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">ConfigureApiExplorer</span> (<span class="params">ActionModel action</span>) </span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (action.ApiExplorer.IsVisible == <span class="literal">null</span>)</span><br><span class="line">       action.ApiExplorer.IsVisible = <span class="literal">true</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="ConfigureSelector"><a href="#ConfigureSelector" class="headerlink" title="ConfigureSelector()"></a>ConfigureSelector()</h2><p>接下来，是对路由进行配置。这部分的核心其实就是根据AreaName、ControllerName、ActionName来生成路由信息，我们会为没有配置过特性路由的Action生成默认的路由，这其实就是MVC里约定大于配置的一种体现啦。在这里会涉及到对ControllerName和ActionName的优化调整，主要体现在两个方面，其一是对类似XXXService、XXXController等这样的后缀进行去除，使其构造出的Api路由更加短小精简；其二是对ActionName里的Get/Save/Update等动词进行替换，使其构造出的Api路由更加符合RESTful风格。</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">ConfigureSelector</span> (<span class="params">ControllerModel controller, DynamicControllerAttribute controllerAttribute</span>) </span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (_dynamicControllerOptions.UseFriendlyControllerName) &#123;</span><br><span class="line">        <span class="keyword">var</span> suffixsToRemove = _dynamicControllerOptions.RemoveControllerSuffix;</span><br><span class="line">        <span class="keyword">if</span> (suffixsToRemove != <span class="literal">null</span> &amp;&amp; suffixsToRemove.Any ())</span><br><span class="line">            suffixsToRemove.ToList ().ForEach (suffix =&gt; controller.ControllerName = controller.ControllerName.Replace (suffix, <span class="string">""</span>));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    controller.Selectors.ToList ().RemoveAll (selector =&gt;</span><br><span class="line">        selector.AttributeRouteModel == <span class="literal">null</span> &amp;&amp; (selector.ActionConstraints == <span class="literal">null</span> || !selector.ActionConstraints.Any ())</span><br><span class="line">    );</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (controller.Selectors.Any (selector =&gt; selector.AttributeRouteModel != <span class="literal">null</span>))</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">var</span> areaName = <span class="keyword">string</span>.Empty;</span><br><span class="line">    <span class="keyword">if</span> (controllerAttribute != <span class="literal">null</span>)</span><br><span class="line">        areaName = controllerAttribute.AreaName;</span><br><span class="line"></span><br><span class="line">    controller.Actions.ToList ().ForEach (action =&gt; ConfigureSelector (areaName, controller.ControllerName, action));</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">ConfigureSelector</span> (<span class="params"><span class="keyword">string</span> areaName, <span class="keyword">string</span> controllerName, ActionModel action</span>) </span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    action.Selectors.ToList ().RemoveAll (selector =&gt;</span><br><span class="line">        selector.AttributeRouteModel == <span class="literal">null</span> &amp;&amp; (selector.ActionConstraints == <span class="literal">null</span> || !selector.ActionConstraints.Any ())</span><br><span class="line">    );</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (!action.Selectors.Any ()) &#123;</span><br><span class="line">        action.Selectors.Add (CreateActionSelector (areaName, controllerName, action));</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        action.Selectors.ToList ().ForEach (selector =&gt; &#123;</span><br><span class="line">            <span class="keyword">var</span> routePath = <span class="string">$"<span class="subst">&#123;_dynamicControllerOptions.DefaultApiRoutePrefix&#125;</span>/<span class="subst">&#123;areaName&#125;</span>/<span class="subst">&#123;controllerName&#125;</span>/<span class="subst">&#123;action.ActionName&#125;</span>"</span>.Replace (<span class="string">"//"</span>, <span class="string">"/"</span>);</span><br><span class="line">            <span class="keyword">var</span> routeModel = <span class="keyword">new</span> AttributeRouteModel (<span class="keyword">new</span> RouteAttribute (routePath));</span><br><span class="line">            <span class="keyword">if</span> (selector.AttributeRouteModel == <span class="literal">null</span> || !_dynamicControllerOptions.UseCustomRouteFirst)</span><br><span class="line">                selector.AttributeRouteModel = routeModel;</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>我们知道，每个API接口都会有相对应的HTTP动词，譬如GET、POST、PUT等等，那么，我们在构造路由的时候，如何知道当前的Action应该使用什么HTTP动词呢？实际上，我们有两个来源来组织这些信息。第一个来源，是根据方法本身的名称，比如Get/Save/Update等等，我们通过对应关系将其转化为对应的HTTP动词。第二个来源是根据用户在接口中配置的路由信息，比如RouteAttribute、HttpMethod等等，将其转化为对应的HTTP动词。这个方法，其实我们在分享ASP.NET下的实现的时候，就已经用过一次啦，所谓“万变不离其宗”，大概就是如此：</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> SelectorModel <span class="title">CreateActionSelector</span>(<span class="params"><span class="keyword">string</span> areaName, <span class="keyword">string</span> controllerName, ActionModel action</span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">var</span> selectorModel = <span class="keyword">new</span> SelectorModel();</span><br><span class="line">    <span class="keyword">var</span> actionName = action.ActionName;</span><br><span class="line">    <span class="keyword">var</span> routeAttributes = action.ActionMethod.GetCustomAttributes(<span class="keyword">typeof</span>(HttpMethodAttribute), <span class="literal">false</span>);</span><br><span class="line">    <span class="keyword">if</span> (routeAttributes != <span class="literal">null</span> &amp;&amp; routeAttributes.Any())</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">var</span> httpVerbs = routeAttributes.SelectMany(s =&gt; (s <span class="keyword">as</span> HttpMethodAttribute).HttpMethods).ToList().Distinct();</span><br><span class="line">        <span class="keyword">var</span> routePath = <span class="string">$"<span class="subst">&#123;_dynamicControllerOptions.DefaultApiRoutePrefix&#125;</span>/<span class="subst">&#123;areaName&#125;</span>/<span class="subst">&#123;controllerName&#125;</span>/<span class="subst">&#123;action.ActionName&#125;</span>"</span>.Replace(<span class="string">"//"</span>, <span class="string">"/"</span>);</span><br><span class="line">        selectorModel.AttributeRouteModel = <span class="keyword">new</span> AttributeRouteModel(<span class="keyword">new</span> RouteAttribute(routePath));</span><br><span class="line">        selectorModel.ActionConstraints.Add(<span class="keyword">new</span> HttpMethodActionConstraint(httpVerbs));</span><br><span class="line">        <span class="keyword">return</span> selectorModel;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">var</span> httpVerb = <span class="keyword">string</span>.Empty;</span><br><span class="line">        <span class="keyword">var</span> methodName = action.ActionMethod.Name.ToUpper();</span><br><span class="line">        <span class="keyword">if</span> (methodName.StartsWith(<span class="string">"GET"</span>) || methodName.StartsWith(<span class="string">"QUERY"</span>))</span><br><span class="line">        &#123;</span><br><span class="line">            httpVerb = <span class="string">"GET"</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span> <span class="keyword">if</span> (methodName.StartsWith(<span class="string">"SAVE"</span>))</span><br><span class="line">        &#123;</span><br><span class="line">            httpVerb = <span class="string">"POST"</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span> <span class="keyword">if</span> (methodName.StartsWith(<span class="string">"UPDATE"</span>))</span><br><span class="line">        &#123;</span><br><span class="line">            httpVerb = <span class="string">"PUT"</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span> <span class="keyword">if</span> (methodName.StartsWith(<span class="string">"DELETE"</span>))</span><br><span class="line">        &#123;</span><br><span class="line">           httpVerb = <span class="string">"DELETE"</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">var</span> routePath = <span class="string">$"api/<span class="subst">&#123;areaName&#125;</span>/<span class="subst">&#123;controllerName&#125;</span>/<span class="subst">&#123;action.ActionName&#125;</span>"</span>.Replace(<span class="string">"//"</span>, <span class="string">"/"</span>);</span><br><span class="line">        selectorModel.AttributeRouteModel = <span class="keyword">new</span> AttributeRouteModel(<span class="keyword">new</span> RouteAttribute(routePath));</span><br><span class="line">        selectorModel.ActionConstraints.Add(<span class="keyword">new</span> HttpMethodActionConstraint(<span class="keyword">new</span>[] &#123; httpVerb &#125;));</span><br><span class="line">        <span class="keyword">return</span> selectorModel;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>由此可见，无论多么令人惊诧的黑科技，当我们一层层地拨开它的迷雾时，常常有种豁然开朗的感觉。当然，和那些令人看起来神清气爽的代码相比，博主远远达不到返璞归真的境界，因为这段代码怎么看都觉得丑陋。古美门律师告诉我们，要爱上丑陋，或许每个程序员都是从写烂代码开始的吧！</p>
+<h2 id="ConfigureParameters"><a href="#ConfigureParameters" class="headerlink" title="ConfigureParameters()"></a>ConfigureParameters()</h2><p>接下来参数绑定相对简单，因为简单类型MVC自己就能完成绑定，所以，我们只需要关注复杂类型的绑定即可，最常见的一种绑定方式是FromBody：</p>
+<figure class="highlight verilog"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">private <span class="keyword">void</span> ConfigureActionParameters(ActionModel action)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">foreach</span> (<span class="keyword">var</span> <span class="keyword">parameter</span> in action<span class="variable">.Parameters</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">if</span> (<span class="keyword">parameter</span><span class="variable">.BindingInfo</span> != <span class="literal">null</span>)</span><br><span class="line">            <span class="keyword">continue</span>;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">var</span> <span class="keyword">type</span> = <span class="keyword">parameter</span><span class="variable">.ParameterInfo</span><span class="variable">.ParameterType</span>;</span><br><span class="line">        <span class="keyword">if</span> (<span class="keyword">type</span><span class="variable">.IsPrimitive</span> || <span class="keyword">type</span><span class="variable">.IsEnum</span> ||</span><br><span class="line">            (<span class="keyword">type</span><span class="variable">.IsGenericType</span> &amp;&amp; <span class="keyword">type</span><span class="variable">.GetGenericTypeDefinition</span>() == typeof(Nullable&lt;&gt;)))</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">if</span> (IsFromBodyEnable(action, <span class="keyword">parameter</span>))</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="keyword">parameter</span><span class="variable">.BindingInfo</span> = BindingInfo<span class="variable">.GetBindingInfo</span>(<span class="keyword">new</span>[] &#123; <span class="keyword">new</span> FromBodyAttribute() &#125;);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>通过以上三个关键步骤，我们就能实现本文一开始的效果，感觉无形中我们又复习了一篇MVC匹配路由的原理呢！</p>
+<h1 id="集成Swagger和WebApiClient"><a href="#集成Swagger和WebApiClient" class="headerlink" title="集成Swagger和WebApiClient"></a>集成Swagger和WebApiClient</h1><p>今天这篇文章，本质上依然是ABP框架中Dynamic WebAPI这一特性的延伸，无非是因为.NET Core中提供了更为友好的机制，可以让这一切实现起来更简单而已。还记得博主研究这个特性的“初心”是什么吗？因为我们在升级.NET Core的过程中打算抛弃WCF，我们需要一种方法，可以让现有的一个普通的Service变成一个Controller。固然，我们可以一个一个的去重新封装，可这真的是比较好的实践方式吗？从内部RPC逐渐转变为Web API调用，这种转变就像从Dubbo换成了Spring Cloud，可是Spring Cloud有注册中心啊，现在我们什么都没有，从RPC转变为Web API，会面临诸如接口授权、地址配置、不同上下文等等的问题。你经常需要告诉别人某个接口的地址是什么，不出意外地话，你至少会有三套环境的地址，别人还会问你各个参数的含义，甚至更懒的会要求你提供示例报文。所以，我觉得做微服务，尤其是全部采用Web API进行通信的微服务，提供实时更新、在线查看的文档真的非常重要，每次看到同事在Git里提交Word或者Excel，我就感到非常纠结，一来这种东西没法正常Merge(压缩包合并个鬼啊)，二来我必须下载下来看(君不见我下载目录里一堆重复文件)，所以，我更推荐努力维护好一家公司的API资产，在我们用JWT保护这些资产以前，至少要先了解它们吧！</p>
+<p>对于API文档，我个人推荐专门用一个站点来承载所有的Web API，比如我们最常用的Swagger，它在融合OAuth2以后可以更完美地去调试接口，了解每个接口的参数和返回值。尤其是在这篇博客的背景下，因为我们只需要把这些POCOController对应的注释文件(.XML)和程序集(.DLL)放到一起，同时把这些注释文件全部Include进来，Swagger就可以把它们展示出来。这里用到一个非常重要的特性就是IApiExploer接口，你可以把它理解为，它是一切文档展示的核心，每个接口及其参数、返回值的描述信息都是由它提供的。在没有Swagger之前，微软提供了一个叫做Web API HelpPage的组件，它和Swagger的原理无出其右。这里剧透下，稍后我会专门写一篇博客来扩展Swagger，目的是确保它可以为ASP.NET MVC提供文档支持。这里，我们使用Swagger来生成在线API文档，其核心配置如下：</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">services.AddMvcCore ().AddApiExplorer ();</span><br><span class="line">services.AddSwaggerGen (swagger =&gt; &#123;</span><br><span class="line">    swagger.SwaggerDoc (<span class="string">"v1"</span>, <span class="keyword">new</span> Swashbuckle.AspNetCore.Swagger.Info () &#123;</span><br><span class="line">        Title = <span class="string">"DynamicController"</span>,</span><br><span class="line">        Version = <span class="string">"1.0"</span>,</span><br><span class="line">    &#125;);</span><br><span class="line">    </span><br><span class="line">    swagger.DocInclusionPredicate ((docName, description) =&gt; <span class="literal">true</span>);</span><br><span class="line">    <span class="keyword">var</span> xmlFile = <span class="string">$"<span class="subst">&#123;Assembly.GetExecutingAssembly().GetName().Name&#125;</span>.xml"</span>;</span><br><span class="line">    <span class="keyword">var</span> xmlPath = Path.Combine (AppContext.BaseDirectory, xmlFile);</span><br><span class="line">    swagger.IncludeXmlComments (xmlPath);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<p>可以注意到，这篇文章里实现的动态Controller和默认的ValuesController都被展示了出来，两个字，完美，我们想要的就是这个效果。</p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="https://ww1.sinaimg.cn/large/4c36074fly1g5k84kvuzqj21hc0s03zo.jpg" alt="通过Swagger生成的在线Api文档" title="" referrerpolicy="no-referrer">
+                </div>
+                <div class="image-caption">通过Swagger生成的在线Api文档</div>
+            </figure>
+
+
+
+<p>说完了API文档的事情，我们再来说说调用Web API的问题。按理说，这应该没啥大问题，因为虽然我们会为HttpWebRequest、WebClient、HttpClient和RestSharp等等不同的API而感到纠结，可这丝毫不会影响我们调用Web API。那么，问题来了，当你面对数不胜数的API接口的时候，你打算如何考虑这些问题？我的API地址应该配置在哪里？是存到Web.Config里还是存到数据库里？我调用API的时候，Token应该从哪里获取？是每次都获取还是获取了缓存起来？如果Token过期了我又该怎么办？这几乎是所有全部采用Web API进行微服务设计时都会遇到的问题。</p>
+<p>此时，我们需要一种更优雅的方式，即Retrofit，它能让我们像调用一个普通方法一样调用一个Web API，这样，我们在调用方式上其实不会有太大的改变，因为Web API本质上是一种特殊的RPC。在.NET的世界里，我们有WebApiClient和Refit这样的轮子，我之前还专门为大家介绍过WebApiClient。这里就不再展示它的具体细节了，所谓点到为止，希望大家可以自己去发现这种美，对博主而言，如果在定义Service的时候，就考虑到这一点，或许我们可以实现更理想的效果，即，服务端和客户端是一套代码，我们写完一个接口以后，它就是Web API，而通过动态代理，它本身又会是客户端，此中乐趣，则不足为外人道也！</p>
+<h1 id="本文小结"><a href="#本文小结" class="headerlink" title="本文小结"></a>本文小结</h1><p>又是漫长的一个夏天，下雨并不能让这座城市温柔起来。这篇博客延续了上一篇博客中关于动态Controller的设想，而借助于.NET Core框架提供的良好特性，它以一种更为简洁的方式被实现了，核心的内容有两个点，其一是ControllerFeatureProvider，它能决定MVC会不会把一个普通的类当做控制器。其二是IApplicationModelConvention接口，它能对全局的路由规则进行修改，以满足我们特殊的定制化需要。再此基础上，继续引入Swagger和WebApiClient两个轮子，来解决微服务构建中的API文档和API调用问题。写博客真的是一件辛苦的事情诶，好啦，今天这篇博客就先写到这里，我们下一篇博客再见，晚安！本文中涉及到的代码可以通过：<a href="https://github.com/qinyuanpei/DynamicWCFProxy/tree/master/DynamicWebApi.Core" target="_blank" rel="noopener">https://github.com/qinyuanpei/DynamicWCFProxy/tree/master/DynamicWebApi.Core</a>来做进一步的了解，以上！</p>
+
+                
+
+                
+
+
+<div class="recommended_posts">
+    <h1>推荐阅读</h1>
+    <ul>
+        
+        <li><a href="https://qinyuanpei.github.io/posts/305484621/">C#中的扩展方法学习总结</a></li>
+        
+        <li><a href="https://qinyuanpei.github.io/posts/2414960312/">.NET Core中对象池(Object Pool)的使用</a></li>
+        
+        <li><a href="https://qinyuanpei.github.io/posts/1734098504/">.NET Core原生DI扩展之基于名称的注入实现</a></li>
+        
+        <li><a href="https://qinyuanpei.github.io/posts/1658310834/">.NET Core原生DI扩展之属性注入实现</a></li>
+        
+        <li><a href="https://qinyuanpei.github.io/posts/1989654282/">使用.NET Core和Vue搭建WebSocket聊天室</a></li>
+        
+    </ul>
+</div>
+
+            </div>
+            
+<blockquote class="post-copyright">
+    <div class="content">
+        <p><b>版权声明：</b>
+        <a href="https://qinyuanpei.github.io/posts/116795088/" rel="external">.NET Core POCOController在动态Web API中的应用</a>
+        ，由&nbsp;<a href="/about" target="_blank" rel="external">飞鸿踏雪</a>&nbsp;
+        首次发表于&nbsp;<a href="/" target="_blank" rel="external">一个人的孤落时辰</a>&nbsp;
+        ，本文地址为：<a href="https://qinyuanpei.github.io/posts/116795088/" target="_blank" rel="external">https://qinyuanpei.github.io/posts/116795088/</a>
+        ，转载请注明<b>作者</b>和<b>出处</b>。</p>
+    </div>
+    <footer>
+        <a href="https://qinyuanpei.github.io">
+            <img src="/assets/images/avatar.jpg" alt="飞鸿踏雪">
+            飞鸿踏雪
+        </a>
+    </footer>
+</blockquote>
+
+
+            
+<div class="page-reward">
+    <a id="rewardBtn" href="javascript:;" class="page-reward-btn waves-effect waves-circle waves-light">赏</a>
+</div>
+
+
+            <div class="post-footer">
+                
+	<ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/NET-Core/" rel="tag">.NET Core</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/API/" rel="tag">API</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Web/" rel="tag">Web</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%8A%80%E5%B7%A7/" rel="tag">技巧</a></li></ul>
+
+                
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://qinyuanpei.github.io/posts/116795088/&title=《.NET Core POCOController在动态Web API中的应用》 — 一个人的孤落时辰&pic=https://qinyuanpei.github.ioassets/images/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://qinyuanpei.github.io/posts/116795088/&title=《.NET Core POCOController在动态Web API中的应用》 — 一个人的孤落时辰&source=一个人的孤落时辰 | 纵有疾风起，人生不言弃 | 隐约雷鸣，阴霾天空，即使天无雨，我亦留此地。" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://qinyuanpei.github.io/posts/116795088/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《.NET Core POCOController在动态Web API中的应用》 — 一个人的孤落时辰&url=https://qinyuanpei.github.io/posts/116795088/&via=https://qinyuanpei.github.io" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://qinyuanpei.github.io/posts/116795088/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+      
+      <li>
+        <a class="google share-sns" target="_blank" onClick="show_yp()" data-title=" 生成海报">
+          <i class="icon icon-file-image-o"></i>
+        </a>
+      </li>
+      
+    </ul>
+ </div>
+
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
+            </div>
+        </div>
+
+        
+<nav class="post-nav flex-row flex-justify-between">
+  
+    <div class="waves-block waves-effect prev">
+      <a href="/posts/4116164325/" id="post-prev" class="post-nav-link">
+        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
+        <h4 class="title">通过ApiExplorer为Swagger提供MVC扩展</h4>
+      </a>
+    </div>
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/posts/1540537013/" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h4 class="title">长安十二时辰随想</h4>
+      </a>
+    </div>
+  
+</nav>
+
+
+        
+    <div id="comment"></div>
+<script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+<script src='//unpkg.com/valine/dist/Valine.min.js'></script>
+<script type="text/javascript">
+new Valine({
+    el: '#comment' ,
+    notify: false, 
+    verify: true, 
+    appId: 'JbHqRp2eMrTgIwYpfERH0g79-gzGzoHsz',
+    appKey: 'VsiKvLuiBGvJL1XrAfv7siY2',
+    placeholder: '云中谁寄锦书来，雁字回时，月满西楼。&#10;Tips：如果希望收到我的评论回复，请至少留下你的邮箱哦:)',
+    path:'https://qinyuanpei.github.io/posts/116795088/', 
+    avatar:'identicon',
+    requiredFields: ['nick','mail']
+});
+</script>
+
+
+
+
+    </article>
+    
+<div id="reward" class="page-modal reward-lay">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <h3 class="reward-title">
+        <i class="icon icon-quote-left"></i>
+        赠人玫瑰，手有余香
+        <i class="icon icon-quote-right"></i>
+    </h3>
+    <div class="reward-content">
+        
+        <div class="reward-code">
+            <img id="rewardCode" src="/assets/images/wechat.png" alt="打赏二维码">
+        </div>
+        
+        <label class="reward-toggle">
+            <input id="rewardToggle" type="checkbox" class="reward-toggle-check"
+                data-wechat="/assets/images/wechat.png" data-alipay="/assets/images/alipay.jpg">
+            <div class="reward-toggle-ctrol">
+                <span class="reward-toggle-item wechat">微信</span>
+                <span class="reward-toggle-label"></span>
+                <span class="reward-toggle-item alipay">支付宝</span>
+            </div>
+        </label>
+        
+    </div>
+</div>
+
+
+    <script type="text/javascript" src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/yoniu.min.js"></script>
+<style type='text/css'>
+	body.active-yp {
+		overflow: hidden;
+	}
+	.yp-fc-btn{
+		display: flex;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		align-items: center;
+		justify-content: space-between;
+		font-size: 13px;
+	}
+	.yp-fc-btn span{
+		cursor: pointer;
+		padding: 2px 10px;
+		color: #4b4b4b;
+		border: #4b4b4b 1px solid;
+		border-radius:5px;
+	}
+	#yp-hide{
+		position: fixed;
+		display: flex;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		justify-content: center;
+		flex-direction: column;
+		left:0;
+		top:0;
+		right:0;
+		bottom:0;
+		background-color:rgba(0,0,0,.5);
+		z-index: 99999;
+		visibility: hidden;
+	}
+	#yoniu-poster{
+		box-sizing: border-box;
+		width: 350px;
+		height: 467.2px;
+		background-color: #fff;
+		margin: 0 auto;
+		padding: 0;
+		line-height: 1.6;
+		text-align:justify;
+	}
+	
+	.yp-img {
+		min-height: 240px;
+		position: relative;
+		display: flex;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		justify-content: flex-end;
+		flex-direction: column;
+		background-position: 50% 50%;
+		background-size: cover;
+		overflow:hidden;
+	}
+	.yp-img>div{
+		padding: 10px 20px;
+	}
+	.yp-name{
+		display: block;
+		color: #fff;
+		font-size: 20px;
+		font-weight: 600;
+		text-shadow: #4b4b4b 0.1em 0.1em 0.2em;
+		margin-top: 10px;
+	}
+	.yp-sort{
+		padding: 3px 10px;
+		font-size: 12px;
+		color: #fff;
+		background: #2e2e2e;
+	}
+	.yp-des{
+		color: #2e2e2e;
+		font-size: 14px;
+		margin: 20px;
+		height: 67.2px;
+	}
+	.yp-qcode{
+		display: flex;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		justify-content: space-between;
+		align-items: center;
+		margin: 10px;
+		padding: 10px 20px;
+		background: #f5f5f5;
+		color: #818181;
+		border-radius: 10px;
+	}
+	.yp-tips{
+		display: flex;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		justify-content: space-between;
+		align-items: center;
+		color: #ccc;
+		margin: 0 10px 10px;
+		font-size: 10px;
+		letter-spacing: 1.5px;
+	}
+	.yp-btns{
+		display: flex;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		align-items: stretch;
+		justify-content: center;
+		width:350px;
+		margin: 0 auto;
+	}
+	.yp-btns>span{
+		display: flex;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		align-items: center;
+		justify-content: center;
+		font-size: 14px;
+		padding: 10px 15px;
+		background:rgba(0,0,0,.2);
+		color: #f5f5f5;
+		cursor: pointer;
+	}
+	.yp-btns>span>a{
+		color: #f5f5f5;
+	}
+	.yp-btns>span>a:hover{
+		text-decoration:none;
+	}
+	#yp-close{
+		font-size: 18px;
+		font-weight: 600;
+	}
+</style>
+<div id="yp-hide">
+    <div id="yoniu-poster">
+        <div class="yp-img" id="yp-img">
+            <div>
+                <span class="yp-sort"></span>
+                <span class="yp-name">.NET Core POCOController在动态Web API中的应用</span>
+            </div>
+        </div>
+        <div class="yp-des">    
+            
+                Hi，大家好，我是Payne，欢迎大家关注我的博客，我的博客地址是：https://blog.yuanpei.me。在上一篇文章中，我和大家分享...
+            
+        </div>
+        <div class="yp-qcode">
+            <span>扫描二维码阅读原文</span>
+            <img id="yp-qcode" width="64px" src="//api.qrserver.com/v1/create-qr-code/?data=https://qinyuanpei.github.io/posts/116795088/">
+        </div>
+        <div class="yp-tips">
+            <span>一个人的孤落时辰</span>
+            <span><time class="post-time" title="2019-08-01 16:44:59" datetime="2019-08-01T16:44:59.000Z"  itemprop="datePublished">2019-08-01</time>
+</span>
+        </div>
+    </div>
+    <div class="yp-btns">
+        <span id="yp-load-yp" onClick="load_yp()">生成海报</span>
+        <span><a id="yp-download"></a></span>
+        <span id="yp-close" onClick="close_yp()">×</span>
+    </div>
+</div>
+<script type="text/javascript">
+    function show_yp(){
+        window.scrollTo(0, 0);
+        document.body.setAttribute("class","active-yp");
+        let cover = document.getElementsByTagName('img')[1];
+        if (cover != null && typeof(cover) != 'undefined') {
+            document.getElementById('yp-img').style.backgroundImage = `url(${cover.src})`;
+        } else {
+            document.getElementById('yp-img').style.backgroundColor = '#d7dbf0';
+        }
+        document.getElementById("yp-hide").style.visibility = "visible";
+    }
+    function close_yp(){
+        var domClass = document.body.getAttribute("class");
+        domClass = domClass.replace("active-yp","");
+        document.body.setAttribute("class",domClass);
+        document.getElementById("yp-hide").style.visibility = "hidden";
+    }
+    function load_yp(){
+        document.getElementById('yp-load-yp').textContent = '海报生成中...';
+        setTimeout(function() {
+            h2c_();
+        },2000);
+
+    }
+</script>
+
+</div>
+
+        <footer class="footer">
+    <div class="top">
+        
+   <p>
+      <span id="lc_counter_container_site_uv">
+         <i class="icon icon-user"></i><span id="lc_counter_value_site_uv"></span>
+      </span>
+      <span id="lc_counter_container_site_pv">
+         <i class="icon icon-eye"></i><span id="lc_counter_value_site_pv"></span>
+      </span>
+  </p>
+
+
+        <p>
+   <a id="jinrishici-sentence" href="https://www.jinrishici.com/" target="_blank" rel="noopener">加载中</a>
+</p>
+<script src="https://sdk.jinrishici.com/v2/browser/jinrishici.js" charset="utf-8"></script>
+<script>
+   jinrishici.load(function(result) {
+      document.querySelector('#subtitle').innerText = result.data.content;
+      document.querySelector('#jinrishici-sentence').innerText = result.data.content;
+  });
+</script>
+            <!--Todo: 考虑重构为插件 -->
+            <p>
+                
+                    <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+                
+                <span>
+                    <a href="https://github.com/qinyuanpei" target="_blank" rel="license noopener" title="Github">
+                        <i class="icon icon-lg icon-github"></i>
+                    </a>
+                </span>
+                <span>
+                    <a href="https://weibo.com/1278609231/profile" target="_blank" rel="license noopener" title="微博">
+                        <i class="icon icon-lg icon-weibo"></i>
+                    </a>
+                </span>
+                <span>
+                    <a href="https://www.douban.com/people/60029335/" target="_blank" rel="license noopener" title="豆瓣">
+                        <i class="icon icon-lg icon-douban"></i>
+                    </a>
+                </span>
+                <span>
+                    <a href="https://www.zhihu.com/people/qinyuanpei" target="_blank" rel="license noopener" title="知乎">
+                        <i class="icon icon-lg icon-zhihu-square"></i>
+                    </a>
+                </span>
+                <span>
+                    <a href="https://blog.csdn.net/qinyuanpei" target="_blank" rel="license noopener" title="CSDN">
+                        <i class="icon icon-lg">C</i>
+                    </a>
+                </span>
+                <span>
+                    <a href="https://music.163.com/#/user/home?id=47002864" target="_blank" rel="license noopener" title="网易音乐">
+                        <i class="icon icon-lg icon-wangyiyunyinyue"></i>
+                    </a>
+                </span>
+            </p>
+        
+    </div>
+    <div class="bottom">
+        <p><span>飞鸿踏雪 &copy; 2014 - 2021</span><br>
+            
+                
+                Powered by <a href="http://hexo.io/" target="_blank">Hexo</a> & Theme by <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a><br>
+                
+                
+                    <p>Hosted by <a href="https://pages.github.com" target="_blank" rel="noopener" style="font-weight: bold">Github Pages</a></p>
+                
+        </p>
+    </div>
+</footer>
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span
+        class="icon icon-lg icon-chevron-up"></span></a>
+
+    
+
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://qinyuanpei.github.io/posts/116795088/&title=《.NET Core POCOController在动态Web API中的应用》 — 一个人的孤落时辰&pic=https://qinyuanpei.github.ioassets/images/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://qinyuanpei.github.io/posts/116795088/&title=《.NET Core POCOController在动态Web API中的应用》 — 一个人的孤落时辰&source=一个人的孤落时辰 | 纵有疾风起，人生不言弃 | 隐约雷鸣，阴霾天空，即使天无雨，我亦留此地。" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://qinyuanpei.github.io/posts/116795088/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《.NET Core POCOController在动态Web API中的应用》 — 一个人的孤落时辰&url=https://qinyuanpei.github.io/posts/116795088/&via=https://qinyuanpei.github.io" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://qinyuanpei.github.io/posts/116795088/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+      
+      <li>
+        <a class="google share-sns" target="_blank" onClick="show_yp()" data-title=" 生成海报">
+          <i class="icon icon-file-image-o"></i>
+        </a>
+      </li>
+      
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="//api.qrserver.com/v1/create-qr-code/?data=https://qinyuanpei.github.io/posts/116795088/" alt="微信分享二维码">
+</div>
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.6/waves.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/4.2.1/echarts.min.js"></script>
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/echarts-wordcloud.min.js" async></script>
+<script>
+    var BLOG = { ROOT: '/', SHARE: true, REWARD: true };
+
+
+</script>
+
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/main.min.js"></script>
+
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/search.min.js" async></script>
+
+
+
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/heart.min.js" async></script>
+
+
+
+
+
+
+
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/leancloud-counter.min.js"></script>
+<script>
+        (function () {
+            var appId = 'JbHqRp2eMrTgIwYpfERH0g79-gzGzoHsz';
+            var appKey = 'VsiKvLuiBGvJL1XrAfv7siY2';
+            new VisitorCounter().init({
+                appId: appId,       //应用ID, 必输
+                appKey: appKey,      //应用Key, 必输
+                region: '华北',      //华东,华北,国际, 默认华东
+                domain: '',      //自定义域名
+                collectIP: true, //是否收集IP及位置信息, 默认开启
+                collectUA: true  //是否收集UserAgent, 默认开启
+            });
+        })();
+</script>
+
+
+
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/vconsole.min.js"></script>
+<script type="text/javascript">
+    //当地址中存在debug=true时，实例化vConsole
+    if (location.href.indexOf('debug=true') > -1) {
+        var vConsole = new VConsole();
+    }
+</script>
+
+
+    <script>
+    //国内用户自动重定向Coding Pages镜像
+    // var ipInfo = JSON.parse(localStorage.getItem('ipInfo'));
+    // if (ipInfo.country_code == 'CN') {
+    //     location.href = location.href.replace('qinyuanpei.github.io', 'blog.yuanpei.me');
+    // }
+    </script>
+
+
+<script>
+titleArray = [];
+function scrollTitle() {
+    if (titleArray.length == 0) return;
+    titleArray.push(titleArray[0]);
+	titleArray.shift();
+	document.title = titleArray.join("");
+}
+setInterval(scrollTitle, 500);
+(function() {
+    var originTitile = document.title, titleTime;
+    document.addEventListener('visibilitychange', function() {
+        if (document.hidden) {
+            titleArray = originTitile.split('');
+            clearTimeout(titleTime);
+        } else {
+            document.title = originTitile;
+            titleArray = originTitile.split('');
+            titleTime = setTimeout(function() {
+                document.title = originTitile;
+                titleArray = [];
+            },2000);
+        }
+    });
+})();
+</script>
+
+
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/ribbon.min.js"></script>
+</body>
+</html>

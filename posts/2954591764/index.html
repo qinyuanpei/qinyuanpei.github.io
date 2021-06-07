@@ -1,0 +1,937 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+    
+<script async defer data-domain="blog.yuanpei.me" src="https://plausible.io/js/plausible.js"></script>
+    
+    <meta charset="utf-8">
+    <!-- HTTP 1.1 -->  
+    <meta http-equiv="pragma" content="no-cache">  
+    <!-- HTTP 1.0 -->  
+    <meta http-equiv="cache-control" content="no-cache">
+    <!-- 微博图床防盗链 --> 
+    <!-- <meta name="referrer" content="no-referrer"/> -->
+    <!--Google站点验证-->
+    
+    <!--百度站点验证-->
+    
+    
+    <!--Google AdSense-->
+    
+    <!--Bing站点验证-->
+    <meta name="msvalidate.01" content="713A48A3FE17D4841C292A6B3942EB4C" />
+    
+    <title>
+        又见AOP之基于RealProxy实现WCF动态代理 | 一个人的孤落时辰 | 纵有疾风起，人生不言弃
+    </title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+        <meta name="theme-color" content="#3F51B5">
+    
+
+    <meta name="keywords" content="AOP,Castle,Dynamic Proxy,秦元培,技术博客,生活随笔,个人博客,NET,Python,数据挖掘,数据分析,NLP">
+    
+        <meta name="description" content="顺着这样的思路，如果我们可以把ChannelFactory注入到RealProxy中，就可以在接口调用过程中记录相关信息，这样我们就可以关注调用本身，因为所有的我们不想写的代码，现在全部都由代理类接管了，更重要的是，所有通过这种方式调用的WCF服务，都可以以一种统一而简洁的方式去处理，永远不用担心因为某个人忘记写代理方法而出现问题，下面给出整个实现的关键代码：;现在，我们来考虑WCF，WCF需要通过ChannelFactory来创建和释放，而这恰恰是代理类所做的事情，就像下面的代码一样，我们通常会把所有的WCF集中配置在一个地方，并通过构造Binding和终结点地址来创建一个WCF服务，在调用服务的过程中，会对调用时间、异常信息等进行记录，这其实和我举的第一个例子完全一致，那么我们能不能用RealProxy来实现这些功能呢;首先，我们定义一个简单的接口ICalculator，它含有加、减、乘、除四种基本运算，我们希望记录每个方法调用的参数、结果和执行时间，因此通过RealProxy对现有类型CalculatorService进行代理，并动态地创建代理对象来供调用方使用，下面给出关键代码：;通过RealProxy，我们已经实现了WCF服务的动态代理，这里介绍第二种方式，即Castle.DynamicProxy，Castle和AspectCore、Unity等项目一样，提供了AOP相关的能力，可以让我们对接口、虚方法、类等进行拦截;我们实现了WCF服务创建细节的隐藏，调用者不再需要去关心ChannelFactory相关的底层细节，可以像使用普通接口一样调用WCF服务，并且可以用一种统一的方式去记录调用相关的细节、对异常进行处理等等">
+    
+    <meta name="description" content="顺着这样的思路，如果我们可以把ChannelFactory注入到RealProxy中，就可以在接口调用过程中记录相关信息，这样我们就可以关注调用本身，因为所有的我们不想写的代码，现在全部都由代理类接管了，更重要的是，所有通过这种方式调用的WCF服务，都可以以一种统一而简洁的方式去处理，永远不用担心因为某个人忘记写代理方法而出现问题，下面给出整个实现的关键代码：;现在，我们来考虑WCF，WCF需要通">
+<meta property="og:type" content="article">
+<meta property="og:title" content="又见AOP之基于RealProxy实现WCF动态代理">
+<meta property="og:url" content="https://qinyuanpei.github.io/posts/2954591764/index.html">
+<meta property="og:site_name" content="一个人的孤落时辰">
+<meta property="og:description" content="顺着这样的思路，如果我们可以把ChannelFactory注入到RealProxy中，就可以在接口调用过程中记录相关信息，这样我们就可以关注调用本身，因为所有的我们不想写的代码，现在全部都由代理类接管了，更重要的是，所有通过这种方式调用的WCF服务，都可以以一种统一而简洁的方式去处理，永远不用担心因为某个人忘记写代理方法而出现问题，下面给出整个实现的关键代码：;现在，我们来考虑WCF，WCF需要通">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://ww1.sinaimg.cn/large/4c36074fly1g2wasftjc2j20dl0b6t8z.jpg">
+<meta property="og:image" content="https://ww1.sinaimg.cn/large/4c36074fly1g2wad7ddv6j20tn09bt9o.jpg">
+<meta property="og:image" content="https://ww1.sinaimg.cn/large/4c36074fly1g2w7brst4dj20rm0eqgmc.jpg">
+<meta property="og:image" content="https://ww1.sinaimg.cn/large/4c36074fly1g2w85svbrfj20rp0eqq41.jpg">
+<meta property="article:published_time" content="2019-05-10T16:27:50.000Z">
+<meta property="article:modified_time" content="2021-06-07T05:34:21.409Z">
+<meta property="article:author" content="飞鸿踏雪">
+<meta property="article:tag" content="AOP">
+<meta property="article:tag" content="Castle">
+<meta property="article:tag" content="Dynamic Proxy">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://ww1.sinaimg.cn/large/4c36074fly1g2wasftjc2j20dl0b6t8z.jpg">
+    
+        <link rel="alternate" type="application/atom+xml" title="一个人的孤落时辰" href="/atom.xml">
+    
+    <link rel="shortcut icon" href="/assets/images/favicon.ico">
+    
+        <link rel="manifest" href="/manifest.json">
+    
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master//assets/styles/style.css">
+    <script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/instantclick.min.js"></script>
+    <script>window.lazyScripts=[]</script>
+    <!-- custom head -->
+    
+
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu" class="hide" >
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap" style="background-image:url(/assets/images/brand.jpg)">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/assets/images/avatar.jpg" alt="avatar">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">飞鸿踏雪</h5>
+          <a href="mailto:qinyuanpei@163.com" title="qinyuanpei@163.com" class="mail">qinyuanpei@163.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/"  >
+                <i class="icon icon-lg icon-home"></i>
+                主页
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives"  >
+                <i class="icon icon-lg icon-archives"></i>
+                归档
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags"  >
+                <i class="icon icon-lg icon-tags"></i>
+                标签
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/categories"  >
+                <i class="icon icon-lg icon-th-list"></i>
+                分类
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/books"  >
+                <i class="icon icon-lg icon-bookmark"></i>
+                书单
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/movies"  >
+                <i class="icon icon-lg icon-film"></i>
+                影单
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="https://qinyuanpei.github.io/poems/"  >
+                <i class="icon icon-lg icon-folder-open"></i>
+                诗集
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/works"  >
+                <i class="icon icon-lg icon-code"></i>
+                实验室
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/about"  >
+                <i class="icon icon-lg icon-circle"></i>
+                关于我
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+            <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">又见AOP之基于RealProxy实现WCF动态代理</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off"
+                placeholder="输入感兴趣的关键字">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+        <a href="https://github.com/qinyuanpei/qinyuanpei.github.io" target="_blank" rel="noopener" class="header-icon waves-effect waves-circle waves-light" id="menuGithub">
+            <i class="icon icon-lg icon-code-fork"></i>
+        </a>
+    </div>
+</header>
+<header class="content-header post-header">
+    <div class="container fade-scale">
+        <h1 class="title">又见AOP之基于RealProxy实现WCF动态代理</h1>
+        <h5 class="subtitle" id="subtitle">
+            
+            <time datetime="2019-05-10T16:27:50.000Z" itemprop="datePublished" class="page-time">
+  2019-05-10
+</time>
+
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/">编程语言</a></li></ul>
+
+            
+        </h5>
+    </div>
+    
+
+</header>
+
+<div class="container body-wrap">
+    
+    <aside class="post-widget">
+        <nav class="post-toc-wrap" id="post-toc">
+            <h4>目录</h4>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#故事背景"><span class="post-toc-number">1.</span> <span class="post-toc-text">故事背景</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#RealProxy介绍"><span class="post-toc-number">2.</span> <span class="post-toc-text">RealProxy介绍</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#WCF动态代理"><span class="post-toc-number">3.</span> <span class="post-toc-text">WCF动态代理</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#Castle-DynamicProxy"><span class="post-toc-number">4.</span> <span class="post-toc-text">Castle.DynamicProxy</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#迁移至-NET-Core"><span class="post-toc-number">5.</span> <span class="post-toc-text">迁移至.NET Core</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#本文小结"><span class="post-toc-number">6.</span> <span class="post-toc-text">本文小结</span></a></li></ol>
+        </nav>
+    </aside>
+    
+    <article id="post-又见AOP之基于RealProxy实现WCF动态代理" class="post-article article-type-post fade" itemprop="blogPost">
+
+        <div class="post-card">
+            <h1 class="post-card-title">
+                又见AOP之基于RealProxy实现WCF动态代理
+            </h1>
+            <div class="post-meta">
+                <time class="post-time" title="2019-05-10 16:27:50" datetime="2019-05-10T16:27:50.000Z"  itemprop="datePublished">2019-05-10</time>
+
+                
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/">编程语言</a></li></ul>
+
+
+
+                
+<span id="lc_counter_container_page_pv" title="文章总阅读量" data-page-url="" data-page-title="又见AOP之基于RealProxy实现WCF动态代理">
+    <i class="icon icon-eye icon-pr"></i><span id="lc_counter_value_page_pv"></span>
+</span>
+
+
+
+
+
+                
+    <span>
+        <i class="icon icon-clock-o"></i>
+        31 min.
+    </span>
+    
+            </div>
+            <div class="post-content" id="post-content" itemprop="postContent">
+                <p>最近一直在研究Mongodb和ElasticSearch之间同步数据的问题，苦于到目前为止，并没有取得任何实质性的进展。偶尔“趁得浮生半日闲暇”，看一看Web API设计方面的书籍，和前辈交流下项目中的历史遗留问题，最为直观的感受就是，这个世界上任何方案的最终落地，都经过理想和现实的无数次挣扎，比如我们希望迁移项目到.NET Core平台上，初步分析大概有将近1000多个无法兼容的地方，维持现状固然可以保证整个项目的稳定，可如果真到了不得不升级的地步，面临的问题可能会越来越多，所谓“凡事预则立，不预则废”，早一点准备总是好的。既然说到里历史问题，那么，今天这篇文章就来说一说，基于RealProxy实现WCF动态代理。</p>
+<h1 id="故事背景"><a href="#故事背景" class="headerlink" title="故事背景"></a>故事背景</h1><p>在我们的业务系统中，对内是使用WCF来进行相互通信的，而对外则是使用Web API来进行数据交换。关于RPC还是REST的争论由来已有，严格地来说，两者没有绝对的高下之分，从风格上而言，RPC倾向于让接口映射到一个方法上，而REST则倾向于让接口映射到一个资源上。从我们实际的使用情况来看，REST在系统中应用得并不是很完美，因为大多数情况下，我们实现的仅仅是HTTP+JSON这样一种协议组合，因此业务系统中存在着大量的WCF接口供系统内部调用。</p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="https://ww1.sinaimg.cn/large/4c36074fly1g2wasftjc2j20dl0b6t8z.jpg" alt="内部服务调用示意图" title="" referrerpolicy="no-referrer">
+                </div>
+                <div class="image-caption">内部服务调用示意图</div>
+            </figure>
+
+
+<p>最早的时候，是通过T4模板来生成针对某个接口的代理类，而代理类中通常封装了ChannelFactory的创建、释放等等WCF相关的代码，实际应用中还会对WCF接口的异常进行捕获、记录日志、统计调用时间等，因此早期的T4模板实际上承担了生成代理类的职责。虽然业务的不断推进，接口中加入的新方法越来越多，导致具体业务类中的代码越来越多，动辄出现单个文件中代码行数达3000行以上，与此同时，每当WCF接口中增加了新方法，就不得不在其相关的代理类中增加代理方法。坦白地讲，就是增加一个看起来差不多的方法，因为你依然要处理ChannelFactory的创建、释放、异常处理、日志记录等等的工作。</p>
+<p>其实，WCF可以直接生成客户端代码，因为每个WCF的服务都可以以WebService服务的形式暴露出来，而只要是WebService，总可以通过WSDL生成一个代理类。不过这显然不利于团队间的协作，更不利于服务终结点配置的集中化，更失去了异常处理、日志记录等等这些“通用”工作的可能性。T4应该可以基于“工作”，可显然大家觉得手写比生成要来得更容易些，所以，这个故事最终演变成这样一个局面，我们不得不通过局部类(Partial Class)的方式来开辟新的类文件。</p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="https://ww1.sinaimg.cn/large/4c36074fly1g2wad7ddv6j20tn09bt9o.jpg" alt="系统中充斥着大量类似的代码" title="" referrerpolicy="no-referrer">
+                </div>
+                <div class="image-caption">系统中充斥着大量类似的代码</div>
+            </figure>
+
+<p>那么，说了这么多，从一个历史遗留问题入手，它真正的痛点在哪里呢？在我看来，主要有两点：第一，是手写代理类的“此恨绵绵无绝期”，明明就是对接口的简单封装，看起来是增加一个代理方法，其实最多就是复制黏贴，因为代理方法的核心代码就是调用接口，而剩下的都是重复的“服务型”代码；第二，是异常处理、日志记录的“哀鸿遍野”，同核心代码交织在一起，一遍又一遍的“重复”，为什么不考虑让它统一地去处理呢？难道每个人都抄着同一段代码，这样就实现了某种意义上的复用吗？</p>
+<h1 id="RealProxy介绍"><a href="#RealProxy介绍" class="headerlink" title="RealProxy介绍"></a>RealProxy介绍</h1><p>既然像我这样懒惰的人，不愿意像别人一样手写代理类，那么我的思路又是什么呢？显然，从这篇文章的题目，你就可以看出，我这里要说的是动态代理，原来的代理类同样属于代理，它是在编译时期间生成了一个代理类，我们以为在调用这个代理类，可其实真正去工作的是ChannelFactory，这种方式称之为“静态代理”。如果你了解过设计模式，应该会知道相对应的代理模式，这里不再展开开来讲这这个设计模式，可以明确的是，动态代理就是在运行时期间动态创建一个代理对象的实例，它可以完全模拟被代理对象的行为，而我们的目的，就是要和手写的代理类永远地说再见！</p>
+<p>好了，下面隆重介绍本文的主角——RealProxy。相信大家一定听说过AOP，即所谓的面向切面编程。它可以让我们在某一个所针对的横切面编程，并讲这种功能应用到所有相同的横切面上。譬如对方法级别的横切面增加拦截器，那么所有的方法都可以在执行前后具备相同的逻辑，典型的如日志记录、指定操作前的检验等等。而RealProxy 类恰恰提供最基本的代理功能，它是一个抽象类，必须通过重写其 Invoke()方法并添加新功能来继承，该类位于System.Runtime.Remoting.Proxies 命名空间中，通过重写Invoke()方法，我们就可以在被代理对象调用前后插入相关逻辑，而通过GetTransparentProxy()方法，则可以返回实际的代理对象。所以，通过这个原理，我们就可以在运行时期间，动态创建出指定类型的实例。这里，我们从一个简单的例子来开始，以帮助大家更好的理解RealProxy。</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">interface</span> <span class="title">ICalculator</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="function"><span class="keyword">double</span> <span class="title">Add</span>(<span class="params"><span class="keyword">double</span> n1, <span class="keyword">double</span> n2</span>)</span>;</span><br><span class="line">    <span class="function"><span class="keyword">double</span> <span class="title">Subtract</span>(<span class="params"><span class="keyword">double</span> n1, <span class="keyword">double</span> n2</span>)</span>;</span><br><span class="line">    <span class="function"><span class="keyword">double</span> <span class="title">Multiply</span>(<span class="params"><span class="keyword">double</span> n1, <span class="keyword">double</span> n2</span>)</span>;</span><br><span class="line">    <span class="function"><span class="keyword">double</span> <span class="title">Divide</span>(<span class="params"><span class="keyword">double</span> n1, <span class="keyword">double</span> n2</span>)</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">CalculatorService</span> : <span class="title">ICalculator</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">double</span> <span class="title">Add</span>(<span class="params"><span class="keyword">double</span> n1, <span class="keyword">double</span> n2</span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        <span class="keyword">return</span> n1 + n2;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">double</span> <span class="title">Subtract</span>(<span class="params"><span class="keyword">double</span> n1, <span class="keyword">double</span> n2</span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        <span class="keyword">return</span> n1 - n2;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">double</span> <span class="title">Multiply</span>(<span class="params"><span class="keyword">double</span> n1, <span class="keyword">double</span> n2</span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        <span class="keyword">return</span> n1 * n2;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">double</span> <span class="title">Divide</span>(<span class="params"><span class="keyword">double</span> n1, <span class="keyword">double</span> n2</span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        <span class="keyword">return</span> n1 / n2;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>首先，我们定义一个简单的接口ICalculator，它含有加、减、乘、除四种基本运算，我们希望记录每个方法调用的参数、结果和执行时间，因此通过RealProxy对现有类型CalculatorService进行代理，并动态地创建代理对象来供调用方使用，下面给出关键代码：</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">CalculatorServiceProxy</span> : <span class="title">RealProxy</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">private</span> Server.Service.ICalculator _calculator;</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="title">CalculatorServiceProxy</span>(<span class="params">Server.Service.ICalculator calculator</span>) :</span></span><br><span class="line"><span class="function">            <span class="title">base</span>(<span class="params"><span class="keyword">typeof</span>(Server.Service.ICalculator</span>))</span></span><br><span class="line"><span class="function"></span>        &#123;</span><br><span class="line">            _calculator = calculator;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">override</span> IMessage <span class="title">Invoke</span>(<span class="params">IMessage message</span>)</span></span><br><span class="line"><span class="function"></span>        &#123;</span><br><span class="line">            <span class="keyword">var</span> methodCall = message <span class="keyword">as</span> IMethodCallMessage;</span><br><span class="line">            <span class="keyword">var</span> methodInfo = methodCall.MethodBase <span class="keyword">as</span> MethodInfo;</span><br><span class="line">            <span class="keyword">var</span> startTime = DateTime.Now;</span><br><span class="line">            <span class="keyword">var</span> serviceName = _calculator.GetType().Name;</span><br><span class="line">            <span class="keyword">var</span> methodName = methodInfo.Name;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">try</span></span><br><span class="line">            &#123;</span><br><span class="line">                Console.WriteLine(<span class="string">"调用&#123;0&#125;服务的&#123;1&#125;方法开始..."</span>, serviceName, methodName);</span><br><span class="line">                <span class="keyword">var</span> argsInfo = <span class="keyword">new</span> Dictionary&lt;<span class="keyword">string</span>, <span class="keyword">object</span>&gt;();</span><br><span class="line">                <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; methodCall.ArgCount; i++)</span><br><span class="line">                &#123;</span><br><span class="line">                    argsInfo.Add(methodCall.GetArgName(i), methodCall.Args[i]);</span><br><span class="line">                &#125;</span><br><span class="line">                Console.WriteLine(<span class="string">"当前传入参数:&#123;0&#125;"</span>, JsonConvert.SerializeObject(argsInfo));</span><br><span class="line">                <span class="keyword">var</span> result = methodInfo.Invoke(_calculator, methodCall.InArgs);</span><br><span class="line">                <span class="keyword">if</span> (result != <span class="literal">null</span>)</span><br><span class="line">                    Console.WriteLine(<span class="string">"当前返回值:&#123;0&#125;"</span>, JsonConvert.SerializeObject(result));</span><br><span class="line">                <span class="keyword">return</span> <span class="keyword">new</span> ReturnMessage(result, <span class="literal">null</span>, <span class="number">0</span>, methodCall.LogicalCallContext, methodCall);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">catch</span> (Exception ex)</span><br><span class="line">            &#123;</span><br><span class="line">                Console.WriteLine(</span><br><span class="line">                    <span class="string">"调用&#123;0&#125;服务的&#123;1&#125;方法失败,失败原因：&#123;2&#125;"</span>, </span><br><span class="line">                    serviceName, methodName, ex.Message</span><br><span class="line">                );</span><br><span class="line">                <span class="keyword">throw</span> ex;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">finally</span></span><br><span class="line">            &#123;</span><br><span class="line">                Console.WriteLine(</span><br><span class="line">                    <span class="string">"调用&#123;0&#125;服务的&#123;1&#125;方法结束,共耗时&#123;2&#125;秒"</span>, </span><br><span class="line">                    serviceName, methodName, DateTime.Now.Subtract(startTime).TotalSeconds</span><br><span class="line">                );</span><br><span class="line">                Console.WriteLine(<span class="string">"----------------------------------"</span>);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p>可以注意到，最核心的代码是在Invoke()方法中，在这里我们增加了我们想要的功能，但这些功能丝毫不会影响到CalculatorService，当我们通过构造函数给RealProxy传入被代理对象后，它就会对被代理对象的特定方法进行拦截，这里实际上就是加、减、乘、除四个方法。OK，到现在为止，这些都是我们的想像而已，具体我们实现执行结果来看。</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> serviceProxy = <span class="keyword">new</span> CalculatorServiceProxy(<span class="keyword">new</span> CalculatorService());</span><br><span class="line"><span class="keyword">var</span> calculator = (ICalculator)serviceProxy.GetTransparentProxy();</span><br><span class="line">calculator.Add(<span class="number">12</span>, <span class="number">24</span>);</span><br><span class="line">calculator.Subtract(<span class="number">36</span>, <span class="number">10</span>);</span><br><span class="line">calculator.Multiply(<span class="number">12</span>, <span class="number">35</span>);</span><br><span class="line">calculator.Divide(<span class="number">36</span>, <span class="number">12</span>);</span><br></pre></td></tr></table></figure>
+
+<p>现在，我们可以说，刚刚所说的一切都是真的，因为我们真的创建了一个ICalculator接口的实例，它真的记录了每个方法调用的参数、结果和执行时间。</p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="https://ww1.sinaimg.cn/large/4c36074fly1g2w7brst4dj20rm0eqgmc.jpg" alt="RealPrxoy牛刀小试" title="" referrerpolicy="no-referrer">
+                </div>
+                <div class="image-caption">RealPrxoy牛刀小试</div>
+            </figure>
+
+<h1 id="WCF动态代理"><a href="#WCF动态代理" class="headerlink" title="WCF动态代理"></a>WCF动态代理</h1><p>现在，我们来考虑WCF，WCF需要通过ChannelFactory来创建和释放，而这恰恰是代理类所做的事情，就像下面的代码一样，我们通常会把所有的WCF集中配置在一个地方，并通过构造Binding和终结点地址来创建一个WCF服务，在调用服务的过程中，会对调用时间、异常信息等进行记录，这其实和我举的第一个例子完全一致，那么我们能不能用RealProxy来实现这些功能呢？</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">public class ServiceInfo&lt;TService&gt;</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">readonly</span> ChannelFactory _channelFactory;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">ServiceInfo</span>(<span class="params">ChannelFactory channelFactory</span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        _channelFactory = channelFactory;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> TService Service &#123; <span class="keyword">get</span>; <span class="keyword">set</span>; &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">Close</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        <span class="keyword">if</span> (_channelFactory != <span class="literal">null</span>)</span><br><span class="line">            _channelFactory.Close();</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">private</span> ServiceInfo&lt;TService&gt; <span class="title">FindService</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    ChannelFactory&lt;TService&gt; channelFactory = <span class="keyword">new</span> ChannelFactory&lt;TService&gt;(_binding, _endpointAddress);</span><br><span class="line">    <span class="keyword">var</span> serviceInfo = <span class="keyword">new</span> ServiceInfo&lt;TService&gt;(channelFactory);</span><br><span class="line">    serviceInfo.Service = channelFactory.CreateChannel();</span><br><span class="line">    <span class="keyword">return</span> serviceInfo;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>顺着这样的思路，如果我们可以把ChannelFactory注入到RealProxy中，就可以在接口调用过程中记录相关信息，这样我们就可以关注调用本身，因为所有的我们不想写的代码，现在全部都由代理类接管了，更重要的是，所有通过这种方式调用的WCF服务，都可以以一种统一而简洁的方式去处理，永远不用担心因为某个人忘记写代理方法而出现问题，下面给出整个实现的关键代码：</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br></pre></td><td class="code"><pre><span class="line">public class DynamicServiceProxy&lt;TService&gt; : RealProxy</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">readonly</span> Binding _binding;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">readonly</span> EndpointAddress _endpointAddress;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">DynamicServiceProxy</span>(<span class="params">Binding binding, EndpointAddress endpointAddress</span>)</span></span><br><span class="line"><span class="function">        : <span class="title">base</span>(<span class="params"><span class="keyword">typeof</span>(TService</span>))</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        _binding = binding;</span><br><span class="line">        _endpointAddress = endpointAddress;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">DynamicServiceProxy</span>(<span class="params">Binding binding, <span class="keyword">string</span> serviceUrl</span>)</span></span><br><span class="line"><span class="function">        : <span class="title">this</span>(<span class="params">binding, new EndpointAddress(serviceUrl</span>))</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">override</span> IMessage <span class="title">Invoke</span>(<span class="params">IMessage message</span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        <span class="keyword">var</span> serviceInfo = FindService();</span><br><span class="line">        <span class="keyword">var</span> methodCall = message <span class="keyword">as</span> IMethodCallMessage;</span><br><span class="line">        <span class="keyword">var</span> methodInfo = methodCall.MethodBase <span class="keyword">as</span> MethodInfo;</span><br><span class="line">        <span class="keyword">var</span> startTime = DateTime.Now;</span><br><span class="line">        <span class="keyword">var</span> serviceName = serviceInfo.Service.GetType().Name;</span><br><span class="line">        <span class="keyword">var</span> methodName = methodInfo.Name;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">try</span></span><br><span class="line">        &#123;</span><br><span class="line">            Console.WriteLine(<span class="string">"RealProxy调用&#123;0&#125;服务&#123;1&#125;方法开始..."</span>, serviceName, methodName);</span><br><span class="line">            <span class="keyword">var</span> argsInfo = <span class="keyword">new</span> Dictionary&lt;<span class="keyword">string</span>, <span class="keyword">object</span>&gt;();</span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; methodCall.ArgCount; i++)</span><br><span class="line">            &#123;</span><br><span class="line">                argsInfo.Add(methodCall.GetArgName(i), methodCall.Args[i]);</span><br><span class="line">            &#125;</span><br><span class="line">            Console.WriteLine(<span class="string">"RealProxy当前传入参数:&#123;0&#125;"</span>, JsonConvert.SerializeObject(argsInfo));</span><br><span class="line">            <span class="keyword">var</span> result = methodInfo.Invoke(serviceInfo.Service, methodCall.InArgs);</span><br><span class="line">            <span class="keyword">if</span> (result != <span class="literal">null</span>)</span><br><span class="line">                Console.WriteLine(<span class="string">"RealProxy当前返回值:&#123;0&#125;"</span>, JsonConvert.SerializeObject(result));</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">new</span> ReturnMessage(result, <span class="literal">null</span>, <span class="number">0</span>, methodCall.LogicalCallContext, methodCall);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">catch</span> (Exception ex)</span><br><span class="line">        &#123;</span><br><span class="line">            Console.WriteLine(</span><br><span class="line">                <span class="string">"RealProxy调用&#123;0&#125;服务&#123;1&#125;方法失败,失败原因：&#123;2&#125;"</span>, </span><br><span class="line">                serviceName, methodName, ex.Message</span><br><span class="line">            );</span><br><span class="line">            <span class="keyword">throw</span> ex;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">finally</span></span><br><span class="line">        &#123;</span><br><span class="line">            serviceInfo.Close();</span><br><span class="line">            Console.WriteLine(</span><br><span class="line">                <span class="string">"调用&#123;0&#125;服务&#123;1&#125;方法结束,共耗时&#123;2&#125;秒"</span>, </span><br><span class="line">                serviceName, methodName, DateTime.Now.Subtract(startTime).TotalSeconds</span><br><span class="line">            );</span><br><span class="line">            Console.WriteLine(<span class="string">"----------------------------------"</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>对于WCF服务端的实现，我们依然使用ICalculator这个接口，需要注意的是为其添加[ServiceContract]和[OperationContract]标签，在这个例子中，我们共有CalculatorService和MessageService两个服务，为了简化这个实例，我们采用BasicHttpBinding的方式进行绑定，并为其指定各自的终结点地址。可以注意到，现在我们的动态代理实现了和原来代理类一样的效果。</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> binding = <span class="keyword">new</span> BasicHttpBinding();</span><br><span class="line"><span class="keyword">var</span> serviceUrl = <span class="string">"http://localhost:8502/Calculator.svc"</span>;</span><br><span class="line"><span class="keyword">var</span> calculator = ServiceProxyFactory.CreatePorxy&lt;Server.Service.ICalculator&gt;(binding, serviceUrl);</span><br></pre></td></tr></table></figure>
+
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="https://ww1.sinaimg.cn/large/4c36074fly1g2w85svbrfj20rp0eqq41.jpg" alt="通过RealPrxoy动态代理WCF服务" title="" referrerpolicy="no-referrer">
+                </div>
+                <div class="image-caption">通过RealPrxoy动态代理WCF服务</div>
+            </figure>
+
+<p>在调用WCF的时候，因为超时、网络等原因造成的调用异常，此时，我们可以为WCF添加异常处理相关的标签，而相应地，我们可以在异常中对异常的种类进行判断和处理，以便于及时地关闭ChannelFactory，因为如果它不能正确地关闭，会导致后续的通信出现问题，而这恰好是当初的代理类想要解决的问题，考虑到创建ChannelFactory是需要付出一定的性能代价的，因此，可以适当地考虑对ChannelFactory进行缓存，而这恰好是原来业务中的一个盲点。</p>
+<h1 id="Castle-DynamicProxy"><a href="#Castle-DynamicProxy" class="headerlink" title="Castle.DynamicProxy"></a>Castle.DynamicProxy</h1><p>通过RealProxy，我们已经实现了WCF服务的动态代理，这里介绍第二种方式，即Castle.DynamicProxy，Castle和AspectCore、Unity等项目一样，提供了AOP相关的能力，可以让我们对接口、虚方法、类等进行拦截。Castle中的动态代理使用的是透明代理，而.NET Remoting的动态代理必须继承自MarshalByRefObject。博主暂时没有搞清楚，这两种是否属于同一种技术上的实现，作为延伸，我们来一起看看如何使用Castle中的DynamicProxy实现类似的功能，首先我们定义一个拦截器，它需要实现IInterceptor接口中的Intercept()方法：</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">Intercept</span>(<span class="params">IInvocation invocation</span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">var</span> serviceInfo = FindService();</span><br><span class="line">    <span class="keyword">var</span> methodInfo = invocation.Method;</span><br><span class="line">    <span class="keyword">var</span> startTime = DateTime.Now;</span><br><span class="line">    <span class="keyword">var</span> serviceName = serviceInfo.Service.GetType().Name;</span><br><span class="line">    <span class="keyword">var</span> methodName = methodInfo.Name;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">try</span></span><br><span class="line">    &#123;</span><br><span class="line">        Console.WriteLine(<span class="string">"CastleProxy调用&#123;0&#125;服务&#123;1&#125;方法开始..."</span>, serviceName, methodName);</span><br><span class="line">        <span class="keyword">var</span> argsInfo = <span class="keyword">new</span> Dictionary&lt;<span class="keyword">string</span>, <span class="keyword">object</span>&gt;();</span><br><span class="line">        <span class="keyword">var</span> parameters = methodInfo.GetParameters();</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; invocation.Arguments.Length; i++)</span><br><span class="line">        &#123;</span><br><span class="line">            argsInfo.Add(parameters[i].Name, invocation.Arguments[i]);</span><br><span class="line">        &#125;</span><br><span class="line">        Console.WriteLine(<span class="string">"当前传入参数:&#123;0&#125;"</span>, JsonConvert.SerializeObject(argsInfo));</span><br><span class="line">        <span class="keyword">var</span> result = methodInfo.Invoke(serviceInfo.Service, invocation.Arguments);</span><br><span class="line">        <span class="keyword">if</span> (result != <span class="literal">null</span>) &#123; </span><br><span class="line">        Console.WriteLine(<span class="string">"当前返回值:&#123;0&#125;"</span>, JsonConvert.SerializeObject(result));</span><br><span class="line">            invocation.ReturnValue = result;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">catch</span> (Exception ex)</span><br><span class="line">    &#123;</span><br><span class="line">        Console.WriteLine(</span><br><span class="line">            <span class="string">"CastleProxy调用&#123;0&#125;服务&#123;1&#125;方法失败,失败原因：&#123;2&#125;"</span>, </span><br><span class="line">            serviceName, methodName, ex.Message</span><br><span class="line">        );</span><br><span class="line">        <span class="keyword">throw</span> ex;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">finally</span></span><br><span class="line">    &#123;</span><br><span class="line">        serviceInfo.Close();</span><br><span class="line">        Console.WriteLine(</span><br><span class="line">            <span class="string">"CastleProxy调用&#123;0&#125;服务&#123;1&#125;方法结束,共耗时&#123;2&#125;秒"</span>, </span><br><span class="line">            serviceName, methodName, DateTime.Now.Subtract(startTime).TotalSeconds</span><br><span class="line">        );</span><br><span class="line">        Console.WriteLine(<span class="string">"----------------------------------"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>接下来，我们通过ProxyGenerator来生成新的代理类，我们需要告诉ProxyGenerator要创建的类型是什么，是一个接口还是类，以及要应用哪一个拦截器。这里我们用到的方法是CreateInterfaceWithoutTarget()，它在这里的作用就是动态创建ICalculator接口的代理类。而通过查看Castle的API，我们会发现它可以在以下几种情况下创建某个类型的实例。首先是CreateInterfaceWithoutTarget()这个方法，当你希望创建一个接口的代理而又不想提供具体的实现时可以使用。其次是CreateInterfaceProxyWithTarget()这个方法，当你希望创建一个接口的代理同时又有提供具体实现时使用可以使用。接下来，是CreateInterfaceProxyWithTargetInterface()这个方法，它的命名看起来让人感到迷惑，甚至在某种角度来看，它和CreateInterfaceProxyWithTarget()这个方法还有点相似，其实。这两者最大的不同就是：后者允许你将调用目标替换为目标接口的不同实现。这种在实际场景中使用得不多，从Castle官方的使用场景来看，唯一用到这种技术的是Castle.Facilities，它可以和Windsor 这样的容器整合在一起使用，这个时候调用者就可以把WCF服务当作一个普通接口来使用，果然，大家都想到这一点，英雄所见略同啊，哈哈。好了，下面我们来看具体的代码实现：</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ProxyGenerator generator = <span class="keyword">new</span> ProxyGenerator();</span><br><span class="line"><span class="keyword">var</span> interceptor = <span class="keyword">new</span> CastleServicePorxy&lt;ICalculator&gt;(binding, serviceUrl);</span><br><span class="line"><span class="keyword">var</span> calculator = (ICalculator)generator.CreateInterfaceProxyWithoutTarget(<span class="keyword">typeof</span>(ICalculator),interceptor);</span><br></pre></td></tr></table></figure>
+
+
+
+
+<h1 id="迁移至-NET-Core"><a href="#迁移至-NET-Core" class="headerlink" title="迁移至.NET Core"></a>迁移至.NET Core</h1><p>其实，我对WCF是不太感冒的，因为第一个字母W表明，它是一个只能运行在Windows平台的产物，现在依然有大量的Web Service存在，如果可以让我像使用普通接口一样使用WCF接口，我还是非常愿意去使用它的，毕竟系统中有大量依赖WCF的东西。可话又说回来，现在到.NET Core这个版本，微软并没有把WCF的服务端移植到.NET Core上，仅仅是提供了客户端调用的支持，或许还是因为WCF里有太多平台相关的东西吧！如果希望自己的.NET应用可以跨平台，越早摆脱这些Windows平台东西越好，譬如IIS、SQLServer等等。不过我这里想说的是，RealProxy在.NET Core中有类似的实现，我们可以用下面这种方式来进行迁移，当然，如果你直接Castle就更没有问题啦！</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">InvokeSerice</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> T Proxy&lt;T&gt;()</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">return</span> DispatchProxy.Create&lt;T, InvokeProxy&lt;T&gt;&gt;();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">public class InvokeProxy&lt;T&gt; : DispatchProxy</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">private</span> Type type = <span class="literal">null</span>;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">InvokeProxy</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        type = <span class="keyword">typeof</span>(T);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">override</span> <span class="keyword">object</span> <span class="title">Invoke</span>(<span class="params">MethodInfo targetMethod, <span class="keyword">object</span>[] args</span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        <span class="comment">//<span class="doctag">TODO:</span> 在这里实现拦截逻辑</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="本文小结"><a href="#本文小结" class="headerlink" title="本文小结"></a>本文小结</h1><p>这篇博客再次让大家领略了AOP的魅力，通过动态代理来创建相关的服务接口，让我们逐渐摆脱了手写代理类的深渊。本文主要分享了两种动态代理的实现方式，一种是基于.NET Remoting的RealProxy，一种是基于Castle的DynamicProxy。两种方式在使用上是非常相近的，通过这种方式。我们实现了WCF服务创建细节的隐藏，调用者不再需要去关心ChannelFactory相关的底层细节，可以像使用普通接口一样调用WCF服务，并且可以用一种统一的方式去记录调用相关的细节、对异常进行处理等等。早期的T4模板本质上是一种静态代理的方式，其缺点是难以适应快速迭代的变化，必须人手编写代理方法，而通过动态代理，这一切只需要写一次就好了，从而做到了真正意义上的“一次编写，到处运行”，这就是所谓的面向横切面编程的思路。关于Castle动态代理更多的应用场景，以及Castle.Facilities相关的内容，大家可以从各自的文档中去了解，以上就是这篇博客的全部内容了。</p>
+
+                
+
+                
+
+
+<div class="recommended_posts">
+    <h1>推荐阅读</h1>
+    <ul>
+        
+        <li><a href="https://qinyuanpei.github.io/posts/1679688265/">ASP.NET Core gRPC 拦截器的使用技巧分享</a></li>
+        
+        <li><a href="https://qinyuanpei.github.io/posts/3291578070/">使用Unity框架简化应用程序异常处理及日志记录流程</a></li>
+        
+        <li><a href="https://qinyuanpei.github.io/posts/2829333122/">深入浅出理解Python装饰器</a></li>
+        
+        <li><a href="https://qinyuanpei.github.io/posts/3668933172/">邂逅AOP：说说JavaScript中的修饰器</a></li>
+        
+        <li><a href="https://qinyuanpei.github.io/posts/3670340170/">ABP vNext 对接 Ant Design Vue 实现分页查询</a></li>
+        
+    </ul>
+</div>
+
+            </div>
+            
+<blockquote class="post-copyright">
+    <div class="content">
+        <p><b>版权声明：</b>
+        <a href="https://qinyuanpei.github.io/posts/2954591764/" rel="external">又见AOP之基于RealProxy实现WCF动态代理</a>
+        ，由&nbsp;<a href="/about" target="_blank" rel="external">飞鸿踏雪</a>&nbsp;
+        首次发表于&nbsp;<a href="/" target="_blank" rel="external">一个人的孤落时辰</a>&nbsp;
+        ，本文地址为：<a href="https://qinyuanpei.github.io/posts/2954591764/" target="_blank" rel="external">https://qinyuanpei.github.io/posts/2954591764/</a>
+        ，转载请注明<b>作者</b>和<b>出处</b>。</p>
+    </div>
+    <footer>
+        <a href="https://qinyuanpei.github.io">
+            <img src="/assets/images/avatar.jpg" alt="飞鸿踏雪">
+            飞鸿踏雪
+        </a>
+    </footer>
+</blockquote>
+
+
+            
+<div class="page-reward">
+    <a id="rewardBtn" href="javascript:;" class="page-reward-btn waves-effect waves-circle waves-light">赏</a>
+</div>
+
+
+            <div class="post-footer">
+                
+	<ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/AOP/" rel="tag">AOP</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Castle/" rel="tag">Castle</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Dynamic-Proxy/" rel="tag">Dynamic Proxy</a></li></ul>
+
+                
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://qinyuanpei.github.io/posts/2954591764/&title=《又见AOP之基于RealProxy实现WCF动态代理》 — 一个人的孤落时辰&pic=https://qinyuanpei.github.ioassets/images/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://qinyuanpei.github.io/posts/2954591764/&title=《又见AOP之基于RealProxy实现WCF动态代理》 — 一个人的孤落时辰&source=一个人的孤落时辰 | 纵有疾风起，人生不言弃 | 隐约雷鸣，阴霾天空，即使天无雨，我亦留此地。" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://qinyuanpei.github.io/posts/2954591764/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《又见AOP之基于RealProxy实现WCF动态代理》 — 一个人的孤落时辰&url=https://qinyuanpei.github.io/posts/2954591764/&via=https://qinyuanpei.github.io" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://qinyuanpei.github.io/posts/2954591764/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+      
+      <li>
+        <a class="google share-sns" target="_blank" onClick="show_yp()" data-title=" 生成海报">
+          <i class="icon icon-file-image-o"></i>
+        </a>
+      </li>
+      
+    </ul>
+ </div>
+
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
+            </div>
+        </div>
+
+        
+<nav class="post-nav flex-row flex-justify-between">
+  
+    <div class="waves-block waves-effect prev">
+      <a href="/posts/3677280829/" id="post-prev" class="post-nav-link">
+        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
+        <h4 class="title">《Web API 的设计与开发》读书笔记</h4>
+      </a>
+    </div>
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/posts/4159187524/" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h4 class="title">WSL下Docker使用踩坑小记</h4>
+      </a>
+    </div>
+  
+</nav>
+
+
+        
+    <div id="comment"></div>
+<script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+<script src='//unpkg.com/valine/dist/Valine.min.js'></script>
+<script type="text/javascript">
+new Valine({
+    el: '#comment' ,
+    notify: false, 
+    verify: true, 
+    appId: 'JbHqRp2eMrTgIwYpfERH0g79-gzGzoHsz',
+    appKey: 'VsiKvLuiBGvJL1XrAfv7siY2',
+    placeholder: '云中谁寄锦书来，雁字回时，月满西楼。&#10;Tips：如果希望收到我的评论回复，请至少留下你的邮箱哦:)',
+    path:'https://qinyuanpei.github.io/posts/2954591764/', 
+    avatar:'identicon',
+    requiredFields: ['nick','mail']
+});
+</script>
+
+
+
+
+    </article>
+    
+<div id="reward" class="page-modal reward-lay">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <h3 class="reward-title">
+        <i class="icon icon-quote-left"></i>
+        赠人玫瑰，手有余香
+        <i class="icon icon-quote-right"></i>
+    </h3>
+    <div class="reward-content">
+        
+        <div class="reward-code">
+            <img id="rewardCode" src="/assets/images/wechat.png" alt="打赏二维码">
+        </div>
+        
+        <label class="reward-toggle">
+            <input id="rewardToggle" type="checkbox" class="reward-toggle-check"
+                data-wechat="/assets/images/wechat.png" data-alipay="/assets/images/alipay.jpg">
+            <div class="reward-toggle-ctrol">
+                <span class="reward-toggle-item wechat">微信</span>
+                <span class="reward-toggle-label"></span>
+                <span class="reward-toggle-item alipay">支付宝</span>
+            </div>
+        </label>
+        
+    </div>
+</div>
+
+
+    <script type="text/javascript" src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/yoniu.min.js"></script>
+<style type='text/css'>
+	body.active-yp {
+		overflow: hidden;
+	}
+	.yp-fc-btn{
+		display: flex;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		align-items: center;
+		justify-content: space-between;
+		font-size: 13px;
+	}
+	.yp-fc-btn span{
+		cursor: pointer;
+		padding: 2px 10px;
+		color: #4b4b4b;
+		border: #4b4b4b 1px solid;
+		border-radius:5px;
+	}
+	#yp-hide{
+		position: fixed;
+		display: flex;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		justify-content: center;
+		flex-direction: column;
+		left:0;
+		top:0;
+		right:0;
+		bottom:0;
+		background-color:rgba(0,0,0,.5);
+		z-index: 99999;
+		visibility: hidden;
+	}
+	#yoniu-poster{
+		box-sizing: border-box;
+		width: 350px;
+		height: 467.2px;
+		background-color: #fff;
+		margin: 0 auto;
+		padding: 0;
+		line-height: 1.6;
+		text-align:justify;
+	}
+	
+	.yp-img {
+		min-height: 240px;
+		position: relative;
+		display: flex;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		justify-content: flex-end;
+		flex-direction: column;
+		background-position: 50% 50%;
+		background-size: cover;
+		overflow:hidden;
+	}
+	.yp-img>div{
+		padding: 10px 20px;
+	}
+	.yp-name{
+		display: block;
+		color: #fff;
+		font-size: 20px;
+		font-weight: 600;
+		text-shadow: #4b4b4b 0.1em 0.1em 0.2em;
+		margin-top: 10px;
+	}
+	.yp-sort{
+		padding: 3px 10px;
+		font-size: 12px;
+		color: #fff;
+		background: #2e2e2e;
+	}
+	.yp-des{
+		color: #2e2e2e;
+		font-size: 14px;
+		margin: 20px;
+		height: 67.2px;
+	}
+	.yp-qcode{
+		display: flex;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		justify-content: space-between;
+		align-items: center;
+		margin: 10px;
+		padding: 10px 20px;
+		background: #f5f5f5;
+		color: #818181;
+		border-radius: 10px;
+	}
+	.yp-tips{
+		display: flex;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		justify-content: space-between;
+		align-items: center;
+		color: #ccc;
+		margin: 0 10px 10px;
+		font-size: 10px;
+		letter-spacing: 1.5px;
+	}
+	.yp-btns{
+		display: flex;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		align-items: stretch;
+		justify-content: center;
+		width:350px;
+		margin: 0 auto;
+	}
+	.yp-btns>span{
+		display: flex;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		align-items: center;
+		justify-content: center;
+		font-size: 14px;
+		padding: 10px 15px;
+		background:rgba(0,0,0,.2);
+		color: #f5f5f5;
+		cursor: pointer;
+	}
+	.yp-btns>span>a{
+		color: #f5f5f5;
+	}
+	.yp-btns>span>a:hover{
+		text-decoration:none;
+	}
+	#yp-close{
+		font-size: 18px;
+		font-weight: 600;
+	}
+</style>
+<div id="yp-hide">
+    <div id="yoniu-poster">
+        <div class="yp-img" id="yp-img">
+            <div>
+                <span class="yp-sort"></span>
+                <span class="yp-name">又见AOP之基于RealProxy实现WCF动态代理</span>
+            </div>
+        </div>
+        <div class="yp-des">    
+            
+                最近一直在研究Mongodb和ElasticSearch之间同步数据的问题，苦于到目前为止，并没有取得任何实质性的进展。偶尔“趁得浮生半日闲暇”...
+            
+        </div>
+        <div class="yp-qcode">
+            <span>扫描二维码阅读原文</span>
+            <img id="yp-qcode" width="64px" src="//api.qrserver.com/v1/create-qr-code/?data=https://qinyuanpei.github.io/posts/2954591764/">
+        </div>
+        <div class="yp-tips">
+            <span>一个人的孤落时辰</span>
+            <span><time class="post-time" title="2019-05-10 16:27:50" datetime="2019-05-10T16:27:50.000Z"  itemprop="datePublished">2019-05-10</time>
+</span>
+        </div>
+    </div>
+    <div class="yp-btns">
+        <span id="yp-load-yp" onClick="load_yp()">生成海报</span>
+        <span><a id="yp-download"></a></span>
+        <span id="yp-close" onClick="close_yp()">×</span>
+    </div>
+</div>
+<script type="text/javascript">
+    function show_yp(){
+        window.scrollTo(0, 0);
+        document.body.setAttribute("class","active-yp");
+        let cover = document.getElementsByTagName('img')[1];
+        if (cover != null && typeof(cover) != 'undefined') {
+            document.getElementById('yp-img').style.backgroundImage = `url(${cover.src})`;
+        } else {
+            document.getElementById('yp-img').style.backgroundColor = '#d7dbf0';
+        }
+        document.getElementById("yp-hide").style.visibility = "visible";
+    }
+    function close_yp(){
+        var domClass = document.body.getAttribute("class");
+        domClass = domClass.replace("active-yp","");
+        document.body.setAttribute("class",domClass);
+        document.getElementById("yp-hide").style.visibility = "hidden";
+    }
+    function load_yp(){
+        document.getElementById('yp-load-yp').textContent = '海报生成中...';
+        setTimeout(function() {
+            h2c_();
+        },2000);
+
+    }
+</script>
+
+</div>
+
+        <footer class="footer">
+    <div class="top">
+        
+   <p>
+      <span id="lc_counter_container_site_uv">
+         <i class="icon icon-user"></i><span id="lc_counter_value_site_uv"></span>
+      </span>
+      <span id="lc_counter_container_site_pv">
+         <i class="icon icon-eye"></i><span id="lc_counter_value_site_pv"></span>
+      </span>
+  </p>
+
+
+        <p>
+   <a id="jinrishici-sentence" href="https://www.jinrishici.com/" target="_blank" rel="noopener">加载中</a>
+</p>
+<script src="https://sdk.jinrishici.com/v2/browser/jinrishici.js" charset="utf-8"></script>
+<script>
+   jinrishici.load(function(result) {
+      document.querySelector('#subtitle').innerText = result.data.content;
+      document.querySelector('#jinrishici-sentence').innerText = result.data.content;
+  });
+</script>
+            <!--Todo: 考虑重构为插件 -->
+            <p>
+                
+                    <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+                
+                <span>
+                    <a href="https://github.com/qinyuanpei" target="_blank" rel="license noopener" title="Github">
+                        <i class="icon icon-lg icon-github"></i>
+                    </a>
+                </span>
+                <span>
+                    <a href="https://weibo.com/1278609231/profile" target="_blank" rel="license noopener" title="微博">
+                        <i class="icon icon-lg icon-weibo"></i>
+                    </a>
+                </span>
+                <span>
+                    <a href="https://www.douban.com/people/60029335/" target="_blank" rel="license noopener" title="豆瓣">
+                        <i class="icon icon-lg icon-douban"></i>
+                    </a>
+                </span>
+                <span>
+                    <a href="https://www.zhihu.com/people/qinyuanpei" target="_blank" rel="license noopener" title="知乎">
+                        <i class="icon icon-lg icon-zhihu-square"></i>
+                    </a>
+                </span>
+                <span>
+                    <a href="https://blog.csdn.net/qinyuanpei" target="_blank" rel="license noopener" title="CSDN">
+                        <i class="icon icon-lg">C</i>
+                    </a>
+                </span>
+                <span>
+                    <a href="https://music.163.com/#/user/home?id=47002864" target="_blank" rel="license noopener" title="网易音乐">
+                        <i class="icon icon-lg icon-wangyiyunyinyue"></i>
+                    </a>
+                </span>
+            </p>
+        
+    </div>
+    <div class="bottom">
+        <p><span>飞鸿踏雪 &copy; 2014 - 2021</span><br>
+            
+                
+                Powered by <a href="http://hexo.io/" target="_blank">Hexo</a> & Theme by <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a><br>
+                
+                
+                    <p>Hosted by <a href="https://pages.github.com" target="_blank" rel="noopener" style="font-weight: bold">Github Pages</a></p>
+                
+        </p>
+    </div>
+</footer>
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span
+        class="icon icon-lg icon-chevron-up"></span></a>
+
+    
+
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://qinyuanpei.github.io/posts/2954591764/&title=《又见AOP之基于RealProxy实现WCF动态代理》 — 一个人的孤落时辰&pic=https://qinyuanpei.github.ioassets/images/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://qinyuanpei.github.io/posts/2954591764/&title=《又见AOP之基于RealProxy实现WCF动态代理》 — 一个人的孤落时辰&source=一个人的孤落时辰 | 纵有疾风起，人生不言弃 | 隐约雷鸣，阴霾天空，即使天无雨，我亦留此地。" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://qinyuanpei.github.io/posts/2954591764/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《又见AOP之基于RealProxy实现WCF动态代理》 — 一个人的孤落时辰&url=https://qinyuanpei.github.io/posts/2954591764/&via=https://qinyuanpei.github.io" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://qinyuanpei.github.io/posts/2954591764/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+      
+      <li>
+        <a class="google share-sns" target="_blank" onClick="show_yp()" data-title=" 生成海报">
+          <i class="icon icon-file-image-o"></i>
+        </a>
+      </li>
+      
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="//api.qrserver.com/v1/create-qr-code/?data=https://qinyuanpei.github.io/posts/2954591764/" alt="微信分享二维码">
+</div>
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.6/waves.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/4.2.1/echarts.min.js"></script>
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/echarts-wordcloud.min.js" async></script>
+<script>
+    var BLOG = { ROOT: '/', SHARE: true, REWARD: true };
+
+
+</script>
+
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/main.min.js"></script>
+
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/search.min.js" async></script>
+
+
+
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/heart.min.js" async></script>
+
+
+
+
+
+
+
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/leancloud-counter.min.js"></script>
+<script>
+        (function () {
+            var appId = 'JbHqRp2eMrTgIwYpfERH0g79-gzGzoHsz';
+            var appKey = 'VsiKvLuiBGvJL1XrAfv7siY2';
+            new VisitorCounter().init({
+                appId: appId,       //应用ID, 必输
+                appKey: appKey,      //应用Key, 必输
+                region: '华北',      //华东,华北,国际, 默认华东
+                domain: '',      //自定义域名
+                collectIP: true, //是否收集IP及位置信息, 默认开启
+                collectUA: true  //是否收集UserAgent, 默认开启
+            });
+        })();
+</script>
+
+
+
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/vconsole.min.js"></script>
+<script type="text/javascript">
+    //当地址中存在debug=true时，实例化vConsole
+    if (location.href.indexOf('debug=true') > -1) {
+        var vConsole = new VConsole();
+    }
+</script>
+
+
+    <script>
+    //国内用户自动重定向Coding Pages镜像
+    // var ipInfo = JSON.parse(localStorage.getItem('ipInfo'));
+    // if (ipInfo.country_code == 'CN') {
+    //     location.href = location.href.replace('qinyuanpei.github.io', 'blog.yuanpei.me');
+    // }
+    </script>
+
+
+<script>
+titleArray = [];
+function scrollTitle() {
+    if (titleArray.length == 0) return;
+    titleArray.push(titleArray[0]);
+	titleArray.shift();
+	document.title = titleArray.join("");
+}
+setInterval(scrollTitle, 500);
+(function() {
+    var originTitile = document.title, titleTime;
+    document.addEventListener('visibilitychange', function() {
+        if (document.hidden) {
+            titleArray = originTitile.split('');
+            clearTimeout(titleTime);
+        } else {
+            document.title = originTitile;
+            titleArray = originTitile.split('');
+            titleTime = setTimeout(function() {
+                document.title = originTitile;
+                titleArray = [];
+            },2000);
+        }
+    });
+})();
+</script>
+
+
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/ribbon.min.js"></script>
+</body>
+</html>

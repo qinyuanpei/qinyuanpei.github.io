@@ -1,0 +1,915 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+    
+<script async defer data-domain="blog.yuanpei.me" src="https://plausible.io/js/plausible.js"></script>
+    
+    <meta charset="utf-8">
+    <!-- HTTP 1.1 -->  
+    <meta http-equiv="pragma" content="no-cache">  
+    <!-- HTTP 1.0 -->  
+    <meta http-equiv="cache-control" content="no-cache">
+    <!-- 微博图床防盗链 --> 
+    <!-- <meta name="referrer" content="no-referrer"/> -->
+    <!--Google站点验证-->
+    
+    <!--百度站点验证-->
+    
+    
+    <!--Google AdSense-->
+    
+    <!--Bing站点验证-->
+    <meta name="msvalidate.01" content="713A48A3FE17D4841C292A6B3942EB4C" />
+    
+    <title>
+        使用Jexus实现ASP.NET在Linux平台下的部署 | 一个人的孤落时辰 | 纵有疾风起，人生不言弃
+    </title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+        <meta name="theme-color" content="#3F51B5">
+    
+
+    <meta name="keywords" content="Docker,Linux,Jexus,秦元培,技术博客,生活随笔,个人博客,NET,Python,数据挖掘,数据分析,NLP">
+    
+        <meta name="description" content="所以，在这今天这篇文章里，你将看到：**如何使用Jexus实现ASP.NET在Linux平台下的部署**;综合考虑这些因素，我们决定采用[Jexus](https://www.jexus.org/)来将ASP.NET项目部署到Linux平台;Jexus是由[宇内流云](http://www.cnblogs.com/yunei)开发的一款Linux平台上的高性能Web服务器，它是一个可以免费使用、不开源的项目，最大的特色是可以支持ASP.NET、ASP.NET Core、PHP;本文从一个实际工作的场景切入，分析和阐述了如何使用Jexus实现ASP.NET项目在Linux下的部署;通过查阅相关资料，博主发现ASP.NET Core的部署不需要Jexus，它只需要一个dotnet run命令即可">
+    
+    <meta name="description" content="所以，在这今天这篇文章里，你将看到：**如何使用Jexus实现ASP.NET在Linux平台下的部署**;综合考虑这些因素，我们决定采用[Jexus](https:&#x2F;&#x2F;www.jexus.org&#x2F;)来将ASP.NET项目部署到Linux平台;Jexus是由[宇内流云](http:&#x2F;&#x2F;www.cnblogs.com&#x2F;yunei)开发的一款Linux平台上的高性能Web服务器，它是一个可以免费使用、不">
+<meta property="og:type" content="article">
+<meta property="og:title" content="使用Jexus实现ASP.NET在Linux平台下的部署">
+<meta property="og:url" content="https://qinyuanpei.github.io/posts/815861661/index.html">
+<meta property="og:site_name" content="一个人的孤落时辰">
+<meta property="og:description" content="所以，在这今天这篇文章里，你将看到：**如何使用Jexus实现ASP.NET在Linux平台下的部署**;综合考虑这些因素，我们决定采用[Jexus](https:&#x2F;&#x2F;www.jexus.org&#x2F;)来将ASP.NET项目部署到Linux平台;Jexus是由[宇内流云](http:&#x2F;&#x2F;www.cnblogs.com&#x2F;yunei)开发的一款Linux平台上的高性能Web服务器，它是一个可以免费使用、不">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://ww1.sinaimg.cn/large/4c36074fly1fz05dq1tcmj20m80aqjsf.jpg">
+<meta property="og:image" content="https://ww1.sinaimg.cn/large/4c36074fly1fz01zbucjvj20m80d5jsm.jpg">
+<meta property="article:published_time" content="2018-05-20T14:00:03.000Z">
+<meta property="article:modified_time" content="2021-06-07T05:34:21.405Z">
+<meta property="article:author" content="飞鸿踏雪">
+<meta property="article:tag" content="Docker">
+<meta property="article:tag" content="Linux">
+<meta property="article:tag" content="Jexus">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://ww1.sinaimg.cn/large/4c36074fly1fz05dq1tcmj20m80aqjsf.jpg">
+    
+        <link rel="alternate" type="application/atom+xml" title="一个人的孤落时辰" href="/atom.xml">
+    
+    <link rel="shortcut icon" href="/assets/images/favicon.ico">
+    
+        <link rel="manifest" href="/manifest.json">
+    
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master//assets/styles/style.css">
+    <script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/instantclick.min.js"></script>
+    <script>window.lazyScripts=[]</script>
+    <!-- custom head -->
+    
+
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu" class="hide" >
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap" style="background-image:url(/assets/images/brand.jpg)">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/assets/images/avatar.jpg" alt="avatar">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">飞鸿踏雪</h5>
+          <a href="mailto:qinyuanpei@163.com" title="qinyuanpei@163.com" class="mail">qinyuanpei@163.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/"  >
+                <i class="icon icon-lg icon-home"></i>
+                主页
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives"  >
+                <i class="icon icon-lg icon-archives"></i>
+                归档
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags"  >
+                <i class="icon icon-lg icon-tags"></i>
+                标签
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/categories"  >
+                <i class="icon icon-lg icon-th-list"></i>
+                分类
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/books"  >
+                <i class="icon icon-lg icon-bookmark"></i>
+                书单
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/movies"  >
+                <i class="icon icon-lg icon-film"></i>
+                影单
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="https://qinyuanpei.github.io/poems/"  >
+                <i class="icon icon-lg icon-folder-open"></i>
+                诗集
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/works"  >
+                <i class="icon icon-lg icon-code"></i>
+                实验室
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/about"  >
+                <i class="icon icon-lg icon-circle"></i>
+                关于我
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+            <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">使用Jexus实现ASP.NET在Linux平台下的部署</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off"
+                placeholder="输入感兴趣的关键字">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+        <a href="https://github.com/qinyuanpei/qinyuanpei.github.io" target="_blank" rel="noopener" class="header-icon waves-effect waves-circle waves-light" id="menuGithub">
+            <i class="icon icon-lg icon-code-fork"></i>
+        </a>
+    </div>
+</header>
+<header class="content-header post-header">
+    <div class="container fade-scale">
+        <h1 class="title">使用Jexus实现ASP.NET在Linux平台下的部署</h1>
+        <h5 class="subtitle" id="subtitle">
+            
+            <time datetime="2018-05-20T14:00:03.000Z" itemprop="datePublished" class="page-time">
+  2018-05-20
+</time>
+
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/%E5%BC%80%E5%8F%91%E5%B7%A5%E5%85%B7/">开发工具</a></li></ul>
+
+            
+        </h5>
+    </div>
+    
+
+</header>
+
+<div class="container body-wrap">
+    
+    <aside class="post-widget">
+        <nav class="post-toc-wrap" id="post-toc">
+            <h4>目录</h4>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#故事背景"><span class="post-toc-number">1.</span> <span class="post-toc-text">故事背景</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#关于Jexus"><span class="post-toc-number">2.</span> <span class="post-toc-text">关于Jexus</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#Hello-Linux"><span class="post-toc-number">3.</span> <span class="post-toc-text">Hello Linux</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#安装Jexus"><span class="post-toc-number">3.1.</span> <span class="post-toc-text">安装Jexus</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#配置Jexus"><span class="post-toc-number">3.2.</span> <span class="post-toc-text">配置Jexus</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#基本使用"><span class="post-toc-number">3.3.</span> <span class="post-toc-text">基本使用</span></a></li></ol></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#Docker"><span class="post-toc-number">4.</span> <span class="post-toc-text">Docker+</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#本文小结"><span class="post-toc-number">5.</span> <span class="post-toc-text">本文小结</span></a></li></ol>
+        </nav>
+    </aside>
+    
+    <article id="post-使用Jexus实现ASP-NET在Linux平台下的部署" class="post-article article-type-post fade" itemprop="blogPost">
+
+        <div class="post-card">
+            <h1 class="post-card-title">
+                使用Jexus实现ASP.NET在Linux平台下的部署
+            </h1>
+            <div class="post-meta">
+                <time class="post-time" title="2018-05-20 14:00:03" datetime="2018-05-20T14:00:03.000Z"  itemprop="datePublished">2018-05-20</time>
+
+                
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/%E5%BC%80%E5%8F%91%E5%B7%A5%E5%85%B7/">开发工具</a></li></ul>
+
+
+
+                
+<span id="lc_counter_container_page_pv" title="文章总阅读量" data-page-url="" data-page-title="使用Jexus实现ASP.NET在Linux平台下的部署">
+    <i class="icon icon-eye icon-pr"></i><span id="lc_counter_value_page_pv"></span>
+</span>
+
+
+
+
+
+                
+    <span>
+        <i class="icon icon-clock-o"></i>
+        25 min.
+    </span>
+    
+            </div>
+            <div class="post-content" id="post-content" itemprop="postContent">
+                <p>&emsp;&emsp;Hello，大家好，我是Payne，欢迎大家关注我的博客，我的博客地址是<a href="https://qinyuanpei.github.io">https://qinyuanpei.github.io</a>。今天想写一点关于Linux部署ASP.NET相关的话题，为什么突然想写这个话题呢？因为就在几天前，我被我所认识的一位前辈深深地鄙视了一番，原因是我依然在使用一个落后的IoC框架——Unity，在如今已然是公元2018年的今天。我突然想到，距离.NET Core 2.0发布已经有一段时间，而.NET Core 3.0的roadmap已经开始提上日程，可我好像还没来得及认真地去对待这个现状。我一直在关注跨平台和跨语言的技术，就像我在大学里的时候就开始接触Linux一样，未来我们要面对的是种类繁多的终端平台，从PC时代到移动互联网，再到VR、AR、IoT和AI，有太多太多的事情在悄然发生着变化。偶尔我的内心会泛起焦虑和迷茫，可在时光蹉跎直至褪色以前，我或许只是变回了曾经的自己。既然要如同涅槃一般重新开始，为什么不首先重新拾起曾经关注的领域呢？所以，在这今天这篇文章里，你将看到：<strong>如何使用Jexus实现ASP.NET在Linux平台下的部署</strong>。</p>
+<h1 id="故事背景"><a href="#故事背景" class="headerlink" title="故事背景"></a>故事背景</h1><p>&emsp;&emsp;我们项目组在开发这样一种服务，它可以通过收集招聘网站的简历来提取相关信息，而这些信息将作为训练集供AI算法使用。考虑到Python在AI领域的优势，我们决定采用Python来开发自然语言处理相关的业务，而简历的收集则是通过.NET中的Web Service暴露给前端。整个开发相对顺利，可是在部署环节出现了问题。因为项目组以往的的项目都是部署在Linux Server上，所以在部署Web Service的问题上产生了分歧，负责运维的同事不愿意为这一个项目而单独配置一台Windows Server。这里需要说明的是，采用.NET来开发Web Service的一个重要原因是，这些简历中存在大量Word文档(.doc/.docx)，因此不得不采用Office提供的COM组件来支持文档的解析，虽然后来证明的确是这些COM组件拖了跨平台的后腿。所以，在这个时候，我们面临着两种选择，第一种方案是采用Windows Server来部署，我们的运维同事表示不开心；第二种方案是采用Linux Server来部署。我们知道.NET跨平台的一个关键技术是Mono，可Mono的问题是它的基础类库不大健全，相信微软收购Mono以后这个问题能够得到解决。目前官方主推的跨平台技术是.NET Core，考虑到迁移到.NET Core版本的成本，我们最终没有选择这个方案。事实上，即使采用.NET Core进行开发，最终我们的部署依然需要依赖<a href="https://www.jexus.org/" target="_blank" rel="noopener">Jexus</a>。综合考虑这些因素，我们决定采用<a href="https://www.jexus.org/" target="_blank" rel="noopener">Jexus</a>来将ASP.NET项目部署到Linux平台。</p>
+<h1 id="关于Jexus"><a href="#关于Jexus" class="headerlink" title="关于Jexus"></a>关于Jexus</h1><p>&emsp;&emsp;Jexus是由<a href="http://www.cnblogs.com/yunei" target="_blank" rel="noopener">宇内流云</a>开发的一款Linux平台上的高性能Web服务器，它是一个可以免费使用、不开源的项目，最大的特色是可以支持ASP.NET、ASP.NET Core、PHP。通俗地来讲，我们可以认为它是Linux平台上的IIS，这并不为过，因为你可以注意到<a href="https://www.jexusmanager.com/en/latest/" target="_blank" rel="noopener">Jexus Manager</a>这个项目，它可以同时支持Jexus，IIS 和 IIS Express三种服务器的管理，并提供了各个平台下一致的使用体验，而Linux平台则主要是针对Jexus。Jexus提供了不亚于商用服务器的众多特性，比如多站点支持、使用应用程序池来调度管理工作进程、具有良好的稳定性和容错能力、支持 HTTPS 和 WebSockets、支持 FastCGI 协议和 OWIN 标准。除此以外，它同时支持 URL 重写、反向代理、压缩传输、入侵检测等重要功能。Jexus底层采用Linux中的epoll机制来处理网站请求，所以会比通常使用libuv实现的技术拥有更高的性能。作为一款跨平台软件，Jexus支持主流的Linux发行版本。目前，国内外已经有大量的网站采用Jexus作为它的服务器，我们可以在Jexus的官网上找到这些<a href="https://www.jexus.org/Examples.htm" target="_blank" rel="noopener">案例</a>。虽然微软官方正在全力推广.NET Core，但对于那些需要维护的旧项目而言，迁移到全新的.NET Core平台着实是个不小的挑战，而且目前支持.NET Core版本的类库并不丰富，虽然最终的趋势一定是.NET Core替代Mono，但对于Mono而言，在.NET宣布开源以后，从.NET Framework中吸收的基础类库，极大的改善了Mono基础类库不完善的状况，而Mono针对CLR的实现、C#编译器的实现、AOT环境等等特性，或许可以为.NET跨平台提供借鉴，这是一个相互促进的过程。在新时代到来以前，我们暂时需要使用Jexus来过渡。</p>
+<h1 id="Hello-Linux"><a href="#Hello-Linux" class="headerlink" title="Hello Linux"></a>Hello Linux</h1><p>&emsp;&emsp;OK，下面我们来体验一下Jexus在Linux平台上的效果，这里我们以ASP.NET MVC4为例，我们直接通过Visual Studio创建一个项目即可，这里我们需要的是这个项目发布以后的所有文件。总之，这些文件需要通过某种方式放到Linux平台上，大家自己去想办法就好啦，这个不再说多余的话。</p>
+<h2 id="安装Jexus"><a href="#安装Jexus" class="headerlink" title="安装Jexus"></a>安装Jexus</h2><p>&emsp;&emsp;Jexus安装起来是非常简单的，这里博主使用的是Elementary OS，基于Ubuntu14.0的衍生版本。在终端下执行如下命令：</p>
+<figure class="highlight vim"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl http<span class="variable">s:</span>//jexus.org/release/x64/install.<span class="keyword">sh</span>|sudo <span class="keyword">sh</span></span><br></pre></td></tr></table></figure>
+<p>你没有看错，真的只需要一行命令。事实上，Jexus分为两个版本，即通用版和独立版。其差别是通用版不含Mono运行时，独立版含有Mono运行时。官方建议使用独立版，如果有朋友想尝试安装通用版，请在终端下执行如下命令：</p>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl https:<span class="regexp">//</span>jexus.org<span class="regexp">/release/i</span>nstall|sudo sh</span><br></pre></td></tr></table></figure>
+<p>无论采用哪一种方式安装，当你看到终端中显示：Jexus已经被成功安装到系统，就表示Jexus安装成功了。</p>
+<h2 id="配置Jexus"><a href="#配置Jexus" class="headerlink" title="配置Jexus"></a>配置Jexus</h2><p>&emsp;&emsp;Jexus部署到网站，需要两个东西，一个是网站内容(废话)，一个是网站配置。假定我们这里将这两个东西打包在一起，压缩包的名字为app.tar。为什么这里选择了.tar格式的压缩文件呢？因为在Linux平台下这个格式更好用些，我们熟悉的.zip格式，可能会需要我们安装相应的扩展。此时，我们可以使用如下脚本来部署网站：</p>
+<figure class="highlight jboss-cli"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">tar -xf app.tar</span><br><span class="line">sudo mv  -f <span class="string">.aspnetconf</span> usr/jexus/siteconf/aspnetconf</span><br><span class="line">sudo mv <span class="string">./aspnet</span> <span class="string">/var/www</span></span><br></pre></td></tr></table></figure>
+<p>OK，现在来解释下这个脚本，这里我们需要部署一个名为“aspnet”的网站，所以，网站的内容被放置在“aspnet”这个目录里。该网站对应一个作用于Jexus的配置文件，配置文件的名字为aspnetconf。首先，我们将“aspnetconf”这个配置文件移动到了“usr/jexus/siteconf/”目录下，这是Jexus指定的配置路径，即<strong>每一个站点都有一个配置文件，且该配置文件被放置在“usr/jexus/siteconf/”目录下</strong>。然后，我们将“aspnet”这个文件夹移动到了“/var/www”目录下，这是Jexus指定的网站目录，即<strong>每一个站点都有一个文件夹，文件夹的名字可以理解为网站的名字</strong>。默认情况下，Jexus会在www目录里创建一个名为default的文件夹，即默认有一个名为default的站点，不过经过博主核实，最新版(v5.8.3)中是没有default站点。同理，Jexus会siteconf目录里创建一个名为default的配置文件。我们通常以这个配置文件为参照来编写我们自己的配置文件，例如下面是aspnetconf中的内容：</p>
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">port</span>=<span class="number">4000</span>                  </span><br><span class="line"><span class="attr">root</span>=/ /var/www/aspnet          </span><br><span class="line"><span class="attr">hosts</span>=  </span><br><span class="line"><span class="attr">indexs</span>= </span><br><span class="line"><span class="attr">aspnet_exts</span>=</span><br></pre></td></tr></table></figure>
+<p>其中，</p>
+<ul>
+<li>port表示Jexus Web服务器监听的端口(必填）</li>
+<li>root表示网站虚拟目录与其对应的物理目录，中间使用空格分开(必填）</li>
+<li>hosts表示网站域名(建议填写)，可以使用泛域名如<em>.yourdomain.com或者填写</em>表示默认网站，一个端口有且只有一个默认网站，选填</li>
+<li>indexs表示网站首页文件名，如index.html、index.aspx等，多个文件名使用英文逗号分开，选填</li>
+<li>aspnet_exts表示ASP.NET扩展名，不建议填写。如要填写，多个扩展名(不含.)使用英文逗号分开。</li>
+</ul>
+<p>最简单的配置只需要port和root即可，更多的配置项可以参考官方文档。</p>
+<h2 id="基本使用"><a href="#基本使用" class="headerlink" title="基本使用"></a>基本使用</h2><p>&emsp;&emsp;Jexus的常用命令简单到只有3个，start、restart、stop。命令的基本格式为：</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">sudo</span> /usr/jexus/jws start<span class="meta"> [站点名(可选，不指定时表示所有)]</span></span><br><span class="line"><span class="attribute">sudo</span> /usr/jexus/jws restart<span class="meta"> [站点名(可选，不指定时表示所有)]</span></span><br><span class="line"><span class="attribute">sudo</span> /usr/jexus/jws stop<span class="meta"> [站点名(可选，不指定时表示所有)]</span></span><br></pre></td></tr></table></figure>
+<p>在这个例子里，我们执行如下命令来启动aspnet这个站点：</p>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo <span class="regexp">/usr/</span>jexus<span class="regexp">/jws start aspnet</span></span><br></pre></td></tr></table></figure>
+<p>当终端中返回OK时，就表示启动成功啦，此时，我们打开浏览器，输入<code>http://localhost:4000</code> 就可以看到如下画面(这里的端口号为4000)：</p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="https://ww1.sinaimg.cn/large/4c36074fly1fz05dq1tcmj20m80aqjsf.jpg" alt="运行在Linux上的ASP.NET" title="" referrerpolicy="no-referrer">
+                </div>
+                <div class="image-caption">运行在Linux上的ASP.NET</div>
+            </figure>
+<p>你就说，这算不算惊喜。我们还可以输入<code>http://localhost:4000/info</code>来验证Jexus是否配置正确，当Jexus被正确配置以后，你就会看到一个显示着“Welcome to Jexus”的页面。嗯嗯，好像是和Nginx挺像的哈！</p>
+<h1 id="Docker"><a href="#Docker" class="headerlink" title="Docker+"></a>Docker+</h1><p>&emsp;&emsp;接下来，让我们考虑将这些Linux上的工作转移到Docker中来做，因为借助Docker的容器技术，它可以为我们提供一个足以自给自足的环境。通过这个环境编译测试通过的镜像可以批量地部署到生产环境中。如果你不想在每一台Linux Server上都覆盖本文的流程，那么Docker将是提高你部署效率的不二选择，而且从认知完整性的角度来看待Docker，你就会发现它和Jekins、TravisCI、VSTS工具一样，都可以非常完美地被接入到持续集成(CI)的流程里去，譬如我们项目组采用的是Jekins + Gitlib + Docker的方案，所以，如果你想要选择一个最适合你的持续集成(CI)方案，无论如何，Docker都是需要去了解的一个知识。关于Docker的背景知识大家可以自己去了解，这里我们通过编写Dockerfile来完成网站镜像的构建：</p>
+<figure class="highlight dockerfile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">FROM</span> ubuntu:<span class="number">14.04</span></span><br><span class="line"><span class="keyword">LABEL</span><span class="bash"> vendor=<span class="string">"qinyuanpei@163.com"</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Prepare Environment</span></span><br><span class="line"><span class="keyword">RUN</span><span class="bash"> sudo apt-get update </span></span><br><span class="line"><span class="keyword">RUN</span><span class="bash"> sudo apt-get install -y</span></span><br><span class="line"><span class="keyword">RUN</span><span class="bash"> sudo apt-get install -y curl</span></span><br><span class="line"><span class="keyword">RUN</span><span class="bash"> sudo apt-get install -y wget</span></span><br><span class="line"><span class="keyword">RUN</span><span class="bash"> sudo curl -sSL https://jexus.org/release/x64/install.sh|sudo sh</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Deploy Website</span></span><br><span class="line"><span class="keyword">ADD</span><span class="bash"> dest/ /</span></span><br><span class="line"><span class="keyword">RUN</span><span class="bash"> sudo mv -f aspnetconf /usr/jexus/siteconf/aspnetconf</span></span><br><span class="line"><span class="keyword">RUN</span><span class="bash"> sudo mkdir -p /var/www</span></span><br><span class="line"><span class="keyword">RUN</span><span class="bash"> sudo mv ./aspnet /var/www</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Start Jexus</span></span><br><span class="line"><span class="keyword">EXPOSE</span> <span class="number">4000</span></span><br><span class="line"><span class="keyword">WORKDIR</span><span class="bash"> /usr/jexus</span></span><br><span class="line"><span class="keyword">CMD</span><span class="bash"> sudo ./jws start aspnet</span></span><br></pre></td></tr></table></figure>
+<p>如果你熟悉Linux下的命令的话，你就会知道apt-get、curl、wget这些命令的含义，真正需要的解释的是ADD，它表示的是，将Dockerfile同级目录下的dest目录添加到Docker环境中，接下来的命令我们同样非常熟悉，因为这和Linux下操作是完全一样的。不过，这里的确有些坑需要踩，在博主构建镜像的过程中，发现容器环境和虚拟机环境还是有本质不同的，这里的mv命令在Docker下有时候会引发“hard link”的问题，从Stackoverflow上好像并没有找到太有价值的答案，总之，这个问题非常的玄学。接下来，我们会将Docker容器的4000端口暴露出来，为什么是4000端口呢？因为这个网站的配置中指向了4000端口，这一点在上文中我们已经提及。而入口处的命令，显然是启动Jexus服务，这个不再解释。</p>
+<p>这里，我们通过如下命令来构建一个镜像版本：</p>
+<figure class="highlight armasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="symbol">docker</span> <span class="keyword">build </span>-t jexus-aspnet:<span class="built_in">v1</span>.<span class="number">0</span> .</span><br></pre></td></tr></table></figure>
+<p>假如这个镜像被成功构建出来，我们就可以使用这个镜像来启动网站啦。如下图所示：</p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="https://ww1.sinaimg.cn/large/4c36074fly1fz01zbucjvj20m80d5jsm.jpg" alt="使用Docker创建网站镜像" title="" referrerpolicy="no-referrer">
+                </div>
+                <div class="image-caption">使用Docker创建网站镜像</div>
+            </figure>
+<p>具体地，我们可以使用docke image命令来管理所有的docker镜像。这里我们启动网站：</p>
+<figure class="highlight angelscript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run -p <span class="number">4050</span>:<span class="number">4000</span> -t jexus-aspnet:v1<span class="number">.0</span></span><br></pre></td></tr></table></figure>
+<p>这里，我们将Docker容器的4000端口映射到主机的4050端口，当我们在浏览器中输入：<code>http://localhost:4050</code>，就可以得到和Linux下一样的结果。不过，在写作这篇博客时，博主使用的是Windows下的Docker，如果大家遇到相关问题，欢迎在博客评论区留言。</p>
+<h1 id="本文小结"><a href="#本文小结" class="headerlink" title="本文小结"></a>本文小结</h1><p>&emsp;&emsp;本文从一个实际工作的场景切入，分析和阐述了如何使用Jexus实现ASP.NET项目在Linux下的部署。为了简化这篇文章的写作，我们使用了一个ASP.NET MVC4的示例项目，真实的项目通常会有数据库，所以情况会比本文所介绍的流程更为复杂，可这让我们看到了一种可能性不是吗？通过查阅相关资料，博主发现ASP.NET Core的部署不需要Jexus，它只需要一个dotnet run命令即可。然后，作为一次体验Docker的过程，我们通过编写Dockerfile的方式让Jexus和Docker发生了某种奇妙的关联。作为本文的一个延伸，我们需要考虑网站服务停止后可以自动重启，这就是所谓的守护进程机制啦，感兴趣的朋友可以继续深入研究，Jexus提供了大量的优秀特性，这篇文章中所看到的不过是冰山一角。最终，我们的项目还是没有使用Jexus，这其中有对Jexus性能的不信任，有因为COM组件而做出的妥协，有对Mono非官方方案的鄙夷……可以说，技术选型是一个受到多种因素制约的问题，谁拥有了话语权，就可以左右技术选型的走向，这是否又印证了，人类并非如自己所标榜的那般理性和正义？好了，以上就是这篇文章的全部内容啦，今天是5月20日，如果没有人对你说“我爱你”，请记得对自己说“我爱你”，谢谢大家！</p>
+
+                
+
+                
+
+
+<div class="recommended_posts">
+    <h1>推荐阅读</h1>
+    <ul>
+        
+        <li><a href="https://qinyuanpei.github.io/posts/4159187524/">WSL下Docker使用踩坑小记</a></li>
+        
+        <li><a href="https://qinyuanpei.github.io/posts/3995512051/">基于Docker构建.NET持续集成环境</a></li>
+        
+        <li><a href="https://qinyuanpei.github.io/posts/570888918/">基于过滤器实现异常处理的探索</a></li>
+        
+        <li><a href="https://qinyuanpei.github.io/posts/907824546/">使用Mono打造轻量级的.NET程序运行时</a></li>
+        
+        <li><a href="https://qinyuanpei.github.io/posts/1836680899/">使用Mono让.NET程序跨平台运行</a></li>
+        
+    </ul>
+</div>
+
+            </div>
+            
+<blockquote class="post-copyright">
+    <div class="content">
+        <p><b>版权声明：</b>
+        <a href="https://qinyuanpei.github.io/posts/815861661/" rel="external">使用Jexus实现ASP.NET在Linux平台下的部署</a>
+        ，由&nbsp;<a href="/about" target="_blank" rel="external">飞鸿踏雪</a>&nbsp;
+        首次发表于&nbsp;<a href="/" target="_blank" rel="external">一个人的孤落时辰</a>&nbsp;
+        ，本文地址为：<a href="https://qinyuanpei.github.io/posts/815861661/" target="_blank" rel="external">https://qinyuanpei.github.io/posts/815861661/</a>
+        ，转载请注明<b>作者</b>和<b>出处</b>。</p>
+    </div>
+    <footer>
+        <a href="https://qinyuanpei.github.io">
+            <img src="/assets/images/avatar.jpg" alt="飞鸿踏雪">
+            飞鸿踏雪
+        </a>
+    </footer>
+</blockquote>
+
+
+            
+<div class="page-reward">
+    <a id="rewardBtn" href="javascript:;" class="page-reward-btn waves-effect waves-circle waves-light">赏</a>
+</div>
+
+
+            <div class="post-footer">
+                
+	<ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Docker/" rel="tag">Docker</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Jexus/" rel="tag">Jexus</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/" rel="tag">Linux</a></li></ul>
+
+                
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://qinyuanpei.github.io/posts/815861661/&title=《使用Jexus实现ASP.NET在Linux平台下的部署》 — 一个人的孤落时辰&pic=https://qinyuanpei.github.ioassets/images/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://qinyuanpei.github.io/posts/815861661/&title=《使用Jexus实现ASP.NET在Linux平台下的部署》 — 一个人的孤落时辰&source=一个人的孤落时辰 | 纵有疾风起，人生不言弃 | 隐约雷鸣，阴霾天空，即使天无雨，我亦留此地。" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://qinyuanpei.github.io/posts/815861661/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《使用Jexus实现ASP.NET在Linux平台下的部署》 — 一个人的孤落时辰&url=https://qinyuanpei.github.io/posts/815861661/&via=https://qinyuanpei.github.io" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://qinyuanpei.github.io/posts/815861661/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+      
+      <li>
+        <a class="google share-sns" target="_blank" onClick="show_yp()" data-title=" 生成海报">
+          <i class="icon icon-file-image-o"></i>
+        </a>
+      </li>
+      
+    </ul>
+ </div>
+
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
+            </div>
+        </div>
+
+        
+<nav class="post-nav flex-row flex-justify-between">
+  
+    <div class="waves-block waves-effect prev">
+      <a href="/posts/3782208845/" id="post-prev" class="post-nav-link">
+        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
+        <h4 class="title">爱情像一场霍乱</h4>
+      </a>
+    </div>
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/posts/4891372/" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h4 class="title">使用SonarCloud为.NET/.NET Core项目集成静态检查</h4>
+      </a>
+    </div>
+  
+</nav>
+
+
+        
+    <div id="comment"></div>
+<script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+<script src='//unpkg.com/valine/dist/Valine.min.js'></script>
+<script type="text/javascript">
+new Valine({
+    el: '#comment' ,
+    notify: false, 
+    verify: true, 
+    appId: 'JbHqRp2eMrTgIwYpfERH0g79-gzGzoHsz',
+    appKey: 'VsiKvLuiBGvJL1XrAfv7siY2',
+    placeholder: '云中谁寄锦书来，雁字回时，月满西楼。&#10;Tips：如果希望收到我的评论回复，请至少留下你的邮箱哦:)',
+    path:'https://qinyuanpei.github.io/posts/815861661/', 
+    avatar:'identicon',
+    requiredFields: ['nick','mail']
+});
+</script>
+
+
+
+
+    </article>
+    
+<div id="reward" class="page-modal reward-lay">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <h3 class="reward-title">
+        <i class="icon icon-quote-left"></i>
+        赠人玫瑰，手有余香
+        <i class="icon icon-quote-right"></i>
+    </h3>
+    <div class="reward-content">
+        
+        <div class="reward-code">
+            <img id="rewardCode" src="/assets/images/wechat.png" alt="打赏二维码">
+        </div>
+        
+        <label class="reward-toggle">
+            <input id="rewardToggle" type="checkbox" class="reward-toggle-check"
+                data-wechat="/assets/images/wechat.png" data-alipay="/assets/images/alipay.jpg">
+            <div class="reward-toggle-ctrol">
+                <span class="reward-toggle-item wechat">微信</span>
+                <span class="reward-toggle-label"></span>
+                <span class="reward-toggle-item alipay">支付宝</span>
+            </div>
+        </label>
+        
+    </div>
+</div>
+
+
+    <script type="text/javascript" src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/yoniu.min.js"></script>
+<style type='text/css'>
+	body.active-yp {
+		overflow: hidden;
+	}
+	.yp-fc-btn{
+		display: flex;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		align-items: center;
+		justify-content: space-between;
+		font-size: 13px;
+	}
+	.yp-fc-btn span{
+		cursor: pointer;
+		padding: 2px 10px;
+		color: #4b4b4b;
+		border: #4b4b4b 1px solid;
+		border-radius:5px;
+	}
+	#yp-hide{
+		position: fixed;
+		display: flex;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		justify-content: center;
+		flex-direction: column;
+		left:0;
+		top:0;
+		right:0;
+		bottom:0;
+		background-color:rgba(0,0,0,.5);
+		z-index: 99999;
+		visibility: hidden;
+	}
+	#yoniu-poster{
+		box-sizing: border-box;
+		width: 350px;
+		height: 467.2px;
+		background-color: #fff;
+		margin: 0 auto;
+		padding: 0;
+		line-height: 1.6;
+		text-align:justify;
+	}
+	
+	.yp-img {
+		min-height: 240px;
+		position: relative;
+		display: flex;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		justify-content: flex-end;
+		flex-direction: column;
+		background-position: 50% 50%;
+		background-size: cover;
+		overflow:hidden;
+	}
+	.yp-img>div{
+		padding: 10px 20px;
+	}
+	.yp-name{
+		display: block;
+		color: #fff;
+		font-size: 20px;
+		font-weight: 600;
+		text-shadow: #4b4b4b 0.1em 0.1em 0.2em;
+		margin-top: 10px;
+	}
+	.yp-sort{
+		padding: 3px 10px;
+		font-size: 12px;
+		color: #fff;
+		background: #2e2e2e;
+	}
+	.yp-des{
+		color: #2e2e2e;
+		font-size: 14px;
+		margin: 20px;
+		height: 67.2px;
+	}
+	.yp-qcode{
+		display: flex;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		justify-content: space-between;
+		align-items: center;
+		margin: 10px;
+		padding: 10px 20px;
+		background: #f5f5f5;
+		color: #818181;
+		border-radius: 10px;
+	}
+	.yp-tips{
+		display: flex;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		justify-content: space-between;
+		align-items: center;
+		color: #ccc;
+		margin: 0 10px 10px;
+		font-size: 10px;
+		letter-spacing: 1.5px;
+	}
+	.yp-btns{
+		display: flex;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		align-items: stretch;
+		justify-content: center;
+		width:350px;
+		margin: 0 auto;
+	}
+	.yp-btns>span{
+		display: flex;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		align-items: center;
+		justify-content: center;
+		font-size: 14px;
+		padding: 10px 15px;
+		background:rgba(0,0,0,.2);
+		color: #f5f5f5;
+		cursor: pointer;
+	}
+	.yp-btns>span>a{
+		color: #f5f5f5;
+	}
+	.yp-btns>span>a:hover{
+		text-decoration:none;
+	}
+	#yp-close{
+		font-size: 18px;
+		font-weight: 600;
+	}
+</style>
+<div id="yp-hide">
+    <div id="yoniu-poster">
+        <div class="yp-img" id="yp-img">
+            <div>
+                <span class="yp-sort"></span>
+                <span class="yp-name">使用Jexus实现ASP.NET在Linux平台下的部署</span>
+            </div>
+        </div>
+        <div class="yp-des">    
+            
+                &emsp;&emsp;Hello，大家好，我是Payne，欢迎大家关注我的博客，我的博客地址是https://qinyuanpei.githu...
+            
+        </div>
+        <div class="yp-qcode">
+            <span>扫描二维码阅读原文</span>
+            <img id="yp-qcode" width="64px" src="//api.qrserver.com/v1/create-qr-code/?data=https://qinyuanpei.github.io/posts/815861661/">
+        </div>
+        <div class="yp-tips">
+            <span>一个人的孤落时辰</span>
+            <span><time class="post-time" title="2018-05-20 14:00:03" datetime="2018-05-20T14:00:03.000Z"  itemprop="datePublished">2018-05-20</time>
+</span>
+        </div>
+    </div>
+    <div class="yp-btns">
+        <span id="yp-load-yp" onClick="load_yp()">生成海报</span>
+        <span><a id="yp-download"></a></span>
+        <span id="yp-close" onClick="close_yp()">×</span>
+    </div>
+</div>
+<script type="text/javascript">
+    function show_yp(){
+        window.scrollTo(0, 0);
+        document.body.setAttribute("class","active-yp");
+        let cover = document.getElementsByTagName('img')[1];
+        if (cover != null && typeof(cover) != 'undefined') {
+            document.getElementById('yp-img').style.backgroundImage = `url(${cover.src})`;
+        } else {
+            document.getElementById('yp-img').style.backgroundColor = '#d7dbf0';
+        }
+        document.getElementById("yp-hide").style.visibility = "visible";
+    }
+    function close_yp(){
+        var domClass = document.body.getAttribute("class");
+        domClass = domClass.replace("active-yp","");
+        document.body.setAttribute("class",domClass);
+        document.getElementById("yp-hide").style.visibility = "hidden";
+    }
+    function load_yp(){
+        document.getElementById('yp-load-yp').textContent = '海报生成中...';
+        setTimeout(function() {
+            h2c_();
+        },2000);
+
+    }
+</script>
+
+</div>
+
+        <footer class="footer">
+    <div class="top">
+        
+   <p>
+      <span id="lc_counter_container_site_uv">
+         <i class="icon icon-user"></i><span id="lc_counter_value_site_uv"></span>
+      </span>
+      <span id="lc_counter_container_site_pv">
+         <i class="icon icon-eye"></i><span id="lc_counter_value_site_pv"></span>
+      </span>
+  </p>
+
+
+        <p>
+   <a id="jinrishici-sentence" href="https://www.jinrishici.com/" target="_blank" rel="noopener">加载中</a>
+</p>
+<script src="https://sdk.jinrishici.com/v2/browser/jinrishici.js" charset="utf-8"></script>
+<script>
+   jinrishici.load(function(result) {
+      document.querySelector('#subtitle').innerText = result.data.content;
+      document.querySelector('#jinrishici-sentence').innerText = result.data.content;
+  });
+</script>
+            <!--Todo: 考虑重构为插件 -->
+            <p>
+                
+                    <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+                
+                <span>
+                    <a href="https://github.com/qinyuanpei" target="_blank" rel="license noopener" title="Github">
+                        <i class="icon icon-lg icon-github"></i>
+                    </a>
+                </span>
+                <span>
+                    <a href="https://weibo.com/1278609231/profile" target="_blank" rel="license noopener" title="微博">
+                        <i class="icon icon-lg icon-weibo"></i>
+                    </a>
+                </span>
+                <span>
+                    <a href="https://www.douban.com/people/60029335/" target="_blank" rel="license noopener" title="豆瓣">
+                        <i class="icon icon-lg icon-douban"></i>
+                    </a>
+                </span>
+                <span>
+                    <a href="https://www.zhihu.com/people/qinyuanpei" target="_blank" rel="license noopener" title="知乎">
+                        <i class="icon icon-lg icon-zhihu-square"></i>
+                    </a>
+                </span>
+                <span>
+                    <a href="https://blog.csdn.net/qinyuanpei" target="_blank" rel="license noopener" title="CSDN">
+                        <i class="icon icon-lg">C</i>
+                    </a>
+                </span>
+                <span>
+                    <a href="https://music.163.com/#/user/home?id=47002864" target="_blank" rel="license noopener" title="网易音乐">
+                        <i class="icon icon-lg icon-wangyiyunyinyue"></i>
+                    </a>
+                </span>
+            </p>
+        
+    </div>
+    <div class="bottom">
+        <p><span>飞鸿踏雪 &copy; 2014 - 2021</span><br>
+            
+                
+                Powered by <a href="http://hexo.io/" target="_blank">Hexo</a> & Theme by <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a><br>
+                
+                
+                    <p>Hosted by <a href="https://pages.github.com" target="_blank" rel="noopener" style="font-weight: bold">Github Pages</a></p>
+                
+        </p>
+    </div>
+</footer>
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span
+        class="icon icon-lg icon-chevron-up"></span></a>
+
+    
+
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://qinyuanpei.github.io/posts/815861661/&title=《使用Jexus实现ASP.NET在Linux平台下的部署》 — 一个人的孤落时辰&pic=https://qinyuanpei.github.ioassets/images/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://qinyuanpei.github.io/posts/815861661/&title=《使用Jexus实现ASP.NET在Linux平台下的部署》 — 一个人的孤落时辰&source=一个人的孤落时辰 | 纵有疾风起，人生不言弃 | 隐约雷鸣，阴霾天空，即使天无雨，我亦留此地。" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://qinyuanpei.github.io/posts/815861661/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《使用Jexus实现ASP.NET在Linux平台下的部署》 — 一个人的孤落时辰&url=https://qinyuanpei.github.io/posts/815861661/&via=https://qinyuanpei.github.io" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://qinyuanpei.github.io/posts/815861661/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+      
+      <li>
+        <a class="google share-sns" target="_blank" onClick="show_yp()" data-title=" 生成海报">
+          <i class="icon icon-file-image-o"></i>
+        </a>
+      </li>
+      
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="//api.qrserver.com/v1/create-qr-code/?data=https://qinyuanpei.github.io/posts/815861661/" alt="微信分享二维码">
+</div>
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.6/waves.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/4.2.1/echarts.min.js"></script>
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/echarts-wordcloud.min.js" async></script>
+<script>
+    var BLOG = { ROOT: '/', SHARE: true, REWARD: true };
+
+
+</script>
+
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/main.min.js"></script>
+
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/search.min.js" async></script>
+
+
+
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/heart.min.js" async></script>
+
+
+
+
+
+
+
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/leancloud-counter.min.js"></script>
+<script>
+        (function () {
+            var appId = 'JbHqRp2eMrTgIwYpfERH0g79-gzGzoHsz';
+            var appKey = 'VsiKvLuiBGvJL1XrAfv7siY2';
+            new VisitorCounter().init({
+                appId: appId,       //应用ID, 必输
+                appKey: appKey,      //应用Key, 必输
+                region: '华北',      //华东,华北,国际, 默认华东
+                domain: '',      //自定义域名
+                collectIP: true, //是否收集IP及位置信息, 默认开启
+                collectUA: true  //是否收集UserAgent, 默认开启
+            });
+        })();
+</script>
+
+
+
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/vconsole.min.js"></script>
+<script type="text/javascript">
+    //当地址中存在debug=true时，实例化vConsole
+    if (location.href.indexOf('debug=true') > -1) {
+        var vConsole = new VConsole();
+    }
+</script>
+
+
+    <script>
+    //国内用户自动重定向Coding Pages镜像
+    // var ipInfo = JSON.parse(localStorage.getItem('ipInfo'));
+    // if (ipInfo.country_code == 'CN') {
+    //     location.href = location.href.replace('qinyuanpei.github.io', 'blog.yuanpei.me');
+    // }
+    </script>
+
+
+<script>
+titleArray = [];
+function scrollTitle() {
+    if (titleArray.length == 0) return;
+    titleArray.push(titleArray[0]);
+	titleArray.shift();
+	document.title = titleArray.join("");
+}
+setInterval(scrollTitle, 500);
+(function() {
+    var originTitile = document.title, titleTime;
+    document.addEventListener('visibilitychange', function() {
+        if (document.hidden) {
+            titleArray = originTitile.split('');
+            clearTimeout(titleTime);
+        } else {
+            document.title = originTitile;
+            titleArray = originTitile.split('');
+            titleTime = setTimeout(function() {
+                document.title = originTitile;
+                titleArray = [];
+            },2000);
+        }
+    });
+})();
+</script>
+
+
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/ribbon.min.js"></script>
+</body>
+</html>
