@@ -35,7 +35,7 @@ message HealthCheckResponse {
     UNKNOWN = 0;
     SERVING = 1;
     NOT_SERVING = 2;
-	}
+  }
   ServingStatus status = 1;
 }
 
