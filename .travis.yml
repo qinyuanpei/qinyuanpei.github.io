@@ -54,7 +54,7 @@ after_script:
   - git init
   - git remote add origin master https://github.com/qinyuanpei/qinyuanpe.github.io 
   - git add .
-  - git commit -m "Coding Pages Build ($TRAVIS_TAG)"
+  - git commit -m "Vercel Build ($TRAVIS_TAG)"
   - git push --force --quiet "https://${CI_TOKEN}@${CO_REF}" master:master
   # Prepare Rebuild
   - cd ..
