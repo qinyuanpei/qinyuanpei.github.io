@@ -26,6 +26,9 @@ menu:
   film:
     text: 影单
     url: /movies
+  folder-open:
+    text: 诗集
+    url: https://qinyuanpei.github.io/poems/
   code:
     text: 实验室
     url: /works

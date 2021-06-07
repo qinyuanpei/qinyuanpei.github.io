@@ -22,7 +22,7 @@ abbrlink: 994796909
 * 领域驱动设计(**DDD**) 
 
 更多的页面：
-* [书单](https://blog.yuanpei.me/books/) / [歌单](https://blog.yuanpei.me/musics/) / [影单](https://blog.yuanpei.me/movies/) / [友人帐](https://blog.yuanpei.me/friends/)
+* [书单](https://blog.yuanpei.me/books/) / [歌单](https://blog.yuanpei.me/musics/) / [影单](https://blog.yuanpei.me/movies/) / [诗集](https://qinyuanpei.github.io/poems/) / [友人帐](https://blog.yuanpei.me/friends/)
 
 更大的世界：
 * [微博](https://weibo.com/1278609231/profile) / [知乎](https://www.zhihu.com/people/qinyuanpei) / [豆瓣](https://www.douban.com/people/60029335/)
