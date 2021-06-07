@@ -1,0 +1,920 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+    
+<script async defer data-domain="blog.yuanpei.me" src="https://plausible.io/js/plausible.js"></script>
+    
+    <meta charset="utf-8">
+    <!-- HTTP 1.1 -->  
+    <meta http-equiv="pragma" content="no-cache">  
+    <!-- HTTP 1.0 -->  
+    <meta http-equiv="cache-control" content="no-cache">
+    <!-- 微博图床防盗链 --> 
+    <!-- <meta name="referrer" content="no-referrer"/> -->
+    <!--Google站点验证-->
+    
+    <!--百度站点验证-->
+    
+    
+    <!--Google AdSense-->
+    
+    <!--Bing站点验证-->
+    <meta name="msvalidate.01" content="713A48A3FE17D4841C292A6B3942EB4C" />
+    
+    <title>
+        在WSL中使用Linux桌面环境的尝试与总结 | 一个人的孤落时辰 | 纵有疾风起，人生不言弃
+    </title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+        <meta name="theme-color" content="#3F51B5">
+    
+
+    <meta name="keywords" content="WSL,Linux,桌面,秦元培,技术博客,生活随笔,个人博客,NET,Python,数据挖掘,数据分析,NLP">
+    
+        <meta name="description" content="Linux Deepin安装是非常顺畅的，但即便安装完这个桌面环境，博主还是不知道怎么启动这个环境，因为你常规使用Ubuntu的话，安装完切换桌面管理器就可以了，可当你用WSL这种方式使用Ubuntu的时候，可能你就会感到非常困惑;虽然目前应用商店里已经提供了Ubuntu、Debian、Kail Linux、OpenSUSE这些常见的发行版，可当你熟悉了Linux的世界以后，就会明白这个世界对多元化的追求是永无止境的，我不想去Judge这些多元化间优劣，我只想自由地使用我喜欢的技术，比如Linux Deepin、Elementary OS;在对比了Gnome、KDE、Unity、Mint、xfce等等的桌面环境以后，我觉得Linux在桌面市场输给Windows是理所当然的，因为实在太混乱了，WSL下需要的应该是一个轻量级的桌面，因为越是华而不实东西，越会消耗大量资源;OK，既然Ubuntu可以装桌面，那么，衍生自Ubuntu的Elementary OS和Linux Deepin应该同样可以吧，虽然目前应用商店里还有这两个发行版;总而言之，博主试图在WSL上体验Elementary OS的想法彻底失败，既然这个最美的Linux发行版已失败告终，并不打算就此罢手的博主，决定继续在命令行终端里折腾Linux Deepin">
+    
+    <meta name="description" content="Linux Deepin安装是非常顺畅的，但即便安装完这个桌面环境，博主还是不知道怎么启动这个环境，因为你常规使用Ubuntu的话，安装完切换桌面管理器就可以了，可当你用WSL这种方式使用Ubuntu的时候，可能你就会感到非常困惑;虽然目前应用商店里已经提供了Ubuntu、Debian、Kail Linux、OpenSUSE这些常见的发行版，可当你熟悉了Linux的世界以后，就会明白这个世界对多元">
+<meta property="og:type" content="article">
+<meta property="og:title" content="在WSL中使用Linux桌面环境的尝试与总结">
+<meta property="og:url" content="https://qinyuanpei.github.io/posts/3972610476/index.html">
+<meta property="og:site_name" content="一个人的孤落时辰">
+<meta property="og:description" content="Linux Deepin安装是非常顺畅的，但即便安装完这个桌面环境，博主还是不知道怎么启动这个环境，因为你常规使用Ubuntu的话，安装完切换桌面管理器就可以了，可当你用WSL这种方式使用Ubuntu的时候，可能你就会感到非常困惑;虽然目前应用商店里已经提供了Ubuntu、Debian、Kail Linux、OpenSUSE这些常见的发行版，可当你熟悉了Linux的世界以后，就会明白这个世界对多元">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://ww1.sinaimg.cn/large/4c36074fly1g633ck83tij20ek0bpwfg.jpg">
+<meta property="og:image" content="https://ww1.sinaimg.cn/large/4c36074fly1g633jddpbcj21200lcabq.jpg">
+<meta property="og:image" content="https://ww1.sinaimg.cn/large/4c36074fly1g67nqmov1yj21410p0qdr.jpg">
+<meta property="og:image" content="https://ww1.sinaimg.cn/large/4c36074fly1g6877vhqhcj20io0hut9u.jpg">
+<meta property="og:image" content="https://ww1.sinaimg.cn/large/4c36074fly1g67nrxqcm4j21hc0u0nat.jpg">
+<meta property="article:published_time" content="2019-08-17T21:09:46.000Z">
+<meta property="article:modified_time" content="2021-06-07T01:53:52.245Z">
+<meta property="article:author" content="飞鸿踏雪">
+<meta property="article:tag" content="WSL">
+<meta property="article:tag" content="Linux">
+<meta property="article:tag" content="桌面">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://ww1.sinaimg.cn/large/4c36074fly1g633ck83tij20ek0bpwfg.jpg">
+    
+        <link rel="alternate" type="application/atom+xml" title="一个人的孤落时辰" href="/atom.xml">
+    
+    <link rel="shortcut icon" href="/assets/images/favicon.ico">
+    
+        <link rel="manifest" href="/manifest.json">
+    
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master//assets/styles/style.css">
+    <script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/instantclick.min.js"></script>
+    <script>window.lazyScripts=[]</script>
+    <!-- custom head -->
+    
+
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu" class="hide" >
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap" style="background-image:url(/assets/images/brand.jpg)">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/assets/images/avatar.jpg" alt="avatar">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">飞鸿踏雪</h5>
+          <a href="mailto:qinyuanpei@163.com" title="qinyuanpei@163.com" class="mail">qinyuanpei@163.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/"  >
+                <i class="icon icon-lg icon-home"></i>
+                主页
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives"  >
+                <i class="icon icon-lg icon-archives"></i>
+                归档
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags"  >
+                <i class="icon icon-lg icon-tags"></i>
+                标签
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/categories"  >
+                <i class="icon icon-lg icon-th-list"></i>
+                分类
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/books"  >
+                <i class="icon icon-lg icon-bookmark"></i>
+                书单
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/movies"  >
+                <i class="icon icon-lg icon-film"></i>
+                影单
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/works"  >
+                <i class="icon icon-lg icon-code"></i>
+                实验室
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/about"  >
+                <i class="icon icon-lg icon-circle"></i>
+                关于我
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+            <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">在WSL中使用Linux桌面环境的尝试与总结</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off"
+                placeholder="输入感兴趣的关键字">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+        <a href="https://github.com/qinyuanpei/qinyuanpei.github.io" target="_blank" rel="noopener" class="header-icon waves-effect waves-circle waves-light" id="menuGithub">
+            <i class="icon icon-lg icon-code-fork"></i>
+        </a>
+    </div>
+</header>
+<header class="content-header post-header">
+    <div class="container fade-scale">
+        <h1 class="title">在WSL中使用Linux桌面环境的尝试与总结</h1>
+        <h5 class="subtitle" id="subtitle">
+            
+            <time datetime="2019-08-17T21:09:46.000Z" itemprop="datePublished" class="page-time">
+  2019-08-17
+</time>
+
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/%E5%BC%80%E5%8F%91%E5%B7%A5%E5%85%B7/">开发工具</a></li></ul>
+
+            
+        </h5>
+    </div>
+    
+
+</header>
+
+<div class="container body-wrap">
+    
+    <article id="post-在WSL中使用Linux桌面环境的尝试与总结" class="post-article article-type-post fade" itemprop="blogPost">
+
+        <div class="post-card">
+            <h1 class="post-card-title">
+                在WSL中使用Linux桌面环境的尝试与总结
+            </h1>
+            <div class="post-meta">
+                <time class="post-time" title="2019-08-17 21:09:46" datetime="2019-08-17T21:09:46.000Z"  itemprop="datePublished">2019-08-17</time>
+
+                
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/%E5%BC%80%E5%8F%91%E5%B7%A5%E5%85%B7/">开发工具</a></li></ul>
+
+
+
+                
+<span id="lc_counter_container_page_pv" title="文章总阅读量" data-page-url="" data-page-title="在WSL中使用Linux桌面环境的尝试与总结">
+    <i class="icon icon-eye icon-pr"></i><span id="lc_counter_value_page_pv"></span>
+</span>
+
+
+
+
+
+                
+    <span>
+        <i class="icon icon-clock-o"></i>
+        16 min.
+    </span>
+    
+            </div>
+            <div class="post-content" id="post-content" itemprop="postContent">
+                <p>最近忙里偷闲的博主，再次迷恋上折腾Linux。话说自从微软推出WSL以后，我就彻底地停止了Windows + Linux 的双系统组合。回想起从前使用过的各种Linux发行版，基本上每隔一段时间就会崩溃一次，所以，面对WSL这种近乎<code>应用</code>级别的方案，我个人是非常愿意去接受的。因为一不小心玩坏了的话，可以直接对应用程序进行重置，或者重新从应用商店下载，相比重装系统，我觉得这种方式要更友好一点。虽然说Windows10是有史以来最好的Linux发行版:smile:，可面对只有命令行的Linux，果然还是有一丝丝的失望啊:beetle:。所以，在这篇博客里，主要想和大家分享下，关于在WSL下使用Linux桌面系统的一点点尝试和体会。虽然目前应用商店里已经提供了Ubuntu、Debian、Kail Linux、OpenSUSE这些常见的发行版，可当你熟悉了Linux的世界以后，就会明白这个世界对多元化的追求是永无止境的，我不想去Judge这些多元化间优劣，我只想自由地使用我喜欢的技术，比如Linux Deepin、Elementary OS。这是我想要使用Linux桌面环境的理由。</p>
+<p>我们知道，目前应用商店里提供的Linux发行版都是<code>&quot;命令行&quot;</code>版本。因为Windows本身就提供了非常出色的桌面环境，虽然每一次设计都给人一种相当前卫的感觉。平时我们使用<code>SSH</code>登录远程服务器的时候，其实是使用它的终端环境即CLI。Linux和Windows最大的不同在于，Linux 的桌面环境并不是Linux本身的一部分，它和所有的Linux应用程序并没有什么区别，因为脱离桌面环境的Linux的单独运行，而脱离桌面环境的Windows则未必可以。那么，我们怎么样在Windows里使用Linux的桌面环境呢？常见的思路主要有<code>XServer</code>和<code>远程桌面</code>两种。这里我们主要介绍第一种方式，即<code>XServer</code>。什么是XServer呢？Linux的GUI架构其实是C/S模式的，其中XServer负责显示，XClient负责请求。所以，我们只要在宿主机上安装XServer就可以啦。在这里，常见的XServer主要有：<code>VcXsrv</code>、<code>X410</code>和<code>MobaXterm</code>。理论上，我们只需要在WSL里安装桌面环境，在Windows上安装XServer，然后通过命令行启动相应桌面环境即可。</p>
+<p>作为一个最流行的Linux发行版，微软非常贴心地给出了16.04和18.04两个版本。不过随着博主不甘寂寞地一通升级以后，最终还是稳定在了18.04这个版本。既然选择从Ubuntu这个发行版开始折腾，不如从它默认的桌面环境Gnome开始折腾吧！虽然我个人一直不太喜欢这个风格，不然就不会有接下来针对<code>Pantheon</code>和<code>Deepin</code>两个桌面环境的作死啦。这个过程最有意思的事情，居然是发现了一个更轻量级的桌面环境，可能真的是<code>&quot;无心插柳柳成荫&quot;</code>吧。好了，关于如何开启WSL及安装Linux发行版的过程不再多说。首先，让我们把系统默认的源切换到阿里云，因为这样能节省博主和大家的时间。:slightly_smiling_face:</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo cp /etc/apt/sources.list /etc/apt/sources.list.2019016</span><br><span class="line">sudo vim /etc/apt/sources.list</span><br></pre></td></tr></table></figure>
+
+<p>接下来，我们使用下面的命令对文件内容进行替换, 或者你可以手动逐行去编辑。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">:%s/security.ubuntu/mirrors.aliyun/g</span><br><span class="line">:%s/archive.ubuntu/mirrors.aliyun/g</span><br></pre></td></tr></table></figure>
+
+<p>除此以外，还推荐大家使用以下国内的镜像源：</p>
+<p>清华大学镜像源：<a href="https://mirrors.tuna.tsinghua.edu.cn/help/ubuntu/" target="_blank" rel="noopener">https://mirrors.tuna.tsinghua.edu.cn/help/ubuntu/</a></p>
+<p>网易开源镜像站：<a href="http://mirrors.163.com/.help/ubuntu.html" target="_blank" rel="noopener">http://mirrors.163.com/.help/ubuntu.html</a></p>
+<p>完成镜像源的切换以后，我们就可以愉快地使用<code>apt-get update</code>刷一波存在感啦，话说最近看到一条微博，建议给<code>sudo</code>起一个别名<code>plz</code>或者<code>pls</code>。除了调侃以外，可能更多是想把冰冷的命令行变得充满人情味吧。Windows下安装<code>VcXsrv</code>大家都轻车熟路啦，这个不再过多的说明。下面，我们来安装以下Ubuntu桌面环境：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">echo "y"|sudo apt-get install ubuntu-desktop unity compizconfig-settings-manager</span><br><span class="line">sudo dpkg-reconfigure dbus &amp;&amp; service dbus restart</span><br></pre></td></tr></table></figure>
+
+<p>接下来配置<code>XLaunch</code>，这是我们安装完<code>VcXsrv</code>后自带一个应用程序：</p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="https://ww1.sinaimg.cn/large/4c36074fly1g633ck83tij20ek0bpwfg.jpg" alt="配置XLaunch" title="" referrerpolicy="no-referrer">
+                </div>
+                <div class="image-caption">配置XLaunch</div>
+            </figure>
+
+<p>按照默认配置直至完成后我，我们会发现桌面上出现了一个黑色的窗口，如下图所示：</p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="https://ww1.sinaimg.cn/large/4c36074fly1g633jddpbcj21200lcabq.jpg" alt="XLaunch经典黑屏" title="" referrerpolicy="no-referrer">
+                </div>
+                <div class="image-caption">XLaunch经典黑屏</div>
+            </figure>
+
+<p>此时，我们在Ubuntu的Bash窗口中输入<code>sudo compiz</code>命令并切回<code>XLaunch</code>界面。接下来，就是见证奇迹的时刻：</p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="https://ww1.sinaimg.cn/large/4c36074fly1g67nqmov1yj21410p0qdr.jpg" alt="经典的Ubuntu桌面" title="" referrerpolicy="no-referrer">
+                </div>
+                <div class="image-caption">经典的Ubuntu桌面</div>
+            </figure>
+
+<p>如你所见，这是Ubuntu默认的Unity桌面，博主一开始是在Ubuntu16.04上研(折)究(腾)的，当时安装完以后桌面其实是黑色的，因为当时并没有保留下这历史性的一刻，所以，从网上找了张图来这里充数啦，这张图片出自：<a href="https://github.com/microsoft/WSL/issues/637" target="_blank" rel="noopener">Run any Desktop Environment in WSL</a>。</p>
+<p>OK，既然Ubuntu可以装桌面，那么，衍生自Ubuntu的Elementary OS和Linux Deepin应该同样可以吧，虽然目前应用商店里还有这两个发行版。本着不折腾就不会死的选择，先装个Elementary OS的桌面环境试试呗！我个人挺喜欢这个发行版的，理由是默认主题样式就很好看，同理，Linux Deepin除了好看以外，本身就带有大量优秀的软件。所以说，人类果然还是始于颜值的啊！Elementary OS使用的桌面环境是Pantheon，我们可以通过下面的命令行快速安装：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sudo add-apt-repository ppa:elementary-os/stable</span><br><span class="line">sudo apt update</span><br><span class="line">sudo apt install elementary-desktop</span><br></pre></td></tr></table></figure>
+<p>通常，每个桌面环境都会自带一部分“最佳”适配的应用程序，考虑到WSL并不是一个完整的Linux实现，我们在这里卸载掉一部分WSL下不支持的应用程序。而微软新推出的WSL2，则是基于VM的实现，两种方式完全没有可比性，这里不做无意义的争论：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sudo apt purge gnome-screensaver \</span><br><span class="line">switchboard-plug-power switchboard-plug-bluetooth switchboard-plug-networking \</span><br><span class="line">wingpanel-indicator-bluetooth wingpanel</span><br></pre></td></tr></table></figure>
+<p>参考<a href="https://token2shell.com/howto/x410/installing-pantheon-desktop-on-ubuntu-wsl/" target="_blank" rel="noopener">Installing Pantheon Desktop On Ubuntu</a>这篇文章中的建议，为了启动Pantheon桌面环境，我们需要 <code>gala</code>、 <code>plank</code>和<code>wingpanel</code>三个软件，它们的作用有点像前面的<code>compiz</code>。而关于<code>X410</code>，你可以把它理解为和<code>VcXsrv</code>类似的软件，不同的是这是一个付费软件，作者写了一系列的博客来推广它。接下来，在安装<code>gala</code>的过程中，你大概会遇到这个错误：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">The following packages have unmet dependencies:</span><br><span class="line">gala : Depends: libmutter-2-0 (&gt;= 3.28.4-0ubuntu18.04.1+elementary4~ubuntu5.0.1) but 3.28.4-0ubuntu18.04.1 is to be installed</span><br><span class="line">E: Unable to correct problems, you have held broken packages.</span><br></pre></td></tr></table></figure>
+<p>我向作者发邮件寻求帮助，作者非常热心地回复了我三次邮件，对方表示应该是Elementary OS团队正在基于Ubuntu19.04开发新版本，所以可能没有意识到<code>elementary-desktop</code>这个包已经broken了，并且他们在18.04版本上复现了这个问题，建议我直接联系官方。好吧，博主的英语表示受宠若惊，邮件在此为证：</p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="https://ww1.sinaimg.cn/large/4c36074fly1g6877vhqhcj20io0hut9u.jpg" alt="来自国外网友的热心指导" title="" referrerpolicy="no-referrer">
+                </div>
+                <div class="image-caption">来自国外网友的热心指导</div>
+            </figure>
+
+
+<p>总而言之，博主试图在WSL上体验Elementary OS的想法彻底失败，既然这个最美的Linux发行版已失败告终，并不打算就此罢手的博主，决定继续在命令行终端里折腾Linux Deepin。这个发行版是我从大学时开始接触的Linux发行版，那时有个小学弟第一次给我介绍了Linux Mint，不过我对这个版本实在爱不起来，因为太像Windows了啊，可谁能想到若干年后，Windows反而变成了最好的Linux发行版呢(:smile:)，果真是<code>“人生不相见，动如参与商”</code>啊……</p>
+<p>好啦，继续敲命令。Linux Deepin的桌面环境是Deepin Desktop Environment，简称dde：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sudo add-apt-repository ppa:leaeasy/dde</span><br><span class="line">sudo apt-get update</span><br><span class="line">sudo apt install dde dde-file-manager</span><br></pre></td></tr></table></figure>
+<p>Linux Deepin安装是非常顺畅的，但即便安装完这个桌面环境，博主还是不知道怎么启动这个环境，因为你常规使用Ubuntu的话，安装完切换桌面管理器就可以了，可当你用WSL这种方式使用Ubuntu的时候，可能你就会感到非常困惑。相比之下，<code>xfce</code>就让人感觉友好得多，因为它只有一个命令<code>startxfce4</code>，而安装只需要安装<code>xfce4</code>和<code>xfce4-terminal</code>就可以了。在对比了Gnome、KDE、Unity、Mint、xfce等等的桌面环境以后，我觉得Linux在桌面市场输给Windows是理所当然的，因为实在太混乱了，WSL下需要的应该是一个轻量级的桌面，因为越是华而不实东西，越会消耗大量资源。我最初想要折腾桌面环境，无非是为了下面这个结果，撒花完结，以上！</p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="https://ww1.sinaimg.cn/large/4c36074fly1g67nrxqcm4j21hc0u0nat.jpg" alt="简洁/简陋的xfce桌面" title="" referrerpolicy="no-referrer">
+                </div>
+                <div class="image-caption">简洁/简陋的xfce桌面</div>
+            </figure>
+                
+
+                
+
+
+<div class="recommended_posts">
+    <h1>推荐阅读</h1>
+    <ul>
+        
+        <li><a href="https://qinyuanpei.github.io/posts/4159187524/">WSL下Docker使用踩坑小记</a></li>
+        
+        <li><a href="https://qinyuanpei.github.io/posts/815861661/">使用Jexus实现ASP.NET在Linux平台下的部署</a></li>
+        
+        <li><a href="https://qinyuanpei.github.io/posts/907824546/">使用Mono打造轻量级的.NET程序运行时</a></li>
+        
+        <li><a href="https://qinyuanpei.github.io/posts/1836680899/">使用Mono让.NET程序跨平台运行</a></li>
+        
+        <li><a href="https://qinyuanpei.github.io/posts/4891372/">使用SonarCloud为.NET/.NET Core项目集成静态检查</a></li>
+        
+    </ul>
+</div>
+
+            </div>
+            
+<blockquote class="post-copyright">
+    <div class="content">
+        <p><b>版权声明：</b>
+        <a href="https://qinyuanpei.github.io/posts/3972610476/" rel="external">在WSL中使用Linux桌面环境的尝试与总结</a>
+        ，由&nbsp;<a href="/about" target="_blank" rel="external">飞鸿踏雪</a>&nbsp;
+        首次发表于&nbsp;<a href="/" target="_blank" rel="external">一个人的孤落时辰</a>&nbsp;
+        ，本文地址为：<a href="https://qinyuanpei.github.io/posts/3972610476/" target="_blank" rel="external">https://qinyuanpei.github.io/posts/3972610476/</a>
+        ，转载请注明<b>作者</b>和<b>出处</b>。</p>
+    </div>
+    <footer>
+        <a href="https://qinyuanpei.github.io">
+            <img src="/assets/images/avatar.jpg" alt="飞鸿踏雪">
+            飞鸿踏雪
+        </a>
+    </footer>
+</blockquote>
+
+
+            
+<div class="page-reward">
+    <a id="rewardBtn" href="javascript:;" class="page-reward-btn waves-effect waves-circle waves-light">赏</a>
+</div>
+
+
+            <div class="post-footer">
+                
+	<ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/" rel="tag">Linux</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/WSL/" rel="tag">WSL</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%A1%8C%E9%9D%A2/" rel="tag">桌面</a></li></ul>
+
+                
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://qinyuanpei.github.io/posts/3972610476/&title=《在WSL中使用Linux桌面环境的尝试与总结》 — 一个人的孤落时辰&pic=https://qinyuanpei.github.ioassets/images/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://qinyuanpei.github.io/posts/3972610476/&title=《在WSL中使用Linux桌面环境的尝试与总结》 — 一个人的孤落时辰&source=一个人的孤落时辰 | 纵有疾风起，人生不言弃 | 隐约雷鸣，阴霾天空，即使天无雨，我亦留此地。" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://qinyuanpei.github.io/posts/3972610476/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《在WSL中使用Linux桌面环境的尝试与总结》 — 一个人的孤落时辰&url=https://qinyuanpei.github.io/posts/3972610476/&via=https://qinyuanpei.github.io" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://qinyuanpei.github.io/posts/3972610476/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+      
+      <li>
+        <a class="google share-sns" target="_blank" onClick="show_yp()" data-title=" 生成海报">
+          <i class="icon icon-file-image-o"></i>
+        </a>
+      </li>
+      
+    </ul>
+ </div>
+
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
+            </div>
+        </div>
+
+        
+<nav class="post-nav flex-row flex-justify-between">
+  
+    <div class="waves-block waves-effect prev">
+      <a href="/posts/169430744/" id="post-prev" class="post-nav-link">
+        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
+        <h4 class="title">Vue快速实现通用表单验证</h4>
+      </a>
+    </div>
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/posts/4116164325/" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h4 class="title">通过ApiExplorer为Swagger提供MVC扩展</h4>
+      </a>
+    </div>
+  
+</nav>
+
+
+        
+    <div id="comment"></div>
+<script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+<script src='//unpkg.com/valine/dist/Valine.min.js'></script>
+<script type="text/javascript">
+new Valine({
+    el: '#comment' ,
+    notify: false, 
+    verify: true, 
+    appId: 'JbHqRp2eMrTgIwYpfERH0g79-gzGzoHsz',
+    appKey: 'VsiKvLuiBGvJL1XrAfv7siY2',
+    placeholder: '云中谁寄锦书来，雁字回时，月满西楼。&#10;Tips：如果希望收到我的评论回复，请至少留下你的邮箱哦:)',
+    path:'https://qinyuanpei.github.io/posts/3972610476/', 
+    avatar:'identicon',
+    requiredFields: ['nick','mail']
+});
+</script>
+
+
+
+
+    </article>
+    
+<div id="reward" class="page-modal reward-lay">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <h3 class="reward-title">
+        <i class="icon icon-quote-left"></i>
+        赠人玫瑰，手有余香
+        <i class="icon icon-quote-right"></i>
+    </h3>
+    <div class="reward-content">
+        
+        <div class="reward-code">
+            <img id="rewardCode" src="/assets/images/wechat.png" alt="打赏二维码">
+        </div>
+        
+        <label class="reward-toggle">
+            <input id="rewardToggle" type="checkbox" class="reward-toggle-check"
+                data-wechat="/assets/images/wechat.png" data-alipay="/assets/images/alipay.jpg">
+            <div class="reward-toggle-ctrol">
+                <span class="reward-toggle-item wechat">微信</span>
+                <span class="reward-toggle-label"></span>
+                <span class="reward-toggle-item alipay">支付宝</span>
+            </div>
+        </label>
+        
+    </div>
+</div>
+
+
+    <script type="text/javascript" src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/yoniu.min.js"></script>
+<style type='text/css'>
+	body.active-yp {
+		overflow: hidden;
+	}
+	.yp-fc-btn{
+		display: flex;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		align-items: center;
+		justify-content: space-between;
+		font-size: 13px;
+	}
+	.yp-fc-btn span{
+		cursor: pointer;
+		padding: 2px 10px;
+		color: #4b4b4b;
+		border: #4b4b4b 1px solid;
+		border-radius:5px;
+	}
+	#yp-hide{
+		position: fixed;
+		display: flex;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		justify-content: center;
+		flex-direction: column;
+		left:0;
+		top:0;
+		right:0;
+		bottom:0;
+		background-color:rgba(0,0,0,.5);
+		z-index: 99999;
+		visibility: hidden;
+	}
+	#yoniu-poster{
+		box-sizing: border-box;
+		width: 350px;
+		height: 467.2px;
+		background-color: #fff;
+		margin: 0 auto;
+		padding: 0;
+		line-height: 1.6;
+		text-align:justify;
+	}
+	
+	.yp-img {
+		min-height: 240px;
+		position: relative;
+		display: flex;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		justify-content: flex-end;
+		flex-direction: column;
+		background-position: 50% 50%;
+		background-size: cover;
+		overflow:hidden;
+	}
+	.yp-img>div{
+		padding: 10px 20px;
+	}
+	.yp-name{
+		display: block;
+		color: #fff;
+		font-size: 20px;
+		font-weight: 600;
+		text-shadow: #4b4b4b 0.1em 0.1em 0.2em;
+		margin-top: 10px;
+	}
+	.yp-sort{
+		padding: 3px 10px;
+		font-size: 12px;
+		color: #fff;
+		background: #2e2e2e;
+	}
+	.yp-des{
+		color: #2e2e2e;
+		font-size: 14px;
+		margin: 20px;
+		height: 67.2px;
+	}
+	.yp-qcode{
+		display: flex;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		justify-content: space-between;
+		align-items: center;
+		margin: 10px;
+		padding: 10px 20px;
+		background: #f5f5f5;
+		color: #818181;
+		border-radius: 10px;
+	}
+	.yp-tips{
+		display: flex;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		justify-content: space-between;
+		align-items: center;
+		color: #ccc;
+		margin: 0 10px 10px;
+		font-size: 10px;
+		letter-spacing: 1.5px;
+	}
+	.yp-btns{
+		display: flex;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		align-items: stretch;
+		justify-content: center;
+		width:350px;
+		margin: 0 auto;
+	}
+	.yp-btns>span{
+		display: flex;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		align-items: center;
+		justify-content: center;
+		font-size: 14px;
+		padding: 10px 15px;
+		background:rgba(0,0,0,.2);
+		color: #f5f5f5;
+		cursor: pointer;
+	}
+	.yp-btns>span>a{
+		color: #f5f5f5;
+	}
+	.yp-btns>span>a:hover{
+		text-decoration:none;
+	}
+	#yp-close{
+		font-size: 18px;
+		font-weight: 600;
+	}
+</style>
+<div id="yp-hide">
+    <div id="yoniu-poster">
+        <div class="yp-img" id="yp-img">
+            <div>
+                <span class="yp-sort"></span>
+                <span class="yp-name">在WSL中使用Linux桌面环境的尝试与总结</span>
+            </div>
+        </div>
+        <div class="yp-des">    
+            
+                最近忙里偷闲的博主，再次迷恋上折腾Linux。话说自从微软推出WSL以后，我就彻底地停止了Windows + Linux 的双系统组合。回想起从...
+            
+        </div>
+        <div class="yp-qcode">
+            <span>扫描二维码阅读原文</span>
+            <img id="yp-qcode" width="64px" src="//api.qrserver.com/v1/create-qr-code/?data=https://qinyuanpei.github.io/posts/3972610476/">
+        </div>
+        <div class="yp-tips">
+            <span>一个人的孤落时辰</span>
+            <span><time class="post-time" title="2019-08-17 21:09:46" datetime="2019-08-17T21:09:46.000Z"  itemprop="datePublished">2019-08-17</time>
+</span>
+        </div>
+    </div>
+    <div class="yp-btns">
+        <span id="yp-load-yp" onClick="load_yp()">生成海报</span>
+        <span><a id="yp-download"></a></span>
+        <span id="yp-close" onClick="close_yp()">×</span>
+    </div>
+</div>
+<script type="text/javascript">
+    function show_yp(){
+        window.scrollTo(0, 0);
+        document.body.setAttribute("class","active-yp");
+        let cover = document.getElementsByTagName('img')[1];
+        if (cover != null && typeof(cover) != 'undefined') {
+            document.getElementById('yp-img').style.backgroundImage = `url(${cover.src})`;
+        } else {
+            document.getElementById('yp-img').style.backgroundColor = '#d7dbf0';
+        }
+        document.getElementById("yp-hide").style.visibility = "visible";
+    }
+    function close_yp(){
+        var domClass = document.body.getAttribute("class");
+        domClass = domClass.replace("active-yp","");
+        document.body.setAttribute("class",domClass);
+        document.getElementById("yp-hide").style.visibility = "hidden";
+    }
+    function load_yp(){
+        document.getElementById('yp-load-yp').textContent = '海报生成中...';
+        setTimeout(function() {
+            h2c_();
+        },2000);
+
+    }
+</script>
+
+</div>
+
+        <footer class="footer">
+    <div class="top">
+        
+   <p>
+      <span id="lc_counter_container_site_uv">
+         <i class="icon icon-user"></i><span id="lc_counter_value_site_uv"></span>
+      </span>
+      <span id="lc_counter_container_site_pv">
+         <i class="icon icon-eye"></i><span id="lc_counter_value_site_pv"></span>
+      </span>
+  </p>
+
+
+        <p>
+   <a id="jinrishici-sentence" href="https://www.jinrishici.com/" target="_blank" rel="noopener">加载中</a>
+</p>
+<script src="https://sdk.jinrishici.com/v2/browser/jinrishici.js" charset="utf-8"></script>
+<script>
+   jinrishici.load(function(result) {
+      document.querySelector('#subtitle').innerText = result.data.content;
+      document.querySelector('#jinrishici-sentence').innerText = result.data.content;
+  });
+</script>
+            <!--Todo: 考虑重构为插件 -->
+            <p>
+                
+                    <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+                
+                <span>
+                    <a href="https://github.com/qinyuanpei" target="_blank" rel="license noopener" title="Github">
+                        <i class="icon icon-lg icon-github"></i>
+                    </a>
+                </span>
+                <span>
+                    <a href="https://weibo.com/1278609231/profile" target="_blank" rel="license noopener" title="微博">
+                        <i class="icon icon-lg icon-weibo"></i>
+                    </a>
+                </span>
+                <span>
+                    <a href="https://www.douban.com/people/60029335/" target="_blank" rel="license noopener" title="豆瓣">
+                        <i class="icon icon-lg icon-douban"></i>
+                    </a>
+                </span>
+                <span>
+                    <a href="https://www.zhihu.com/people/qinyuanpei" target="_blank" rel="license noopener" title="知乎">
+                        <i class="icon icon-lg icon-zhihu-square"></i>
+                    </a>
+                </span>
+                <span>
+                    <a href="https://blog.csdn.net/qinyuanpei" target="_blank" rel="license noopener" title="CSDN">
+                        <i class="icon icon-lg">C</i>
+                    </a>
+                </span>
+                <span>
+                    <a href="https://music.163.com/#/user/home?id=47002864" target="_blank" rel="license noopener" title="网易音乐">
+                        <i class="icon icon-lg icon-wangyiyunyinyue"></i>
+                    </a>
+                </span>
+            </p>
+        
+    </div>
+    <div class="bottom">
+        <p><span>飞鸿踏雪 &copy; 2014 - 2021</span><br>
+            
+                
+                Powered by <a href="http://hexo.io/" target="_blank">Hexo</a> & Theme by <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a><br>
+                
+                
+                    <p>Hosted by <a href="https://pages.github.com" target="_blank" rel="noopener" style="font-weight: bold">Github Pages</a></p>
+                
+        </p>
+    </div>
+</footer>
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span
+        class="icon icon-lg icon-chevron-up"></span></a>
+
+    
+
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://qinyuanpei.github.io/posts/3972610476/&title=《在WSL中使用Linux桌面环境的尝试与总结》 — 一个人的孤落时辰&pic=https://qinyuanpei.github.ioassets/images/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://qinyuanpei.github.io/posts/3972610476/&title=《在WSL中使用Linux桌面环境的尝试与总结》 — 一个人的孤落时辰&source=一个人的孤落时辰 | 纵有疾风起，人生不言弃 | 隐约雷鸣，阴霾天空，即使天无雨，我亦留此地。" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://qinyuanpei.github.io/posts/3972610476/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《在WSL中使用Linux桌面环境的尝试与总结》 — 一个人的孤落时辰&url=https://qinyuanpei.github.io/posts/3972610476/&via=https://qinyuanpei.github.io" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://qinyuanpei.github.io/posts/3972610476/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+      
+      <li>
+        <a class="google share-sns" target="_blank" onClick="show_yp()" data-title=" 生成海报">
+          <i class="icon icon-file-image-o"></i>
+        </a>
+      </li>
+      
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="//api.qrserver.com/v1/create-qr-code/?data=https://qinyuanpei.github.io/posts/3972610476/" alt="微信分享二维码">
+</div>
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.6/waves.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/4.2.1/echarts.min.js"></script>
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/echarts-wordcloud.min.js" async></script>
+<script>
+    var BLOG = { ROOT: '/', SHARE: true, REWARD: true };
+
+
+</script>
+
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/main.min.js"></script>
+
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/search.min.js" async></script>
+
+
+
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/heart.min.js" async></script>
+
+
+
+
+
+
+
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/leancloud-counter.min.js"></script>
+<script>
+        (function () {
+            var appId = 'JbHqRp2eMrTgIwYpfERH0g79-gzGzoHsz';
+            var appKey = 'VsiKvLuiBGvJL1XrAfv7siY2';
+            new VisitorCounter().init({
+                appId: appId,       //应用ID, 必输
+                appKey: appKey,      //应用Key, 必输
+                region: '华北',      //华东,华北,国际, 默认华东
+                domain: '',      //自定义域名
+                collectIP: true, //是否收集IP及位置信息, 默认开启
+                collectUA: true  //是否收集UserAgent, 默认开启
+            });
+        })();
+</script>
+
+
+
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/vconsole.min.js"></script>
+<script type="text/javascript">
+    //当地址中存在debug=true时，实例化vConsole
+    if (location.href.indexOf('debug=true') > -1) {
+        var vConsole = new VConsole();
+    }
+</script>
+
+
+    <script>
+    //国内用户自动重定向Coding Pages镜像
+    // var ipInfo = JSON.parse(localStorage.getItem('ipInfo'));
+    // if (ipInfo.country_code == 'CN') {
+    //     location.href = location.href.replace('qinyuanpei.github.io', 'blog.yuanpei.me');
+    // }
+    </script>
+
+
+<script>
+titleArray = [];
+function scrollTitle() {
+    if (titleArray.length == 0) return;
+    titleArray.push(titleArray[0]);
+	titleArray.shift();
+	document.title = titleArray.join("");
+}
+setInterval(scrollTitle, 500);
+(function() {
+    var originTitile = document.title, titleTime;
+    document.addEventListener('visibilitychange', function() {
+        if (document.hidden) {
+            titleArray = originTitile.split('');
+            clearTimeout(titleTime);
+        } else {
+            document.title = originTitile;
+            titleArray = originTitile.split('');
+            titleTime = setTimeout(function() {
+                document.title = originTitile;
+                titleArray = [];
+            },2000);
+        }
+    });
+})();
+</script>
+
+
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/ribbon.min.js"></script>
+</body>
+</html>
