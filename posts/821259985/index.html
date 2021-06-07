@@ -1,0 +1,867 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+    
+<script async defer data-domain="blog.yuanpei.me" src="https://plausible.io/js/plausible.js"></script>
+    
+    <meta charset="utf-8">
+    <!-- HTTP 1.1 -->  
+    <meta http-equiv="pragma" content="no-cache">  
+    <!-- HTTP 1.0 -->  
+    <meta http-equiv="cache-control" content="no-cache">
+    <!-- 微博图床防盗链 --> 
+    <!-- <meta name="referrer" content="no-referrer"/> -->
+    <!--Google站点验证-->
+    
+    <!--百度站点验证-->
+    
+    
+    <!--Google AdSense-->
+    
+    <!--Bing站点验证-->
+    <meta name="msvalidate.01" content="713A48A3FE17D4841C292A6B3942EB4C" />
+    
+    <title>
+        在Unity3D中加载外部图片的两种方法 | 一个人的孤落时辰 | 纵有疾风起，人生不言弃
+    </title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+        <meta name="theme-color" content="#3F51B5">
+    
+
+    <meta name="keywords" content="Unity3D,游戏开发,uGUI,秦元培,技术博客,生活随笔,个人博客,NET,Python,数据挖掘,数据分析,NLP">
+    
+        <meta name="description" content="现在我们运行程序可以发现两种方式均可以让图片加载进来，为了对比两种方式在执行效率上的高低，我们在脚本中加入了相关代码，通过对比可以发现使用IO方式加载一张227k的图片需要的时间为0s，而使用WWW方式加载需要0.0185s，因此传统的IO方式具有更高的效率，建议大家在遇到这类问题时尽可能地使用这种方式;经过博主的研究发现，这种方式加载外部图片相对于使用WWW加载外部图片效率更高，所以如果大家遇到类似的需求，博主个人推荐大家使用这种方式进行加载;/// 以WWW方式进行加载;针对有朋友指出WWW加载和传统IO加载方式在效率上的差异，我们这里重新做一个效率测试;可以看到在使用这种方式读取图片文件的时候主要是将图片文件转化为byte[]数组，再利用Texture2D的LoadImage方法转化为Unity3D中的Texture2D">
+    
+    <meta name="description" content="现在我们运行程序可以发现两种方式均可以让图片加载进来，为了对比两种方式在执行效率上的高低，我们在脚本中加入了相关代码，通过对比可以发现使用IO方式加载一张227k的图片需要的时间为0s，而使用WWW方式加载需要0.0185s，因此传统的IO方式具有更高的效率，建议大家在遇到这类问题时尽可能地使用这种方式;经过博主的研究发现，这种方式加载外部图片相对于使用WWW加载外部图片效率更高，所以如果大家遇到">
+<meta property="og:type" content="article">
+<meta property="og:title" content="在Unity3D中加载外部图片的两种方法">
+<meta property="og:url" content="https://qinyuanpei.github.io/posts/821259985/index.html">
+<meta property="og:site_name" content="一个人的孤落时辰">
+<meta property="og:description" content="现在我们运行程序可以发现两种方式均可以让图片加载进来，为了对比两种方式在执行效率上的高低，我们在脚本中加入了相关代码，通过对比可以发现使用IO方式加载一张227k的图片需要的时间为0s，而使用WWW方式加载需要0.0185s，因此传统的IO方式具有更高的效率，建议大家在遇到这类问题时尽可能地使用这种方式;经过博主的研究发现，这种方式加载外部图片相对于使用WWW加载外部图片效率更高，所以如果大家遇到">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2015-10-08T15:03:01.000Z">
+<meta property="article:modified_time" content="2021-06-07T00:59:02.485Z">
+<meta property="article:author" content="飞鸿踏雪">
+<meta property="article:tag" content="Unity3D">
+<meta property="article:tag" content="游戏开发">
+<meta property="article:tag" content="uGUI">
+<meta name="twitter:card" content="summary">
+    
+        <link rel="alternate" type="application/atom+xml" title="一个人的孤落时辰" href="/atom.xml">
+    
+    <link rel="shortcut icon" href="/assets/images/favicon.ico">
+    
+        <link rel="manifest" href="/manifest.json">
+    
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master//assets/styles/style.css">
+    <script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/instantclick.min.js"></script>
+    <script>window.lazyScripts=[]</script>
+    <!-- custom head -->
+    
+
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu" class="hide" >
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap" style="background-image:url(/assets/images/brand.jpg)">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/assets/images/avatar.jpg" alt="avatar">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">飞鸿踏雪</h5>
+          <a href="mailto:qinyuanpei@163.com" title="qinyuanpei@163.com" class="mail">qinyuanpei@163.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/"  >
+                <i class="icon icon-lg icon-home"></i>
+                主页
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives"  >
+                <i class="icon icon-lg icon-archives"></i>
+                归档
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags"  >
+                <i class="icon icon-lg icon-tags"></i>
+                标签
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/categories"  >
+                <i class="icon icon-lg icon-th-list"></i>
+                分类
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/books"  >
+                <i class="icon icon-lg icon-bookmark"></i>
+                书单
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/movies"  >
+                <i class="icon icon-lg icon-film"></i>
+                影单
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/works"  >
+                <i class="icon icon-lg icon-code"></i>
+                实验室
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/about"  >
+                <i class="icon icon-lg icon-circle"></i>
+                关于我
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+            <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">在Unity3D中加载外部图片的两种方法</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off"
+                placeholder="输入感兴趣的关键字">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+        <a href="https://github.com/qinyuanpei/qinyuanpei.github.io" target="_blank" rel="noopener" class="header-icon waves-effect waves-circle waves-light" id="menuGithub">
+            <i class="icon icon-lg icon-code-fork"></i>
+        </a>
+    </div>
+</header>
+<header class="content-header post-header">
+    <div class="container fade-scale">
+        <h1 class="title">在Unity3D中加载外部图片的两种方法</h1>
+        <h5 class="subtitle" id="subtitle">
+            
+            <time datetime="2015-10-08T15:03:01.000Z" itemprop="datePublished" class="page-time">
+  2015-10-08
+</time>
+
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Unity3D/">Unity3D</a></li></ul>
+
+            
+        </h5>
+    </div>
+    
+
+</header>
+
+<div class="container body-wrap">
+    
+    <aside class="post-widget">
+        <nav class="post-toc-wrap" id="post-toc">
+            <h4>目录</h4>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#喜闻乐见的WWW方式"><span class="post-toc-number">1.</span> <span class="post-toc-text">喜闻乐见的WWW方式</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#亘古不变的传统IO方式"><span class="post-toc-number">2.</span> <span class="post-toc-text">亘古不变的传统IO方式</span></a></li></ol>
+        </nav>
+    </aside>
+    
+    <article id="post-在Unity3D中加载外部图片的两种方法" class="post-article article-type-post fade" itemprop="blogPost">
+
+        <div class="post-card">
+            <h1 class="post-card-title">
+                在Unity3D中加载外部图片的两种方法
+            </h1>
+            <div class="post-meta">
+                <time class="post-time" title="2015-10-08 15:03:01" datetime="2015-10-08T15:03:01.000Z"  itemprop="datePublished">2015-10-08</time>
+
+                
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/Unity3D/">Unity3D</a></li></ul>
+
+
+
+                
+<span id="lc_counter_container_page_pv" title="文章总阅读量" data-page-url="" data-page-title="在Unity3D中加载外部图片的两种方法">
+    <i class="icon icon-eye icon-pr"></i><span id="lc_counter_value_page_pv"></span>
+</span>
+
+
+
+
+
+                
+    <span>
+        <i class="icon icon-clock-o"></i>
+        11 min.
+    </span>
+    
+            </div>
+            <div class="post-content" id="post-content" itemprop="postContent">
+                <p>&emsp;&emsp;各位朋友大家好，我是秦元培，欢迎大家关注我的博客。最近在做项目的过程中遇到这样的一个需求：玩家可以在游戏过程中进行实时存档，在存档过程中会保存当前游戏进度，同时会截取当前游戏画面并加载到游戏存档界面中。当下一次进入游戏的时候，将读取本地存档图片并加载到游戏界面中。这在单机游戏中是特别常见的一种功能，这里主要有两个关键点。首先是截取游戏画面，这个问题大家可以在<a href="http://blog.csdn.net/qinyuanpei/article/details/39185195" target="_blank" rel="noopener">《Unity3D游戏开发之截屏保存精彩瞬间》</a>这篇文章中找到答案。其次是从本地加载图片，因为这里要保证可读可写，因此传统的Resources.Load()方式和AssetBundle方式均无法实现这样的功能。那么怎样从外部加载图片到游戏中，这就是我们今天要讨论的内容啦。好了，这里介绍两种方法来实现这一目的。</p>
+<a id="more"></a>
+
+<h1 id="喜闻乐见的WWW方式"><a href="#喜闻乐见的WWW方式" class="headerlink" title="喜闻乐见的WWW方式"></a>喜闻乐见的WWW方式</h1><p>&emsp;&emsp;喜闻乐见的WWW方式之所以喜闻乐见，这是因为这是我们最为熟悉的一种，我们都知道通过WWW可以从网络上加载文本、图片、音频等形式的内容，那么通过WWW能否加载本地外部（相对于应用程序）资源呢？答案是肯定的，这是因为WWW可以支持http和file两种协议。我们通常接触到的WWW默认都是指http协议，现在我们来说说file协议，该协议可以用来访问本地资源（绝对路径）。例如我们希望加载文件D:\TestFile\pic001.png这个文件，则此时对应的C#脚本为：</p>
+<figure class="highlight stata"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//请求WWW</span></span><br><span class="line">WWW www = new WWW("<span class="keyword">file</span>:<span class="comment">//D:\\TestFile\\pic001.png);</span></span><br><span class="line">yield <span class="keyword">return</span> www;        </span><br><span class="line"><span class="keyword">if</span>(www != null &amp;&amp; string.IsNullOrEmpty(www.<span class="keyword">error</span>))</span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">//获取Texture</span></span><br><span class="line">    Texture texture=www.texture;   </span><br><span class="line">    <span class="comment">//更多操作...       </span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>注意到这里出现了yield return结构，这表示这里使用到了协程，因此我们需要付出的代价就是需要在项目中使用StartCoroutine等协程相关的方法来调用这些协程。虽然在Unity3D中使用协程是件简单的事情，可是如果我们随随便便地使用协程而不注意去维护这些协程，那么这些让我们引以为傲的简单代码可能就会变成我们痛苦不堪的无尽深渊。</p>
+<h1 id="亘古不变的传统IO方式"><a href="#亘古不变的传统IO方式" class="headerlink" title="亘古不变的传统IO方式"></a>亘古不变的传统IO方式</h1><p>&emsp;&emsp;好了，下面我们隆重推出亘古不变的传统IO方式，这种方式相信大家都没有接触过，所以这里将这种方法和大家分享。既然是传统的IO方式，那么无非就是各种IO流的处理啦。好，我们一起来看下面这段代码：</p>
+<figure class="highlight reasonml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//创建文件读取流</span></span><br><span class="line">FileStream fileStream = <span class="keyword">new</span> <span class="constructor">FileStream(<span class="params">screen</span>, FileMode.Open, FileAccess.Read)</span>;</span><br><span class="line">fileStream.<span class="constructor">Seek(0, SeekOrigin.Begin)</span>;</span><br><span class="line"><span class="comment">//创建文件长度缓冲区</span></span><br><span class="line">byte<span class="literal">[]</span> <span class="built_in">bytes</span> = <span class="keyword">new</span> byte<span class="literal">[<span class="identifier">fileStream</span>.L<span class="identifier">ength</span>]</span>; </span><br><span class="line"><span class="comment">//读取文件</span></span><br><span class="line">fileStream.<span class="constructor">Read(<span class="params">bytes</span>, 0, (<span class="params">int</span>)</span>fileStream.Length);</span><br><span class="line"><span class="comment">//释放文件读取流</span></span><br><span class="line">fileStream.<span class="constructor">Close()</span>;</span><br><span class="line">fileStream.<span class="constructor">Dispose()</span>;</span><br><span class="line">fileStream = null;</span><br><span class="line"></span><br><span class="line"><span class="comment">//创建Texture</span></span><br><span class="line"><span class="built_in">int</span> width=<span class="number">800</span>;</span><br><span class="line"><span class="built_in">int</span> height=<span class="number">640</span>;</span><br><span class="line">Texture2D texture = <span class="keyword">new</span> <span class="constructor">Texture2D(<span class="params">width</span>, <span class="params">height</span>)</span>;</span><br><span class="line">texture.<span class="constructor">LoadImage(<span class="params">bytes</span>)</span>;</span><br></pre></td></tr></table></figure>
+
+<p>可以看到在使用这种方式读取图片文件的时候主要是将图片文件转化为byte[]数组，再利用Texture2D的LoadImage方法转化为Unity3D中的Texture2D。这种方法需要在创建过程中传入图片的大小，在这里我们创建了一张800X640的图片。经过博主的研究发现，这种方式加载外部图片相对于使用WWW加载外部图片效率更高，所以如果大家遇到类似的需求，博主个人推荐大家使用这种方式进行加载。</p>
+<p>&emsp;&emsp;到目前为止我们解决了如何从外部加载图片到Unity3D中，现在我们回到最开始的问题，我们从外部读取到这些图片以后需要将它们加载到游戏界面中。比如当我们使用UGUI的时候，UGUI中的Image控件需要一个Sprite来作为它的填充内容，那么此时我们就需要将Texture转化为Sprite.号了，下面我们给出一个简单的例子：</p>
+<figure class="highlight reasonml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br></pre></td><td class="code"><pre><span class="line">using UnityEngine;</span><br><span class="line">using System.Collections;</span><br><span class="line">using UnityEngine.UI;</span><br><span class="line">using System.IO;</span><br><span class="line"></span><br><span class="line">public <span class="keyword">class</span> TestLoading : MonoBehaviour </span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">/// &lt;summary&gt;</span></span><br><span class="line">    <span class="comment">/// Image控件</span></span><br><span class="line">    <span class="comment">/// &lt;/summary&gt;</span></span><br><span class="line">    <span class="keyword">private</span> Image image;</span><br><span class="line"></span><br><span class="line">	void Start <span class="literal">()</span> </span><br><span class="line">    &#123;</span><br><span class="line">        image = this.transform.<span class="constructor">Find(<span class="string">"Image"</span>)</span>.GetComponent&lt;Image&gt;<span class="literal">()</span>;</span><br><span class="line"></span><br><span class="line">        <span class="comment">//为不同的按钮绑定不同的事件</span></span><br><span class="line">        this.transform.<span class="constructor">Find(<span class="string">"LoadByWWW"</span>)</span>.GetComponent&lt;Button&gt;<span class="literal">()</span>.onClick.AddListener</span><br><span class="line">        (</span><br><span class="line">           delegate<span class="literal">()</span>&#123;<span class="constructor">LoadByWWW()</span>;&#125;</span><br><span class="line">        );</span><br><span class="line"></span><br><span class="line">        this.transform.<span class="constructor">Find(<span class="string">"LoadByIO"</span>)</span>.GetComponent&lt;Button&gt;<span class="literal">()</span>.onClick.AddListener</span><br><span class="line">        (</span><br><span class="line">          delegate<span class="literal">()</span>&#123;<span class="constructor">LoadByIO()</span>;&#125;</span><br><span class="line">        );</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/// &lt;summary&gt;</span></span><br><span class="line">    <span class="comment">/// 以IO方式进行加载</span></span><br><span class="line">    <span class="comment">/// &lt;/summary&gt;</span></span><br><span class="line">    <span class="keyword">private</span> void <span class="constructor">LoadByIO()</span></span><br><span class="line">    &#123;</span><br><span class="line">        double startTime = (double)<span class="module-access"><span class="module"><span class="identifier">Time</span>.</span></span>time;</span><br><span class="line">        <span class="comment">//创建文件读取流</span></span><br><span class="line">        FileStream fileStream = <span class="keyword">new</span> <span class="constructor">FileStream(<span class="string">"D:\\test.jpg"</span>, FileMode.Open, FileAccess.Read)</span>;</span><br><span class="line">        fileStream.<span class="constructor">Seek(0, SeekOrigin.Begin)</span>;</span><br><span class="line">        <span class="comment">//创建文件长度缓冲区</span></span><br><span class="line">        byte<span class="literal">[]</span> <span class="built_in">bytes</span> = <span class="keyword">new</span> byte<span class="literal">[<span class="identifier">fileStream</span>.L<span class="identifier">ength</span>]</span>;</span><br><span class="line">        <span class="comment">//读取文件</span></span><br><span class="line">        fileStream.<span class="constructor">Read(<span class="params">bytes</span>, 0, (<span class="params">int</span>)</span>fileStream.Length);</span><br><span class="line">        <span class="comment">//释放文件读取流</span></span><br><span class="line">        fileStream.<span class="constructor">Close()</span>;</span><br><span class="line">        fileStream.<span class="constructor">Dispose()</span>;</span><br><span class="line">        fileStream = null;</span><br><span class="line"></span><br><span class="line">        <span class="comment">//创建Texture</span></span><br><span class="line">        <span class="built_in">int</span> width = <span class="number">300</span>;</span><br><span class="line">        <span class="built_in">int</span> height = <span class="number">372</span>;</span><br><span class="line">        Texture2D texture = <span class="keyword">new</span> <span class="constructor">Texture2D(<span class="params">width</span>, <span class="params">height</span>)</span>;</span><br><span class="line">        texture.<span class="constructor">LoadImage(<span class="params">bytes</span>)</span>;</span><br><span class="line"></span><br><span class="line">        <span class="comment">//创建Sprite</span></span><br><span class="line">        Sprite sprite = Sprite.<span class="constructor">Create(<span class="params">texture</span>, <span class="params">new</span> Rect(0, 0, <span class="params">texture</span>.<span class="params">width</span>, <span class="params">texture</span>.<span class="params">height</span>)</span>, <span class="keyword">new</span> <span class="constructor">Vector2(0.5f, 0.5f)</span>);</span><br><span class="line">        image.sprite = sprite;</span><br><span class="line"></span><br><span class="line">        startTime=(double)<span class="module-access"><span class="module"><span class="identifier">Time</span>.</span></span>time-startTime;</span><br><span class="line">        Debug.<span class="constructor">Log(<span class="string">"IO加载用时:"</span> + <span class="params">startTime</span>)</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/// &lt;summary&gt;</span></span><br><span class="line">    <span class="comment">/// 以WWW方式进行加载</span></span><br><span class="line">    <span class="comment">/// &lt;/summary&gt;</span></span><br><span class="line">    <span class="keyword">private</span> void <span class="constructor">LoadByWWW()</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="constructor">StartCoroutine(Load()</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    IEnumerator <span class="constructor">Load()</span></span><br><span class="line">    &#123;</span><br><span class="line">        double startTime = (double)<span class="module-access"><span class="module"><span class="identifier">Time</span>.</span></span>time;</span><br><span class="line">        <span class="comment">//请求WWW</span></span><br><span class="line">        WWW www = <span class="keyword">new</span> <span class="constructor">WWW(<span class="string">"file://D:\\test.jpg"</span>)</span>;</span><br><span class="line">        yield return www;        </span><br><span class="line">        <span class="keyword">if</span>(www != null<span class="operator"> &amp;&amp; </span><span class="built_in">string</span>.<span class="constructor">IsNullOrEmpty(<span class="params">www</span>.<span class="params">error</span>)</span>)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="comment">//获取Texture</span></span><br><span class="line">            Texture2D texture=www.texture;</span><br><span class="line"></span><br><span class="line">            <span class="comment">//创建Sprite</span></span><br><span class="line">            Sprite sprite = Sprite.<span class="constructor">Create(<span class="params">texture</span>, <span class="params">new</span> Rect(0, 0, <span class="params">texture</span>.<span class="params">width</span>, <span class="params">texture</span>.<span class="params">height</span>)</span>, <span class="keyword">new</span> <span class="constructor">Vector2(0.5f, 0.5f)</span>);</span><br><span class="line">            image.sprite = sprite;</span><br><span class="line"></span><br><span class="line">            startTime = (double)<span class="module-access"><span class="module"><span class="identifier">Time</span>.</span></span>time - startTime;</span><br><span class="line">            Debug.<span class="constructor">Log(<span class="string">"WWW加载用时:"</span> + <span class="params">startTime</span>)</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;现在我们运行程序可以发现两种方式均可以让图片加载进来，为了对比两种方式在执行效率上的高低，我们在脚本中加入了相关代码，通过对比可以发现使用IO方式加载一张227k的图片需要的时间为0s，而使用WWW方式加载需要0.0185s，因此传统的IO方式具有更高的效率，建议大家在遇到这类问题时尽可能地使用这种方式。好了，今天的内容就是这样啦，欢迎大家在我的博客中留言、欢迎大家关注和支持我的博客，谢谢大家！</p>
+<p>2016年6月12日更新：<br>&emsp;&emsp;针对有朋友指出WWW加载和传统IO加载方式在效率上的差异，我们这里重新做一个效率测试。</p>
+
+                
+
+                
+
+
+<div class="recommended_posts">
+    <h1>推荐阅读</h1>
+    <ul>
+        
+        <li><a href="https://qinyuanpei.github.io/posts/305484621/">C#中的扩展方法学习总结</a></li>
+        
+        <li><a href="https://qinyuanpei.github.io/posts/3120185261/">EasyAR尝鲜系列教程之Hello EasyAR</a></li>
+        
+        <li><a href="https://qinyuanpei.github.io/posts/1156673678/">EasyAR尝鲜系列教程之自定义Marker的实现</a></li>
+        
+        <li><a href="https://qinyuanpei.github.io/posts/316230277/">EasyAR尝鲜系列教程之视频播放功能的实现</a></li>
+        
+        <li><a href="https://qinyuanpei.github.io/posts/1176959868/">Unity3D塔防游戏开发项目讲解(下)</a></li>
+        
+    </ul>
+</div>
+
+            </div>
+            
+<blockquote class="post-copyright">
+    <div class="content">
+        <p><b>版权声明：</b>
+        <a href="https://qinyuanpei.github.io/posts/821259985/" rel="external">在Unity3D中加载外部图片的两种方法</a>
+        ，由&nbsp;<a href="/about" target="_blank" rel="external">飞鸿踏雪</a>&nbsp;
+        首次发表于&nbsp;<a href="/" target="_blank" rel="external">一个人的孤落时辰</a>&nbsp;
+        ，本文地址为：<a href="https://qinyuanpei.github.io/posts/821259985/" target="_blank" rel="external">https://qinyuanpei.github.io/posts/821259985/</a>
+        ，转载请注明<b>作者</b>和<b>出处</b>。</p>
+    </div>
+    <footer>
+        <a href="https://qinyuanpei.github.io">
+            <img src="/assets/images/avatar.jpg" alt="飞鸿踏雪">
+            飞鸿踏雪
+        </a>
+    </footer>
+</blockquote>
+
+
+            
+<div class="page-reward">
+    <a id="rewardBtn" href="javascript:;" class="page-reward-btn waves-effect waves-circle waves-light">赏</a>
+</div>
+
+
+            <div class="post-footer">
+                
+	<ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Unity3D/" rel="tag">Unity3D</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/uGUI/" rel="tag">uGUI</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91/" rel="tag">游戏开发</a></li></ul>
+
+                
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://qinyuanpei.github.io/posts/821259985/&title=《在Unity3D中加载外部图片的两种方法》 — 一个人的孤落时辰&pic=https://qinyuanpei.github.ioassets/images/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://qinyuanpei.github.io/posts/821259985/&title=《在Unity3D中加载外部图片的两种方法》 — 一个人的孤落时辰&source=&emsp;&emsp;各位朋友大家好，我是秦元培，欢迎大家关注我的博客。最近在做项目的过程中遇到这样的一个需求：玩家可以在游戏过程中进行实时存档，在存档..." data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://qinyuanpei.github.io/posts/821259985/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《在Unity3D中加载外部图片的两种方法》 — 一个人的孤落时辰&url=https://qinyuanpei.github.io/posts/821259985/&via=https://qinyuanpei.github.io" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://qinyuanpei.github.io/posts/821259985/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+      
+      <li>
+        <a class="google share-sns" target="_blank" onClick="show_yp()" data-title=" 生成海报">
+          <i class="icon icon-file-image-o"></i>
+        </a>
+      </li>
+      
+    </ul>
+ </div>
+
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
+            </div>
+        </div>
+
+        
+<nav class="post-nav flex-row flex-justify-between">
+  
+    <div class="waves-block waves-effect prev">
+      <a href="/posts/3019914405/" id="post-prev" class="post-nav-link">
+        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
+        <h4 class="title">Unity3D游戏开发之Unity3D场景编辑器扩展开发</h4>
+      </a>
+    </div>
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/posts/786195243/" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h4 class="title">做最初的自己</h4>
+      </a>
+    </div>
+  
+</nav>
+
+
+        
+    <div id="comment"></div>
+<script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+<script src='//unpkg.com/valine/dist/Valine.min.js'></script>
+<script type="text/javascript">
+new Valine({
+    el: '#comment' ,
+    notify: false, 
+    verify: true, 
+    appId: 'JbHqRp2eMrTgIwYpfERH0g79-gzGzoHsz',
+    appKey: 'VsiKvLuiBGvJL1XrAfv7siY2',
+    placeholder: '云中谁寄锦书来，雁字回时，月满西楼。&#10;Tips：如果希望收到我的评论回复，请至少留下你的邮箱哦:)',
+    path:'https://qinyuanpei.github.io/posts/821259985/', 
+    avatar:'identicon',
+    requiredFields: ['nick','mail']
+});
+</script>
+
+
+
+
+    </article>
+    
+<div id="reward" class="page-modal reward-lay">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <h3 class="reward-title">
+        <i class="icon icon-quote-left"></i>
+        赠人玫瑰，手有余香
+        <i class="icon icon-quote-right"></i>
+    </h3>
+    <div class="reward-content">
+        
+        <div class="reward-code">
+            <img id="rewardCode" src="/assets/images/wechat.png" alt="打赏二维码">
+        </div>
+        
+        <label class="reward-toggle">
+            <input id="rewardToggle" type="checkbox" class="reward-toggle-check"
+                data-wechat="/assets/images/wechat.png" data-alipay="/assets/images/alipay.jpg">
+            <div class="reward-toggle-ctrol">
+                <span class="reward-toggle-item wechat">微信</span>
+                <span class="reward-toggle-label"></span>
+                <span class="reward-toggle-item alipay">支付宝</span>
+            </div>
+        </label>
+        
+    </div>
+</div>
+
+
+    <script type="text/javascript" src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/yoniu.min.js"></script>
+<style type='text/css'>
+	body.active-yp {
+		overflow: hidden;
+	}
+	.yp-fc-btn{
+		display: flex;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		align-items: center;
+		justify-content: space-between;
+		font-size: 13px;
+	}
+	.yp-fc-btn span{
+		cursor: pointer;
+		padding: 2px 10px;
+		color: #4b4b4b;
+		border: #4b4b4b 1px solid;
+		border-radius:5px;
+	}
+	#yp-hide{
+		position: fixed;
+		display: flex;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		justify-content: center;
+		flex-direction: column;
+		left:0;
+		top:0;
+		right:0;
+		bottom:0;
+		background-color:rgba(0,0,0,.5);
+		z-index: 99999;
+		visibility: hidden;
+	}
+	#yoniu-poster{
+		box-sizing: border-box;
+		width: 350px;
+		height: 467.2px;
+		background-color: #fff;
+		margin: 0 auto;
+		padding: 0;
+		line-height: 1.6;
+		text-align:justify;
+	}
+	
+	.yp-img {
+		min-height: 240px;
+		position: relative;
+		display: flex;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		justify-content: flex-end;
+		flex-direction: column;
+		background-position: 50% 50%;
+		background-size: cover;
+		overflow:hidden;
+	}
+	.yp-img>div{
+		padding: 10px 20px;
+	}
+	.yp-name{
+		display: block;
+		color: #fff;
+		font-size: 20px;
+		font-weight: 600;
+		text-shadow: #4b4b4b 0.1em 0.1em 0.2em;
+		margin-top: 10px;
+	}
+	.yp-sort{
+		padding: 3px 10px;
+		font-size: 12px;
+		color: #fff;
+		background: #2e2e2e;
+	}
+	.yp-des{
+		color: #2e2e2e;
+		font-size: 14px;
+		margin: 20px;
+		height: 67.2px;
+	}
+	.yp-qcode{
+		display: flex;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		justify-content: space-between;
+		align-items: center;
+		margin: 10px;
+		padding: 10px 20px;
+		background: #f5f5f5;
+		color: #818181;
+		border-radius: 10px;
+	}
+	.yp-tips{
+		display: flex;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		justify-content: space-between;
+		align-items: center;
+		color: #ccc;
+		margin: 0 10px 10px;
+		font-size: 10px;
+		letter-spacing: 1.5px;
+	}
+	.yp-btns{
+		display: flex;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		align-items: stretch;
+		justify-content: center;
+		width:350px;
+		margin: 0 auto;
+	}
+	.yp-btns>span{
+		display: flex;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		align-items: center;
+		justify-content: center;
+		font-size: 14px;
+		padding: 10px 15px;
+		background:rgba(0,0,0,.2);
+		color: #f5f5f5;
+		cursor: pointer;
+	}
+	.yp-btns>span>a{
+		color: #f5f5f5;
+	}
+	.yp-btns>span>a:hover{
+		text-decoration:none;
+	}
+	#yp-close{
+		font-size: 18px;
+		font-weight: 600;
+	}
+</style>
+<div id="yp-hide">
+    <div id="yoniu-poster">
+        <div class="yp-img" id="yp-img">
+            <div>
+                <span class="yp-sort">Unity3D</span>
+                <span class="yp-name">在Unity3D中加载外部图片的两种方法</span>
+            </div>
+        </div>
+        <div class="yp-des">    
+            
+                &emsp;&emsp;各位朋友大家好，我是秦元培，欢迎大家关注我的博客。最近在做项目的过程中遇到这样的一个需求：玩家可以在游戏过程中进行实时存...
+            
+        </div>
+        <div class="yp-qcode">
+            <span>扫描二维码阅读原文</span>
+            <img id="yp-qcode" width="64px" src="//api.qrserver.com/v1/create-qr-code/?data=https://qinyuanpei.github.io/posts/821259985/">
+        </div>
+        <div class="yp-tips">
+            <span>一个人的孤落时辰</span>
+            <span><time class="post-time" title="2015-10-08 15:03:01" datetime="2015-10-08T15:03:01.000Z"  itemprop="datePublished">2015-10-08</time>
+</span>
+        </div>
+    </div>
+    <div class="yp-btns">
+        <span id="yp-load-yp" onClick="load_yp()">生成海报</span>
+        <span><a id="yp-download"></a></span>
+        <span id="yp-close" onClick="close_yp()">×</span>
+    </div>
+</div>
+<script type="text/javascript">
+    function show_yp(){
+        window.scrollTo(0, 0);
+        document.body.setAttribute("class","active-yp");
+        let cover = document.getElementsByTagName('img')[1];
+        if (cover != null && typeof(cover) != 'undefined') {
+            document.getElementById('yp-img').style.backgroundImage = `url(${cover.src})`;
+        } else {
+            document.getElementById('yp-img').style.backgroundColor = '#d7dbf0';
+        }
+        document.getElementById("yp-hide").style.visibility = "visible";
+    }
+    function close_yp(){
+        var domClass = document.body.getAttribute("class");
+        domClass = domClass.replace("active-yp","");
+        document.body.setAttribute("class",domClass);
+        document.getElementById("yp-hide").style.visibility = "hidden";
+    }
+    function load_yp(){
+        document.getElementById('yp-load-yp').textContent = '海报生成中...';
+        setTimeout(function() {
+            h2c_();
+        },2000);
+
+    }
+</script>
+
+</div>
+
+        <footer class="footer">
+    <div class="top">
+        
+   <p>
+      <span id="lc_counter_container_site_uv">
+         <i class="icon icon-user"></i><span id="lc_counter_value_site_uv"></span>
+      </span>
+      <span id="lc_counter_container_site_pv">
+         <i class="icon icon-eye"></i><span id="lc_counter_value_site_pv"></span>
+      </span>
+  </p>
+
+
+        <p>
+   <a id="jinrishici-sentence" href="https://www.jinrishici.com/" target="_blank" rel="noopener">加载中</a>
+</p>
+<script src="https://sdk.jinrishici.com/v2/browser/jinrishici.js" charset="utf-8"></script>
+<script>
+   jinrishici.load(function(result) {
+      document.querySelector('#subtitle').innerText = result.data.content;
+      document.querySelector('#jinrishici-sentence').innerText = result.data.content;
+  });
+</script>
+            <!--Todo: 考虑重构为插件 -->
+            <p>
+                
+                    <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+                
+                <span>
+                    <a href="https://github.com/qinyuanpei" target="_blank" rel="license noopener" title="Github">
+                        <i class="icon icon-lg icon-github"></i>
+                    </a>
+                </span>
+                <span>
+                    <a href="https://weibo.com/1278609231/profile" target="_blank" rel="license noopener" title="微博">
+                        <i class="icon icon-lg icon-weibo"></i>
+                    </a>
+                </span>
+                <span>
+                    <a href="https://www.douban.com/people/60029335/" target="_blank" rel="license noopener" title="豆瓣">
+                        <i class="icon icon-lg icon-douban"></i>
+                    </a>
+                </span>
+                <span>
+                    <a href="https://www.zhihu.com/people/qinyuanpei" target="_blank" rel="license noopener" title="知乎">
+                        <i class="icon icon-lg icon-zhihu-square"></i>
+                    </a>
+                </span>
+                <span>
+                    <a href="https://blog.csdn.net/qinyuanpei" target="_blank" rel="license noopener" title="CSDN">
+                        <i class="icon icon-lg">C</i>
+                    </a>
+                </span>
+                <span>
+                    <a href="https://music.163.com/#/user/home?id=47002864" target="_blank" rel="license noopener" title="网易音乐">
+                        <i class="icon icon-lg icon-wangyiyunyinyue"></i>
+                    </a>
+                </span>
+            </p>
+        
+    </div>
+    <div class="bottom">
+        <p><span>飞鸿踏雪 &copy; 2014 - 2021</span><br>
+            
+                
+                Powered by <a href="http://hexo.io/" target="_blank">Hexo</a> & Theme by <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a><br>
+                
+                
+                    <p>Hosted by <a href="https://pages.github.com" target="_blank" rel="noopener" style="font-weight: bold">Github Pages</a></p>
+                
+        </p>
+    </div>
+</footer>
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span
+        class="icon icon-lg icon-chevron-up"></span></a>
+
+    
+
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://qinyuanpei.github.io/posts/821259985/&title=《在Unity3D中加载外部图片的两种方法》 — 一个人的孤落时辰&pic=https://qinyuanpei.github.ioassets/images/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://qinyuanpei.github.io/posts/821259985/&title=《在Unity3D中加载外部图片的两种方法》 — 一个人的孤落时辰&source=&emsp;&emsp;各位朋友大家好，我是秦元培，欢迎大家关注我的博客。最近在做项目的过程中遇到这样的一个需求：玩家可以在游戏过程中进行实时存档，在存档..." data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://qinyuanpei.github.io/posts/821259985/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《在Unity3D中加载外部图片的两种方法》 — 一个人的孤落时辰&url=https://qinyuanpei.github.io/posts/821259985/&via=https://qinyuanpei.github.io" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://qinyuanpei.github.io/posts/821259985/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+      
+      <li>
+        <a class="google share-sns" target="_blank" onClick="show_yp()" data-title=" 生成海报">
+          <i class="icon icon-file-image-o"></i>
+        </a>
+      </li>
+      
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="//api.qrserver.com/v1/create-qr-code/?data=https://qinyuanpei.github.io/posts/821259985/" alt="微信分享二维码">
+</div>
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.6/waves.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/4.2.1/echarts.min.js"></script>
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/echarts-wordcloud.min.js" async></script>
+<script>
+    var BLOG = { ROOT: '/', SHARE: true, REWARD: true };
+
+
+</script>
+
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/main.min.js"></script>
+
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/search.min.js" async></script>
+
+
+
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/heart.min.js" async></script>
+
+
+
+
+
+
+
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/leancloud-counter.min.js"></script>
+<script>
+        (function () {
+            var appId = 'JbHqRp2eMrTgIwYpfERH0g79-gzGzoHsz';
+            var appKey = 'VsiKvLuiBGvJL1XrAfv7siY2';
+            new VisitorCounter().init({
+                appId: appId,       //应用ID, 必输
+                appKey: appKey,      //应用Key, 必输
+                region: '华北',      //华东,华北,国际, 默认华东
+                domain: '',      //自定义域名
+                collectIP: true, //是否收集IP及位置信息, 默认开启
+                collectUA: true  //是否收集UserAgent, 默认开启
+            });
+        })();
+</script>
+
+
+
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/vconsole.min.js"></script>
+<script type="text/javascript">
+    //当地址中存在debug=true时，实例化vConsole
+    if (location.href.indexOf('debug=true') > -1) {
+        var vConsole = new VConsole();
+    }
+</script>
+
+
+    <script>
+    //国内用户自动重定向Coding Pages镜像
+    // var ipInfo = JSON.parse(localStorage.getItem('ipInfo'));
+    // if (ipInfo.country_code == 'CN') {
+    //     location.href = location.href.replace('qinyuanpei.github.io', 'blog.yuanpei.me');
+    // }
+    </script>
+
+
+<script>
+titleArray = [];
+function scrollTitle() {
+    if (titleArray.length == 0) return;
+    titleArray.push(titleArray[0]);
+	titleArray.shift();
+	document.title = titleArray.join("");
+}
+setInterval(scrollTitle, 500);
+(function() {
+    var originTitile = document.title, titleTime;
+    document.addEventListener('visibilitychange', function() {
+        if (document.hidden) {
+            titleArray = originTitile.split('');
+            clearTimeout(titleTime);
+        } else {
+            document.title = originTitile;
+            titleArray = originTitile.split('');
+            titleTime = setTimeout(function() {
+                document.title = originTitile;
+                titleArray = [];
+            },2000);
+        }
+    });
+})();
+</script>
+
+
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/ribbon.min.js"></script>
+</body>
+</html>
