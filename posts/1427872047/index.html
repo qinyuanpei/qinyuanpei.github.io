@@ -1,0 +1,894 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+    
+<script async defer data-domain="blog.yuanpei.me" src="https://plausible.io/js/plausible.js"></script>
+    
+    <meta charset="utf-8">
+    <!-- HTTP 1.1 -->  
+    <meta http-equiv="pragma" content="no-cache">  
+    <!-- HTTP 1.0 -->  
+    <meta http-equiv="cache-control" content="no-cache">
+    <!-- 微博图床防盗链 --> 
+    <!-- <meta name="referrer" content="no-referrer"/> -->
+    <!--Google站点验证-->
+    
+    <!--百度站点验证-->
+    
+    
+    <!--Google AdSense-->
+    
+    <!--Bing站点验证-->
+    <meta name="msvalidate.01" content="713A48A3FE17D4841C292A6B3942EB4C" />
+    
+    <title>
+        使用Python抽取《半泽直树》原著小说人物关系 | 一个人的孤落时辰 | 纵有疾风起，人生不言弃
+    </title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+        <meta name="theme-color" content="#3F51B5">
+    
+
+    <meta name="keywords" content="NLP,Python,半泽直树,Gephi,ECharts,秦元培,技术博客,生活随笔,个人博客,NET,Python,数据挖掘,数据分析,NLP">
+    
+        <meta name="description" content="考虑到小说人物关系抽取，属于自然语言处理(**NLP**)领域的内容，所以，除了准备好Python环境以外，我们需要提前准备相关的中文语料，在这里主要有：[半泽直树原著小说](https://github.com/qinyuanpei/graph-relation/blob/master/input/半泽直树.txt)、 [半泽直树人名词典](https://github.com/qinyuanpei/graph-relation/blob/master/input/人名词典.txt)、[半泽直树别名词典](https://github.com/qinyuanpei/graph-relation/blob/master/input/别名词典.txt)、[中文分词停用词表](https://github.com/qinyuanpei/graph-relation/blob/master/input/停用词词典.txt);所以，你基本可以想到，我们会使用结巴分词对小说文本进行分词处理，而半泽直树人名列表则作为用户词典供结巴分词使用，经过一系列处理后，我们最终通过`Gephi`和`PyECharts`对结果进行可视化，通过分析人物间的关系，结合我们对电视剧剧情的掌握情况，我们就可以对本文所采用方法的效果进行评估，也许你认为两个人毫无联系，可最终他们以某种特殊的形式建立了联系，这就是我们要做这件事情的意义所在;因为`Gephi`和`PyECharts`以及`NetworkX`都提供了针对`Graph`的可视化功能，因此，我们可以使用这种方法，对《半泽直树》原著小说中的人物关系进行抽取;其中，`extract()`方法用于抽取制定小说文本中的人物关系，`exportGephi()`方法用于输出Gephi格式的节点和边信息， `exportECharts()`方法则可以使用`ECharts`对人物关系进行渲染和输出：;今天，就让我们使用Python来抽取半泽直树原著小说中的人物关系吧">
+    
+    <meta name="description" content="考虑到小说人物关系抽取，属于自然语言处理(**NLP**)领域的内容，所以，除了准备好Python环境以外，我们需要提前准备相关的中文语料，在这里主要有：[半泽直树原著小说](https:&#x2F;&#x2F;github.com&#x2F;qinyuanpei&#x2F;graph-relation&#x2F;blob&#x2F;master&#x2F;input&#x2F;半泽直树.txt)、 [半泽直树人名词典](https:&#x2F;&#x2F;github.com&#x2F;qinyuanp">
+<meta property="og:type" content="article">
+<meta property="og:title" content="使用Python抽取《半泽直树》原著小说人物关系">
+<meta property="og:url" content="https://qinyuanpei.github.io/posts/1427872047/index.html">
+<meta property="og:site_name" content="一个人的孤落时辰">
+<meta property="og:description" content="考虑到小说人物关系抽取，属于自然语言处理(**NLP**)领域的内容，所以，除了准备好Python环境以外，我们需要提前准备相关的中文语料，在这里主要有：[半泽直树原著小说](https:&#x2F;&#x2F;github.com&#x2F;qinyuanpei&#x2F;graph-relation&#x2F;blob&#x2F;master&#x2F;input&#x2F;半泽直树.txt)、 [半泽直树人名词典](https:&#x2F;&#x2F;github.com&#x2F;qinyuanp">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://i.loli.net/2020/12/09/4TV9CAoE6lksGMg.png">
+<meta property="og:image" content="https://i.loli.net/2020/12/09/V5pD6mJKCMsN4uS.png">
+<meta property="article:published_time" content="2020-12-08T22:49:47.000Z">
+<meta property="article:modified_time" content="2021-06-07T01:42:22.145Z">
+<meta property="article:author" content="飞鸿踏雪">
+<meta property="article:tag" content="NLP">
+<meta property="article:tag" content="Python">
+<meta property="article:tag" content="半泽直树">
+<meta property="article:tag" content="Gephi">
+<meta property="article:tag" content="ECharts">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i.loli.net/2020/12/09/4TV9CAoE6lksGMg.png">
+    
+        <link rel="alternate" type="application/atom+xml" title="一个人的孤落时辰" href="/atom.xml">
+    
+    <link rel="shortcut icon" href="/assets/images/favicon.ico">
+    
+        <link rel="manifest" href="/manifest.json">
+    
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master//assets/styles/style.css">
+    <script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/instantclick.min.js"></script>
+    <script>window.lazyScripts=[]</script>
+    <!-- custom head -->
+    
+
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu" class="hide" >
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap" style="background-image:url(/assets/images/brand.jpg)">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/assets/images/avatar.jpg" alt="avatar">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">飞鸿踏雪</h5>
+          <a href="mailto:qinyuanpei@163.com" title="qinyuanpei@163.com" class="mail">qinyuanpei@163.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/"  >
+                <i class="icon icon-lg icon-home"></i>
+                主页
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives"  >
+                <i class="icon icon-lg icon-archives"></i>
+                归档
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags"  >
+                <i class="icon icon-lg icon-tags"></i>
+                标签
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/categories"  >
+                <i class="icon icon-lg icon-th-list"></i>
+                分类
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/books"  >
+                <i class="icon icon-lg icon-bookmark"></i>
+                书单
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/movies"  >
+                <i class="icon icon-lg icon-film"></i>
+                影单
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/works"  >
+                <i class="icon icon-lg icon-code"></i>
+                实验室
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/about"  >
+                <i class="icon icon-lg icon-circle"></i>
+                关于我
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+            <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">使用Python抽取《半泽直树》原著小说人物关系</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off"
+                placeholder="输入感兴趣的关键字">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+        <a href="https://github.com/qinyuanpei/qinyuanpei.github.io" target="_blank" rel="noopener" class="header-icon waves-effect waves-circle waves-light" id="menuGithub">
+            <i class="icon icon-lg icon-code-fork"></i>
+        </a>
+    </div>
+</header>
+<header class="content-header post-header">
+    <div class="container fade-scale">
+        <h1 class="title">使用Python抽取《半泽直树》原著小说人物关系</h1>
+        <h5 class="subtitle" id="subtitle">
+            
+            <time datetime="2020-12-08T22:49:47.000Z" itemprop="datePublished" class="page-time">
+  2020-12-08
+</time>
+
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90/">数据分析</a></li></ul>
+
+            
+        </h5>
+    </div>
+    
+
+</header>
+
+<div class="container body-wrap">
+    
+    <aside class="post-widget">
+        <nav class="post-toc-wrap" id="post-toc">
+            <h4>目录</h4>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#准备工作"><span class="post-toc-number">1.</span> <span class="post-toc-text">准备工作</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#原理说明"><span class="post-toc-number">2.</span> <span class="post-toc-text">原理说明</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#过程实现"><span class="post-toc-number">3.</span> <span class="post-toc-text">过程实现</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#结果展示"><span class="post-toc-number">4.</span> <span class="post-toc-text">结果展示</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#总结思考"><span class="post-toc-number">5.</span> <span class="post-toc-text">总结思考</span></a></li></ol>
+        </nav>
+    </aside>
+    
+    <article id="post-使用Python抽取《半泽直树》原著小说人物关系" class="post-article article-type-post fade" itemprop="blogPost">
+
+        <div class="post-card">
+            <h1 class="post-card-title">
+                使用Python抽取《半泽直树》原著小说人物关系
+            </h1>
+            <div class="post-meta">
+                <time class="post-time" title="2020-12-08 22:49:47" datetime="2020-12-08T22:49:47.000Z"  itemprop="datePublished">2020-12-08</time>
+
+                
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90/">数据分析</a></li></ul>
+
+
+
+                
+<span id="lc_counter_container_page_pv" title="文章总阅读量" data-page-url="" data-page-title="使用Python抽取《半泽直树》原著小说人物关系">
+    <i class="icon icon-eye icon-pr"></i><span id="lc_counter_value_page_pv"></span>
+</span>
+
+
+
+
+
+                
+    <span>
+        <i class="icon icon-clock-o"></i>
+        19 min.
+    </span>
+    
+            </div>
+            <div class="post-content" id="post-content" itemprop="postContent">
+                <p>此时此刻，2020年的最后一个月，不管过去这一年给我们留下了怎样的记忆，时间终究自顾自地往前走，留给我们的怀念已时日无多。如果要说2020年的年度日剧，我想《半泽直树》实至名归，这部在时隔七年后上映的续集，豆瓣评分高达9.4分，一度超越2013年第一部的9.3分，是当之无愧的现象级电视剧，期间甚至因为疫情原因而推迟播出，这不能不感谢为此付出辛勤努力的演职人员们。身为一个“打工人”，主角半泽直树那种百折不挠、恩怨分明的性格，难免会引起你我这种“社畜”们的共鸣，即使做不到“以牙还牙，加倍奉还”，至少可以活得像一个活生生的人。电视剧或许大家都看过了，那么，电视剧相对于原著小说有哪些改动呢？今天，就让我们使用Python来抽取半泽直树原著小说中的人物关系吧！</p>
+<h1 id="准备工作"><a href="#准备工作" class="headerlink" title="准备工作"></a>准备工作</h1><p>在开始今天的博客内容前，我们有一点准备工作要完成。考虑到小说人物关系抽取，属于自然语言处理(<strong>NLP</strong>)领域的内容，所以，除了准备好Python环境以外，我们需要提前准备相关的中文语料，在这里主要有：<a href="https://github.com/qinyuanpei/graph-relation/blob/master/input/半泽直树.txt" target="_blank" rel="noopener">半泽直树原著小说</a>、 <a href="https://github.com/qinyuanpei/graph-relation/blob/master/input/人名词典.txt" target="_blank" rel="noopener">半泽直树人名词典</a>、<a href="https://github.com/qinyuanpei/graph-relation/blob/master/input/别名词典.txt" target="_blank" rel="noopener">半泽直树别名词典</a>、<a href="https://github.com/qinyuanpei/graph-relation/blob/master/input/停用词词典.txt" target="_blank" rel="noopener">中文分词停用词表</a>。除此之外，我们需要安装<code>结巴分词</code>、<code>PyECharts</code>两个第三方库(<strong>注，可以通过pip直接安装</strong>)，以及用于展示人物关系的软件<code>Gephi</code>(<strong>注，这个软件依赖Java环境</strong>)。所以，你基本可以想到，我们会使用结巴分词对小说文本进行分词处理，而半泽直树人名列表则作为用户词典供结巴分词使用，经过一系列处理后，我们最终通过<code>Gephi</code>和<code>PyECharts</code>对结果进行可视化，通过分析人物间的关系，结合我们对电视剧剧情的掌握情况，我们就可以对本文所采用方法的效果进行评估，也许你认为两个人毫无联系，可最终他们以某种特殊的形式建立了联系，这就是我们要做这件事情的意义所在。本项目已托管在 <a href="https://github.com/qinyuanpei/graph-relation" target="_blank" rel="noopener">Github</a>上，供大家自由查阅。</p>
+<h1 id="原理说明"><a href="#原理说明" class="headerlink" title="原理说明"></a>原理说明</h1><p>这篇博客主要参考了 <a href="https://www.shiyanlou.com/courses/677" target="_blank" rel="noopener">Python 基于共现提取《釜山行》人物关系</a> 这个课程，该项目已在 Github 上开源，可以参考：<a href="https://github.com/Forec/text-cooccurrence" target="_blank" rel="noopener">https://github.com/Forec/text-cooccurrence</a>。这篇文章中提到了一种称之为“共现网络”的方法，它本质上是一种基于统计的信息提取方法。其基本原理是，当我们在阅读书籍或者观看影视作品时，在同一时间段内同时出现的人物，通常都会存在某种联系。所以，如果我们将小说中的每个人物都看作一个节点，将人物间的关系都看作一条连线，最终我们将会得到一个图(指数据结构中的<strong>Graph</strong>)。因为<code>Gephi</code>和<code>PyECharts</code>以及<code>NetworkX</code>都提供了针对<code>Graph</code>的可视化功能，因此，我们可以使用这种方法，对《半泽直树》原著小说中的人物关系进行抽取。当然，这种方法本身会存在一点局限性，这些我们会放在总结思考这部分来进行说明，而我们之所以需要准备人名词典，主要还是为了排除单纯的分词产生的干扰词汇的影响；准备别名词典，则是考虑到同一个人物，在不同的语境下会有不同的称谓。</p>
+<h1 id="过程实现"><a href="#过程实现" class="headerlink" title="过程实现"></a>过程实现</h1><p>这里，我们定义一个<code>RelationExtractor</code>类来实现小说人物关系的抽取。其中，<code>extract()</code>方法用于抽取制定小说文本中的人物关系，<code>exportGephi()</code>方法用于输出Gephi格式的节点和边信息， <code>exportECharts()</code>方法则可以使用<code>ECharts</code>对人物关系进行渲染和输出：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> os, sys</span><br><span class="line"><span class="keyword">import</span> jieba, codecs, math</span><br><span class="line"><span class="keyword">import</span> jieba.posseg <span class="keyword">as</span> pseg</span><br><span class="line"><span class="keyword">from</span> pyecharts <span class="keyword">import</span> options <span class="keyword">as</span> opts</span><br><span class="line"><span class="keyword">from</span> pyecharts.charts <span class="keyword">import</span> Graph</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">RelationExtractor</span>:</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, fpStopWords, fpNameDicts, fpAliasNames)</span>:</span></span><br><span class="line">        <span class="comment"># 人名词典</span></span><br><span class="line">        self.name_dicts = [line.strip().split(<span class="string">' '</span>)[<span class="number">0</span>] <span class="keyword">for</span> line <span class="keyword">in</span> open(fpNameDicts,<span class="string">'rt'</span>,encoding=<span class="string">'utf-8'</span>).readlines()]</span><br><span class="line">        <span class="comment"># 停止词表</span></span><br><span class="line">        self.stop_words = [line.strip() <span class="keyword">for</span> line <span class="keyword">in</span> open(fpStopWords,<span class="string">'rt'</span>,encoding=<span class="string">'utf-8'</span>).readlines()]</span><br><span class="line">        <span class="comment"># 别名词典</span></span><br><span class="line">        self.alias_names = dict([(line.split(<span class="string">','</span>)[<span class="number">0</span>].strip(), line.split(<span class="string">','</span>)[<span class="number">1</span>].strip()) <span class="keyword">for</span> line <span class="keyword">in</span> open(fpAliasNames,<span class="string">'rt'</span>,encoding=<span class="string">'utf-8'</span>).readlines()])</span><br><span class="line">        <span class="comment"># 加载词典</span></span><br><span class="line">        jieba.load_userdict(fpNameDicts)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 提取指定小说文本中的人物关系</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">extract</span><span class="params">(self, fpText)</span>:</span></span><br><span class="line">        <span class="comment"># 人物关系</span></span><br><span class="line">        relationships = &#123;&#125;</span><br><span class="line">        <span class="comment"># 人名频次</span></span><br><span class="line">        name_frequency = &#123;&#125;</span><br><span class="line">        <span class="comment"># 每个段落中的人名</span></span><br><span class="line">        name_in_paragraph = []</span><br><span class="line"></span><br><span class="line">        <span class="comment"># 读取小说文本，统计人名出现的频次，以及每个段落中出现的人名</span></span><br><span class="line">        <span class="keyword">with</span> codecs.open(fpText, <span class="string">"r"</span>, <span class="string">"utf8"</span>) <span class="keyword">as</span> f:</span><br><span class="line">            <span class="keyword">for</span> line <span class="keyword">in</span> f.readlines():</span><br><span class="line">                poss = pseg.cut(line)</span><br><span class="line">                name_in_paragraph.append([])</span><br><span class="line">                <span class="keyword">for</span> w <span class="keyword">in</span> poss:</span><br><span class="line">                    <span class="keyword">if</span> w.flag != <span class="string">"nr"</span> <span class="keyword">or</span> len(w.word) &lt; <span class="number">2</span>:</span><br><span class="line">                        <span class="keyword">continue</span></span><br><span class="line">                    <span class="keyword">if</span> (w.word <span class="keyword">in</span> self.stop_words):</span><br><span class="line">                        <span class="keyword">continue</span></span><br><span class="line">                    <span class="keyword">if</span> (<span class="keyword">not</span> w.word <span class="keyword">in</span> self.name_dicts <span class="keyword">and</span> w.word != <span class="string">'半泽'</span>):</span><br><span class="line">                        <span class="keyword">continue</span></span><br><span class="line">                    <span class="comment"># 规范化人物姓名，例：半泽-&gt;半泽直树，大和田-&gt;大和田晓</span></span><br><span class="line">                    word = w.word</span><br><span class="line">                    <span class="keyword">if</span> (self.alias_names.get(word)):</span><br><span class="line">                        word = self.alias_names.get(word)  </span><br><span class="line">                    name_in_paragraph[<span class="number">-1</span>].append(word)</span><br><span class="line">                    <span class="keyword">if</span> name_frequency.get(word) <span class="keyword">is</span> <span class="literal">None</span>:</span><br><span class="line">                        name_frequency[word] = <span class="number">0</span></span><br><span class="line">                        relationships[word] = &#123;&#125;</span><br><span class="line">                    name_frequency[word] += <span class="number">1</span></span><br><span class="line"></span><br><span class="line">        <span class="comment"># 基于共现组织人物关系</span></span><br><span class="line">        <span class="keyword">for</span> paragraph <span class="keyword">in</span> name_in_paragraph:</span><br><span class="line">            <span class="keyword">for</span> name1 <span class="keyword">in</span> paragraph:</span><br><span class="line">                <span class="keyword">for</span> name2 <span class="keyword">in</span> paragraph:</span><br><span class="line">                    <span class="keyword">if</span> name1 == name2:</span><br><span class="line">                        <span class="keyword">continue</span></span><br><span class="line">                    <span class="keyword">if</span> relationships[name1].get(name2) <span class="keyword">is</span> <span class="literal">None</span>:</span><br><span class="line">                        relationships[name1][name2] = <span class="number">1</span></span><br><span class="line">                    <span class="keyword">else</span>:</span><br><span class="line">                        relationships[name1][name2] += <span class="number">1</span> </span><br><span class="line">        </span><br><span class="line">        <span class="comment"># 返回节点和边</span></span><br><span class="line">        <span class="keyword">return</span> name_frequency, relationships</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 输出Gephi格式的节点和边信息</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">exportGephi</span><span class="params">(self, nodes, relationships)</span>:</span></span><br><span class="line">        <span class="comment"># 输出节点</span></span><br><span class="line">        <span class="keyword">with</span> codecs.open(<span class="string">"./output/node.txt"</span>, <span class="string">"w"</span>, <span class="string">"gbk"</span>) <span class="keyword">as</span> f:</span><br><span class="line">            f.write(<span class="string">"Id Label Weight\r\n"</span>)</span><br><span class="line">            <span class="keyword">for</span> name, freq <span class="keyword">in</span> nodes.items():</span><br><span class="line">                f.write(name + <span class="string">" "</span> + name + <span class="string">" "</span> + str(freq) + <span class="string">"\r\n"</span>)</span><br><span class="line"></span><br><span class="line">        <span class="comment"># 输出边</span></span><br><span class="line">        <span class="keyword">with</span> codecs.open(<span class="string">"./output/edge.txt"</span>, <span class="string">"w"</span>, <span class="string">"gbk"</span>) <span class="keyword">as</span> f:</span><br><span class="line">            f.write(<span class="string">"Source Target Weight\r\n"</span>)</span><br><span class="line">            <span class="keyword">for</span> name, edges <span class="keyword">in</span> relationships.items():</span><br><span class="line">                <span class="keyword">for</span> v, w <span class="keyword">in</span> edges.items():</span><br><span class="line">                    <span class="keyword">if</span> w &gt; <span class="number">0</span>:</span><br><span class="line">                        f.write(name + <span class="string">" "</span> + v + <span class="string">" "</span> + str(w) + <span class="string">"\r\n"</span>)   </span><br><span class="line"></span><br><span class="line">    <span class="comment"># 使用ECharts对人物关系进行渲染</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">exportECharts</span><span class="params">(self, nodes, relationships)</span>:</span></span><br><span class="line">        <span class="comment"># 总频次，用于数据的归一化</span></span><br><span class="line">        total = sum(list(map(<span class="keyword">lambda</span> x:x[<span class="number">1</span>], nodes.items())))</span><br><span class="line"></span><br><span class="line">        <span class="comment"># 输出节点</span></span><br><span class="line">        nodes_data = []</span><br><span class="line">        <span class="keyword">for</span> name, freq <span class="keyword">in</span> nodes.items():</span><br><span class="line">            nodes_data.append(opts.GraphNode(</span><br><span class="line">                name = name, </span><br><span class="line">                symbol_size = round(freq / total * <span class="number">100</span>, <span class="number">2</span>), </span><br><span class="line">                value = freq,</span><br><span class="line">            )),</span><br><span class="line"></span><br><span class="line">        <span class="comment"># 输出边</span></span><br><span class="line">        links_data = []</span><br><span class="line">        <span class="keyword">for</span> name, edges <span class="keyword">in</span> relationships.items():</span><br><span class="line">                <span class="keyword">for</span> v, w <span class="keyword">in</span> edges.items():</span><br><span class="line">                    <span class="keyword">if</span> w &gt; <span class="number">0</span>:</span><br><span class="line">                        links_data.append(opts.GraphLink(</span><br><span class="line">                            source = v, </span><br><span class="line">                            target = w, </span><br><span class="line">                            value = w</span><br><span class="line">                        ))</span><br><span class="line"></span><br><span class="line">        <span class="comment"># 绘制Graph</span></span><br><span class="line">        c = (</span><br><span class="line">            Graph()</span><br><span class="line">            .add(</span><br><span class="line">                <span class="string">""</span>,</span><br><span class="line">                nodes_data,</span><br><span class="line">                links_data,</span><br><span class="line">                gravity = <span class="number">0.2</span>,</span><br><span class="line">                repulsion = <span class="number">8000</span>,</span><br><span class="line">                is_draggable = <span class="literal">True</span>,</span><br><span class="line">                symbol = <span class="string">'circle'</span>,</span><br><span class="line">                linestyle_opts = opts.LineStyleOpts(</span><br><span class="line">                    curve = <span class="number">0.3</span>, </span><br><span class="line">                    width = <span class="number">0.5</span>, </span><br><span class="line">                    opacity = <span class="number">0.7</span></span><br><span class="line">                ),</span><br><span class="line">                edge_label = opts.LabelOpts(</span><br><span class="line">                    is_show = <span class="literal">False</span>, </span><br><span class="line">                    position = <span class="string">"middle"</span>, </span><br><span class="line">                    formatter = <span class="string">"&#123;b&#125;-&gt;&#123;c&#125;"</span></span><br><span class="line">                ),</span><br><span class="line">            )</span><br><span class="line">            .set_global_opts(</span><br><span class="line">                title_opts = opts.TitleOpts(title=<span class="string">"半泽直树原著小说人物关系抽取"</span>)</span><br><span class="line">            )</span><br><span class="line">            .render(<span class="string">"./docs/半泽直树原著小说人物关系抽取.html"</span>)</span><br><span class="line">        )</span><br></pre></td></tr></table></figure>
+<p>你可以注意到，在<code>input</code>目录中，博主已经准备好了中文语料。因此，我们可以通过下面的代码来完成任务关系抽取：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">extractor = RelationExtractor(<span class="string">'./input/停用词词典.txt'</span>,</span><br><span class="line">    <span class="string">'./input/人名词典.txt'</span>,</span><br><span class="line">    <span class="string">'./input/别名词典.txt'</span></span><br><span class="line">)</span><br><span class="line">nodes, relationships = extractor.extract(<span class="string">'./input/半泽直树.txt'</span>)</span><br><span class="line">extractor.exportGephi(nodes, relationships)</span><br><span class="line">extractor.exportECharts(nodes, relationships)</span><br></pre></td></tr></table></figure>
+<p>此时，我们可以分别在<code>output</code>目录和<code>docs</code>目录获得<code>Gephi</code>和<code>ECharts</code>相关的渲染结果。</p>
+<h1 id="结果展示"><a href="#结果展示" class="headerlink" title="结果展示"></a>结果展示</h1><p>这里，通过Gephi软件导入生成的节点和边信息，这两个信息默认情况下在<code>output</code>目录下。如果你熟悉这个软件的使用的话，你可以得到下面的结果：</p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="https://i.loli.net/2020/12/09/4TV9CAoE6lksGMg.png" alt="使用Gephi渲染的小说人物关系图" title="" referrerpolicy="no-referrer">
+                </div>
+                <div class="image-caption">使用Gephi渲染的小说人物关系图</div>
+            </figure>
+
+<p>作为对比，博主这里同时提供了使用ECharts渲染的小说人物关系图：</p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="https://i.loli.net/2020/12/09/V5pD6mJKCMsN4uS.png" alt="使用ECharts渲染的小说人物关系图" title="" referrerpolicy="no-referrer">
+                </div>
+                <div class="image-caption">使用ECharts渲染的小说人物关系图</div>
+            </figure>
+
+<p>或者，可以直接访问博主托管在 Github Pages 上的 <a href="https://qinyuanpei.github.io/graph-relation/半泽直树原著小说人物关系抽取.html">在线版本</a> 。关于Gephi软件的使用，请参考： <a href="https://www.jianshu.com/p/86145943695a" target="_blank" rel="noopener">Gephi网络图极简教程</a>。关于PyECharts的使用，请参考： <a href="https://pyecharts.org/#/" target="_blank" rel="noopener">PyECharts</a>。</p>
+<h1 id="总结思考"><a href="#总结思考" class="headerlink" title="总结思考"></a>总结思考</h1><p>通过生成的人物关系图，可以发现下列规律：</p>
+<ul>
+<li>大多数人物间的关系是正确的，譬如<strong>东田-&gt;浅野匡-&gt;半泽</strong>这条线，对应的是第一季西大阪钢铁5亿贷款的事件，而<strong>箕部-&gt;白井-&gt;半泽</strong>这条线，显然对应的第二季议员利用“炼金术”敛财的事件。</li>
+<li>我们发现渡真利拥有仅次于半泽的“连线”数量，这符合他在剧中掌握大量信息来源、职场上八面玲珑的形象设定。相比之下，同样作为半泽好友的近藤和苅田，则没有这样强大的光环。</li>
+<li>关于大和田，我们都知道他在第二季属于编剧强行“加戏”，一定程度上是在顶替内藤部长的作用，大和田实际上并未参与第二季的剧情，这一点从图中人物节点的联系和大小可以看出。</li>
+<li>日本人似乎更喜欢使用姓氏，由于妻子要跟随丈夫的姓氏，剧中很多女性角色譬如半泽花、浅野利惠等似乎都不太好提取出来，除非是像白井、谷川、藤泽这些重要的剧情人物。</li>
+</ul>
+<p>考虑到，小说中同一个人的称呼通常会有很多种，与之相关联的领域被称为“中文指代消解问题”，使用姓氏作为关键字会造成“女性角色”的缺失，而这种基于“共现”的理论，无法解决A在B交谈的过程中提到C的问题，此时，C和A、C和B可能并没有直接的联系，譬如图中的垣内，理论上与西大阪钢铁5亿贷款事件并无直接联系，因为剧情中参与融资的主要是新人中西，更不用说老员工角田居然“孤零零”的一个人，而主流的命名实体识别的理论基本都针对三元组，所以，在这里要心疼下角田这位老人。</p>
+<p>在目前的人物关系抽取案例中，这种情况称为“无效的人名实体共现句”，所以，更好的做法是，采用文本分类模型，结合依存句法去识别实体间的关系，比如同事关系、朋友关系或者亲属关系等等，它有一个非常专业的名词，称为命名实体识别(NER)，而这会让我们的这张图变得更加丰富。在这个方向上，我个人推荐使用哈工大的语言技术平台(LTP)作为进一步改进，因为它可以更好地识别人名。好了，以上就是这篇博客的全部内容啦，欢迎大家在博客下面留言，喜欢我的博客话，请一键三连，点赞收藏，谢谢大家！</p>
+
+                
+
+                
+
+
+<div class="recommended_posts">
+    <h1>推荐阅读</h1>
+    <ul>
+        
+        <li><a href="https://qinyuanpei.github.io/posts/1772340994/">SnowNLP 使用自定义语料进行模型训练</a></li>
+        
+        <li><a href="https://qinyuanpei.github.io/posts/3602353334/">作为技术宅的我，是这样追鬼滅の刃的</a></li>
+        
+        <li><a href="https://qinyuanpei.github.io/posts/1960676615/">使用Python开发插件化应用程序</a></li>
+        
+        <li><a href="https://qinyuanpei.github.io/posts/1329254441/">使用Python生成博客目录并自动更新README</a></li>
+        
+        <li><a href="https://qinyuanpei.github.io/posts/3247093203/">使用多线程为你的Python爬虫提速的N种姿势，你会几种？</a></li>
+        
+    </ul>
+</div>
+
+            </div>
+            
+<blockquote class="post-copyright">
+    <div class="content">
+        <p><b>版权声明：</b>
+        <a href="https://qinyuanpei.github.io/posts/1427872047/" rel="external">使用Python抽取《半泽直树》原著小说人物关系</a>
+        ，由&nbsp;<a href="/about" target="_blank" rel="external">飞鸿踏雪</a>&nbsp;
+        首次发表于&nbsp;<a href="/" target="_blank" rel="external">一个人的孤落时辰</a>&nbsp;
+        ，本文地址为：<a href="https://qinyuanpei.github.io/posts/1427872047/" target="_blank" rel="external">https://qinyuanpei.github.io/posts/1427872047/</a>
+        ，转载请注明<b>作者</b>和<b>出处</b>。</p>
+    </div>
+    <footer>
+        <a href="https://qinyuanpei.github.io">
+            <img src="/assets/images/avatar.jpg" alt="飞鸿踏雪">
+            飞鸿踏雪
+        </a>
+    </footer>
+</blockquote>
+
+
+            
+<div class="page-reward">
+    <a id="rewardBtn" href="javascript:;" class="page-reward-btn waves-effect waves-circle waves-light">赏</a>
+</div>
+
+
+            <div class="post-footer">
+                
+	<ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ECharts/" rel="tag">ECharts</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Gephi/" rel="tag">Gephi</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/NLP/" rel="tag">NLP</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Python/" rel="tag">Python</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%8D%8A%E6%B3%BD%E7%9B%B4%E6%A0%91/" rel="tag">半泽直树</a></li></ul>
+
+                
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://qinyuanpei.github.io/posts/1427872047/&title=《使用Python抽取《半泽直树》原著小说人物关系》 — 一个人的孤落时辰&pic=https://qinyuanpei.github.ioassets/images/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://qinyuanpei.github.io/posts/1427872047/&title=《使用Python抽取《半泽直树》原著小说人物关系》 — 一个人的孤落时辰&source=一个人的孤落时辰 | 纵有疾风起，人生不言弃 | 隐约雷鸣，阴霾天空，即使天无雨，我亦留此地。" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://qinyuanpei.github.io/posts/1427872047/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《使用Python抽取《半泽直树》原著小说人物关系》 — 一个人的孤落时辰&url=https://qinyuanpei.github.io/posts/1427872047/&via=https://qinyuanpei.github.io" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://qinyuanpei.github.io/posts/1427872047/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+      
+      <li>
+        <a class="google share-sns" target="_blank" onClick="show_yp()" data-title=" 生成海报">
+          <i class="icon icon-file-image-o"></i>
+        </a>
+      </li>
+      
+    </ul>
+ </div>
+
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
+            </div>
+        </div>
+
+        
+<nav class="post-nav flex-row flex-justify-between">
+  
+    <div class="waves-block waves-effect prev">
+      <a href="/posts/3602353334/" id="post-prev" class="post-nav-link">
+        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
+        <h4 class="title">作为技术宅的我，是这样追鬼滅の刃的</h4>
+      </a>
+    </div>
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/posts/2147036181/" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h4 class="title">厉害了！打工人用Python分析西安市职位信息</h4>
+      </a>
+    </div>
+  
+</nav>
+
+
+        
+    <div id="comment"></div>
+<script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+<script src='//unpkg.com/valine/dist/Valine.min.js'></script>
+<script type="text/javascript">
+new Valine({
+    el: '#comment' ,
+    notify: false, 
+    verify: true, 
+    appId: 'JbHqRp2eMrTgIwYpfERH0g79-gzGzoHsz',
+    appKey: 'VsiKvLuiBGvJL1XrAfv7siY2',
+    placeholder: '云中谁寄锦书来，雁字回时，月满西楼。&#10;Tips：如果希望收到我的评论回复，请至少留下你的邮箱哦:)',
+    path:'https://qinyuanpei.github.io/posts/1427872047/', 
+    avatar:'identicon',
+    requiredFields: ['nick','mail']
+});
+</script>
+
+
+
+
+    </article>
+    
+<div id="reward" class="page-modal reward-lay">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <h3 class="reward-title">
+        <i class="icon icon-quote-left"></i>
+        赠人玫瑰，手有余香
+        <i class="icon icon-quote-right"></i>
+    </h3>
+    <div class="reward-content">
+        
+        <div class="reward-code">
+            <img id="rewardCode" src="/assets/images/wechat.png" alt="打赏二维码">
+        </div>
+        
+        <label class="reward-toggle">
+            <input id="rewardToggle" type="checkbox" class="reward-toggle-check"
+                data-wechat="/assets/images/wechat.png" data-alipay="/assets/images/alipay.jpg">
+            <div class="reward-toggle-ctrol">
+                <span class="reward-toggle-item wechat">微信</span>
+                <span class="reward-toggle-label"></span>
+                <span class="reward-toggle-item alipay">支付宝</span>
+            </div>
+        </label>
+        
+    </div>
+</div>
+
+
+    <script type="text/javascript" src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/yoniu.min.js"></script>
+<style type='text/css'>
+	body.active-yp {
+		overflow: hidden;
+	}
+	.yp-fc-btn{
+		display: flex;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		align-items: center;
+		justify-content: space-between;
+		font-size: 13px;
+	}
+	.yp-fc-btn span{
+		cursor: pointer;
+		padding: 2px 10px;
+		color: #4b4b4b;
+		border: #4b4b4b 1px solid;
+		border-radius:5px;
+	}
+	#yp-hide{
+		position: fixed;
+		display: flex;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		justify-content: center;
+		flex-direction: column;
+		left:0;
+		top:0;
+		right:0;
+		bottom:0;
+		background-color:rgba(0,0,0,.5);
+		z-index: 99999;
+		visibility: hidden;
+	}
+	#yoniu-poster{
+		box-sizing: border-box;
+		width: 350px;
+		height: 467.2px;
+		background-color: #fff;
+		margin: 0 auto;
+		padding: 0;
+		line-height: 1.6;
+		text-align:justify;
+	}
+	
+	.yp-img {
+		min-height: 240px;
+		position: relative;
+		display: flex;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		justify-content: flex-end;
+		flex-direction: column;
+		background-position: 50% 50%;
+		background-size: cover;
+		overflow:hidden;
+	}
+	.yp-img>div{
+		padding: 10px 20px;
+	}
+	.yp-name{
+		display: block;
+		color: #fff;
+		font-size: 20px;
+		font-weight: 600;
+		text-shadow: #4b4b4b 0.1em 0.1em 0.2em;
+		margin-top: 10px;
+	}
+	.yp-sort{
+		padding: 3px 10px;
+		font-size: 12px;
+		color: #fff;
+		background: #2e2e2e;
+	}
+	.yp-des{
+		color: #2e2e2e;
+		font-size: 14px;
+		margin: 20px;
+		height: 67.2px;
+	}
+	.yp-qcode{
+		display: flex;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		justify-content: space-between;
+		align-items: center;
+		margin: 10px;
+		padding: 10px 20px;
+		background: #f5f5f5;
+		color: #818181;
+		border-radius: 10px;
+	}
+	.yp-tips{
+		display: flex;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		justify-content: space-between;
+		align-items: center;
+		color: #ccc;
+		margin: 0 10px 10px;
+		font-size: 10px;
+		letter-spacing: 1.5px;
+	}
+	.yp-btns{
+		display: flex;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		align-items: stretch;
+		justify-content: center;
+		width:350px;
+		margin: 0 auto;
+	}
+	.yp-btns>span{
+		display: flex;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		align-items: center;
+		justify-content: center;
+		font-size: 14px;
+		padding: 10px 15px;
+		background:rgba(0,0,0,.2);
+		color: #f5f5f5;
+		cursor: pointer;
+	}
+	.yp-btns>span>a{
+		color: #f5f5f5;
+	}
+	.yp-btns>span>a:hover{
+		text-decoration:none;
+	}
+	#yp-close{
+		font-size: 18px;
+		font-weight: 600;
+	}
+</style>
+<div id="yp-hide">
+    <div id="yoniu-poster">
+        <div class="yp-img" id="yp-img">
+            <div>
+                <span class="yp-sort">数据分析</span>
+                <span class="yp-name">使用Python抽取《半泽直树》原著小说人物关系</span>
+            </div>
+        </div>
+        <div class="yp-des">    
+            
+                此时此刻，2020年的最后一个月，不管过去这一年给我们留下了怎样的记忆，时间终究自顾自地往前走，留给我们的怀念已时日无多。如果要说2020年的年...
+            
+        </div>
+        <div class="yp-qcode">
+            <span>扫描二维码阅读原文</span>
+            <img id="yp-qcode" width="64px" src="//api.qrserver.com/v1/create-qr-code/?data=https://qinyuanpei.github.io/posts/1427872047/">
+        </div>
+        <div class="yp-tips">
+            <span>一个人的孤落时辰</span>
+            <span><time class="post-time" title="2020-12-08 22:49:47" datetime="2020-12-08T22:49:47.000Z"  itemprop="datePublished">2020-12-08</time>
+</span>
+        </div>
+    </div>
+    <div class="yp-btns">
+        <span id="yp-load-yp" onClick="load_yp()">生成海报</span>
+        <span><a id="yp-download"></a></span>
+        <span id="yp-close" onClick="close_yp()">×</span>
+    </div>
+</div>
+<script type="text/javascript">
+    function show_yp(){
+        window.scrollTo(0, 0);
+        document.body.setAttribute("class","active-yp");
+        let cover = document.getElementsByTagName('img')[1];
+        if (cover != null && typeof(cover) != 'undefined') {
+            document.getElementById('yp-img').style.backgroundImage = `url(${cover.src})`;
+        } else {
+            document.getElementById('yp-img').style.backgroundColor = '#d7dbf0';
+        }
+        document.getElementById("yp-hide").style.visibility = "visible";
+    }
+    function close_yp(){
+        var domClass = document.body.getAttribute("class");
+        domClass = domClass.replace("active-yp","");
+        document.body.setAttribute("class",domClass);
+        document.getElementById("yp-hide").style.visibility = "hidden";
+    }
+    function load_yp(){
+        document.getElementById('yp-load-yp').textContent = '海报生成中...';
+        setTimeout(function() {
+            h2c_();
+        },2000);
+
+    }
+</script>
+
+</div>
+
+        <footer class="footer">
+    <div class="top">
+        
+   <p>
+      <span id="lc_counter_container_site_uv">
+         <i class="icon icon-user"></i><span id="lc_counter_value_site_uv"></span>
+      </span>
+      <span id="lc_counter_container_site_pv">
+         <i class="icon icon-eye"></i><span id="lc_counter_value_site_pv"></span>
+      </span>
+  </p>
+
+
+        <p>
+   <a id="jinrishici-sentence" href="https://www.jinrishici.com/" target="_blank" rel="noopener">加载中</a>
+</p>
+<script src="https://sdk.jinrishici.com/v2/browser/jinrishici.js" charset="utf-8"></script>
+<script>
+   jinrishici.load(function(result) {
+      document.querySelector('#subtitle').innerText = result.data.content;
+      document.querySelector('#jinrishici-sentence').innerText = result.data.content;
+  });
+</script>
+            <!--Todo: 考虑重构为插件 -->
+            <p>
+                
+                    <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+                
+                <span>
+                    <a href="https://github.com/qinyuanpei" target="_blank" rel="license noopener" title="Github">
+                        <i class="icon icon-lg icon-github"></i>
+                    </a>
+                </span>
+                <span>
+                    <a href="https://weibo.com/1278609231/profile" target="_blank" rel="license noopener" title="微博">
+                        <i class="icon icon-lg icon-weibo"></i>
+                    </a>
+                </span>
+                <span>
+                    <a href="https://www.douban.com/people/60029335/" target="_blank" rel="license noopener" title="豆瓣">
+                        <i class="icon icon-lg icon-douban"></i>
+                    </a>
+                </span>
+                <span>
+                    <a href="https://www.zhihu.com/people/qinyuanpei" target="_blank" rel="license noopener" title="知乎">
+                        <i class="icon icon-lg icon-zhihu-square"></i>
+                    </a>
+                </span>
+                <span>
+                    <a href="https://blog.csdn.net/qinyuanpei" target="_blank" rel="license noopener" title="CSDN">
+                        <i class="icon icon-lg">C</i>
+                    </a>
+                </span>
+                <span>
+                    <a href="https://music.163.com/#/user/home?id=47002864" target="_blank" rel="license noopener" title="网易音乐">
+                        <i class="icon icon-lg icon-wangyiyunyinyue"></i>
+                    </a>
+                </span>
+            </p>
+        
+    </div>
+    <div class="bottom">
+        <p><span>飞鸿踏雪 &copy; 2014 - 2021</span><br>
+            
+                
+                Powered by <a href="http://hexo.io/" target="_blank">Hexo</a> & Theme by <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a><br>
+                
+                
+                    <p>Hosted by <a href="https://pages.github.com" target="_blank" rel="noopener" style="font-weight: bold">Github Pages</a></p>
+                
+        </p>
+    </div>
+</footer>
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span
+        class="icon icon-lg icon-chevron-up"></span></a>
+
+    
+
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://qinyuanpei.github.io/posts/1427872047/&title=《使用Python抽取《半泽直树》原著小说人物关系》 — 一个人的孤落时辰&pic=https://qinyuanpei.github.ioassets/images/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://qinyuanpei.github.io/posts/1427872047/&title=《使用Python抽取《半泽直树》原著小说人物关系》 — 一个人的孤落时辰&source=一个人的孤落时辰 | 纵有疾风起，人生不言弃 | 隐约雷鸣，阴霾天空，即使天无雨，我亦留此地。" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://qinyuanpei.github.io/posts/1427872047/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《使用Python抽取《半泽直树》原著小说人物关系》 — 一个人的孤落时辰&url=https://qinyuanpei.github.io/posts/1427872047/&via=https://qinyuanpei.github.io" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://qinyuanpei.github.io/posts/1427872047/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+      
+      <li>
+        <a class="google share-sns" target="_blank" onClick="show_yp()" data-title=" 生成海报">
+          <i class="icon icon-file-image-o"></i>
+        </a>
+      </li>
+      
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="//api.qrserver.com/v1/create-qr-code/?data=https://qinyuanpei.github.io/posts/1427872047/" alt="微信分享二维码">
+</div>
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.6/waves.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/4.2.1/echarts.min.js"></script>
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/echarts-wordcloud.min.js" async></script>
+<script>
+    var BLOG = { ROOT: '/', SHARE: true, REWARD: true };
+
+
+</script>
+
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/main.min.js"></script>
+
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/search.min.js" async></script>
+
+
+
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/heart.min.js" async></script>
+
+
+
+
+
+
+
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/leancloud-counter.min.js"></script>
+<script>
+        (function () {
+            var appId = 'JbHqRp2eMrTgIwYpfERH0g79-gzGzoHsz';
+            var appKey = 'VsiKvLuiBGvJL1XrAfv7siY2';
+            new VisitorCounter().init({
+                appId: appId,       //应用ID, 必输
+                appKey: appKey,      //应用Key, 必输
+                region: '华北',      //华东,华北,国际, 默认华东
+                domain: '',      //自定义域名
+                collectIP: true, //是否收集IP及位置信息, 默认开启
+                collectUA: true  //是否收集UserAgent, 默认开启
+            });
+        })();
+</script>
+
+
+
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/vconsole.min.js"></script>
+<script type="text/javascript">
+    //当地址中存在debug=true时，实例化vConsole
+    if (location.href.indexOf('debug=true') > -1) {
+        var vConsole = new VConsole();
+    }
+</script>
+
+
+    <script>
+    //国内用户自动重定向Coding Pages镜像
+    // var ipInfo = JSON.parse(localStorage.getItem('ipInfo'));
+    // if (ipInfo.country_code == 'CN') {
+    //     location.href = location.href.replace('qinyuanpei.github.io', 'blog.yuanpei.me');
+    // }
+    </script>
+
+
+<script>
+titleArray = [];
+function scrollTitle() {
+    if (titleArray.length == 0) return;
+    titleArray.push(titleArray[0]);
+	titleArray.shift();
+	document.title = titleArray.join("");
+}
+setInterval(scrollTitle, 500);
+(function() {
+    var originTitile = document.title, titleTime;
+    document.addEventListener('visibilitychange', function() {
+        if (document.hidden) {
+            titleArray = originTitile.split('');
+            clearTimeout(titleTime);
+        } else {
+            document.title = originTitile;
+            titleArray = originTitile.split('');
+            titleTime = setTimeout(function() {
+                document.title = originTitile;
+                titleArray = [];
+            },2000);
+        }
+    });
+})();
+</script>
+
+
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/ribbon.min.js"></script>
+</body>
+</html>
