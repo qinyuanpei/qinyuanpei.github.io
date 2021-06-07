@@ -1,0 +1,875 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+    
+<script async defer data-domain="blog.yuanpei.me" src="https://plausible.io/js/plausible.js"></script>
+    
+    <meta charset="utf-8">
+    <!-- HTTP 1.1 -->  
+    <meta http-equiv="pragma" content="no-cache">  
+    <!-- HTTP 1.0 -->  
+    <meta http-equiv="cache-control" content="no-cache">
+    <!-- 微博图床防盗链 --> 
+    <!-- <meta name="referrer" content="no-referrer"/> -->
+    <!--Google站点验证-->
+    
+    <!--百度站点验证-->
+    
+    
+    <!--Google AdSense-->
+    
+    <!--Bing站点验证-->
+    <meta name="msvalidate.01" content="713A48A3FE17D4841C292A6B3942EB4C" />
+    
+    <title>
+        在Hexo中为文章自动添加版权信息声明模块 | 一个人的孤落时辰 | 纵有疾风起，人生不言弃
+    </title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+        <meta name="theme-color" content="#3F51B5">
+    
+
+    <meta name="keywords" content="Hexo,版权,知识共享,秦元培,技术博客,生活随笔,个人博客,NET,Python,数据挖掘,数据分析,NLP">
+    
+        <meta name="description" content="大家可以看到这里就是一段HTML代码，因为我们要引入的这个模板和article.ejs在同一个页面中，所以我们可以直接在这里调用item这个变量，而item这个变量里是封装了当前文章的标题和链接的，因此我们可以顺利成章的构造这样一段HTML代码，因为博主不会写CSS样式，所以使用了一个默认的代码样式来完成这个工作，如果大家懂CSS，请自行发挥你的创意将它做得更好;&lt;div class=&#34;article-content&#34;&gt;;&lt;div class=&#34;article-content&#34;&gt;;我们可以注意到文章的内容是在&lt;%- item.content %&gt;这个标签里，因此我们如果要在文章中增加内容，只需要在&lt;%- item.content %&gt;的后面引入一个ejs模板文件即可，所以我们接下在article.ejs的同级目录下创建一个declare.ejs文件：;好了，废话少说，放码过来，我们下面来看看怎么在Hexo中的文章中增加一个展示版权信息的模块，这里以[Jacman](https://github.com/wuchong/jacman)主题为例，我们首先定位到该主题文件夹下的\layout\_partial\post\article.ejs文件：">
+    
+    <meta name="description" content="大家可以看到这里就是一段HTML代码，因为我们要引入的这个模板和article.ejs在同一个页面中，所以我们可以直接在这里调用item这个变量，而item这个变量里是封装了当前文章的标题和链接的，因此我们可以顺利成章的构造这样一段HTML代码，因为博主不会写CSS样式，所以使用了一个默认的代码样式来完成这个工作，如果大家懂CSS，请自行发挥你的创意将它做得更好;;;我们可以注意到文章的内容是在这">
+<meta property="og:type" content="article">
+<meta property="og:title" content="在Hexo中为文章自动添加版权信息声明模块">
+<meta property="og:url" content="https://qinyuanpei.github.io/posts/2950334112/index.html">
+<meta property="og:site_name" content="一个人的孤落时辰">
+<meta property="og:description" content="大家可以看到这里就是一段HTML代码，因为我们要引入的这个模板和article.ejs在同一个页面中，所以我们可以直接在这里调用item这个变量，而item这个变量里是封装了当前文章的标题和链接的，因此我们可以顺利成章的构造这样一段HTML代码，因为博主不会写CSS样式，所以使用了一个默认的代码样式来完成这个工作，如果大家懂CSS，请自行发挥你的创意将它做得更好;;;我们可以注意到文章的内容是在这">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2015-11-15T13:12:22.000Z">
+<meta property="article:modified_time" content="2021-06-07T01:20:58.693Z">
+<meta property="article:author" content="飞鸿踏雪">
+<meta property="article:tag" content="Hexo">
+<meta property="article:tag" content="版权">
+<meta property="article:tag" content="知识共享">
+<meta name="twitter:card" content="summary">
+    
+        <link rel="alternate" type="application/atom+xml" title="一个人的孤落时辰" href="/atom.xml">
+    
+    <link rel="shortcut icon" href="/assets/images/favicon.ico">
+    
+        <link rel="manifest" href="/manifest.json">
+    
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master//assets/styles/style.css">
+    <script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/instantclick.min.js"></script>
+    <script>window.lazyScripts=[]</script>
+    <!-- custom head -->
+    
+
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu" class="hide" >
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap" style="background-image:url(/assets/images/brand.jpg)">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/assets/images/avatar.jpg" alt="avatar">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">飞鸿踏雪</h5>
+          <a href="mailto:qinyuanpei@163.com" title="qinyuanpei@163.com" class="mail">qinyuanpei@163.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/"  >
+                <i class="icon icon-lg icon-home"></i>
+                主页
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives"  >
+                <i class="icon icon-lg icon-archives"></i>
+                归档
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags"  >
+                <i class="icon icon-lg icon-tags"></i>
+                标签
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/categories"  >
+                <i class="icon icon-lg icon-th-list"></i>
+                分类
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/books"  >
+                <i class="icon icon-lg icon-bookmark"></i>
+                书单
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/movies"  >
+                <i class="icon icon-lg icon-film"></i>
+                影单
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/works"  >
+                <i class="icon icon-lg icon-code"></i>
+                实验室
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/about"  >
+                <i class="icon icon-lg icon-circle"></i>
+                关于我
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+            <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">在Hexo中为文章自动添加版权信息声明模块</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off"
+                placeholder="输入感兴趣的关键字">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+        <a href="https://github.com/qinyuanpei/qinyuanpei.github.io" target="_blank" rel="noopener" class="header-icon waves-effect waves-circle waves-light" id="menuGithub">
+            <i class="icon icon-lg icon-code-fork"></i>
+        </a>
+    </div>
+</header>
+<header class="content-header post-header">
+    <div class="container fade-scale">
+        <h1 class="title">在Hexo中为文章自动添加版权信息声明模块</h1>
+        <h5 class="subtitle" id="subtitle">
+            
+            <time datetime="2015-11-15T13:12:22.000Z" itemprop="datePublished" class="page-time">
+  2015-11-15
+</time>
+
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/%E7%8B%AC%E7%AB%8B%E5%8D%9A%E5%AE%A2/">独立博客</a></li></ul>
+
+            
+        </h5>
+    </div>
+    
+
+</header>
+
+<div class="container body-wrap">
+    
+    <aside class="post-widget">
+        <nav class="post-toc-wrap" id="post-toc">
+            <h4>目录</h4>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#为什么要说博客文章版权这件事儿"><span class="post-toc-number">1.</span> <span class="post-toc-text">为什么要说博客文章版权这件事儿</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#谈谈如何保护博客文章版权"><span class="post-toc-number">2.</span> <span class="post-toc-text">谈谈如何保护博客文章版权</span></a></li><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#保护博客文章版权，独立博客在行动"><span class="post-toc-number">3.</span> <span class="post-toc-text">保护博客文章版权，独立博客在行动</span></a></li></ol>
+        </nav>
+    </aside>
+    
+    <article id="post-在Hexo中为文章自动添加版权信息声明模块" class="post-article article-type-post fade" itemprop="blogPost">
+
+        <div class="post-card">
+            <h1 class="post-card-title">
+                在Hexo中为文章自动添加版权信息声明模块
+            </h1>
+            <div class="post-meta">
+                <time class="post-time" title="2015-11-15 13:12:22" datetime="2015-11-15T13:12:22.000Z"  itemprop="datePublished">2015-11-15</time>
+
+                
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/%E7%8B%AC%E7%AB%8B%E5%8D%9A%E5%AE%A2/">独立博客</a></li></ul>
+
+
+
+                
+<span id="lc_counter_container_page_pv" title="文章总阅读量" data-page-url="" data-page-title="在Hexo中为文章自动添加版权信息声明模块">
+    <i class="icon icon-eye icon-pr"></i><span id="lc_counter_value_page_pv"></span>
+</span>
+
+
+
+
+
+                
+    <span>
+        <i class="icon icon-clock-o"></i>
+        20 min.
+    </span>
+    
+            </div>
+            <div class="post-content" id="post-content" itemprop="postContent">
+                <p>&emsp;&emsp;各位朋友，大家好，欢迎大家关注我的博客，我是秦元培，我的博客地址是<a href="http://qinyuanpei.com" target="_blank" rel="noopener">http://qinyuanpei.com</a>。今天想和大家说说博客文章版权这件事情。每当提到版权的时候，我知道大家内心深处都是对此不以为然的，因为国内版权意识薄弱，所以版权在我们的眼中就变成了这样一件可有可无的东西，可是事实真的是这样的吗？首先我们必须承认一件事情，即你从互联网上获得的知识都是有价值的，即使这些知识的创造者并未因此而获得利益。<a id="more"></a>相对其它的行业，因为程序员这个职业本身需要其通过不断地学习新知识来适应新变化，因此程序员这个群体更喜欢在互联网上分享知识和经验，而这些知识的受众面窄、技术门槛高则决定了程序员们无法像普通的博客作者一样有更多的机会来获得收入。大部分的程序员都是从分享知识、记录学习和技术交流这样的角度来撰写博客的。那么这样就会造成一个问题，在国内版权意识薄弱和技术博客变现困难的双重夹缝中，博客作者该如何寻求新的突破呢？</p>
+<h1 id="为什么要说博客文章版权这件事儿"><a href="#为什么要说博客文章版权这件事儿" class="headerlink" title="为什么要说博客文章版权这件事儿"></a>为什么要说博客文章版权这件事儿</h1><p>&emsp;&emsp;首先，我们为什么要说博客文章版权这件事情呢？因为博客是文字创造的产物，是知识共享的一种形式。当我们无视版权的时候，这意味着知识是没有价值的，创造是无关痛痒的，脑力劳动和创意活动的价值在现实中被无情地扼杀。当你引用一个人的观点却不加以注明的时候，当你盗用一个人的创意却不给予报酬的时候，试问谁还会愿意为这个社会贡献创意和想法呢？引用<a href="http://blog.caijing.com.cn/expert_article-151317-41037.shtml" target="_blank" rel="noopener">许锡良</a>的观点，尊重版权更深层次的含义在于对人权的尊重：</p>
+<blockquote>
+<p>从人权的角度看，人与动物的区别在于知识与思想，因此，人类最根本的财富也应该是知识与思想上的财富，一切社会财富都来源于知识与思想，这是从自然界获得生活资料，以及改造社会的根本。没有知识与思想的人类将与动物世界没有什么区别。尊重人权，首先就要学会尊重人的劳动成果，特别是创造性劳动成果，只有人，才能创造出来的知识产权与发明专利。尊重人权，首先就要学会尊重一个人的思想与创意。只有人，才能创造出来的知识产权与发明专利。因为每个人都是一个独立的个体，每个人头脑里的想法都是独一无二的，无人能替代的。在没有说出来，或者写出来之前，也无人能盗取的，这种思想就是个人独有，就是只属于个人的专利。 </p>
+</blockquote>
+<p>&emsp;&emsp;我常常遇到在博客评论中和我直接要源代码的人，我不明白从什么时候起对知识的分享变成了某些人懒惰的借口。我选择将我知道的某个分享出来，当然我同样有权利可以选择沉默。你不能因为习惯了做伸手党就认为我应该理所当然地把源代码给你，这是对我的不尊重。我写博客的目的在于和别人交流技术、互相学习，如果你根本没有看懂我博客写了什么，只是希望可以找到可以“抄”来就能用的代码。抱歉!这违背了我的初衷我更没有道理要将源代码分享给你,况且如果我的代码都清清楚楚（命名规范、注释清晰）地写在博客里，如果这样的代码你都不能看懂，就算把完整的工程分享给你又有什么用呢？我本来不情愿论坛来转载我的文章，因为论坛盖楼的这种互动模式实在难以产生较为良好的互动效果，可是人家来诚心诚意地询问你的态度，如此拒绝难免有点却之不恭吧！当然最让人讨厌的是网络爬虫和网站编辑，这种让人讨厌是因为它”简单粗暴”，完全不考虑博客作者的感受，文章的原始链接被删除、文章的作者署名被删除。或许大家都觉得一个署名、一个原始链接都是无足轻重的东西，可是在我看来这恰恰是体现责任的地方。作者的责任在于对文章的真实性和客观性负责，转发者的责任在于帮助读者找到作者当他们之间需要某种交流的时候，这就是我为什么强调署名和原始链接的理由！</p>
+<h1 id="谈谈如何保护博客文章版权"><a href="#谈谈如何保护博客文章版权" class="headerlink" title="谈谈如何保护博客文章版权"></a>谈谈如何保护博客文章版权</h1><p>&emsp;&emsp;在保护博客文章版权这个问题上，我们可以采取的方式固然很多，但是这件事情的根本原因在于人们普遍不重视知识产权的保护，所以我们这里提到的这些方式都是外家功夫，真正要根除这等沉疴痼疾需要人们不断提升自我、勤修内功。</p>
+<ul>
+<li>第一种方式，我们称为通过技术方式提醒，比如通过编写JavaScript脚本，实现当对方复制你的博客内容的时候，程序可以自动在这段复制的内容中增加署名和连接。当然我们可以通过修改文章的模板来在文章中加入版权信息，这个我们留到最后会说，因为实际上这个是我们今天要重点研究的内容，博主是个程序员，我们当然要用技术的方式来实现了，前面的这些大家看完心里有个数就是了，哈哈！</li>
+<li>第二种方式，我们称为增加文章内链的方式，就是在文章中尽可能地使用指向这个博客的连接，这样可以保证在文章转载后为博客带来一定的反向访客。</li>
+<li>第三种方式，在图片上增加水印，这样读者在看到图片的时候就可以很容易地找到原始出处，可是如果你不能保证拥有所引用的图片得版权，建议不要轻易地使用这种方式。</li>
+<li>第四种方式，逐渐形成个性化的写作风格，这样当读者读到这些文字的时候，可以通过文章的风格知道文章的作者和出处。</li>
+<li>第五种方式，努力提高自己博客的文章质量，让更多的读者从中受益，形成有独立风格的博客品牌。一个博客有了高质量的内容和品牌，那么在搜索引擎中的权重就会很高，网民通过搜索引擎进行查找的时候，博客原文都会排在第一位。</li>
+</ul>
+<p>博主之所以要使用<a href="http://qinyuanpei.com" target="_blank" rel="noopener">http://qinyuanpei.com</a>这个独立博客的原因正是基于这个原因。博主目前采用的<a href="http://baike.baidu.com/link?url=jcl0t2y3iwHPETIXjXM5yhQtujk2iUJE9Fy7dCoti7xtNDMxHYlUlXcW0GsorpaAWGq_Y1OSduIXVEpHlpSm1qHhV7mkGnU56J6JSRUuCRlwnWHNJL6K913N5mm9sMqiw1BXlmSprfhmwc1sxsjU3X7gMRd7z9OfBR446a__T3Gp90js_NnS6Dq-TkbmBeWB" target="_blank" rel="noopener">知识共享</a>许可是署名(BY)-非商业性使用(NC)-相同方式共享(SA)，请各位在转载文章的时候注意保留作者署名和文章出处，谢谢！</p>
+<h1 id="保护博客文章版权，独立博客在行动"><a href="#保护博客文章版权，独立博客在行动" class="headerlink" title="保护博客文章版权，独立博客在行动"></a>保护博客文章版权，独立博客在行动</h1><p>&emsp;&emsp;我的博客是采用<a href="http://hexo.io/" target="_blank" rel="noopener">Hexo</a>这个博客系统来搭建的，说到底程序员是天生爱折腾的命吧，都有对掌控事物的欲望，不喜欢受到条件制约。CSDN的博客虽然还不错，可是“限制因素 + 服务器奔溃”这样的强效组合实在让我很难有继续坚持下去的动力，所以果断就自己搭了博客买了域名，老老实实地开始管理起独立博客。好了，废话少说，放码过来，我们下面来看看怎么在Hexo中的文章中增加一个展示版权信息的模块，这里以<a href="https://github.com/wuchong/jacman" target="_blank" rel="noopener">Jacman</a>主题为例，我们首先定位到该主题文件夹下的\layout_partial\post\article.ejs文件：</p>
+<figure class="highlight erb"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="xml"><span class="tag">&lt;<span class="name">div</span> <span class="attr">id</span>=<span class="string">"main"</span> <span class="attr">class</span>=<span class="string">"&lt;%=</span></span></span><span class="ruby"> item.layout </span><span class="xml"><span class="tag"><span class="string">%&gt;"</span> <span class="attr">itemscope</span> <span class="attr">itemprop</span>=<span class="string">"blogPost"</span>&gt;</span></span></span><br><span class="line"><span class="xml">  <span class="tag">&lt;<span class="name">%</span></span></span><span class="ruby"> <span class="keyword">if</span> (page.layout==<span class="string">'photo'</span> &amp;&amp; item.photos &amp;&amp; item.photos.length)&#123; </span><span class="xml"><span class="tag">%&gt;</span></span></span><br><span class="line"><span class="xml">    <span class="tag">&lt;<span class="name">%-</span></span></span><span class="ruby"> partial(<span class="string">'gallery'</span>) </span><span class="xml"><span class="tag">%&gt;</span></span></span><br><span class="line"><span class="xml">  <span class="tag">&lt;<span class="name">%</span></span></span><span class="ruby"> &#125; </span><span class="xml"><span class="tag">%&gt;</span></span></span><br><span class="line"><span class="xml">	<span class="tag">&lt;<span class="name">article</span> <span class="attr">itemprop</span>=<span class="string">"articleBody"</span>&gt;</span> </span></span><br><span class="line"><span class="xml">		<span class="tag">&lt;<span class="name">%-</span></span></span><span class="ruby"> partial(<span class="string">'header'</span>) </span><span class="xml"><span class="tag">%&gt;</span></span></span><br><span class="line"><span class="xml">	<span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"article-content"</span>&gt;</span></span></span><br><span class="line"><span class="xml">		<span class="tag">&lt;<span class="name">%</span></span></span><span class="ruby"> <span class="keyword">if</span>( table&amp;&amp;(item.toc !== <span class="literal">false</span>) &amp;&amp; theme.toc.article)&#123; </span><span class="xml"><span class="tag">%&gt;</span></span></span><br><span class="line"><span class="xml">		<span class="tag">&lt;<span class="name">div</span> <span class="attr">id</span>=<span class="string">"toc"</span> <span class="attr">class</span>=<span class="string">"toc-article"</span>&gt;</span></span></span><br><span class="line"><span class="xml">			<span class="tag">&lt;<span class="name">strong</span> <span class="attr">class</span>=<span class="string">"toc-title"</span>&gt;</span><span class="tag">&lt;<span class="name">%=</span></span></span><span class="ruby"> _<span class="number">_</span>(<span class="string">'contents'</span>) </span><span class="xml"><span class="tag">%&gt;</span><span class="tag">&lt;/<span class="name">strong</span>&gt;</span></span></span><br><span class="line"><span class="xml">		<span class="tag">&lt;<span class="name">%</span></span></span><span class="ruby"> <span class="keyword">if</span>(item.list_number == <span class="literal">false</span>) &#123;</span><span class="xml"><span class="tag">%&gt;</span></span></span><br><span class="line"><span class="xml">		<span class="tag">&lt;<span class="name">%-</span></span></span><span class="ruby"> toc(item.content,&#123;<span class="symbol">list_number:</span><span class="literal">false</span>&#125;) </span><span class="xml"><span class="tag">%&gt;</span></span></span><br><span class="line"><span class="xml">		<span class="tag">&lt;<span class="name">%</span></span></span><span class="ruby"> &#125;<span class="keyword">else</span>&#123; </span><span class="xml"><span class="tag">%&gt;</span></span></span><br><span class="line"><span class="xml">			<span class="tag">&lt;<span class="name">%-</span></span></span><span class="ruby"> toc(item.content) </span><span class="xml"><span class="tag">%&gt;</span></span></span><br><span class="line"><span class="xml">		<span class="tag">&lt;<span class="name">%</span></span></span><span class="ruby"> &#125; </span><span class="xml"><span class="tag">%&gt;</span></span></span><br><span class="line"><span class="xml">		<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span></span><br><span class="line"><span class="xml">		<span class="tag">&lt;<span class="name">%</span></span></span><span class="ruby"> &#125; </span><span class="xml"><span class="tag">%&gt;</span></span></span><br><span class="line"><span class="xml">		<span class="tag">&lt;<span class="name">%-</span></span></span><span class="ruby"> item.content </span><span class="xml"><span class="tag">%&gt;</span> </span></span><br><span class="line"><span class="xml">	<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span></span><br><span class="line"><span class="xml">		<span class="tag">&lt;<span class="name">%-</span></span></span><span class="ruby"> partial(<span class="string">'footer'</span>) </span><span class="xml"><span class="tag">%&gt;</span>  	       </span></span><br><span class="line"><span class="xml">	<span class="tag">&lt;/<span class="name">article</span>&gt;</span></span></span><br><span class="line"><span class="xml">	<span class="tag">&lt;<span class="name">%-</span></span></span><span class="ruby"> partial(<span class="string">'pagination'</span>) </span><span class="xml"><span class="tag">%&gt;</span></span></span><br><span class="line"><span class="xml">	<span class="tag">&lt;<span class="name">%-</span></span></span><span class="ruby"> partial(<span class="string">'comment'</span>) </span><span class="xml"><span class="tag">%&gt;</span></span></span><br><span class="line"><span class="xml"><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span></span><br></pre></td></tr></table></figure>
+<p>我们可以注意到文章的内容是在&lt;%- item.content %&gt;这个标签里，因此我们如果要在文章中增加内容，只需要在&lt;%- item.content %&gt;的后面引入一个ejs模板文件即可，所以我们接下在article.ejs的同级目录下创建一个declare.ejs文件：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">pre</span>&gt;</span><span class="tag">&lt;<span class="name">code</span>&gt;</span><span class="tag">&lt;<span class="name">b</span>&gt;</span>    版权声明<span class="tag">&lt;/<span class="name">b</span>&gt;</span>:本文由<span class="tag">&lt;<span class="name">b</span>&gt;</span><span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">"&lt;%= config.root %&gt;about"</span> <span class="attr">target</span>=<span class="string">"_blank"</span> <span class="attr">title</span>=<span class="string">"&lt;%= config.author %&gt;"</span>&gt;</span><span class="tag">&lt;<span class="name">%=</span> <span class="attr">config.author</span> %&gt;</span><span class="tag">&lt;/<span class="name">a</span>&gt;</span><span class="tag">&lt;/<span class="name">b</span>&gt;</span>创作和发表,采用<span class="tag">&lt;<span class="name">b</span>&gt;</span>署名(BY)<span class="tag">&lt;/<span class="name">b</span>&gt;</span>-<span class="tag">&lt;<span class="name">b</span>&gt;</span>非商业性使用(NC)<span class="tag">&lt;/<span class="name">b</span>&gt;</span>-<span class="tag">&lt;<span class="name">b</span>&gt;</span>相同方式共享(SA)<span class="tag">&lt;/<span class="name">b</span>&gt;</span>国际许可协议进行许可,转载请注明作者及出处,本文作者为<span class="tag">&lt;<span class="name">b</span>&gt;</span><span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">"&lt;%= config.root %&gt;about"</span> <span class="attr">target</span>=<span class="string">"_blank"</span> <span class="attr">title</span>=<span class="string">"&lt;%= config.author %&gt;"</span>&gt;</span><span class="tag">&lt;<span class="name">%=</span> <span class="attr">config.author</span> %&gt;</span><span class="tag">&lt;/<span class="name">a</span>&gt;</span><span class="tag">&lt;/<span class="name">b</span>&gt;</span>,本文标题为<span class="tag">&lt;<span class="name">b</span>&gt;</span><span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">"&lt;%- config.root %&gt;&lt;%- item.path %&gt;"</span> <span class="attr">target</span>=<span class="string">"_blank"</span> <span class="attr">title</span>=<span class="string">"&lt;%= item.title %&gt;"</span>&gt;</span><span class="tag">&lt;<span class="name">%=</span> <span class="attr">item.title</span> %&gt;</span><span class="tag">&lt;/<span class="name">a</span>&gt;</span><span class="tag">&lt;/<span class="name">b</span>&gt;</span>,本文链接为<span class="tag">&lt;<span class="name">b</span>&gt;</span><span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">"&lt;%- config.root %&gt;&lt;%- item.path %&gt;"</span> <span class="attr">target</span>=<span class="string">"_blank"</span> <span class="attr">title</span>=<span class="string">"&lt;%= item.title %&gt;"</span>&gt;</span><span class="tag">&lt;<span class="name">%-</span> <span class="attr">config.url</span> %&gt;</span>/<span class="tag">&lt;<span class="name">%-</span> <span class="attr">item.path</span> %&gt;</span><span class="tag">&lt;/<span class="name">a</span>&gt;</span><span class="tag">&lt;/<span class="name">b</span>&gt;</span>.<span class="tag">&lt;/<span class="name">code</span>&gt;</span><span class="tag">&lt;/<span class="name">pre</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>大家可以看到这里就是一段HTML代码，因为我们要引入的这个模板和article.ejs在同一个页面中，所以我们可以直接在这里调用item这个变量，而item这个变量里是封装了当前文章的标题和链接的，因此我们可以顺利成章的构造这样一段HTML代码，因为博主不会写CSS样式，所以使用了一个默认的代码样式来完成这个工作，如果大家懂CSS，请自行发挥你的创意将它做得更好。好了，下面我们要做的工作就是将这个模版引用到article.ejs文件中，类似地我们可以使用&lt;%- partial(‘footer’) %&gt;这样的结构来引入这个模板，这里给出完整的article.ejs文件内容：</p>
+<figure class="highlight erb"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="xml"><span class="tag">&lt;<span class="name">div</span> <span class="attr">id</span>=<span class="string">"main"</span> <span class="attr">class</span>=<span class="string">"&lt;%=</span></span></span><span class="ruby"> item.layout </span><span class="xml"><span class="tag"><span class="string">%&gt;"</span> <span class="attr">itemscope</span> <span class="attr">itemprop</span>=<span class="string">"blogPost"</span>&gt;</span></span></span><br><span class="line"><span class="xml">  <span class="tag">&lt;<span class="name">%</span></span></span><span class="ruby"> <span class="keyword">if</span> (page.layout==<span class="string">'photo'</span> &amp;&amp; item.photos &amp;&amp; item.photos.length)&#123; </span><span class="xml"><span class="tag">%&gt;</span></span></span><br><span class="line"><span class="xml">    <span class="tag">&lt;<span class="name">%-</span></span></span><span class="ruby"> partial(<span class="string">'gallery'</span>) </span><span class="xml"><span class="tag">%&gt;</span></span></span><br><span class="line"><span class="xml">  <span class="tag">&lt;<span class="name">%</span></span></span><span class="ruby"> &#125; </span><span class="xml"><span class="tag">%&gt;</span></span></span><br><span class="line"><span class="xml">	<span class="tag">&lt;<span class="name">article</span> <span class="attr">itemprop</span>=<span class="string">"articleBody"</span>&gt;</span> </span></span><br><span class="line"><span class="xml">		<span class="tag">&lt;<span class="name">%-</span></span></span><span class="ruby"> partial(<span class="string">'header'</span>) </span><span class="xml"><span class="tag">%&gt;</span></span></span><br><span class="line"><span class="xml">	<span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"article-content"</span>&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="xml">	    <span class="tag">&lt;<span class="name">%</span></span></span><span class="ruby"> <span class="keyword">if</span>(theme.show_declare) &#123; </span><span class="xml"><span class="tag">%&gt;</span></span></span><br><span class="line"><span class="xml">			<span class="tag">&lt;<span class="name">%-</span></span></span><span class="ruby"> partial(<span class="string">'declare'</span>) </span><span class="xml"><span class="tag">%&gt;</span></span></span><br><span class="line"><span class="xml">		<span class="tag">&lt;<span class="name">%</span></span></span><span class="ruby"> &#125; </span><span class="xml"><span class="tag">%&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="xml">		<span class="tag">&lt;<span class="name">%</span></span></span><span class="ruby"> <span class="keyword">if</span>( table&amp;&amp;(item.toc !== <span class="literal">false</span>) &amp;&amp; theme.toc.article)&#123; </span><span class="xml"><span class="tag">%&gt;</span></span></span><br><span class="line"><span class="xml">		<span class="tag">&lt;<span class="name">div</span> <span class="attr">id</span>=<span class="string">"toc"</span> <span class="attr">class</span>=<span class="string">"toc-article"</span>&gt;</span></span></span><br><span class="line"><span class="xml">			<span class="tag">&lt;<span class="name">strong</span> <span class="attr">class</span>=<span class="string">"toc-title"</span>&gt;</span><span class="tag">&lt;<span class="name">%=</span></span></span><span class="ruby"> _<span class="number">_</span>(<span class="string">'contents'</span>) </span><span class="xml"><span class="tag">%&gt;</span><span class="tag">&lt;/<span class="name">strong</span>&gt;</span></span></span><br><span class="line"><span class="xml">		<span class="tag">&lt;<span class="name">%</span></span></span><span class="ruby"> <span class="keyword">if</span>(item.list_number == <span class="literal">false</span>) &#123;</span><span class="xml"><span class="tag">%&gt;</span></span></span><br><span class="line"><span class="xml">		<span class="tag">&lt;<span class="name">%-</span></span></span><span class="ruby"> toc(item.content,&#123;<span class="symbol">list_number:</span><span class="literal">false</span>&#125;) </span><span class="xml"><span class="tag">%&gt;</span></span></span><br><span class="line"><span class="xml">		<span class="tag">&lt;<span class="name">%</span></span></span><span class="ruby"> &#125;<span class="keyword">else</span>&#123; </span><span class="xml"><span class="tag">%&gt;</span></span></span><br><span class="line"><span class="xml">			<span class="tag">&lt;<span class="name">%-</span></span></span><span class="ruby"> toc(item.content) </span><span class="xml"><span class="tag">%&gt;</span></span></span><br><span class="line"><span class="xml">		<span class="tag">&lt;<span class="name">%</span></span></span><span class="ruby"> &#125; </span><span class="xml"><span class="tag">%&gt;</span></span></span><br><span class="line"><span class="xml">		<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span></span><br><span class="line"><span class="xml">		<span class="tag">&lt;<span class="name">%</span></span></span><span class="ruby"> &#125; </span><span class="xml"><span class="tag">%&gt;</span></span></span><br><span class="line"><span class="xml">		<span class="tag">&lt;<span class="name">%-</span></span></span><span class="ruby"> item.content </span><span class="xml"><span class="tag">%&gt;</span> </span></span><br><span class="line"></span><br><span class="line"><span class="xml">	    <span class="tag">&lt;<span class="name">%</span></span></span><span class="ruby"> <span class="keyword">if</span>(theme.show_declare) &#123; </span><span class="xml"><span class="tag">%&gt;</span></span></span><br><span class="line"><span class="xml">			<span class="tag">&lt;<span class="name">%-</span></span></span><span class="ruby"> partial(<span class="string">'declare'</span>) </span><span class="xml"><span class="tag">%&gt;</span></span></span><br><span class="line"><span class="xml">		<span class="tag">&lt;<span class="name">%</span></span></span><span class="ruby"> &#125; </span><span class="xml"><span class="tag">%&gt;</span></span></span><br><span class="line"><span class="xml">	<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span></span><br><span class="line"><span class="xml">		<span class="tag">&lt;<span class="name">%-</span></span></span><span class="ruby"> partial(<span class="string">'footer'</span>) </span><span class="xml"><span class="tag">%&gt;</span>  	       </span></span><br><span class="line"><span class="xml">	<span class="tag">&lt;/<span class="name">article</span>&gt;</span></span></span><br><span class="line"><span class="xml">	<span class="tag">&lt;<span class="name">%-</span></span></span><span class="ruby"> partial(<span class="string">'pagination'</span>) </span><span class="xml"><span class="tag">%&gt;</span></span></span><br><span class="line"><span class="xml">	<span class="tag">&lt;<span class="name">%-</span></span></span><span class="ruby"> partial(<span class="string">'comment'</span>) </span><span class="xml"><span class="tag">%&gt;</span></span></span><br><span class="line"><span class="xml"><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span></span><br></pre></td></tr></table></figure>
+<p>这里博主在文章的开头和结尾处插入了这个模板，同时在主题文件夹中设置了一个是否显示版权声明的开关变量，这样我们就可以在主题中设置是否开启版权声明模块了。好啦，相信你在看到这边文章的时候你已经看到了它的版权声明了，这就是我们今天的内容啦，谢谢大家！</p>
+
+                
+
+                
+
+
+<div class="recommended_posts">
+    <h1>推荐阅读</h1>
+    <ul>
+        
+        <li><a href="https://qinyuanpei.github.io/posts/828223375/">为Hexo开发一个网易云音乐的文章插件</a></li>
+        
+        <li><a href="https://qinyuanpei.github.io/posts/1417719502/">使用 jsDelivr 为 Hexo 博客提供高效免费的CDN加速</a></li>
+        
+        <li><a href="https://qinyuanpei.github.io/posts/1150071886/">使用Coding.NET和Hexo实现网页游戏的发布</a></li>
+        
+        <li><a href="https://qinyuanpei.github.io/posts/2318173297/">关于单位转换相关问题的常见思路</a></li>
+        
+        <li><a href="https://qinyuanpei.github.io/posts/478946932/">原生JavaScript实现Hexo博客推荐功能</a></li>
+        
+    </ul>
+</div>
+
+            </div>
+            
+<blockquote class="post-copyright">
+    <div class="content">
+        <p><b>版权声明：</b>
+        <a href="https://qinyuanpei.github.io/posts/2950334112/" rel="external">在Hexo中为文章自动添加版权信息声明模块</a>
+        ，由&nbsp;<a href="/about" target="_blank" rel="external">飞鸿踏雪</a>&nbsp;
+        首次发表于&nbsp;<a href="/" target="_blank" rel="external">一个人的孤落时辰</a>&nbsp;
+        ，本文地址为：<a href="https://qinyuanpei.github.io/posts/2950334112/" target="_blank" rel="external">https://qinyuanpei.github.io/posts/2950334112/</a>
+        ，转载请注明<b>作者</b>和<b>出处</b>。</p>
+    </div>
+    <footer>
+        <a href="https://qinyuanpei.github.io">
+            <img src="/assets/images/avatar.jpg" alt="飞鸿踏雪">
+            飞鸿踏雪
+        </a>
+    </footer>
+</blockquote>
+
+
+            
+<div class="page-reward">
+    <a id="rewardBtn" href="javascript:;" class="page-reward-btn waves-effect waves-circle waves-light">赏</a>
+</div>
+
+
+            <div class="post-footer">
+                
+	<ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Hexo/" rel="tag">Hexo</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%89%88%E6%9D%83/" rel="tag">版权</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%9F%A5%E8%AF%86%E5%85%B1%E4%BA%AB/" rel="tag">知识共享</a></li></ul>
+
+                
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://qinyuanpei.github.io/posts/2950334112/&title=《在Hexo中为文章自动添加版权信息声明模块》 — 一个人的孤落时辰&pic=https://qinyuanpei.github.ioassets/images/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://qinyuanpei.github.io/posts/2950334112/&title=《在Hexo中为文章自动添加版权信息声明模块》 — 一个人的孤落时辰&source=&emsp;&emsp;各位朋友，大家好，欢迎大家关注我的博客，我是秦元培，我的博客地址是http://qinyuanpei.com。今天想和大家说说博客..." data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://qinyuanpei.github.io/posts/2950334112/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《在Hexo中为文章自动添加版权信息声明模块》 — 一个人的孤落时辰&url=https://qinyuanpei.github.io/posts/2950334112/&via=https://qinyuanpei.github.io" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://qinyuanpei.github.io/posts/2950334112/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+      
+      <li>
+        <a class="google share-sns" target="_blank" onClick="show_yp()" data-title=" 生成海报">
+          <i class="icon icon-file-image-o"></i>
+        </a>
+      </li>
+      
+    </ul>
+ </div>
+
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
+            </div>
+        </div>
+
+        
+<nav class="post-nav flex-row flex-justify-between">
+  
+    <div class="waves-block waves-effect prev">
+      <a href="/posts/2527231326/" id="post-prev" class="post-nav-link">
+        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
+        <h4 class="title">Unity3D游戏开发之C++插件接入</h4>
+      </a>
+    </div>
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/posts/1124152964/" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h4 class="title">解析OBJ模型并将其加载到Unity3D场景中</h4>
+      </a>
+    </div>
+  
+</nav>
+
+
+        
+    <div id="comment"></div>
+<script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+<script src='//unpkg.com/valine/dist/Valine.min.js'></script>
+<script type="text/javascript">
+new Valine({
+    el: '#comment' ,
+    notify: false, 
+    verify: true, 
+    appId: 'JbHqRp2eMrTgIwYpfERH0g79-gzGzoHsz',
+    appKey: 'VsiKvLuiBGvJL1XrAfv7siY2',
+    placeholder: '云中谁寄锦书来，雁字回时，月满西楼。&#10;Tips：如果希望收到我的评论回复，请至少留下你的邮箱哦:)',
+    path:'https://qinyuanpei.github.io/posts/2950334112/', 
+    avatar:'identicon',
+    requiredFields: ['nick','mail']
+});
+</script>
+
+
+
+
+    </article>
+    
+<div id="reward" class="page-modal reward-lay">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <h3 class="reward-title">
+        <i class="icon icon-quote-left"></i>
+        赠人玫瑰，手有余香
+        <i class="icon icon-quote-right"></i>
+    </h3>
+    <div class="reward-content">
+        
+        <div class="reward-code">
+            <img id="rewardCode" src="/assets/images/wechat.png" alt="打赏二维码">
+        </div>
+        
+        <label class="reward-toggle">
+            <input id="rewardToggle" type="checkbox" class="reward-toggle-check"
+                data-wechat="/assets/images/wechat.png" data-alipay="/assets/images/alipay.jpg">
+            <div class="reward-toggle-ctrol">
+                <span class="reward-toggle-item wechat">微信</span>
+                <span class="reward-toggle-label"></span>
+                <span class="reward-toggle-item alipay">支付宝</span>
+            </div>
+        </label>
+        
+    </div>
+</div>
+
+
+    <script type="text/javascript" src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/yoniu.min.js"></script>
+<style type='text/css'>
+	body.active-yp {
+		overflow: hidden;
+	}
+	.yp-fc-btn{
+		display: flex;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		align-items: center;
+		justify-content: space-between;
+		font-size: 13px;
+	}
+	.yp-fc-btn span{
+		cursor: pointer;
+		padding: 2px 10px;
+		color: #4b4b4b;
+		border: #4b4b4b 1px solid;
+		border-radius:5px;
+	}
+	#yp-hide{
+		position: fixed;
+		display: flex;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		justify-content: center;
+		flex-direction: column;
+		left:0;
+		top:0;
+		right:0;
+		bottom:0;
+		background-color:rgba(0,0,0,.5);
+		z-index: 99999;
+		visibility: hidden;
+	}
+	#yoniu-poster{
+		box-sizing: border-box;
+		width: 350px;
+		height: 467.2px;
+		background-color: #fff;
+		margin: 0 auto;
+		padding: 0;
+		line-height: 1.6;
+		text-align:justify;
+	}
+	
+	.yp-img {
+		min-height: 240px;
+		position: relative;
+		display: flex;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		justify-content: flex-end;
+		flex-direction: column;
+		background-position: 50% 50%;
+		background-size: cover;
+		overflow:hidden;
+	}
+	.yp-img>div{
+		padding: 10px 20px;
+	}
+	.yp-name{
+		display: block;
+		color: #fff;
+		font-size: 20px;
+		font-weight: 600;
+		text-shadow: #4b4b4b 0.1em 0.1em 0.2em;
+		margin-top: 10px;
+	}
+	.yp-sort{
+		padding: 3px 10px;
+		font-size: 12px;
+		color: #fff;
+		background: #2e2e2e;
+	}
+	.yp-des{
+		color: #2e2e2e;
+		font-size: 14px;
+		margin: 20px;
+		height: 67.2px;
+	}
+	.yp-qcode{
+		display: flex;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		justify-content: space-between;
+		align-items: center;
+		margin: 10px;
+		padding: 10px 20px;
+		background: #f5f5f5;
+		color: #818181;
+		border-radius: 10px;
+	}
+	.yp-tips{
+		display: flex;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		justify-content: space-between;
+		align-items: center;
+		color: #ccc;
+		margin: 0 10px 10px;
+		font-size: 10px;
+		letter-spacing: 1.5px;
+	}
+	.yp-btns{
+		display: flex;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		align-items: stretch;
+		justify-content: center;
+		width:350px;
+		margin: 0 auto;
+	}
+	.yp-btns>span{
+		display: flex;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		align-items: center;
+		justify-content: center;
+		font-size: 14px;
+		padding: 10px 15px;
+		background:rgba(0,0,0,.2);
+		color: #f5f5f5;
+		cursor: pointer;
+	}
+	.yp-btns>span>a{
+		color: #f5f5f5;
+	}
+	.yp-btns>span>a:hover{
+		text-decoration:none;
+	}
+	#yp-close{
+		font-size: 18px;
+		font-weight: 600;
+	}
+</style>
+<div id="yp-hide">
+    <div id="yoniu-poster">
+        <div class="yp-img" id="yp-img">
+            <div>
+                <span class="yp-sort">独立博客</span>
+                <span class="yp-name">在Hexo中为文章自动添加版权信息声明模块</span>
+            </div>
+        </div>
+        <div class="yp-des">    
+            
+                &emsp;&emsp;各位朋友，大家好，欢迎大家关注我的博客，我是秦元培，我的博客地址是http://qinyuanpei.com。今天想和大...
+            
+        </div>
+        <div class="yp-qcode">
+            <span>扫描二维码阅读原文</span>
+            <img id="yp-qcode" width="64px" src="//api.qrserver.com/v1/create-qr-code/?data=https://qinyuanpei.github.io/posts/2950334112/">
+        </div>
+        <div class="yp-tips">
+            <span>一个人的孤落时辰</span>
+            <span><time class="post-time" title="2015-11-15 13:12:22" datetime="2015-11-15T13:12:22.000Z"  itemprop="datePublished">2015-11-15</time>
+</span>
+        </div>
+    </div>
+    <div class="yp-btns">
+        <span id="yp-load-yp" onClick="load_yp()">生成海报</span>
+        <span><a id="yp-download"></a></span>
+        <span id="yp-close" onClick="close_yp()">×</span>
+    </div>
+</div>
+<script type="text/javascript">
+    function show_yp(){
+        window.scrollTo(0, 0);
+        document.body.setAttribute("class","active-yp");
+        let cover = document.getElementsByTagName('img')[1];
+        if (cover != null && typeof(cover) != 'undefined') {
+            document.getElementById('yp-img').style.backgroundImage = `url(${cover.src})`;
+        } else {
+            document.getElementById('yp-img').style.backgroundColor = '#d7dbf0';
+        }
+        document.getElementById("yp-hide").style.visibility = "visible";
+    }
+    function close_yp(){
+        var domClass = document.body.getAttribute("class");
+        domClass = domClass.replace("active-yp","");
+        document.body.setAttribute("class",domClass);
+        document.getElementById("yp-hide").style.visibility = "hidden";
+    }
+    function load_yp(){
+        document.getElementById('yp-load-yp').textContent = '海报生成中...';
+        setTimeout(function() {
+            h2c_();
+        },2000);
+
+    }
+</script>
+
+</div>
+
+        <footer class="footer">
+    <div class="top">
+        
+   <p>
+      <span id="lc_counter_container_site_uv">
+         <i class="icon icon-user"></i><span id="lc_counter_value_site_uv"></span>
+      </span>
+      <span id="lc_counter_container_site_pv">
+         <i class="icon icon-eye"></i><span id="lc_counter_value_site_pv"></span>
+      </span>
+  </p>
+
+
+        <p>
+   <a id="jinrishici-sentence" href="https://www.jinrishici.com/" target="_blank" rel="noopener">加载中</a>
+</p>
+<script src="https://sdk.jinrishici.com/v2/browser/jinrishici.js" charset="utf-8"></script>
+<script>
+   jinrishici.load(function(result) {
+      document.querySelector('#subtitle').innerText = result.data.content;
+      document.querySelector('#jinrishici-sentence').innerText = result.data.content;
+  });
+</script>
+            <!--Todo: 考虑重构为插件 -->
+            <p>
+                
+                    <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+                
+                <span>
+                    <a href="https://github.com/qinyuanpei" target="_blank" rel="license noopener" title="Github">
+                        <i class="icon icon-lg icon-github"></i>
+                    </a>
+                </span>
+                <span>
+                    <a href="https://weibo.com/1278609231/profile" target="_blank" rel="license noopener" title="微博">
+                        <i class="icon icon-lg icon-weibo"></i>
+                    </a>
+                </span>
+                <span>
+                    <a href="https://www.douban.com/people/60029335/" target="_blank" rel="license noopener" title="豆瓣">
+                        <i class="icon icon-lg icon-douban"></i>
+                    </a>
+                </span>
+                <span>
+                    <a href="https://www.zhihu.com/people/qinyuanpei" target="_blank" rel="license noopener" title="知乎">
+                        <i class="icon icon-lg icon-zhihu-square"></i>
+                    </a>
+                </span>
+                <span>
+                    <a href="https://blog.csdn.net/qinyuanpei" target="_blank" rel="license noopener" title="CSDN">
+                        <i class="icon icon-lg">C</i>
+                    </a>
+                </span>
+                <span>
+                    <a href="https://music.163.com/#/user/home?id=47002864" target="_blank" rel="license noopener" title="网易音乐">
+                        <i class="icon icon-lg icon-wangyiyunyinyue"></i>
+                    </a>
+                </span>
+            </p>
+        
+    </div>
+    <div class="bottom">
+        <p><span>飞鸿踏雪 &copy; 2014 - 2021</span><br>
+            
+                
+                Powered by <a href="http://hexo.io/" target="_blank">Hexo</a> & Theme by <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a><br>
+                
+                
+                    <p>Hosted by <a href="https://pages.github.com" target="_blank" rel="noopener" style="font-weight: bold">Github Pages</a></p>
+                
+        </p>
+    </div>
+</footer>
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span
+        class="icon icon-lg icon-chevron-up"></span></a>
+
+    
+
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://qinyuanpei.github.io/posts/2950334112/&title=《在Hexo中为文章自动添加版权信息声明模块》 — 一个人的孤落时辰&pic=https://qinyuanpei.github.ioassets/images/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://qinyuanpei.github.io/posts/2950334112/&title=《在Hexo中为文章自动添加版权信息声明模块》 — 一个人的孤落时辰&source=&emsp;&emsp;各位朋友，大家好，欢迎大家关注我的博客，我是秦元培，我的博客地址是http://qinyuanpei.com。今天想和大家说说博客..." data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://qinyuanpei.github.io/posts/2950334112/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《在Hexo中为文章自动添加版权信息声明模块》 — 一个人的孤落时辰&url=https://qinyuanpei.github.io/posts/2950334112/&via=https://qinyuanpei.github.io" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://qinyuanpei.github.io/posts/2950334112/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+      
+      <li>
+        <a class="google share-sns" target="_blank" onClick="show_yp()" data-title=" 生成海报">
+          <i class="icon icon-file-image-o"></i>
+        </a>
+      </li>
+      
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="//api.qrserver.com/v1/create-qr-code/?data=https://qinyuanpei.github.io/posts/2950334112/" alt="微信分享二维码">
+</div>
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.6/waves.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/4.2.1/echarts.min.js"></script>
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/echarts-wordcloud.min.js" async></script>
+<script>
+    var BLOG = { ROOT: '/', SHARE: true, REWARD: true };
+
+
+</script>
+
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/main.min.js"></script>
+
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/search.min.js" async></script>
+
+
+
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/heart.min.js" async></script>
+
+
+
+
+
+
+
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/leancloud-counter.min.js"></script>
+<script>
+        (function () {
+            var appId = 'JbHqRp2eMrTgIwYpfERH0g79-gzGzoHsz';
+            var appKey = 'VsiKvLuiBGvJL1XrAfv7siY2';
+            new VisitorCounter().init({
+                appId: appId,       //应用ID, 必输
+                appKey: appKey,      //应用Key, 必输
+                region: '华北',      //华东,华北,国际, 默认华东
+                domain: '',      //自定义域名
+                collectIP: true, //是否收集IP及位置信息, 默认开启
+                collectUA: true  //是否收集UserAgent, 默认开启
+            });
+        })();
+</script>
+
+
+
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/vconsole.min.js"></script>
+<script type="text/javascript">
+    //当地址中存在debug=true时，实例化vConsole
+    if (location.href.indexOf('debug=true') > -1) {
+        var vConsole = new VConsole();
+    }
+</script>
+
+
+    <script>
+    //国内用户自动重定向Coding Pages镜像
+    // var ipInfo = JSON.parse(localStorage.getItem('ipInfo'));
+    // if (ipInfo.country_code == 'CN') {
+    //     location.href = location.href.replace('qinyuanpei.github.io', 'blog.yuanpei.me');
+    // }
+    </script>
+
+
+<script>
+titleArray = [];
+function scrollTitle() {
+    if (titleArray.length == 0) return;
+    titleArray.push(titleArray[0]);
+	titleArray.shift();
+	document.title = titleArray.join("");
+}
+setInterval(scrollTitle, 500);
+(function() {
+    var originTitile = document.title, titleTime;
+    document.addEventListener('visibilitychange', function() {
+        if (document.hidden) {
+            titleArray = originTitile.split('');
+            clearTimeout(titleTime);
+        } else {
+            document.title = originTitile;
+            titleArray = originTitile.split('');
+            titleTime = setTimeout(function() {
+                document.title = originTitile;
+                titleArray = [];
+            },2000);
+        }
+    });
+})();
+</script>
+
+
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/ribbon.min.js"></script>
+</body>
+</html>
