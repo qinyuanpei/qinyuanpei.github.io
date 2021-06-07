@@ -23,7 +23,6 @@
             return prev.concat(next);
         },[]);
         var relatedPosts = postsByTag.concat(postsByCate);
-        console.log(relatedPosts.length)
         if (relatedPosts.length >= limit) {
             return Array.from(new Set(relatedPosts)).slice(0, limit)
         }
