@@ -1,0 +1,884 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+    
+<script async defer data-domain="blog.yuanpei.me" src="https://plausible.io/js/plausible.js"></script>
+    
+    <meta charset="utf-8">
+    <!-- HTTP 1.1 -->  
+    <meta http-equiv="pragma" content="no-cache">  
+    <!-- HTTP 1.0 -->  
+    <meta http-equiv="cache-control" content="no-cache">
+    <!-- 微博图床防盗链 --> 
+    <!-- <meta name="referrer" content="no-referrer"/> -->
+    <!--Google站点验证-->
+    
+    <!--百度站点验证-->
+    
+    
+    <!--Google AdSense-->
+    
+    <!--Bing站点验证-->
+    <meta name="msvalidate.01" content="713A48A3FE17D4841C292A6B3942EB4C" />
+    
+    <title>
+        .NET Core原生DI扩展之基于名称的注入实现 | 一个人的孤落时辰 | 纵有疾风起，人生不言弃
+    </title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+        <meta name="theme-color" content="#3F51B5">
+    
+
+    <meta name="keywords" content="技巧,.NET Core,DI,依赖注入,秦元培,技术博客,生活随笔,个人博客,NET,Python,数据挖掘,数据分析,NLP">
+    
+        <meta name="description" content="public INamedServiceProviderBuilder AddNamedService&lt;TImplementation&gt;(string serviceName, ServiceLifetime lifetime) where TImplementation : class;public INamedServiceProviderBuilder TryAddNamedService&lt;TImplementation&gt;(string serviceName, ServiceLifetime lifetime) where TImplementation : class;相信到这里，大家都明白博主的意图了吧，核心其实是在`Build()`方法中，因为我们最终需要的是其实是`NamedServiceProvider`，而在此之前的种种，都属于收集依赖、构建ServiceProvider的过程，所以，它被定义为`NamedServiceProviderBuilder`，我们在这里维护的这个字典，最终会被传入到`NamedServiceProvider`的构造函数中，这样我们就知道根据名称应该返回哪一个服务了;public NamedServiceProvider(IServiceProvider serviceProvider, IDictionary&lt;string, Type&gt; registrations);var sayHelloFactory = _serviceProvider.GetRequiredService&lt;Func&lt;string, ISayHello&gt;&gt;()">
+    
+    <meta name="description" content="public INamedServiceProviderBuilder AddNamedService(string serviceName, ServiceLifetime lifetime) where TImplementation : class;public INamedServiceProviderBuilder TryAddNamedService(string serviceNam">
+<meta property="og:type" content="article">
+<meta property="og:title" content=".NET Core原生DI扩展之基于名称的注入实现">
+<meta property="og:url" content="https://qinyuanpei.github.io/posts/1734098504/index.html">
+<meta property="og:site_name" content="一个人的孤落时辰">
+<meta property="og:description" content="public INamedServiceProviderBuilder AddNamedService(string serviceName, ServiceLifetime lifetime) where TImplementation : class;public INamedServiceProviderBuilder TryAddNamedService(string serviceNam">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-06-10T13:08:03.000Z">
+<meta property="article:modified_time" content="2021-06-08T03:55:47.408Z">
+<meta property="article:author" content="飞鸿踏雪">
+<meta property="article:tag" content="技巧">
+<meta property="article:tag" content=".NET Core">
+<meta property="article:tag" content="DI">
+<meta property="article:tag" content="依赖注入">
+<meta name="twitter:card" content="summary">
+    
+        <link rel="alternate" type="application/atom+xml" title="一个人的孤落时辰" href="/atom.xml">
+    
+    <link rel="shortcut icon" href="/assets/images/favicon.ico">
+    
+        <link rel="manifest" href="/manifest.json">
+    
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master//assets/styles/style.css">
+    <script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/instantclick.min.js"></script>
+    <script>window.lazyScripts=[]</script>
+    <!-- custom head -->
+    
+
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu" class="hide" >
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap" style="background-image:url(/assets/images/brand.jpg)">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/assets/images/avatar.jpg" alt="avatar">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">飞鸿踏雪</h5>
+          <a href="mailto:qinyuanpei@163.com" title="qinyuanpei@163.com" class="mail">qinyuanpei@163.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/"  >
+                <i class="icon icon-lg icon-home"></i>
+                主页
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives"  >
+                <i class="icon icon-lg icon-archives"></i>
+                归档
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags"  >
+                <i class="icon icon-lg icon-tags"></i>
+                标签
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/categories"  >
+                <i class="icon icon-lg icon-th-list"></i>
+                分类
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/books"  >
+                <i class="icon icon-lg icon-bookmark"></i>
+                书单
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/movies"  >
+                <i class="icon icon-lg icon-film"></i>
+                影单
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="https://qinyuanpei.github.io/poems/"  >
+                <i class="icon icon-lg icon-folder-open"></i>
+                诗集
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/works"  >
+                <i class="icon icon-lg icon-code"></i>
+                实验室
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/about"  >
+                <i class="icon icon-lg icon-circle"></i>
+                关于我
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+            <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">.NET Core原生DI扩展之基于名称的注入实现</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off"
+                placeholder="输入感兴趣的关键字">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+        <a href="https://github.com/qinyuanpei/qinyuanpei.github.io" target="_blank" rel="noopener" class="header-icon waves-effect waves-circle waves-light" id="menuGithub">
+            <i class="icon icon-lg icon-code-fork"></i>
+        </a>
+    </div>
+</header>
+<header class="content-header post-header">
+    <div class="container fade-scale">
+        <h1 class="title">.NET Core原生DI扩展之基于名称的注入实现</h1>
+        <h5 class="subtitle" id="subtitle">
+            
+            <time datetime="2020-06-10T13:08:03.000Z" itemprop="datePublished" class="page-time">
+  2020-06-10
+</time>
+
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/">编程语言</a></li></ul>
+
+            
+        </h5>
+    </div>
+    
+
+</header>
+
+<div class="container body-wrap">
+    
+    <article id="post-NET-Core原生DI扩展之基于名称的注入实现" class="post-article article-type-post fade" itemprop="blogPost">
+
+        <div class="post-card">
+            <h1 class="post-card-title">
+                .NET Core原生DI扩展之基于名称的注入实现
+            </h1>
+            <div class="post-meta">
+                <time class="post-time" title="2020-06-10 13:08:03" datetime="2020-06-10T13:08:03.000Z"  itemprop="datePublished">2020-06-10</time>
+
+                
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/">编程语言</a></li></ul>
+
+
+
+                
+<span id="lc_counter_container_page_pv" title="文章总阅读量" data-page-url="" data-page-title=".NET Core原生DI扩展之基于名称的注入实现">
+    <i class="icon icon-eye icon-pr"></i><span id="lc_counter_value_page_pv"></span>
+</span>
+
+
+
+
+
+                
+    <span>
+        <i class="icon icon-clock-o"></i>
+        13 min.
+    </span>
+    
+            </div>
+            <div class="post-content" id="post-content" itemprop="postContent">
+                <p>接触 <code>.NET Core</code> 有一段时间了，最大的感受无外乎无所不在的依赖注入，以及抽象化程度更高的全新框架设计。想起三年前 Peter 大神手写 IoC 容器时的惊艳，此时此刻，也许会有不一样的体会。的确，那个基于字典实现的 IoC 容器相当“简陋”，就像 <code>.NET Core</code> 里的依赖注入，默认(原生)都是采用构造函数注入的方式，可其实从整个依赖注入的理论上而言，属性注入和方法注入的方式，同样是依赖注入的实现方式啊。最近一位朋友找我讨论，<code>.NET Core</code> 里该如何实现 <code>Autowried</code>，这位朋友本身是 Java 出身，一番攀谈了解到原来是指属性注入啊。所以，我打算用两篇博客来聊聊 <code>.NET Core</code> 中的原生 DI 的扩展，而今天这篇，则单讲基于名称的注入的实现。</p>
+<p><a href="https://autofac.org/" target="_blank" rel="noopener">Autofac</a>是一个非常不错的 IoC 容器，通常我们会使用它来替换微软内置的 IoC 容器。为什么要这样做呢？其实，微软在其官方<a href="https://docs.microsoft.com/zh-cn/aspnet/core/fundamentals/dependency-injection?view=aspnetcore-3.1" target="_blank" rel="noopener">文档</a>中早已给出了说明，即微软内置的 IoC 容器实际上是不支持以下特性的： <strong>属性注入、基于名称的注入、子容器、自定义生存期管理、对迟缓初始化的 Func<T> 支持、基于约定的注册</strong>。这是我们为什么要替换微软内置的 IoC  容器的原因，除了Autofac 以外，我们还可以考虑 <code>Unity</code> 、<code>Castle</code> 等容器，对我个人而言，其实最需要的一个功能是“扫描”，即它可以针对程序集中的组件或者服务进行自动注册。这个功能可以让人写起代码更省心一点，果然，人类的本质就是让自己变得更加懒惰呢。好了，话题拉回到本文主题，我们为什么需要基于名称的注入呢？它其实针对的是“<strong>同一个接口对应多种不同的实现</strong>”这种场景。</p>
+<p>OK ，假设我们现在有一个接口ISayHello，它对外提供一个方法SayHello：</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">interface</span> <span class="title">ISayHello</span></span><br><span class="line">&#123;</span><br><span class="line">  <span class="function"><span class="keyword">string</span> <span class="title">SayHello</span>(<span class="params"><span class="keyword">string</span> receiver</span>)</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>相对应地，我们有两个实现类，ChineseSayHello和EnglishSayHello：</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//ChineseSayHello</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">ChineseSayHello</span> : <span class="title">ISayHello</span></span><br><span class="line">&#123;</span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">string</span> <span class="title">SayHello</span>(<span class="params"><span class="keyword">string</span> receiver</span>)</span></span><br><span class="line"><span class="function"></span>  &#123;</span><br><span class="line">      <span class="keyword">return</span> <span class="string">$"你好，<span class="subst">&#123;receiver&#125;</span>"</span>;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//EnglishSayHello</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">EnglishSayHello</span> : <span class="title">ISayHello</span></span><br><span class="line">&#123;</span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">string</span> <span class="title">SayHello</span>(<span class="params"><span class="keyword">string</span> receiver</span>)</span></span><br><span class="line"><span class="function"></span>  &#123;</span><br><span class="line">      <span class="keyword">return</span> <span class="string">$"Hello，<span class="subst">&#123;receiver&#125;</span>"</span>;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>接下来，一顿操作猛如虎：</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> services = <span class="keyword">new</span> ServiceCollection();</span><br><span class="line">services.AddTransient&lt;ISayHello, ChineseSayHello&gt;();</span><br><span class="line">services.AddTransient&lt;ISayHello, EnglishSayHello&gt;();</span><br><span class="line"><span class="keyword">var</span> serviceProvider = services.BuildServiceProvider();</span><br><span class="line"><span class="keyword">var</span> sayHello = serviceProvider.GetRequiredService&lt;ISayHello&gt;();</span><br></pre></td></tr></table></figure>
+<p>没想到，尴尬的事情就发生了，大家来猜猜看，这个时候我们获取到的<code>ISayHello</code>到底是哪一个呢？事实上，它会获取到<code>EnglishSayHello</code>这个实现类，为什么呢？因为它后注册的呀！当然，微软的工程师们不可能想不到这个问题，所以，官方推荐的做法是使用<code>IEnumerable&lt;ISayHello&gt;</code>，这样我们就能拿到所有注册的<code>ISayHello</code>，然后自己决定到底要使用一种实现，类似下面这样：</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> sayHellos = _serviceProvider.GetRequiredService&lt;IEnumerable&lt;ISayHello&gt;&gt;();</span><br><span class="line"><span class="keyword">var</span> chineseSayHello = sayHellos.FirstOrDefault(x =&gt; x.GetType() == (<span class="keyword">typeof</span>(ChineseSayHello)));</span><br><span class="line"><span class="keyword">var</span> englishSayHello = sayHellos.FirstOrDefault(x =&gt; x.GetType() == (<span class="keyword">typeof</span>(EnglishSayHello)));</span><br></pre></td></tr></table></figure>
+<p>可这样还是有一点不方便啊，继续改造：</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">services.AddTransient&lt;ChineseSayHello&gt;();</span><br><span class="line">services.AddTransient&lt;EnglishSayHello&gt;();</span><br><span class="line">services.AddTransient(implementationFactory =&gt;</span><br><span class="line">&#123;</span><br><span class="line">  Func&lt;<span class="keyword">string</span>, ISayHello&gt; sayHelloFactory = lang =&gt;</span><br><span class="line">  &#123;</span><br><span class="line">    <span class="keyword">switch</span> (lang)</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="keyword">case</span> <span class="string">"Chinese"</span>:</span><br><span class="line">        <span class="keyword">return</span> implementationFactory.GetService&lt;ChineseSayHello&gt;();</span><br><span class="line">      <span class="keyword">case</span> <span class="string">"English"</span>:</span><br><span class="line">        <span class="keyword">return</span> implementationFactory.GetService&lt;EnglishSayHello&gt;();</span><br><span class="line">      <span class="keyword">default</span>:</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> NotImplementedException();</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> sayHelloFactory;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<p>这样子，这个工厂类看起来就消失了对吧，其实并没有(逃</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> sayHelloFactory = _serviceProvider.GetRequiredService&lt;Func&lt;<span class="keyword">string</span>, ISayHello&gt;&gt;();</span><br><span class="line"><span class="keyword">var</span> chineseSayHello = sayHelloFactory(<span class="string">"Chinese"</span>);</span><br><span class="line"><span class="keyword">var</span> englishSayHello = sayHelloFactory(<span class="string">"English"</span>);</span><br></pre></td></tr></table></figure>
+<p>这距离我们的目标有一点接近了哈，唯一的遗憾是这个工厂类对调用方是透明的，可谓是隐藏细节上的失败。有没有更好的方案呢？好了，我不卖关子啦，一起来看下面的实现。</p>
+<p>首先，我们定义一个接口<code>INamedServiceProvider</code>, 顾名思义，就不需要再解释什么了:</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">interface</span> <span class="title">INamedServiceProvider</span></span><br><span class="line">&#123;</span><br><span class="line">  TService GetService&lt;TService&gt;(<span class="keyword">string</span> serviceName);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>接下来，编写实现类<code>NamedServiceProvider</code>:</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">NamedServiceProvider</span> : <span class="title">INamedServiceProvider</span></span><br><span class="line">&#123;</span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">readonly</span> IServiceProvider _serviceProvider;</span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">readonly</span> IDictionary&lt;<span class="keyword">string</span>, Type&gt; _registrations;</span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="title">NamedServiceProvider</span>(<span class="params">IServiceProvider serviceProvider, IDictionary&lt;<span class="keyword">string</span>, Type&gt; registrations</span>)</span></span><br><span class="line"><span class="function"></span>  &#123;</span><br><span class="line">    _serviceProvider = serviceProvider;</span><br><span class="line">    _registrations = registrations;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">public</span> TService GetService&lt;TService&gt;(<span class="keyword">string</span> serviceName)</span><br><span class="line">  &#123;</span><br><span class="line">    <span class="keyword">if</span>(!_registrations.TryGetValue(serviceName, <span class="keyword">out</span> <span class="keyword">var</span> implementationType))</span><br><span class="line">      <span class="keyword">throw</span> <span class="keyword">new</span> ArgumentException(<span class="string">$"Service \"<span class="subst">&#123;serviceName&#125;</span>\" is not registered in container"</span>);</span><br><span class="line">    <span class="keyword">return</span> (TService)_serviceProvider.GetService(implementationType);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>可以注意到，我们这里用一个字典来维护名称和类型间的关系，一切仿佛又回到三年前Peter大神手写IoC的那个下午。接下来，我们定义一个<code>INamedServiceProviderBuilder</code>, 它可以让我们使用链式语法注册服务：</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">interface</span> <span class="title">INamedServiceProviderBuilder</span></span><br><span class="line">&#123;</span><br><span class="line">  INamedServiceProviderBuilder AddNamedService&lt;TService&gt;(<span class="keyword">string</span> serviceName, ServiceLifetime lifetime) <span class="keyword">where</span> TService : <span class="keyword">class</span>;</span><br><span class="line"></span><br><span class="line">  INamedServiceProviderBuilder TryAddNamedService&lt;TService&gt;(<span class="keyword">string</span> serviceName, ServiceLifetime lifetime) <span class="keyword">where</span> TService : <span class="keyword">class</span>;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">void</span> <span class="title">Build</span>(<span class="params"></span>)</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里，Add和TryAdd的区别就是后者会对已有的键进行检查，如果键存在则不会继续注册，和微软自带的DI中的Add/TryAdd对应，我们一起来看它的实现：</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">NamedServiceProviderBuilder</span> : <span class="title">INamedServiceProviderBuilder</span></span><br><span class="line">&#123;</span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">readonly</span> IServiceCollection _services;</span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">readonly</span> IDictionary&lt;<span class="keyword">string</span>, Type&gt; _registrations = <span class="keyword">new</span> Dictionary&lt;<span class="keyword">string</span>, Type&gt;();</span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="title">NamedServiceProviderBuilder</span>(<span class="params">IServiceCollection services</span>)</span></span><br><span class="line"><span class="function"></span>  &#123;</span><br><span class="line">    _services = services;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">Build</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>  &#123;</span><br><span class="line">    _services.AddTransient&lt;INamedServiceProvider&gt;(sp =&gt; <span class="keyword">new</span> NamedServiceProvider(sp, _registrations));</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">public</span> INamedServiceProviderBuilder AddNamedService&lt;TImplementation&gt;(<span class="keyword">string</span> serviceName, ServiceLifetime lifetime) <span class="keyword">where</span> TImplementation : <span class="keyword">class</span></span><br><span class="line">  &#123;</span><br><span class="line">    <span class="keyword">switch</span> (lifetime)</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="keyword">case</span> ServiceLifetime.Transient:</span><br><span class="line">        _services.AddTransient&lt;TImplementation&gt;();</span><br><span class="line">      <span class="keyword">break</span>;</span><br><span class="line">      <span class="keyword">case</span> ServiceLifetime.Scoped:</span><br><span class="line">        _services.AddScoped&lt;TImplementation&gt;();</span><br><span class="line">      <span class="keyword">break</span>;</span><br><span class="line">      <span class="keyword">case</span> ServiceLifetime.Singleton:</span><br><span class="line">        _services.AddSingleton&lt;TImplementation&gt;();</span><br><span class="line">      <span class="keyword">break</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    _registrations.Add(serviceName, <span class="keyword">typeof</span>(TImplementation));</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">this</span>;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">public</span> INamedServiceProviderBuilder TryAddNamedService&lt;TImplementation&gt;(<span class="keyword">string</span> serviceName, ServiceLifetime lifetime) <span class="keyword">where</span> TImplementation : <span class="keyword">class</span></span><br><span class="line">  &#123;</span><br><span class="line">    <span class="keyword">switch</span> (lifetime)</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="keyword">case</span> ServiceLifetime.Transient:</span><br><span class="line">        _services.TryAddTransient&lt;TImplementation&gt;();</span><br><span class="line">      <span class="keyword">break</span>;</span><br><span class="line">      <span class="keyword">case</span> ServiceLifetime.Scoped:</span><br><span class="line">        _services.TryAddScoped&lt;TImplementation&gt;();</span><br><span class="line">      <span class="keyword">break</span>;</span><br><span class="line">      <span class="keyword">case</span> ServiceLifetime.Singleton:</span><br><span class="line">        _services.TryAddSingleton&lt;TImplementation&gt;();</span><br><span class="line">      <span class="keyword">break</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    _registrations.TryAdd(serviceName, <span class="keyword">typeof</span>(TImplementation));</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">this</span>;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>相信到这里，大家都明白博主的意图了吧，核心其实是在<code>Build()</code>方法中，因为我们最终需要的是其实是<code>NamedServiceProvider</code>，而在此之前的种种，都属于收集依赖、构建ServiceProvider的过程，所以，它被定义为<code>NamedServiceProviderBuilder</code>，我们在这里维护的这个字典，最终会被传入到<code>NamedServiceProvider</code>的构造函数中，这样我们就知道根据名称应该返回哪一个服务了。</p>
+<p>接下来，为了让它和微软自带的DI无缝粘合，我们需要编写一点扩展方法：</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">class</span> <span class="title">ServiceCollectionExstension</span></span><br><span class="line">&#123;</span><br><span class="line">  <span class="keyword">public</span> <span class="keyword">static</span> TService GetNamedService&lt;TService&gt;(<span class="keyword">this</span> IServiceProvider serviceProvider, <span class="keyword">string</span> serviceName)</span><br><span class="line">  &#123;</span><br><span class="line">    <span class="keyword">var</span> namedServiceProvider = serviceProvider.GetRequiredService&lt;INamedServiceProvider&gt;();</span><br><span class="line">    <span class="keyword">if</span> (namedServiceProvider == <span class="literal">null</span>)</span><br><span class="line">      <span class="keyword">throw</span> <span class="keyword">new</span> ArgumentException(<span class="string">$"Service \"<span class="subst">&#123;<span class="keyword">nameof</span>(INamedServiceProvider)&#125;</span>\" is not registered in container"</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> namedServiceProvider.GetService&lt;TService&gt;(serviceName);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> INamedServiceProviderBuilder <span class="title">AsNamedServiceProvider</span>(<span class="params"><span class="keyword">this</span> IServiceCollection services</span>)</span></span><br><span class="line"><span class="function"></span>  &#123;</span><br><span class="line">    <span class="keyword">var</span> builder = <span class="keyword">new</span> NamedServiceProviderBuilder(services);</span><br><span class="line">    <span class="keyword">return</span> builder;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>现在，回到我们一开始的问题，它是如何被解决的呢？</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">services</span><br><span class="line">  .AsNamedServiceProvider()</span><br><span class="line">  .AddNamedService&lt;ChineseSayHello&gt;(<span class="string">"Chinese"</span>, ServiceLifetime.Transient)</span><br><span class="line">  .AddNamedService&lt;EnglishSayHello&gt;(<span class="string">"English"</span>, ServiceLifetime.Transient)</span><br><span class="line">  .Build();</span><br><span class="line"><span class="keyword">var</span> serviceProvider = services.BuildServiceProvier();</span><br><span class="line"><span class="keyword">var</span> chineseSayHello = serviceProvider.GetNamedService&lt;ISayHello&gt;(<span class="string">"Chinese"</span>);</span><br><span class="line"><span class="keyword">var</span> englishSayHello = serviceProvider.GetNamedService&lt;ISayHello&gt;(<span class="string">"English"</span>);</span><br></pre></td></tr></table></figure>
+<p>这个时候，对调用方而已，依然是熟悉的ServiceProvider，它只需要传入一个名称来获取服务即可，由此，我们就实现了基于名称的依赖注入。回顾一下它的实现过程，其实是一个逐步推进的过程，我们使用依赖注入，本来是希望依赖抽象，即针对同一个接口，可以无痛地从一种实现切换到另外一种实现。可我们发现，当这些实现同时被注册到容器里的时候，容器一样会迷惑于到底用哪一种实现，这就让我们开始思考，这种基于字典的IoC容器设计方案是否存在缺陷。所以，在.NET Core里的DI设计中还引入了工厂的概念，因为并不是所以的Resolve<T>都可以通过<code>Activator.Create</code>来实现，更不必说Autofac和Castle中还有子容器的概念，只能说人生不同的阶段总会有不同的理解吧！好了，这篇博客就先写到这里，欢迎大家给我留言，晚安！</p>
+
+                
+
+                
+
+
+<div class="recommended_posts">
+    <h1>推荐阅读</h1>
+    <ul>
+        
+        <li><a href="https://qinyuanpei.github.io/posts/305484621/">C#中的扩展方法学习总结</a></li>
+        
+        <li><a href="https://qinyuanpei.github.io/posts/116795088/">.NET Core POCOController在动态Web API中的应用</a></li>
+        
+        <li><a href="https://qinyuanpei.github.io/posts/2414960312/">.NET Core中对象池(Object Pool)的使用</a></li>
+        
+        <li><a href="https://qinyuanpei.github.io/posts/1658310834/">.NET Core原生DI扩展之属性注入实现</a></li>
+        
+        <li><a href="https://qinyuanpei.github.io/posts/3247093203/">使用多线程为你的Python爬虫提速的N种姿势，你会几种？</a></li>
+        
+    </ul>
+</div>
+
+            </div>
+            
+<blockquote class="post-copyright">
+    <div class="content">
+        <p><b>版权声明：</b>
+        <a href="https://qinyuanpei.github.io/posts/1734098504/" rel="external">.NET Core原生DI扩展之基于名称的注入实现</a>
+        ，由&nbsp;<a href="/about" target="_blank" rel="external">飞鸿踏雪</a>&nbsp;
+        首次发表于&nbsp;<a href="/" target="_blank" rel="external">一个人的孤落时辰</a>&nbsp;
+        ，本文地址为：<a href="https://qinyuanpei.github.io/posts/1734098504/" target="_blank" rel="external">https://qinyuanpei.github.io/posts/1734098504/</a>
+        ，转载请注明<b>作者</b>和<b>出处</b>。</p>
+    </div>
+    <footer>
+        <a href="https://qinyuanpei.github.io">
+            <img src="/assets/images/avatar.jpg" alt="飞鸿踏雪">
+            飞鸿踏雪
+        </a>
+    </footer>
+</blockquote>
+
+
+            
+<div class="page-reward">
+    <a id="rewardBtn" href="javascript:;" class="page-reward-btn waves-effect waves-circle waves-light">赏</a>
+</div>
+
+
+            <div class="post-footer">
+                
+	<ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/NET-Core/" rel="tag">.NET Core</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/DI/" rel="tag">DI</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E4%BE%9D%E8%B5%96%E6%B3%A8%E5%85%A5/" rel="tag">依赖注入</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%8A%80%E5%B7%A7/" rel="tag">技巧</a></li></ul>
+
+                
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://qinyuanpei.github.io/posts/1734098504/&title=《.NET Core原生DI扩展之基于名称的注入实现》 — 一个人的孤落时辰&pic=https://qinyuanpei.github.ioassets/images/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://qinyuanpei.github.io/posts/1734098504/&title=《.NET Core原生DI扩展之基于名称的注入实现》 — 一个人的孤落时辰&source=一个人的孤落时辰 | 纵有疾风起，人生不言弃 | 隐约雷鸣，阴霾天空，即使天无雨，我亦留此地。" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://qinyuanpei.github.io/posts/1734098504/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《.NET Core原生DI扩展之基于名称的注入实现》 — 一个人的孤落时辰&url=https://qinyuanpei.github.io/posts/1734098504/&via=https://qinyuanpei.github.io" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://qinyuanpei.github.io/posts/1734098504/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+      
+      <li>
+        <a class="google share-sns" target="_blank" onClick="show_yp()" data-title=" 生成海报">
+          <i class="icon icon-file-image-o"></i>
+        </a>
+      </li>
+      
+    </ul>
+ </div>
+
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
+            </div>
+        </div>
+
+        
+<nav class="post-nav flex-row flex-justify-between">
+  
+    <div class="waves-block waves-effect prev">
+      <a href="/posts/1658310834/" id="post-prev" class="post-nav-link">
+        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
+        <h4 class="title">.NET Core原生DI扩展之属性注入实现</h4>
+      </a>
+    </div>
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/posts/478946932/" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h4 class="title">原生JavaScript实现Hexo博客推荐功能</h4>
+      </a>
+    </div>
+  
+</nav>
+
+
+        
+    <div id="comment"></div>
+<script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+<script src='//unpkg.com/valine/dist/Valine.min.js'></script>
+<script type="text/javascript">
+new Valine({
+    el: '#comment' ,
+    notify: false, 
+    verify: true, 
+    appId: 'JbHqRp2eMrTgIwYpfERH0g79-gzGzoHsz',
+    appKey: 'VsiKvLuiBGvJL1XrAfv7siY2',
+    placeholder: '云中谁寄锦书来，雁字回时，月满西楼。&#10;Tips：如果希望收到我的评论回复，请至少留下你的邮箱哦:)',
+    path:'https://qinyuanpei.github.io/posts/1734098504/', 
+    avatar:'identicon',
+    requiredFields: ['nick','mail']
+});
+</script>
+
+
+
+
+    </article>
+    
+<div id="reward" class="page-modal reward-lay">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <h3 class="reward-title">
+        <i class="icon icon-quote-left"></i>
+        赠人玫瑰，手有余香
+        <i class="icon icon-quote-right"></i>
+    </h3>
+    <div class="reward-content">
+        
+        <div class="reward-code">
+            <img id="rewardCode" src="/assets/images/wechat.png" alt="打赏二维码">
+        </div>
+        
+        <label class="reward-toggle">
+            <input id="rewardToggle" type="checkbox" class="reward-toggle-check"
+                data-wechat="/assets/images/wechat.png" data-alipay="/assets/images/alipay.jpg">
+            <div class="reward-toggle-ctrol">
+                <span class="reward-toggle-item wechat">微信</span>
+                <span class="reward-toggle-label"></span>
+                <span class="reward-toggle-item alipay">支付宝</span>
+            </div>
+        </label>
+        
+    </div>
+</div>
+
+
+    <script type="text/javascript" src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/yoniu.min.js"></script>
+<style type='text/css'>
+	body.active-yp {
+		overflow: hidden;
+	}
+	.yp-fc-btn{
+		display: flex;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		align-items: center;
+		justify-content: space-between;
+		font-size: 13px;
+	}
+	.yp-fc-btn span{
+		cursor: pointer;
+		padding: 2px 10px;
+		color: #4b4b4b;
+		border: #4b4b4b 1px solid;
+		border-radius:5px;
+	}
+	#yp-hide{
+		position: fixed;
+		display: flex;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		justify-content: center;
+		flex-direction: column;
+		left:0;
+		top:0;
+		right:0;
+		bottom:0;
+		background-color:rgba(0,0,0,.5);
+		z-index: 99999;
+		visibility: hidden;
+	}
+	#yoniu-poster{
+		box-sizing: border-box;
+		width: 350px;
+		height: 467.2px;
+		background-color: #fff;
+		margin: 0 auto;
+		padding: 0;
+		line-height: 1.6;
+		text-align:justify;
+	}
+	
+	.yp-img {
+		min-height: 240px;
+		position: relative;
+		display: flex;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		justify-content: flex-end;
+		flex-direction: column;
+		background-position: 50% 50%;
+		background-size: cover;
+		overflow:hidden;
+	}
+	.yp-img>div{
+		padding: 10px 20px;
+	}
+	.yp-name{
+		display: block;
+		color: #fff;
+		font-size: 20px;
+		font-weight: 600;
+		text-shadow: #4b4b4b 0.1em 0.1em 0.2em;
+		margin-top: 10px;
+	}
+	.yp-sort{
+		padding: 3px 10px;
+		font-size: 12px;
+		color: #fff;
+		background: #2e2e2e;
+	}
+	.yp-des{
+		color: #2e2e2e;
+		font-size: 14px;
+		margin: 20px;
+		height: 67.2px;
+	}
+	.yp-qcode{
+		display: flex;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		justify-content: space-between;
+		align-items: center;
+		margin: 10px;
+		padding: 10px 20px;
+		background: #f5f5f5;
+		color: #818181;
+		border-radius: 10px;
+	}
+	.yp-tips{
+		display: flex;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		justify-content: space-between;
+		align-items: center;
+		color: #ccc;
+		margin: 0 10px 10px;
+		font-size: 10px;
+		letter-spacing: 1.5px;
+	}
+	.yp-btns{
+		display: flex;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		align-items: stretch;
+		justify-content: center;
+		width:350px;
+		margin: 0 auto;
+	}
+	.yp-btns>span{
+		display: flex;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		align-items: center;
+		justify-content: center;
+		font-size: 14px;
+		padding: 10px 15px;
+		background:rgba(0,0,0,.2);
+		color: #f5f5f5;
+		cursor: pointer;
+	}
+	.yp-btns>span>a{
+		color: #f5f5f5;
+	}
+	.yp-btns>span>a:hover{
+		text-decoration:none;
+	}
+	#yp-close{
+		font-size: 18px;
+		font-weight: 600;
+	}
+</style>
+<div id="yp-hide">
+    <div id="yoniu-poster">
+        <div class="yp-img" id="yp-img">
+            <div>
+                <span class="yp-sort"></span>
+                <span class="yp-name">.NET Core原生DI扩展之基于名称的注入实现</span>
+            </div>
+        </div>
+        <div class="yp-des">    
+            
+                接触 .NET Core 有一段时间了，最大的感受无外乎无所不在的依赖注入，以及抽象化程度更高的全新框架设计。想起三年前 Peter 大神手写 ...
+            
+        </div>
+        <div class="yp-qcode">
+            <span>扫描二维码阅读原文</span>
+            <img id="yp-qcode" width="64px" src="//api.qrserver.com/v1/create-qr-code/?data=https://qinyuanpei.github.io/posts/1734098504/">
+        </div>
+        <div class="yp-tips">
+            <span>一个人的孤落时辰</span>
+            <span><time class="post-time" title="2020-06-10 13:08:03" datetime="2020-06-10T13:08:03.000Z"  itemprop="datePublished">2020-06-10</time>
+</span>
+        </div>
+    </div>
+    <div class="yp-btns">
+        <span id="yp-load-yp" onClick="load_yp()">生成海报</span>
+        <span><a id="yp-download"></a></span>
+        <span id="yp-close" onClick="close_yp()">×</span>
+    </div>
+</div>
+<script type="text/javascript">
+    function show_yp(){
+        window.scrollTo(0, 0);
+        document.body.setAttribute("class","active-yp");
+        let cover = document.getElementsByTagName('img')[1];
+        if (cover != null && typeof(cover) != 'undefined') {
+            document.getElementById('yp-img').style.backgroundImage = `url(${cover.src})`;
+        } else {
+            document.getElementById('yp-img').style.backgroundColor = '#d7dbf0';
+        }
+        document.getElementById("yp-hide").style.visibility = "visible";
+    }
+    function close_yp(){
+        var domClass = document.body.getAttribute("class");
+        domClass = domClass.replace("active-yp","");
+        document.body.setAttribute("class",domClass);
+        document.getElementById("yp-hide").style.visibility = "hidden";
+    }
+    function load_yp(){
+        document.getElementById('yp-load-yp').textContent = '海报生成中...';
+        setTimeout(function() {
+            h2c_();
+        },2000);
+
+    }
+</script>
+
+</div>
+
+        <footer class="footer">
+    <div class="top">
+        
+   <p>
+      <span id="lc_counter_container_site_uv">
+         <i class="icon icon-user"></i><span id="lc_counter_value_site_uv"></span>
+      </span>
+      <span id="lc_counter_container_site_pv">
+         <i class="icon icon-eye"></i><span id="lc_counter_value_site_pv"></span>
+      </span>
+  </p>
+
+
+        <p>
+   <a id="jinrishici-sentence" href="https://www.jinrishici.com/" target="_blank" rel="noopener">加载中</a>
+</p>
+<script src="https://sdk.jinrishici.com/v2/browser/jinrishici.js" charset="utf-8"></script>
+<script>
+   jinrishici.load(function(result) {
+      document.querySelector('#subtitle').innerText = result.data.content;
+      document.querySelector('#jinrishici-sentence').innerText = result.data.content;
+  });
+</script>
+            <!--Todo: 考虑重构为插件 -->
+            <p>
+                
+                    <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+                
+                <span>
+                    <a href="https://github.com/qinyuanpei" target="_blank" rel="license noopener" title="Github">
+                        <i class="icon icon-lg icon-github"></i>
+                    </a>
+                </span>
+                <span>
+                    <a href="https://weibo.com/1278609231/profile" target="_blank" rel="license noopener" title="微博">
+                        <i class="icon icon-lg icon-weibo"></i>
+                    </a>
+                </span>
+                <span>
+                    <a href="https://www.douban.com/people/60029335/" target="_blank" rel="license noopener" title="豆瓣">
+                        <i class="icon icon-lg icon-douban"></i>
+                    </a>
+                </span>
+                <span>
+                    <a href="https://www.zhihu.com/people/qinyuanpei" target="_blank" rel="license noopener" title="知乎">
+                        <i class="icon icon-lg icon-zhihu-square"></i>
+                    </a>
+                </span>
+                <span>
+                    <a href="https://blog.csdn.net/qinyuanpei" target="_blank" rel="license noopener" title="CSDN">
+                        <i class="icon icon-lg">C</i>
+                    </a>
+                </span>
+                <span>
+                    <a href="https://music.163.com/#/user/home?id=47002864" target="_blank" rel="license noopener" title="网易音乐">
+                        <i class="icon icon-lg icon-wangyiyunyinyue"></i>
+                    </a>
+                </span>
+            </p>
+        
+    </div>
+    <div class="bottom">
+        <p><span>飞鸿踏雪 &copy; 2014 - 2021</span><br>
+            
+                
+                Powered by <a href="http://hexo.io/" target="_blank">Hexo</a> & Theme by <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a><br>
+                
+                
+                    <p>Hosted by <a href="https://pages.github.com" target="_blank" rel="noopener" style="font-weight: bold">Github Pages</a></p>
+                
+        </p>
+    </div>
+</footer>
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span
+        class="icon icon-lg icon-chevron-up"></span></a>
+
+    
+
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://qinyuanpei.github.io/posts/1734098504/&title=《.NET Core原生DI扩展之基于名称的注入实现》 — 一个人的孤落时辰&pic=https://qinyuanpei.github.ioassets/images/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://qinyuanpei.github.io/posts/1734098504/&title=《.NET Core原生DI扩展之基于名称的注入实现》 — 一个人的孤落时辰&source=一个人的孤落时辰 | 纵有疾风起，人生不言弃 | 隐约雷鸣，阴霾天空，即使天无雨，我亦留此地。" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://qinyuanpei.github.io/posts/1734098504/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《.NET Core原生DI扩展之基于名称的注入实现》 — 一个人的孤落时辰&url=https://qinyuanpei.github.io/posts/1734098504/&via=https://qinyuanpei.github.io" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://qinyuanpei.github.io/posts/1734098504/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+      
+      <li>
+        <a class="google share-sns" target="_blank" onClick="show_yp()" data-title=" 生成海报">
+          <i class="icon icon-file-image-o"></i>
+        </a>
+      </li>
+      
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="//api.qrserver.com/v1/create-qr-code/?data=https://qinyuanpei.github.io/posts/1734098504/" alt="微信分享二维码">
+</div>
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.6/waves.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/4.2.1/echarts.min.js"></script>
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/echarts-wordcloud.min.js" async></script>
+<script>
+    var BLOG = { ROOT: '/', SHARE: true, REWARD: true };
+
+
+</script>
+
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/main.min.js"></script>
+
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/search.min.js" async></script>
+
+
+
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/heart.min.js" async></script>
+
+
+
+
+
+
+
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/leancloud-counter.min.js"></script>
+<script>
+        (function () {
+            var appId = 'JbHqRp2eMrTgIwYpfERH0g79-gzGzoHsz';
+            var appKey = 'VsiKvLuiBGvJL1XrAfv7siY2';
+            new VisitorCounter().init({
+                appId: appId,       //应用ID, 必输
+                appKey: appKey,      //应用Key, 必输
+                region: '华北',      //华东,华北,国际, 默认华东
+                domain: '',      //自定义域名
+                collectIP: true, //是否收集IP及位置信息, 默认开启
+                collectUA: true  //是否收集UserAgent, 默认开启
+            });
+        })();
+</script>
+
+
+
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/vconsole.min.js"></script>
+<script type="text/javascript">
+    //当地址中存在debug=true时，实例化vConsole
+    if (location.href.indexOf('debug=true') > -1) {
+        var vConsole = new VConsole();
+    }
+</script>
+
+
+    <script>
+    //国内用户自动重定向Coding Pages镜像
+    // var ipInfo = JSON.parse(localStorage.getItem('ipInfo'));
+    // if (ipInfo.country_code == 'CN') {
+    //     location.href = location.href.replace('qinyuanpei.github.io', 'blog.yuanpei.me');
+    // }
+    </script>
+
+
+<script>
+titleArray = [];
+function scrollTitle() {
+    if (titleArray.length == 0) return;
+    titleArray.push(titleArray[0]);
+	titleArray.shift();
+	document.title = titleArray.join("");
+}
+setInterval(scrollTitle, 500);
+(function() {
+    var originTitile = document.title, titleTime;
+    document.addEventListener('visibilitychange', function() {
+        if (document.hidden) {
+            titleArray = originTitile.split('');
+            clearTimeout(titleTime);
+        } else {
+            document.title = originTitile;
+            titleArray = originTitile.split('');
+            titleTime = setTimeout(function() {
+                document.title = originTitile;
+                titleArray = [];
+            },2000);
+        }
+    });
+})();
+</script>
+
+
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/ribbon.min.js"></script>
+</body>
+</html>
