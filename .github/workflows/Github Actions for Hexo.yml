@@ -19,10 +19,9 @@ jobs:
       with:
         python-version: '3.x'
         architecture: 'x64'
-    - name: For Linux
-      run: |
-        sudo apt-get install python-dev libxml2-dev libxslt1-dev zlib1g-dev
-    - name: Install Requirements
+    - name: Prepare For Linux
+      run: sudo apt-get install python-dev libxml2-dev libxslt1-dev zlib1g-dev
+    - name: Install Python Requirements
       run: |
         python -m pip install pip -U
         python -m pip config set global.index-url http://mirrors.aliyun.com/pypi/simple/
@@ -31,8 +30,12 @@ jobs:
         # python -m pip install --default-timeout=50000 -r requirements.txt 
     - name: Setup Hexo
       run: npm install hexo-cli -g
-    - name: Install Packages
+    - name: Install NodeJS Packages
       run: npm install
+    - name: Configure Git
+      run: | 
+       git config user.name "qinyuanpei"
+       git config user.email "qinyuanpei@163.com"
     - name: Clean & Generate
       run: | 
        hexo clean
@@ -47,16 +50,30 @@ jobs:
        # python readme.py https://qinyuanpei.github.io/
        cp README.md ./public/README.md
        cp VERSION.txt ./public/VERSION.txt
-       git config user.name "qinyuanpei"
-       git config user.email "qinyuanpei@163.com"
        cd ./public
        git init 
        git remote add origin -m master https://github.com/qinyuanpei/qinyuanpe.github.io
        git add .
        git commit -m "Update Blog By Github Actions"
        git push --force --quiet "https://${CI_TOKEN}@${GH_REF}" master:master
-      
+    - name: Deploy Vercel
+      run: |
+       rm _config.yml
+       mv config-master.yml _config.yml
+       hexo recommend
+       hexo douban
+       hexo generate
+       # python readme.py https://blog.yuanpei.me
+       cp README.md ./public/README.md
+       cp VERSION.txt ./public/VERSION.txt
+       cd ./public
+       git init 
+       git remote add origin -m master https://github.com/qinyuanpei/qinyuanpe.github.io
+       git add .
+       git commit -m "Update Blog By Github Actions"
+       git push --force --quiet "https://${CI_TOKEN}@${GO_REF}" master:master    
       env:
         CI: true
         GH_REF: github.com/qinyuanpei/qinyuanpei.github.io
+        CO_REF: github.com/qinyuanpei/blog.yuanpei.me
         CI_TOKEN: ${{ secrets.CI_TOKEN }}
