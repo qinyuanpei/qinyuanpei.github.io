@@ -53,6 +53,8 @@ jobs:
        cp VERSION.txt ./public/VERSION.txt
        cd ./public
        git init 
+       git config user.name "qinyuanpei"
+       git config user.email "qinyuanpei@163.com"
        git remote add origin -m master https://github.com/qinyuanpei/qinyuanpe.github.io
        git add .
        git commit -m "Update Blog By Github Actions"
@@ -69,6 +71,8 @@ jobs:
        cp VERSION.txt ./public/VERSION.txt
        cd ./public
        git init 
+       git config user.name "qinyuanpei"
+       git config user.email "qinyuanpei@163.com"
        git remote add origin -m master https://github.com/qinyuanpei/qinyuanpe.github.io
        git add .
        git commit -m "Update Blog By Github Actions"
