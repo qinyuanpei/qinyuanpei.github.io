@@ -22,8 +22,10 @@ jobs:
     - name: Install Requirements
       run: |
         - python -m pip install pip -U
-        - python -m pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple
-        - python -m pip install -r requirements.txt
+        - python -m pip config set global.index-url http://mirrors.aliyun.com/pypi/simple/
+        - python -m pip config set install.trusted-host mirrors.aliyun.com
+        - python -m pip install setuptools==33.1.1 
+        - python -m pip install --default-timeout=50000 -r requirements.txt 
     - name: Setup Hexo
       run: npm install hexo-cli -g
     - name: Install Packages
