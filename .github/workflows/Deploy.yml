@@ -1,4 +1,4 @@
-name: Github Actions for Hexo
+name: Deploy
 
 on:
   push:
