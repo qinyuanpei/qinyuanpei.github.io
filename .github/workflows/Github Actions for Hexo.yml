@@ -9,19 +9,20 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v1
-    - name: Use Node.js
+    - name: Checkout 
+      uses: actions/checkout@v1
+    - name: Setup Node.js
       uses: actions/setup-node@v1
       with:
         node-version: 14.x
-    - name: Use Python
+    - name: Setup Python
       uses: actions/setup-python@v2
       with:
         python-version: '3.x'
         architecture: 'x64'
-    - name: Prepare For Linux
+    - name: Setup Python-Dev
       run: sudo apt-get install python-dev libxml2-dev libxslt1-dev zlib1g-dev
-    - name: Install Python Requirements
+    - name: Python Packages
       run: |
         python -m pip install pip -U
         python -m pip config set global.index-url http://mirrors.aliyun.com/pypi/simple/
@@ -30,7 +31,7 @@ jobs:
         # python -m pip install --default-timeout=50000 -r requirements.txt 
     - name: Setup Hexo
       run: npm install hexo-cli -g
-    - name: Install NodeJS Packages
+    - name: Node.js Packages
       run: npm install
     - name: Configure Git
       run: | 
