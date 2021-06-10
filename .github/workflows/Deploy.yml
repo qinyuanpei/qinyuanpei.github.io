@@ -43,15 +43,13 @@ jobs:
        git rev-parse HEAD > VERSION.txt
     - name: Deploy Github Pages
       run: |
-       rm _config.yml
-       mv config-salve.yml _config.yml
-       hexo recommend
-       hexo douban
+       sudo rm _config.yml
+       sudo mv config-salve.yml _config.yml
        hexo generate
        # python readme.py https://qinyuanpei.github.io/
-       cp README.md ./public/README.md
-       cp VERSION.txt ./public/VERSION.txt
-       cd ./public
+       sudo cp README.md ./public/README.md
+       sudo cp VERSION.txt ./public/VERSION.txt
+       sudo cd ./public
        git init 
        git config user.name "qinyuanpei"
        git config user.email "qinyuanpei@163.com"
