@@ -49,7 +49,7 @@ jobs:
        # python readme.py https://qinyuanpei.github.io/
        sudo cp README.md ./public/README.md
        sudo cp VERSION.txt ./public/VERSION.txt
-       sudo cd ./public
+       cd ./public
        git init 
        git config user.name "qinyuanpei"
        git config user.email "qinyuanpei@163.com"
