@@ -15,17 +15,17 @@ jobs:
       with:
         node-version: 8.x
     - name: Use Python
-      uses: actions/setup-python@v1
+      uses: actions/setup-python@v2
       with:
         python-version: '3.x'
         architecture: 'x64'
     - name: Install Requirements
       run: |
-        - python3 -m pip install pip -U
-        - python3 -m pip config set global.index-url http://mirrors.aliyun.com/pypi/simple/
-        - python3 -m pip config set install.trusted-host mirrors.aliyun.com
-        - python3 -m pip install setuptools==33.1.1 
-        - python3 -m pip install --default-timeout=50000 -r requirements.txt 
+        - python -m pip install pip -U
+        - python -m pip config set global.index-url http://mirrors.aliyun.com/pypi/simple/
+        - python -m pip config set install.trusted-host mirrors.aliyun.com
+        - python -m pip install setuptools==33.1.1 
+        - python -m pip install --default-timeout=50000 -r requirements.txt 
     - name: Setup Hexo
       run: npm install hexo-cli -g
     - name: Install Packages
@@ -41,7 +41,7 @@ jobs:
        - hexo recommend
        - hexo douban
        - hexo generate
-       - python3 readme.py https://qinyuanpei.github.io/
+       - python readme.py https://qinyuanpei.github.io/
        - cp README.md ./public/README.md
        - cp VERSION.txt ./public/VERSION.txt
        - git config user.name "qinyuanpei"
