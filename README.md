@@ -1,18 +1,19 @@
 [![Build Status](https://www.travis-ci.org/qinyuanpei/qinyuanpei.github.io.svg?branch=blog)](https://www.travis-ci.org/qinyuanpei/qinyuanpei.github.io)
 [![jsDelivr](https://data.jsdelivr.com/v1/package/gh/qinyuanpei/qinyuanpei.github.io/badge)](https://www.jsdelivr.com/package/gh/qinyuanpei/qinyuanpei.github.io)
 
-本文档由脚本自动生成，最后更新时间：2021-06-10 09:36:50，最后部署版本：[5f662f9](https://github.com/qinyuanpei/qinyuanpei.github.io/commit/5f662f978
+本文档由脚本自动生成，最后更新时间：2021-06-10 10:21:44，最后部署版本：[5f662f9](https://github.com/qinyuanpei/qinyuanpei.github.io/commit/5f662f978
 )
 
 如果想订阅我的博客，请使用Github的Watch功能，**请不要fork此项目**
 
-Hi, Payne. 从2014-12-30至今，你撰写博客共计199篇，请继续努力！
+Hi, Payne. 从2014-12-30至今，你撰写博客共计200篇，请继续努力！
 
 Coding Pages版本：[https://blog.yuanpei.me](https://blog.yuanpei.me)
 
 Github Pages版本：[https://qinyuanpei.github.io](https://qinyuanpei.github.io)
 
-# 2021(共19篇)
+# 2021(共20篇)
+* 2021-06-07 - [ASP.NET Core gRPC 集成 Polly 实现优雅重试](https://blog.yuanpei.me/posts/2742255459/)
 * 2021-06-01 - [ASP.NET Core gRPC 健康检查的探索与实现](https://blog.yuanpei.me/posts/1657075397/)
 * 2021-05-26 - [ASP.NET Core gRPC 拦截器的使用技巧分享](https://blog.yuanpei.me/posts/1679688265/)
 * 2021-05-19 - [SnowNLP 使用自定义语料进行模型训练](https://blog.yuanpei.me/posts/1772340994/)
