@@ -1,0 +1,901 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+    
+<script async defer data-domain="blog.yuanpei.me" src="https://plausible.io/js/plausible.js"></script>
+    
+    <meta charset="utf-8">
+    <!-- HTTP 1.1 -->  
+    <meta http-equiv="pragma" content="no-cache">  
+    <!-- HTTP 1.0 -->  
+    <meta http-equiv="cache-control" content="no-cache">
+    <!-- 微博图床防盗链 --> 
+    <!-- <meta name="referrer" content="no-referrer"/> -->
+    <!--Google站点验证-->
+    
+    <!--百度站点验证-->
+    
+    
+    <!--Google AdSense-->
+    
+    <!--Bing站点验证-->
+    <meta name="msvalidate.01" content="713A48A3FE17D4841C292A6B3942EB4C" />
+    
+    <title>
+        使用C#开发HTTP服务器之支持HTTPS | 一个人的孤落时辰 | 纵有疾风起，人生不言弃
+    </title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+        <meta name="theme-color" content="#3F51B5">
+    
+
+    <meta name="keywords" content="HTTP,服务器,C#,秦元培,技术博客,生活随笔,个人博客,NET,Python,数据挖掘,数据分析,NLP">
+    
+        <meta name="description" content="这恰恰印证了我们最初的观点，即HTTPS协议依然采用HTTP协议(三次握手)进行通讯，不同的地方在于中间环节增加了加密处理，例如在客户端和服务器端相互验证的环节采用的是非对称加密，在客户端验证通过以后双方采用随机数作为密钥是对称加密，而三次握手以后验证消息是否被篡改则是采用HASH算法;我们可以将其理解为在HTTP协议的基础上增加了安全机制，这里的安全机制是指SSL,简单来讲HTTPS协议依然采用HTTP协议，不过它在HTTP和TCP间增加了加密/身份验证层，因此在保证数据传输安全的同时，为服务器提供了身份校验机制;好了，现在我们对HTTPS协议有了一个基本的认识：HTTPS协议相比HTTP协议增加了身份验证和消息加密的机制，因此HTTPS协议能够保证通讯过程中的数据传输安全;所以我们应该可以注意到，HTTP协议和HTTPS协议的一个显著的区别是，前者采用明文来传输消息，而后者采用密文来传输消息，因此HTTPS协议比HTTP协议在通讯上更为安全;可是当我们了解了HTTPS协议后，我们发现，如果要让最初设计的Web服务器支持HTTPS协议，我们需要关注的是Security，即身份验证和数据加密，我们知道这里的Security指的是SSL，所以需要了解SSL相关的内容">
+    
+    <meta name="description" content="这恰恰印证了我们最初的观点，即HTTPS协议依然采用HTTP协议(三次握手)进行通讯，不同的地方在于中间环节增加了加密处理，例如在客户端和服务器端相互验证的环节采用的是非对称加密，在客户端验证通过以后双方采用随机数作为密钥是对称加密，而三次握手以后验证消息是否被篡改则是采用HASH算法;我们可以将其理解为在HTTP协议的基础上增加了安全机制，这里的安全机制是指SSL,简单来讲HTTPS协议依然采用">
+<meta property="og:type" content="article">
+<meta property="og:title" content="使用C#开发HTTP服务器之支持HTTPS">
+<meta property="og:url" content="https://qinyuanpei.github.io/posts/2734896333/index.html">
+<meta property="og:site_name" content="一个人的孤落时辰">
+<meta property="og:description" content="这恰恰印证了我们最初的观点，即HTTPS协议依然采用HTTP协议(三次握手)进行通讯，不同的地方在于中间环节增加了加密处理，例如在客户端和服务器端相互验证的环节采用的是非对称加密，在客户端验证通过以后双方采用随机数作为密钥是对称加密，而三次握手以后验证消息是否被篡改则是采用HASH算法;我们可以将其理解为在HTTP协议的基础上增加了安全机制，这里的安全机制是指SSL,简单来讲HTTPS协议依然采用">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://ww1.sinaimg.cn/large/4c36074fly1fzix85xqd1j20i00fkwg8.jpg">
+<meta property="article:published_time" content="2017-03-05T14:01:39.000Z">
+<meta property="article:modified_time" content="2021-06-11T06:41:55.425Z">
+<meta property="article:author" content="飞鸿踏雪">
+<meta property="article:tag" content="HTTP">
+<meta property="article:tag" content="服务器">
+<meta property="article:tag" content="C#">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://ww1.sinaimg.cn/large/4c36074fly1fzix85xqd1j20i00fkwg8.jpg">
+    
+        <link rel="alternate" type="application/atom+xml" title="一个人的孤落时辰" href="/atom.xml">
+    
+    <link rel="shortcut icon" href="/assets/images/favicon.ico">
+    
+        <link rel="manifest" href="/manifest.json">
+    
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master//assets/styles/style.css">
+    <script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/instantclick.min.js"></script>
+    <script>window.lazyScripts=[]</script>
+    <!-- custom head -->
+    
+
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu" class="hide" >
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap" style="background-image:url(/assets/images/brand.jpg)">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/assets/images/avatar.jpg" alt="avatar">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">飞鸿踏雪</h5>
+          <a href="mailto:qinyuanpei@163.com" title="qinyuanpei@163.com" class="mail">qinyuanpei@163.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/"  >
+                <i class="icon icon-lg icon-home"></i>
+                主页
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives"  >
+                <i class="icon icon-lg icon-archives"></i>
+                归档
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags"  >
+                <i class="icon icon-lg icon-tags"></i>
+                标签
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/categories"  >
+                <i class="icon icon-lg icon-th-list"></i>
+                分类
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/books"  >
+                <i class="icon icon-lg icon-bookmark"></i>
+                书单
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/movies"  >
+                <i class="icon icon-lg icon-film"></i>
+                影单
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="https://qinyuanpei.github.io/poems/"  >
+                <i class="icon icon-lg icon-folder-open"></i>
+                诗集
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/works"  >
+                <i class="icon icon-lg icon-code"></i>
+                实验室
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/about"  >
+                <i class="icon icon-lg icon-circle"></i>
+                关于我
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+            <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">使用C#开发HTTP服务器之支持HTTPS</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off"
+                placeholder="输入感兴趣的关键字">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+        <a href="https://github.com/qinyuanpei/qinyuanpei.github.io" target="_blank" rel="noopener" class="header-icon waves-effect waves-circle waves-light" id="menuGithub">
+            <i class="icon icon-lg icon-code-fork"></i>
+        </a>
+    </div>
+</header>
+<header class="content-header post-header">
+    <div class="container fade-scale">
+        <h1 class="title">使用C#开发HTTP服务器之支持HTTPS</h1>
+        <h5 class="subtitle" id="subtitle">
+            
+            <time datetime="2017-03-05T14:01:39.000Z" itemprop="datePublished" class="page-time">
+  2017-03-05
+</time>
+
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/">编程语言</a></li></ul>
+
+            
+        </h5>
+    </div>
+    
+
+</header>
+
+<div class="container body-wrap">
+    
+    <article id="post-使用C#开发HTTP服务器之支持HTTPS" class="post-article article-type-post fade" itemprop="blogPost">
+
+        <div class="post-card">
+            <h1 class="post-card-title">
+                使用C#开发HTTP服务器之支持HTTPS
+            </h1>
+            <div class="post-meta">
+                <time class="post-time" title="2017-03-05 14:01:39" datetime="2017-03-05T14:01:39.000Z"  itemprop="datePublished">2017-03-05</time>
+
+                
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80/">编程语言</a></li></ul>
+
+
+
+                
+<span id="lc_counter_container_page_pv" title="文章总阅读量" data-page-url="" data-page-title="使用C#开发HTTP服务器之支持HTTPS">
+    <i class="icon icon-eye icon-pr"></i><span id="lc_counter_value_page_pv"></span>
+</span>
+
+
+
+
+
+                
+    <span>
+        <i class="icon icon-clock-o"></i>
+        16 min.
+    </span>
+    
+            </div>
+            <div class="post-content" id="post-content" itemprop="postContent">
+                <p>&emsp;&emsp;各位朋友大家好，我是秦元培，欢迎大家关注我的博客，我的博客地址是<a href="http://qinyuanpei.com" target="_blank" rel="noopener">http://qinyuanpei.com</a>。本文是“使用C#开发HTTP服务器”系列的第六篇文章，在这个系列文章中我们实现了一个基础的Web服务器，它支持从本地读取静态HTML页面，支持GET和POST 两种请求方式。该项目托管在我的<a href="https://github.com/qinyuanpei" target="_blank" rel="noopener">Github</a>上，项目地址为<a href="https://github.com/qinyuanpei/HttpServer" target="_blank" rel="noopener">https://github.com/qinyuanpei/HttpServer</a>，感兴趣的朋友可以前往了解。其间有朋友为我提供了HTTPS的PR，或许这偏离了这个系列开发HTTP服务器的初衷，可是我们应该认识到普及HTTPS是大势所趋。所以在今天这篇文章中，我将为大家带来HTTPS相关知识的普及，以及如何为我们的这个Web服务器增加HTTPS的支持。</p>
+<a id="more"></a>
+
+<p>&emsp;&emsp;2017年我们听到这样一个声音，苹果将强制实施ATS，即App Transport Security。首先我们要了解的是ATS，它是苹果为了保证应用数据在网络中安全地传输而制定的一种规则，其核心是鼓励开发者使用安全的HTTPS协议和服务器进行通讯。在此之前考虑到大量的应用还在使用HTTP协议，所以苹果并未强制要求应用遵守这个规范，而此时苹果发出这样一种声音，我们终于意识到苹果这是在推广HTTPS啊！无独有偶，同样作为科技巨头之一的Google，宣布在新发布的Chrome 56中会将仅支持HTTP协议的网页标记为“不安全”。HTTPS到底是什么呢？为什么科技巨头纷纷开始对它青眼有加呢？这或许要从HTTPS协议说起。</p>
+<p>&emsp;&emsp;HTTPS，即Hyper Text Transfer Protocol Over Secure Socket Layer的简称，是指以安全为目标的HTTP协议。我们可以将其理解为在HTTP协议的基础上增加了安全机制，这里的安全机制是指SSL,简单来讲HTTPS协议依然采用HTTP协议，不过它在HTTP和TCP间增加了加密/身份验证层，因此在保证数据传输安全的同时，为服务器提供了身份校验机制。任何采用HTTPS协议的网站，均可通过浏览器地址栏中的“锁”标志来查看网站的认证信息，或者是通过CA机构颁发的数字证书来查询。下图展示的是HTTPS协议中客户端和服务器端通信过程：</p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="https://ww1.sinaimg.cn/large/4c36074fly1fzix85xqd1j20i00fkwg8.jpg" alt="HTTPS协议中客户端和服务器通信过程" title="" referrerpolicy="no-referrer">
+                </div>
+                <div class="image-caption">HTTPS协议中客户端和服务器通信过程</div>
+            </figure>
+
+<p>从图中我们可以看出，在HTTPS协议中客户端和服务器端分为六步：</p>
+<ul>
+<li>客户端请求服务器，发送握手消息给服务器。</li>
+<li>服务器端返回客户端加密算法、数字证书和公钥。</li>
+<li>客户端对返回的数字证书进行验证，如果验证通过则产生一个随机数，否则提示验证失败。</li>
+<li>客户端使用公钥对产生的随机数进行加密，然后将其发送给服务器端。</li>
+<li>服务器对该随机数进行解密，并以此作为密钥发送握手信息给客户端。</li>
+<li>客户端收到消息后对消息进行解密，如果解密成功则表示握手结束。</li>
+</ul>
+<p>&emsp;&emsp;这恰恰印证了我们最初的观点，即HTTPS协议依然采用HTTP协议(三次握手)进行通讯，不同的地方在于中间环节增加了加密处理，例如在客户端和服务器端相互验证的环节采用的是非对称加密，在客户端验证通过以后双方采用随机数作为密钥是对称加密，而三次握手以后验证消息是否被篡改则是采用HASH算法。所以我们应该可以注意到，HTTP协议和HTTPS协议的一个显著的区别是，前者采用明文来传输消息，而后者采用密文来传输消息，因此HTTPS协议比HTTP协议在通讯上更为安全。而详细来说，两者的区别主要有：</p>
+<ul>
+<li>HTTPS需要证书，而HTTP则不需要证书，证书由CA机构颁发。</li>
+<li>HTTP采用明文来传输消息，C/S端无身份验证；HTTPS采用密文来传输消息，C/S端有身份验证。</li>
+<li>HTTP默认采用80端口进行通信，而HTTPS默认采用443端口进行通信。</li>
+</ul>
+<p>&emsp;&emsp;好了，现在我们对HTTPS协议有了一个基本的认识：HTTPS协议相比HTTP协议增加了身份验证和消息加密的机制，因此HTTPS协议能够保证通讯过程中的数据传输安全。在今天这样一个数字时代，当个人隐私安全彻底地暴露在浏览器、应用程序面前，能够提供更安全的互联网服务无疑会让人更有安全感，我想这是苹果和谷歌这样的科技巨头公司，之所以要去努力推广HTTPS协议的原因吧！因为客户端需要对服务器的证书进行验证，所以这意味着在客户端拥有访问所有受信证书的能力，例如我们在使用传统网银产品时都需要安装网银证书，这其实就是为了让客户端在向服务器端发起请求时方便对服务器进行验证，因此如果客户端请求的URL遭遇劫持，被重定向到某个不被信任的站点上，那么客户端发起的请求就会被拦截。同样的道理，服务器端会对客户端的请求进行验证，所以这里就不再详细展开去说啦。</p>
+<p>&emsp;&emsp;我们最初设计这个HTTP服务器的时候，没有考虑过要支持HTTPS协议。可是当我们了解了HTTPS协议后，我们发现，如果要让最初设计的Web服务器支持HTTPS协议，我们需要关注的是Security，即身份验证和数据加密，我们知道这里的Security指的是SSL，所以需要了解SSL相关的内容。其次，我们需要提供一个数字证书给服务器端，目的是在客户端发起请求的时候，将数字证书、加密算法和公钥返回，保证客户端可以完成证书校验。从这两点可以看出，我们首先需要从CA机构购买证书，这一点毋庸置疑。关于证书的购买及服务器的设置，我们通过搜索引擎可以找到相关参考。目前主流的服务器如Apache、IIS、Tomcat和Ngnix都可以非常方便地支持HTTPS，这些问题更像是一种基础设施，所以我会在文章末尾列举出相关文章供大家查阅。</p>
+<p>&emsp;&emsp;这篇文章的核心是开发一个服务器，所以在保证这些基础设施完备的前提下，让我们将关注点落实到代码上面来。我们提到，HTTPS除了证书以外关键点是SSL，而在.NET中提供SSL相关的API，所以这里我们直接使用这些API就可以完成证书的创建、加载等工作。下面是相关的代码示例：</p>
+<figure class="highlight reasonml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 使用OpenSSL.NET生成密钥</span></span><br><span class="line">RSA rsa = <span class="keyword">new</span> <span class="constructor">RSA()</span>;</span><br><span class="line">BigNumber number = OpenSSL.Core.Random.<span class="constructor">Next(10, 10, 1)</span>;</span><br><span class="line">rsa.<span class="constructor">GenerateKeys(1024, <span class="params">number</span>, <span class="params">null</span>, <span class="params">null</span>)</span>;</span><br><span class="line">CryptoKey key = <span class="keyword">new</span> <span class="constructor">CryptoKey(<span class="params">rsa</span>)</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">//创建X509证书，Subject和Issuer相同 </span></span><br><span class="line">X509Certificate x509 = <span class="keyword">new</span> <span class="constructor">X509Certificate()</span>;</span><br><span class="line">x509.SerialNumber = (<span class="built_in">int</span>)DateTime.Now.Ticks;</span><br><span class="line">x509.Subject = <span class="keyword">new</span> <span class="constructor">X509Name(<span class="string">"CN=DOMAIN"</span>)</span>;        <span class="comment">//DOMAIN为站点域名 </span></span><br><span class="line">x509.Issuer = <span class="keyword">new</span> <span class="constructor">X509Name(<span class="string">"CN=DOMAIN"</span>)</span>;</span><br><span class="line">x509.PublicKey = key;                            <span class="comment">//指定公钥 </span></span><br><span class="line">x509.NotBefore = Convert.<span class="constructor">ToDateTime(<span class="string">"2011-1-1"</span>)</span>; <span class="comment">//起始时间 </span></span><br><span class="line">x509.NotAfter = Convert.<span class="constructor">ToDateTime(<span class="string">"2050-1-1"</span>)</span>;  <span class="comment">//失效时间 </span></span><br><span class="line">x509.Version = <span class="number">2</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">//使用私钥签名</span></span><br><span class="line">x509.<span class="constructor">Sign(<span class="params">key</span>, MessageDigest.MD5)</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">//生成CRT证书</span></span><br><span class="line">BIO x509bio = BIO.<span class="constructor">File(<span class="string">"CA.crt"</span>, <span class="string">"w"</span>)</span>;</span><br><span class="line">x509.<span class="constructor">Write(<span class="params">x509bio</span>)</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">//生成PFX证书</span></span><br><span class="line">var certs = <span class="keyword">new</span> OpenSSL.Core.Stack&lt;X509Certificate&gt;<span class="literal">()</span>;</span><br><span class="line">PKCS12 p12 = <span class="keyword">new</span> <span class="constructor">PKCS12(<span class="string">"PASSWORD"</span>, <span class="params">key</span>, <span class="params">x509</span>, <span class="params">certs</span>)</span>; <span class="comment">//PASSWORD为保护密钥 </span></span><br><span class="line">BIO p12Bio = BIO.<span class="constructor">File(<span class="string">"CA.pfx"</span>, <span class="string">"w"</span>)</span>;</span><br><span class="line">p12.<span class="constructor">Write(<span class="params">p12Bio</span>)</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">//加载证书</span></span><br><span class="line">var certifiate = X509Certificate.<span class="constructor">CreateFromCertFile(<span class="string">"CA.crt"</span>)</span>;</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;在我们获得证书以后，我们就可以通过SSL对Socket通信过程中传递的消息进行加密了，一个基本的示例代码如下：</p>
+<figure class="highlight reasonml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">SslStream sslStream = <span class="keyword">new</span> <span class="constructor">SslStream(<span class="params">clientStream</span>)</span>;</span><br><span class="line">sslStream.<span class="constructor">AuthenticateAsServer(<span class="params">serverCertificate</span>, <span class="params">false</span>, SslProtocols.Tls, <span class="params">true</span>)</span>;</span><br><span class="line">sslStream.ReadTimeout = <span class="number">10000</span>;</span><br><span class="line">sslStream.WriteTimeout = <span class="number">10000</span>;</span><br><span class="line">return sslStream;</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;个人感觉加密相关的问题深奥而晦涩，这篇文章中涉及到的相关概念和技术，都大大地超出了我目前的认知范围。不过既然这位朋友热心地提交了这个PR，我就将这个过程视为向别人的一次学习吧！我会继续去完善这个项目：<a href="https://github.com/qinyuanpei/HttpServer" target="_blank" rel="noopener">https://github.com/qinyuanpei/HttpServer</a>。这篇博客终于算是写完了，周末开心！</p>
+<p>** 参考文章 **</p>
+<ul>
+<li><a href="http://www.cnblogs.com/zery/p/5164795.html" target="_blank" rel="noopener">Zery - HTTPS原理解析</a></li>
+<li><a href="http://www.ruanyifeng.com/blog/2014/02/ssl_tls.html" target="_blank" rel="noopener">阮一峰 - SSL/TLS协议运行机制的概述</a></li>
+<li><a href="https://zh.wikipedia.org/zh-hans/%E8%B6%85%E6%96%87%E6%9C%AC%E4%BC%A0%E8%BE%93%E5%AE%89%E5%85%A8%E5%8D%8F%E8%AE%AE" target="_blank" rel="noopener">维基百科 - 超文本传输安全协议</a></li>
+<li><a href="https://cattail.me/tech/2015/11/30/how-https-works.html" target="_blank" rel="noopener">猫尾博客 - HTTPS工作原理</a></li>
+<li><a href="https://support.microsoft.com/zh-cn/help/324069/how-to-set-up-an-https-service-in-iis" target="_blank" rel="noopener">MSDN - 如何在 IIS 中设置 HTTPS 服务</a></li>
+<li><a href="http://www.cnblogs.com/dudu/p/iis_https_ca.html" target="_blank" rel="noopener">Dudu - 给IIS添加CA证书以支持https</a></li>
+<li><a href="http://www.cnblogs.com/liaojiafa/p/6028816.html" target="_blank" rel="noopener">温柔易淡 - Apache配置HTTPS功能</a></li>
+<li><a href="http://www.cnblogs.com/wanghaoyuhappy/p/5267702.html" target="_blank" rel="noopener">王浩宇 - 配置Tomcat使用https协议</a></li>
+</ul>
+
+                
+
+                
+
+
+<div class="recommended_posts">
+    <h1>推荐阅读</h1>
+    <ul>
+        
+        <li><a href="https://qinyuanpei.github.io/posts/2015300310/">Referrer还是Referer? 一个迷人的错误</a></li>
+        
+        <li><a href="https://qinyuanpei.github.io/posts/1071063696/">使用ASP.NET Core和Hangfire实现HTTP异步化方案</a></li>
+        
+        <li><a href="https://qinyuanpei.github.io/posts/3040357134/">使用C#开发HTTP服务器系列之Hello World</a></li>
+        
+        <li><a href="https://qinyuanpei.github.io/posts/1700650235/">使用C#开发HTTP服务器系列之实现Get和Post</a></li>
+        
+        <li><a href="https://qinyuanpei.github.io/posts/3603924376/">使用C#开发HTTP服务器系列之更简单的实现方式</a></li>
+        
+    </ul>
+</div>
+
+            </div>
+            
+<blockquote class="post-copyright">
+    <div class="content">
+        <p><b>版权声明：</b>
+        <a href="https://qinyuanpei.github.io/posts/2734896333/" rel="external">使用C#开发HTTP服务器之支持HTTPS</a>
+        ，由&nbsp;<a href="/about" target="_blank" rel="external">飞鸿踏雪</a>&nbsp;
+        首次发表于&nbsp;<a href="/" target="_blank" rel="external">一个人的孤落时辰</a>&nbsp;
+        ，本文地址为：<a href="https://qinyuanpei.github.io/posts/2734896333/" target="_blank" rel="external">https://qinyuanpei.github.io/posts/2734896333/</a>
+        ，转载请注明<b>作者</b>和<b>出处</b>。</p>
+    </div>
+    <footer>
+        <a href="https://qinyuanpei.github.io">
+            <img src="/assets/images/avatar.jpg" alt="飞鸿踏雪">
+            飞鸿踏雪
+        </a>
+    </footer>
+</blockquote>
+
+
+            
+<div class="page-reward">
+    <a id="rewardBtn" href="javascript:;" class="page-reward-btn waves-effect waves-circle waves-light">赏</a>
+</div>
+
+
+            <div class="post-footer">
+                
+	<ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/C/" rel="tag">C#</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/HTTP/" rel="tag">HTTP</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%9C%8D%E5%8A%A1%E5%99%A8/" rel="tag">服务器</a></li></ul>
+
+                
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://qinyuanpei.github.io/posts/2734896333/&title=《使用C#开发HTTP服务器之支持HTTPS》 — 一个人的孤落时辰&pic=https://qinyuanpei.github.ioassets/images/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://qinyuanpei.github.io/posts/2734896333/&title=《使用C#开发HTTP服务器之支持HTTPS》 — 一个人的孤落时辰&source=&emsp;&emsp;各位朋友大家好，我是秦元培，欢迎大家关注我的博客，我的博客地址是http://qinyuanpei.com。本文是“使用C#开发H..." data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://qinyuanpei.github.io/posts/2734896333/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《使用C#开发HTTP服务器之支持HTTPS》 — 一个人的孤落时辰&url=https://qinyuanpei.github.io/posts/2734896333/&via=https://qinyuanpei.github.io" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://qinyuanpei.github.io/posts/2734896333/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+      
+      <li>
+        <a class="google share-sns" target="_blank" onClick="show_yp()" data-title=" 生成海报">
+          <i class="icon icon-file-image-o"></i>
+        </a>
+      </li>
+      
+    </ul>
+ </div>
+
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
+            </div>
+        </div>
+
+        
+<nav class="post-nav flex-row flex-justify-between">
+  
+    <div class="waves-block waves-effect prev">
+      <a href="/posts/3032366281/" id="post-prev" class="post-nav-link">
+        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
+        <h4 class="title">Redis缓存技术学习系列之邂逅Redis</h4>
+      </a>
+    </div>
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/posts/2314414875/" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h4 class="title">愿浮萍乘风破浪</h4>
+      </a>
+    </div>
+  
+</nav>
+
+
+        
+    <div id="comment"></div>
+<script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+<script src='//unpkg.com/valine/dist/Valine.min.js'></script>
+<script type="text/javascript">
+new Valine({
+    el: '#comment' ,
+    notify: false, 
+    verify: true, 
+    appId: 'JbHqRp2eMrTgIwYpfERH0g79-gzGzoHsz',
+    appKey: 'VsiKvLuiBGvJL1XrAfv7siY2',
+    placeholder: '云中谁寄锦书来，雁字回时，月满西楼。&#10;Tips：如果希望收到我的评论回复，请至少留下你的邮箱哦:)',
+    path:'https://qinyuanpei.github.io/posts/2734896333/', 
+    avatar:'identicon',
+    requiredFields: ['nick','mail']
+});
+</script>
+
+
+
+
+    </article>
+    
+<div id="reward" class="page-modal reward-lay">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <h3 class="reward-title">
+        <i class="icon icon-quote-left"></i>
+        赠人玫瑰，手有余香
+        <i class="icon icon-quote-right"></i>
+    </h3>
+    <div class="reward-content">
+        
+        <div class="reward-code">
+            <img id="rewardCode" src="/assets/images/wechat.png" alt="打赏二维码">
+        </div>
+        
+        <label class="reward-toggle">
+            <input id="rewardToggle" type="checkbox" class="reward-toggle-check"
+                data-wechat="/assets/images/wechat.png" data-alipay="/assets/images/alipay.jpg">
+            <div class="reward-toggle-ctrol">
+                <span class="reward-toggle-item wechat">微信</span>
+                <span class="reward-toggle-label"></span>
+                <span class="reward-toggle-item alipay">支付宝</span>
+            </div>
+        </label>
+        
+    </div>
+</div>
+
+
+    <script type="text/javascript" src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/yoniu.min.js"></script>
+<style type='text/css'>
+	body.active-yp {
+		overflow: hidden;
+	}
+	.yp-fc-btn{
+		display: flex;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		align-items: center;
+		justify-content: space-between;
+		font-size: 13px;
+	}
+	.yp-fc-btn span{
+		cursor: pointer;
+		padding: 2px 10px;
+		color: #4b4b4b;
+		border: #4b4b4b 1px solid;
+		border-radius:5px;
+	}
+	#yp-hide{
+		position: fixed;
+		display: flex;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		justify-content: center;
+		flex-direction: column;
+		left:0;
+		top:0;
+		right:0;
+		bottom:0;
+		background-color:rgba(0,0,0,.5);
+		z-index: 99999;
+		visibility: hidden;
+	}
+	#yoniu-poster{
+		box-sizing: border-box;
+		width: 350px;
+		height: 467.2px;
+		background-color: #fff;
+		margin: 0 auto;
+		padding: 0;
+		line-height: 1.6;
+		text-align:justify;
+	}
+	
+	.yp-img {
+		min-height: 240px;
+		position: relative;
+		display: flex;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		justify-content: flex-end;
+		flex-direction: column;
+		background-position: 50% 50%;
+		background-size: cover;
+		overflow:hidden;
+	}
+	.yp-img>div{
+		padding: 10px 20px;
+	}
+	.yp-name{
+		display: block;
+		color: #fff;
+		font-size: 20px;
+		font-weight: 600;
+		text-shadow: #4b4b4b 0.1em 0.1em 0.2em;
+		margin-top: 10px;
+	}
+	.yp-sort{
+		padding: 3px 10px;
+		font-size: 12px;
+		color: #fff;
+		background: #2e2e2e;
+	}
+	.yp-des{
+		color: #2e2e2e;
+		font-size: 14px;
+		margin: 20px;
+		height: 67.2px;
+	}
+	.yp-qcode{
+		display: flex;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		justify-content: space-between;
+		align-items: center;
+		margin: 10px;
+		padding: 10px 20px;
+		background: #f5f5f5;
+		color: #818181;
+		border-radius: 10px;
+	}
+	.yp-tips{
+		display: flex;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		justify-content: space-between;
+		align-items: center;
+		color: #ccc;
+		margin: 0 10px 10px;
+		font-size: 10px;
+		letter-spacing: 1.5px;
+	}
+	.yp-btns{
+		display: flex;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		align-items: stretch;
+		justify-content: center;
+		width:350px;
+		margin: 0 auto;
+	}
+	.yp-btns>span{
+		display: flex;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		align-items: center;
+		justify-content: center;
+		font-size: 14px;
+		padding: 10px 15px;
+		background:rgba(0,0,0,.2);
+		color: #f5f5f5;
+		cursor: pointer;
+	}
+	.yp-btns>span>a{
+		color: #f5f5f5;
+	}
+	.yp-btns>span>a:hover{
+		text-decoration:none;
+	}
+	#yp-close{
+		font-size: 18px;
+		font-weight: 600;
+	}
+</style>
+<div id="yp-hide">
+    <div id="yoniu-poster">
+        <div class="yp-img" id="yp-img">
+            <div>
+                <span class="yp-sort"></span>
+                <span class="yp-name">使用C#开发HTTP服务器之支持HTTPS</span>
+            </div>
+        </div>
+        <div class="yp-des">    
+            
+                &emsp;&emsp;各位朋友大家好，我是秦元培，欢迎大家关注我的博客，我的博客地址是http://qinyuanpei.com。本文是“使用...
+            
+        </div>
+        <div class="yp-qcode">
+            <span>扫描二维码阅读原文</span>
+            <img id="yp-qcode" width="64px" src="//api.qrserver.com/v1/create-qr-code/?data=https://qinyuanpei.github.io/posts/2734896333/">
+        </div>
+        <div class="yp-tips">
+            <span>一个人的孤落时辰</span>
+            <span><time class="post-time" title="2017-03-05 14:01:39" datetime="2017-03-05T14:01:39.000Z"  itemprop="datePublished">2017-03-05</time>
+</span>
+        </div>
+    </div>
+    <div class="yp-btns">
+        <span id="yp-load-yp" onClick="load_yp()">生成海报</span>
+        <span><a id="yp-download"></a></span>
+        <span id="yp-close" onClick="close_yp()">×</span>
+    </div>
+</div>
+<script type="text/javascript">
+    function show_yp(){
+        window.scrollTo(0, 0);
+        document.body.setAttribute("class","active-yp");
+        let cover = document.getElementsByTagName('img')[1];
+        if (cover != null && typeof(cover) != 'undefined') {
+            document.getElementById('yp-img').style.backgroundImage = `url(${cover.src})`;
+        } else {
+            document.getElementById('yp-img').style.backgroundColor = '#d7dbf0';
+        }
+        document.getElementById("yp-hide").style.visibility = "visible";
+    }
+    function close_yp(){
+        var domClass = document.body.getAttribute("class");
+        domClass = domClass.replace("active-yp","");
+        document.body.setAttribute("class",domClass);
+        document.getElementById("yp-hide").style.visibility = "hidden";
+    }
+    function load_yp(){
+        document.getElementById('yp-load-yp').textContent = '海报生成中...';
+        setTimeout(function() {
+            h2c_();
+        },2000);
+
+    }
+</script>
+
+</div>
+
+        <footer class="footer">
+    <div class="top">
+        
+   <p>
+      <span id="lc_counter_container_site_uv">
+         <i class="icon icon-user"></i><span id="lc_counter_value_site_uv"></span>
+      </span>
+      <span id="lc_counter_container_site_pv">
+         <i class="icon icon-eye"></i><span id="lc_counter_value_site_pv"></span>
+      </span>
+  </p>
+
+
+        <p>
+   <a id="jinrishici-sentence" href="https://www.jinrishici.com/" target="_blank" rel="noopener">加载中</a>
+</p>
+<script src="https://sdk.jinrishici.com/v2/browser/jinrishici.js" charset="utf-8"></script>
+<script>
+   jinrishici.load(function(result) {
+      document.querySelector('#subtitle').innerText = result.data.content;
+      document.querySelector('#jinrishici-sentence').innerText = result.data.content;
+  });
+</script>
+            <!--Todo: 考虑重构为插件 -->
+            <p>
+                
+                    <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+                
+                <span>
+                    <a href="https://github.com/qinyuanpei" target="_blank" rel="license noopener" title="Github">
+                        <i class="icon icon-lg icon-github"></i>
+                    </a>
+                </span>
+                <span>
+                    <a href="https://weibo.com/1278609231/profile" target="_blank" rel="license noopener" title="微博">
+                        <i class="icon icon-lg icon-weibo"></i>
+                    </a>
+                </span>
+                <span>
+                    <a href="https://www.douban.com/people/60029335/" target="_blank" rel="license noopener" title="豆瓣">
+                        <i class="icon icon-lg icon-douban"></i>
+                    </a>
+                </span>
+                <span>
+                    <a href="https://www.zhihu.com/people/qinyuanpei" target="_blank" rel="license noopener" title="知乎">
+                        <i class="icon icon-lg icon-zhihu-square"></i>
+                    </a>
+                </span>
+                <span>
+                    <a href="https://blog.csdn.net/qinyuanpei" target="_blank" rel="license noopener" title="CSDN">
+                        <i class="icon icon-lg">C</i>
+                    </a>
+                </span>
+                <span>
+                    <a href="https://music.163.com/#/user/home?id=47002864" target="_blank" rel="license noopener" title="网易音乐">
+                        <i class="icon icon-lg icon-wangyiyunyinyue"></i>
+                    </a>
+                </span>
+            </p>
+        
+    </div>
+    <div class="bottom">
+        <p><span>飞鸿踏雪 &copy; 2014 - 2021</span><br>
+            
+                
+                Powered by <a href="http://hexo.io/" target="_blank">Hexo</a> & Theme by <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a><br>
+                
+                
+                    <p>Hosted by <a href="https://pages.github.com" target="_blank" rel="noopener" style="font-weight: bold">Github Pages</a></p>
+                
+        </p>
+    </div>
+</footer>
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span
+        class="icon icon-lg icon-chevron-up"></span></a>
+
+    
+
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://qinyuanpei.github.io/posts/2734896333/&title=《使用C#开发HTTP服务器之支持HTTPS》 — 一个人的孤落时辰&pic=https://qinyuanpei.github.ioassets/images/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://qinyuanpei.github.io/posts/2734896333/&title=《使用C#开发HTTP服务器之支持HTTPS》 — 一个人的孤落时辰&source=&emsp;&emsp;各位朋友大家好，我是秦元培，欢迎大家关注我的博客，我的博客地址是http://qinyuanpei.com。本文是“使用C#开发H..." data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://qinyuanpei.github.io/posts/2734896333/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《使用C#开发HTTP服务器之支持HTTPS》 — 一个人的孤落时辰&url=https://qinyuanpei.github.io/posts/2734896333/&via=https://qinyuanpei.github.io" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://qinyuanpei.github.io/posts/2734896333/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+      
+      <li>
+        <a class="google share-sns" target="_blank" onClick="show_yp()" data-title=" 生成海报">
+          <i class="icon icon-file-image-o"></i>
+        </a>
+      </li>
+      
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="//api.qrserver.com/v1/create-qr-code/?data=https://qinyuanpei.github.io/posts/2734896333/" alt="微信分享二维码">
+</div>
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.6/waves.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/4.2.1/echarts.min.js"></script>
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/echarts-wordcloud.min.js" async></script>
+<script>
+    var BLOG = { ROOT: '/', SHARE: true, REWARD: true };
+
+
+</script>
+
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/main.min.js"></script>
+
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/search.min.js" async></script>
+
+
+
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/heart.min.js" async></script>
+
+
+
+
+
+
+
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/leancloud-counter.min.js"></script>
+<script>
+        (function () {
+            var appId = 'JbHqRp2eMrTgIwYpfERH0g79-gzGzoHsz';
+            var appKey = 'VsiKvLuiBGvJL1XrAfv7siY2';
+            new VisitorCounter().init({
+                appId: appId,       //应用ID, 必输
+                appKey: appKey,      //应用Key, 必输
+                region: '华北',      //华东,华北,国际, 默认华东
+                domain: '',      //自定义域名
+                collectIP: true, //是否收集IP及位置信息, 默认开启
+                collectUA: true  //是否收集UserAgent, 默认开启
+            });
+        })();
+</script>
+
+
+
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/vconsole.min.js"></script>
+<script type="text/javascript">
+    //当地址中存在debug=true时，实例化vConsole
+    if (location.href.indexOf('debug=true') > -1) {
+        var vConsole = new VConsole();
+    }
+</script>
+
+
+    <script>
+    //国内用户自动重定向Coding Pages镜像
+    // var ipInfo = JSON.parse(localStorage.getItem('ipInfo'));
+    // if (ipInfo.country_code == 'CN') {
+    //     location.href = location.href.replace('qinyuanpei.github.io', 'blog.yuanpei.me');
+    // }
+    </script>
+
+
+<script>
+titleArray = [];
+function scrollTitle() {
+    if (titleArray.length == 0) return;
+    titleArray.push(titleArray[0]);
+	titleArray.shift();
+	document.title = titleArray.join("");
+}
+setInterval(scrollTitle, 500);
+(function() {
+    var originTitile = document.title, titleTime;
+    document.addEventListener('visibilitychange', function() {
+        if (document.hidden) {
+            titleArray = originTitile.split('');
+            clearTimeout(titleTime);
+        } else {
+            document.title = originTitile;
+            titleArray = originTitile.split('');
+            titleTime = setTimeout(function() {
+                document.title = originTitile;
+                titleArray = [];
+            },2000);
+        }
+    });
+})();
+</script>
+
+
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/ribbon.min.js"></script>
+</body>
+</html>
