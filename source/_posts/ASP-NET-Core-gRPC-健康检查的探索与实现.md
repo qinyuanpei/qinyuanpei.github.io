@@ -342,6 +342,10 @@ await client.CalcAsync(new CalculatorRequest() { Num1 = 1, Num2 = 2, Op = "+" })
 我猜，大多数看到这个标题会一脸鄙夷，心里大概会想，就测试工具这种东西值得特地写出来吗？诚然，以前写API接口的时候，大家都是用 [Postman](https://www.postman.com/downloads/) 或者 [Apifox](https://www.apifox.cn/) 这样的工具来进行测试的，可是突然有一天你要调试一个`gRPC`的接口，你总不能每次都调用客户端啊，所以，这里要给大家推荐两个`gRPC`接口的测试工具，它们分别是: [grpcurl](https://github.com/fullstorydev/grpcurl) 和 [grpcui](https://github.com/fullstorydev/grpcui)，它们都出自同一个人 [FullStory](https://github.com/fullstorydev) 之手，基于Go语言开发，简单介绍下使用方法：
 
 ```shell
+// 建议使用国内源
+go env -w GO111MODULE=on
+go env -w GOPROXY=https://goproxy.cn,direct
+
 // grpcurl
 brew install grpcurl
 
@@ -353,6 +357,7 @@ go install github.com/fullstorydev/grpcui/cmd/grpcui
 虽然这个说明简单而直白，可我还是没能装好，我不得不祭出Docker这个神器，果然它不会令我失望：
 
 ```shell
+docker pull wongnai/grpcui
 docker run -e GRPCUI_SERVER=localhost:5001 -p 8080:8080 wongnai/grpcui
 ```
 
