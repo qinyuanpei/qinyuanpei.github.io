@@ -46,6 +46,8 @@ jobs:
        sudo rm _config.yml
        sudo mv config-salve.yml _config.yml
        hexo generate
+       echo 'Generate Done!!!'
+       # python readme.py https://qinyuanpei.github.io/
        sudo cp README.md ./public/README.md
        sudo cp VERSION.txt ./public/VERSION.txt
        cd ./public
