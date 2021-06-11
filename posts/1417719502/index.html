@@ -1,0 +1,909 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+    
+<script async defer data-domain="blog.yuanpei.me" src="https://plausible.io/js/plausible.js"></script>
+    
+    <meta charset="utf-8">
+    <!-- HTTP 1.1 -->  
+    <meta http-equiv="pragma" content="no-cache">  
+    <!-- HTTP 1.0 -->  
+    <meta http-equiv="cache-control" content="no-cache">
+    <!-- 微博图床防盗链 --> 
+    <!-- <meta name="referrer" content="no-referrer"/> -->
+    <!--Google站点验证-->
+    
+    <!--百度站点验证-->
+    
+    
+    <!--Google AdSense-->
+    
+    <!--Bing站点验证-->
+    <meta name="msvalidate.01" content="713A48A3FE17D4841C292A6B3942EB4C" />
+    
+    <title>
+        使用 jsDelivr 为 Hexo 博客提供高效免费的CDN加速 | 一个人的孤落时辰 | 纵有疾风起，人生不言弃
+    </title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    
+        <meta name="theme-color" content="#3F51B5">
+    
+
+    <meta name="keywords" content="Hexo,CDN,jsDelivr,秦元培,技术博客,生活随笔,个人博客,NET,Python,数据挖掘,数据分析,NLP">
+    
+        <meta name="description" content="&gt; https://cdn.jsdelivr.net/gh/user/repo@version/file;[jsDelivr提供的CDN加速资源](https://i.loli.net/2020/02/05/HtmhUdsSRLW4Q9A.png);https://cdn.jsdelivr.net/npm/jquery@3.2.1/dist/jquery.min.js;最终，我采用的方案是，通过Travis CI编译部署的时候，首先导出变量`$TRAVIS_BUILD_NUMBER`到一个文本文件中，然后Hexo在生成静态页面的时侯，从这个文本文件中读取该变量的值作为版本号，这样每次编译部署的时候，我们总能获得一个新的tag，而这个tag和Hexo中引用的资源版本一致，这样就彻底解决了这个遗留问题;首先，我们在浏览器里输入下面这个地址：[https://cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@latest/](https://cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@latest/)">
+    
+    <meta name="description" content="&gt; https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;user&#x2F;repo@version&#x2F;file;[jsDelivr提供的CDN加速资源](https:&#x2F;&#x2F;i.loli.net&#x2F;2020&#x2F;02&#x2F;05&#x2F;HtmhUdsSRLW4Q9A.png);https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;npm&#x2F;jquery@3.2.1&#x2F;dist&#x2F;jquery.min.js;最终，我采用的方案是，通过T">
+<meta property="og:type" content="article">
+<meta property="og:title" content="使用 jsDelivr 为 Hexo 博客提供高效免费的CDN加速">
+<meta property="og:url" content="https://qinyuanpei.github.io/posts/1417719502/index.html">
+<meta property="og:site_name" content="一个人的孤落时辰">
+<meta property="og:description" content="&gt; https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;user&#x2F;repo@version&#x2F;file;[jsDelivr提供的CDN加速资源](https:&#x2F;&#x2F;i.loli.net&#x2F;2020&#x2F;02&#x2F;05&#x2F;HtmhUdsSRLW4Q9A.png);https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;npm&#x2F;jquery@3.2.1&#x2F;dist&#x2F;jquery.min.js;最终，我采用的方案是，通过T">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://i.loli.net/2020/02/05/HtmhUdsSRLW4Q9A.png">
+<meta property="og:image" content="https://i.loli.net/2020/02/05/FZJi9esXWQzxLYf.png">
+<meta property="og:image" content="https://i.loli.net/2020/02/05/E3WYBRQk4DJCZr5.png">
+<meta property="article:published_time" content="2020-02-05T19:01:00.000Z">
+<meta property="article:modified_time" content="2021-06-11T06:55:07.276Z">
+<meta property="article:author" content="飞鸿踏雪">
+<meta property="article:tag" content="Hexo">
+<meta property="article:tag" content="CDN">
+<meta property="article:tag" content="jsDelivr">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i.loli.net/2020/02/05/HtmhUdsSRLW4Q9A.png">
+    
+        <link rel="alternate" type="application/atom+xml" title="一个人的孤落时辰" href="/atom.xml">
+    
+    <link rel="shortcut icon" href="/assets/images/favicon.ico">
+    
+        <link rel="manifest" href="/manifest.json">
+    
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master//assets/styles/style.css">
+    <script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/instantclick.min.js"></script>
+    <script>window.lazyScripts=[]</script>
+    <!-- custom head -->
+    
+
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+<body>
+    <div id="loading" class="active"></div>
+
+    <aside id="menu" class="hide" >
+  <div class="inner flex-row-vertical">
+    <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+        <i class="icon icon-lg icon-close"></i>
+    </a>
+    <div class="brand-wrap" style="background-image:url(/assets/images/brand.jpg)">
+      <div class="brand">
+        <a href="/" class="avatar waves-effect waves-circle waves-light">
+          <img src="/assets/images/avatar.jpg" alt="avatar">
+        </a>
+        <hgroup class="introduce">
+          <h5 class="nickname">飞鸿踏雪</h5>
+          <a href="mailto:qinyuanpei@163.com" title="qinyuanpei@163.com" class="mail">qinyuanpei@163.com</a>
+        </hgroup>
+      </div>
+    </div>
+    <div class="scroll-wrap flex-col">
+      <ul class="nav">
+        
+            <li class="waves-block waves-effect">
+              <a href="/"  >
+                <i class="icon icon-lg icon-home"></i>
+                主页
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/archives"  >
+                <i class="icon icon-lg icon-archives"></i>
+                归档
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/tags"  >
+                <i class="icon icon-lg icon-tags"></i>
+                标签
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/categories"  >
+                <i class="icon icon-lg icon-th-list"></i>
+                分类
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/books"  >
+                <i class="icon icon-lg icon-bookmark"></i>
+                书单
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/movies"  >
+                <i class="icon icon-lg icon-film"></i>
+                影单
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="https://qinyuanpei.github.io/poems/"  >
+                <i class="icon icon-lg icon-folder-open"></i>
+                诗集
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/works"  >
+                <i class="icon icon-lg icon-code"></i>
+                实验室
+              </a>
+            </li>
+        
+            <li class="waves-block waves-effect">
+              <a href="/about"  >
+                <i class="icon icon-lg icon-circle"></i>
+                关于我
+              </a>
+            </li>
+        
+      </ul>
+    </div>
+  </div>
+</aside>
+
+    <main id="main">
+        <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+            <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">使用 jsDelivr 为 Hexo 博客提供高效免费的CDN加速</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input" autocomplete="off"
+                placeholder="输入感兴趣的关键字">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menuShare">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+        <a href="https://github.com/qinyuanpei/qinyuanpei.github.io" target="_blank" rel="noopener" class="header-icon waves-effect waves-circle waves-light" id="menuGithub">
+            <i class="icon icon-lg icon-code-fork"></i>
+        </a>
+    </div>
+</header>
+<header class="content-header post-header">
+    <div class="container fade-scale">
+        <h1 class="title">使用 jsDelivr 为 Hexo 博客提供高效免费的CDN加速</h1>
+        <h5 class="subtitle" id="subtitle">
+            
+            <time datetime="2020-02-05T19:01:00.000Z" itemprop="datePublished" class="page-time">
+  2020-02-05
+</time>
+
+
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/%E7%8B%AC%E7%AB%8B%E5%8D%9A%E5%AE%A2/">独立博客</a></li></ul>
+
+            
+        </h5>
+    </div>
+    
+
+</header>
+
+<div class="container body-wrap">
+    
+    <aside class="post-widget">
+        <nav class="post-toc-wrap" id="post-toc">
+            <h4>目录</h4>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-1"><a class="post-toc-link" href="#2020-02-13-更新"><span class="post-toc-number">1.</span> <span class="post-toc-text">2020&#x2F;02&#x2F;13 更新</span></a></li></ol>
+        </nav>
+    </aside>
+    
+    <article id="post-使用 jsDelivr 为 Hexo 博客提供高效免费的CDN加速" class="post-article article-type-post fade" itemprop="blogPost">
+
+        <div class="post-card">
+            <h1 class="post-card-title">
+                使用 jsDelivr 为 Hexo 博客提供高效免费的CDN加速
+            </h1>
+            <div class="post-meta">
+                <time class="post-time" title="2020-02-05 19:01:00" datetime="2020-02-05T19:01:00.000Z"  itemprop="datePublished">2020-02-05</time>
+
+                
+	<ul class="article-category-list"><li class="article-category-list-item"><a class="article-category-list-link" href="/categories/%E7%8B%AC%E7%AB%8B%E5%8D%9A%E5%AE%A2/">独立博客</a></li></ul>
+
+
+
+                
+<span id="lc_counter_container_page_pv" title="文章总阅读量" data-page-url="" data-page-title="使用 jsDelivr 为 Hexo 博客提供高效免费的CDN加速">
+    <i class="icon icon-eye icon-pr"></i><span id="lc_counter_value_page_pv"></span>
+</span>
+
+
+
+
+
+                
+    <span>
+        <i class="icon icon-clock-o"></i>
+        14 min.
+    </span>
+    
+            </div>
+            <div class="post-content" id="post-content" itemprop="postContent">
+                <p>最近给博客做了升级，从3.x升级到了4.x，主要是在官网看到了关于静态页面生成效率提升的内容。众所周知，Hexo在文章数目增加以后会越来越慢。博主大概是从14年年底开始使用Hexo这个静态博客的，截止到目前一共有176篇博客，其中的“慢”可想而知，中间甚至动过使用Hugo和VuePress的念头，所以，听说有性能方面的提升，还是决定第一时间来试试。整个升级过程挺顺利的，唯一遇到的问题是关于外部链接检测方面的，具体可以参考<a href="https://github.com/hexojs/hexo/issues/4107" target="_blank" rel="noopener">这里</a>。今天，博主主要想和大家分享下关于如何使用<a href="http://www.jsdelivr.com/" target="_blank" rel="noopener">jsDelivr</a>来为博客提供免费、高效的CDN服务，希望对大家有所帮助。</p>
+<p><a href="http://www.jsdelivr.com/" target="_blank" rel="noopener">jsDelivr</a>是一个免费、快速和可信赖的CDN加速服务，官网上声称它每个月可以支撑680亿次的请求。博主是在去年年底的时候，偶然了解到这个服务的存在，这次趁着疫情肆虐的间隙，终于把这个服务集成到了博客中。更重要的是，这个服务在Github上是<a href="https://github.com/jsdelivr/jsdelivr" target="_blank" rel="noopener">开源</a>的。目前，它提供了针对<a href="https://www.npmjs.com/" target="_blank" rel="noopener">npm</a>、<a href="https://github.com" target="_blank" rel="noopener">Github</a>和<a href="https://cn.wordpress.org" target="_blank" rel="noopener">WordPress</a>的加速服务，只需要一行代码就可以获得加速效果，以常用的jQuery和Bootstrap为例：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// load jQuery v3.2.1</span></span><br><span class="line">https:<span class="comment">//cdn.jsdelivr.net/npm/jquery@3.2.1/dist/jquery.min.js</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// load bootstrap v4.4.1</span></span><br><span class="line">https:<span class="comment">//cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/js/bootstrap.js</span></span><br></pre></td></tr></table></figure>
+
+<p>这意味着我们只需要发布一个npm的包，就可以使用它提供的加速服务。CDN加速的好处我这里就不再多说了，只要我们的项目中用到了第三方的静态资源，譬如JavaScript/CSS等等都应该考虑接入到CDN中。有人常常担心CDN挂掉或者是私有化部署无法接入外网环境。我想说，我们目光应该长远一点，现在早已不是早年那种单打独斗式的开发模式了，我们不可能把所有资源都放到本地来。随着云计算的概念越发地深入人心，越来越多的基础服务都运行在一台又一台虚拟化的“云服务器”上，这种情况下，搞这种集中化配置的做法，是完全违背分布式的发展趋势的。</p>
+<p>如果说，针对npm包的CDN加速服务离我们还有点遥远，因为我们大多数情况下都是在使用别人写好的库。那么，接下来，针对Github的CDN加速服务应该会让我们无比兴奋吧，毕竟Github Pages的“慢”大家是可以感受得到的。不然，为什么大家要用Coding Pages做国内/国外的双线部署呢？首先，我们在浏览器里输入下面这个地址：<a href="https://cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@latest/" target="_blank" rel="noopener">https://cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@latest/</a></p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="https://i.loli.net/2020/02/05/HtmhUdsSRLW4Q9A.png" alt="jsDelivr提供的CDN加速资源" title="" referrerpolicy="no-referrer">
+                </div>
+                <div class="image-caption">jsDelivr提供的CDN加速资源</div>
+            </figure>
+<p>此时，可以注意到，<a href="http://www.jsdelivr.com/" target="_blank" rel="noopener">jsDelivr</a>可以把我们Github上的资源呈现出来，只要我们在Github上发布过相应的版本即可。这里的版本，可以理解为一次Release，对应Git中tag的概念，虽然Github现在引入了包管理器的概念，试图统一像npm、nuget、pip等等这样的包管理器。它提供的CDN服务有一个基本的格式：</p>
+<blockquote>
+<p><a href="https://cdn.jsdelivr.net/gh/user/repo@version/file" target="_blank" rel="noopener">https://cdn.jsdelivr.net/gh/user/repo@version/file</a></p>
+</blockquote>
+<p>如果大家感兴趣，可以把这里的user和repo改成自己的来体验一番。需要注意的是，这里的版本号同样可以换成Commit ID或者是分支的名称。我个人建议用tag，因为它通常携带了版本号信息，语义上要更好一点。那么，顺着这个思路，我们只要把Hexo中的资源的相对路径改为jsDelivr的CDN加速路径就好啦！为了让切换更加自如，这里我们为Hexo写一个Helper，它可以理解为Hexo中的辅助代码片段。我们在<code>&lt;YouTheme&gt;/scripts/</code>目录下新建一个<code>plugins.js</code>文件，这样Hexo会在渲染时自动加载这个脚本文件：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> source = <span class="function">(<span class="params">path, cache, ext</span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> (cache) &#123;</span><br><span class="line">        <span class="keyword">const</span> minFile = <span class="string">`<span class="subst">$&#123;path&#125;</span><span class="subst">$&#123;ext === <span class="string">'.js'</span> ? <span class="string">'.min'</span> : <span class="string">''</span>&#125;</span><span class="subst">$&#123;ext&#125;</span>`</span>;</span><br><span class="line">        <span class="keyword">const</span> jsdelivrCDN = hexo.config.jsdelivr;</span><br><span class="line">        <span class="keyword">return</span> jsdelivrCDN.enable ? <span class="string">`//<span class="subst">$&#123;jsdelivrCDN.baseUrl&#125;</span>/gh/<span class="subst">$&#123;jsdelivrCDN.gh_user&#125;</span>/<span class="subst">$&#123;jsdelivrCDN.gh_repo&#125;</span>@latest/<span class="subst">$&#123;minFile&#125;</span>`</span> : <span class="string">`<span class="subst">$&#123;minFile&#125;</span>?v=<span class="subst">$&#123;version&#125;</span>`</span></span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> path + ext</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">hexo.extend.helper.register(<span class="string">'theme_js'</span>, (path, cache) =&gt; source(path, cache, <span class="string">'.js'</span>))</span><br><span class="line">hexo.extend.helper.register(<span class="string">'theme_css'</span>, (path, cache) =&gt; source(path, cache, <span class="string">'.css'</span>))</span><br></pre></td></tr></table></figure>
+<p>接下来，修改布局文件，项目中的JavaScript和CSS文件，均通过<code>theme_js()</code>和<code>thems_css()</code>两个函数引入：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">//加载JavaScript</span><br><span class="line">&lt;script src="&lt;%- url_for(theme_js('assets/scripts/search', cache)) %&gt;" async&gt;&lt;/script&gt;</span><br><span class="line">//加载CSS</span><br><span class="line">&lt;link rel="stylesheet" href="&lt;%- url_for(theme_css('/assets/styles/style', cache)) %&gt;"&gt;</span><br></pre></td></tr></table></figure>
+<p>既然是否使用CDN加速是可配置的，我们要在_config.yml文件中添加相应的配置项：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># jsdelivr CDN</span></span><br><span class="line"><span class="attr">jsdelivr:</span></span><br><span class="line">  <span class="attr">enable:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">gh_user:</span> <span class="string">qinyuanpei</span></span><br><span class="line">  <span class="attr">gh_repo:</span> <span class="string">qinyuanpei.github.io</span></span><br><span class="line">  <span class="attr">baseUrl:</span> <span class="string">cdn.jsdelivr.net</span></span><br></pre></td></tr></table></figure>
+<p>除此以外，我们还需要在部署博客的时候，生成一个名为latest的tag。虽然官网上说，在引用CDN的时候版本号可以省略，不过经过博主反复尝试，不带版本号并不会指向正确的版本，有些资源文件会报404，因为这部分资源文件回滚以后发现还是没有。所以，最后博主只好把这个版本号给固定下来了，这样又引入一个新问题，即：每次部署的时候都要先删除远程的latest。所以，这块儿的<a href="https://raw.githubusercontent.com/qinyuanpei/qinyuanpei.github.io/blog/.travis.yml" target="_blank" rel="noopener">Travis CI脚本</a>看起来会有点讨厌，如果大家有更好的方案，欢迎大家在博客中留言：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">git tag latest</span><br><span class="line">git push --force --quiet "https://$&#123;CI_TOKEN&#125;@$&#123;GH_REF&#125;" master:master --tags</span><br></pre></td></tr></table></figure>
+<p>好了，现在重新生成、部署，来看看效果吧：</p>
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="https://i.loli.net/2020/02/05/FZJi9esXWQzxLYf.png" alt="Coding Pages速度" title="" referrerpolicy="no-referrer">
+                </div>
+                <div class="image-caption">Coding Pages速度</div>
+            </figure>
+
+<figure class="image-bubble">
+                <div class="img-lightbox">
+                    <div class="overlay"></div>
+                    <img src="https://i.loli.net/2020/02/05/E3WYBRQk4DJCZr5.png" alt="Github Pages速度" title="" referrerpolicy="no-referrer">
+                </div>
+                <div class="image-caption">Github Pages速度</div>
+            </figure>
+<p>感觉效果还不错，Github Pages比平时要快很多，博主顺便就给Coding Pages启用了CDN加速。话说，看到这张图的时候总是感慨，如果肺炎疫情地图能像这两张图一样就好啦！面对这场无声的战役，有很多人一直在一线抗击病魔，还有很多人默默无闻地在支援武汉。或许，宅在家里的你我，什么都做不了，可即便如此，还是让我们一起来祈祷疫情快点结束吧，因为春天都要来了呢……好了，这就是这篇博客的全部内容啦，谢谢大家！</p>
+<h1 id="2020-02-13-更新"><a href="#2020-02-13-更新" class="headerlink" title="2020/02/13 更新"></a>2020/02/13 更新</h1><p>在此之前，博主提到版本号的问题，即每一次在CDN上生成的版本，怎样体现到Hexo中引用的资源上面。当时采用了一个取巧的方法，Hexo中固定版本号为latest，然后每次都推送这个tag。这样引发一个问题，每次都先去远程删除这个tag，显然这不是我期望的解决方案。最终，我采用的方案是，通过Travis CI编译部署的时候，首先导出变量<code>$TRAVIS_BUILD_NUMBER</code>到一个文本文件中，然后Hexo在生成静态页面的时侯，从这个文本文件中读取该变量的值作为版本号，这样每次编译部署的时候，我们总能获得一个新的tag，而这个tag和Hexo中引用的资源版本一致，这样就彻底解决了这个遗留问题。修改后的<code>plugins.js</code>文件内容如下：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> fs = <span class="built_in">require</span>(<span class="string">'fs'</span>);</span><br><span class="line"><span class="keyword">var</span> version = <span class="string">'latest'</span></span><br><span class="line">fs.readFile(<span class="string">'./BUILD_NUMBER.txt'</span>, <span class="function"><span class="keyword">function</span> (<span class="params">error, data</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (error) &#123;</span><br><span class="line">      <span class="built_in">console</span>.log(<span class="string">'load BUILD_NUMBER.txt fails, '</span> + error)</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        version = data.toString().trim();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> source = <span class="function">(<span class="params">path, cache, ext</span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> (cache) &#123;</span><br><span class="line">        <span class="keyword">const</span> minFile = <span class="string">`<span class="subst">$&#123;path&#125;</span><span class="subst">$&#123;ext === <span class="string">'.js'</span> ? <span class="string">'.min'</span> : <span class="string">''</span>&#125;</span><span class="subst">$&#123;ext&#125;</span>`</span>;</span><br><span class="line">        <span class="keyword">const</span> jsdelivrCDN = hexo.config.jsdelivr;</span><br><span class="line">        <span class="keyword">return</span> jsdelivrCDN.enable ? <span class="string">`//<span class="subst">$&#123;jsdelivrCDN.baseUrl&#125;</span>/gh/<span class="subst">$&#123;jsdelivrCDN.gh_user&#125;</span>/<span class="subst">$&#123;jsdelivrCDN.gh_repo&#125;</span>@<span class="subst">$&#123;version&#125;</span>/<span class="subst">$&#123;minFile&#125;</span>`</span> : <span class="string">`<span class="subst">$&#123;minFile&#125;</span>?v=<span class="subst">$&#123;version&#125;</span>`</span></span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> path + ext</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">hexo.extend.helper.register(<span class="string">'theme_js'</span>, (path, cache) =&gt; source(path, cache, <span class="string">'.js'</span>))</span><br><span class="line">hexo.extend.helper.register(<span class="string">'theme_css'</span>, (path, cache) =&gt; source(path, cache, <span class="string">'.css'</span>))</span><br></pre></td></tr></table></figure>
+<p>修改后的<code>.travis.yml</code>文件可以在<a href="https://raw.githubusercontent.com/qinyuanpei/qinyuanpei.github.io/blog/.travis.yml" target="_blank" rel="noopener">这里</a>获取。</p>
+
+                
+
+                
+
+
+<div class="recommended_posts">
+    <h1>推荐阅读</h1>
+    <ul>
+        
+        <li><a href="https://qinyuanpei.github.io/posts/828223375/">为Hexo开发一个网易云音乐的文章插件</a></li>
+        
+        <li><a href="https://qinyuanpei.github.io/posts/1150071886/">使用Coding.NET和Hexo实现网页游戏的发布</a></li>
+        
+        <li><a href="https://qinyuanpei.github.io/posts/478946932/">原生JavaScript实现Hexo博客推荐功能</a></li>
+        
+        <li><a href="https://qinyuanpei.github.io/posts/2950334112/">在Hexo中为文章自动添加版权信息声明模块</a></li>
+        
+        <li><a href="https://qinyuanpei.github.io/posts/2822230423/">基于Python实现Windows下壁纸切换功能</a></li>
+        
+    </ul>
+</div>
+
+            </div>
+            
+<blockquote class="post-copyright">
+    <div class="content">
+        <p><b>版权声明：</b>
+        <a href="https://qinyuanpei.github.io/posts/1417719502/" rel="external">使用 jsDelivr 为 Hexo 博客提供高效免费的CDN加速</a>
+        ，由&nbsp;<a href="/about" target="_blank" rel="external">飞鸿踏雪</a>&nbsp;
+        首次发表于&nbsp;<a href="/" target="_blank" rel="external">一个人的孤落时辰</a>&nbsp;
+        ，本文地址为：<a href="https://qinyuanpei.github.io/posts/1417719502/" target="_blank" rel="external">https://qinyuanpei.github.io/posts/1417719502/</a>
+        ，转载请注明<b>作者</b>和<b>出处</b>。</p>
+    </div>
+    <footer>
+        <a href="https://qinyuanpei.github.io">
+            <img src="/assets/images/avatar.jpg" alt="飞鸿踏雪">
+            飞鸿踏雪
+        </a>
+    </footer>
+</blockquote>
+
+
+            
+<div class="page-reward">
+    <a id="rewardBtn" href="javascript:;" class="page-reward-btn waves-effect waves-circle waves-light">赏</a>
+</div>
+
+
+            <div class="post-footer">
+                
+	<ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/CDN/" rel="tag">CDN</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Hexo/" rel="tag">Hexo</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/jsDelivr/" rel="tag">jsDelivr</a></li></ul>
+
+                
+<div class="page-share-wrap">
+    
+
+<div class="page-share" id="pageShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://qinyuanpei.github.io/posts/1417719502/&title=《使用 jsDelivr 为 Hexo 博客提供高效免费的CDN加速》 — 一个人的孤落时辰&pic=https://qinyuanpei.github.ioassets/images/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://qinyuanpei.github.io/posts/1417719502/&title=《使用 jsDelivr 为 Hexo 博客提供高效免费的CDN加速》 — 一个人的孤落时辰&source=一个人的孤落时辰 | 纵有疾风起，人生不言弃 | 隐约雷鸣，阴霾天空，即使天无雨，我亦留此地。" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://qinyuanpei.github.io/posts/1417719502/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《使用 jsDelivr 为 Hexo 博客提供高效免费的CDN加速》 — 一个人的孤落时辰&url=https://qinyuanpei.github.io/posts/1417719502/&via=https://qinyuanpei.github.io" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://qinyuanpei.github.io/posts/1417719502/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+      
+      <li>
+        <a class="google share-sns" target="_blank" onClick="show_yp()" data-title=" 生成海报">
+          <i class="icon icon-file-image-o"></i>
+        </a>
+      </li>
+      
+    </ul>
+ </div>
+
+
+
+    <a href="javascript:;" id="shareFab" class="page-share-fab waves-effect waves-circle">
+        <i class="icon icon-share-alt icon-lg"></i>
+    </a>
+</div>
+
+
+            </div>
+        </div>
+
+        
+<nav class="post-nav flex-row flex-justify-between">
+  
+    <div class="waves-block waves-effect prev">
+      <a href="/posts/3687594958/" id="post-prev" class="post-nav-link">
+        <div class="tips"><i class="icon icon-angle-left icon-lg icon-pr"></i> Prev</div>
+        <h4 class="title">.NET Core + ELK搭建可视化日志分析平台(上)</h4>
+      </a>
+    </div>
+  
+
+  
+    <div class="waves-block waves-effect next">
+      <a href="/posts/3099575458/" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h4 class="title">从 .NET Core 2.2 升级到 3.1 的踩坑之旅</h4>
+      </a>
+    </div>
+  
+</nav>
+
+
+        
+    <div id="comment"></div>
+<script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+<script src='//unpkg.com/valine/dist/Valine.min.js'></script>
+<script type="text/javascript">
+new Valine({
+    el: '#comment' ,
+    notify: false, 
+    verify: true, 
+    appId: 'JbHqRp2eMrTgIwYpfERH0g79-gzGzoHsz',
+    appKey: 'VsiKvLuiBGvJL1XrAfv7siY2',
+    placeholder: '云中谁寄锦书来，雁字回时，月满西楼。&#10;Tips：如果希望收到我的评论回复，请至少留下你的邮箱哦:)',
+    path:'https://qinyuanpei.github.io/posts/1417719502/', 
+    avatar:'identicon',
+    requiredFields: ['nick','mail']
+});
+</script>
+
+
+
+
+    </article>
+    
+<div id="reward" class="page-modal reward-lay">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <h3 class="reward-title">
+        <i class="icon icon-quote-left"></i>
+        赠人玫瑰，手有余香
+        <i class="icon icon-quote-right"></i>
+    </h3>
+    <div class="reward-content">
+        
+        <div class="reward-code">
+            <img id="rewardCode" src="/assets/images/wechat.png" alt="打赏二维码">
+        </div>
+        
+        <label class="reward-toggle">
+            <input id="rewardToggle" type="checkbox" class="reward-toggle-check"
+                data-wechat="/assets/images/wechat.png" data-alipay="/assets/images/alipay.jpg">
+            <div class="reward-toggle-ctrol">
+                <span class="reward-toggle-item wechat">微信</span>
+                <span class="reward-toggle-label"></span>
+                <span class="reward-toggle-item alipay">支付宝</span>
+            </div>
+        </label>
+        
+    </div>
+</div>
+
+
+    <script type="text/javascript" src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/yoniu.min.js"></script>
+<style type='text/css'>
+	body.active-yp {
+		overflow: hidden;
+	}
+	.yp-fc-btn{
+		display: flex;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		align-items: center;
+		justify-content: space-between;
+		font-size: 13px;
+	}
+	.yp-fc-btn span{
+		cursor: pointer;
+		padding: 2px 10px;
+		color: #4b4b4b;
+		border: #4b4b4b 1px solid;
+		border-radius:5px;
+	}
+	#yp-hide{
+		position: fixed;
+		display: flex;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		justify-content: center;
+		flex-direction: column;
+		left:0;
+		top:0;
+		right:0;
+		bottom:0;
+		background-color:rgba(0,0,0,.5);
+		z-index: 99999;
+		visibility: hidden;
+	}
+	#yoniu-poster{
+		box-sizing: border-box;
+		width: 350px;
+		height: 467.2px;
+		background-color: #fff;
+		margin: 0 auto;
+		padding: 0;
+		line-height: 1.6;
+		text-align:justify;
+	}
+	
+	.yp-img {
+		min-height: 240px;
+		position: relative;
+		display: flex;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		justify-content: flex-end;
+		flex-direction: column;
+		background-position: 50% 50%;
+		background-size: cover;
+		overflow:hidden;
+	}
+	.yp-img>div{
+		padding: 10px 20px;
+	}
+	.yp-name{
+		display: block;
+		color: #fff;
+		font-size: 20px;
+		font-weight: 600;
+		text-shadow: #4b4b4b 0.1em 0.1em 0.2em;
+		margin-top: 10px;
+	}
+	.yp-sort{
+		padding: 3px 10px;
+		font-size: 12px;
+		color: #fff;
+		background: #2e2e2e;
+	}
+	.yp-des{
+		color: #2e2e2e;
+		font-size: 14px;
+		margin: 20px;
+		height: 67.2px;
+	}
+	.yp-qcode{
+		display: flex;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		justify-content: space-between;
+		align-items: center;
+		margin: 10px;
+		padding: 10px 20px;
+		background: #f5f5f5;
+		color: #818181;
+		border-radius: 10px;
+	}
+	.yp-tips{
+		display: flex;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		justify-content: space-between;
+		align-items: center;
+		color: #ccc;
+		margin: 0 10px 10px;
+		font-size: 10px;
+		letter-spacing: 1.5px;
+	}
+	.yp-btns{
+		display: flex;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		align-items: stretch;
+		justify-content: center;
+		width:350px;
+		margin: 0 auto;
+	}
+	.yp-btns>span{
+		display: flex;
+		display: -webkit-flex;
+		display: -ms-flexbox;
+		align-items: center;
+		justify-content: center;
+		font-size: 14px;
+		padding: 10px 15px;
+		background:rgba(0,0,0,.2);
+		color: #f5f5f5;
+		cursor: pointer;
+	}
+	.yp-btns>span>a{
+		color: #f5f5f5;
+	}
+	.yp-btns>span>a:hover{
+		text-decoration:none;
+	}
+	#yp-close{
+		font-size: 18px;
+		font-weight: 600;
+	}
+</style>
+<div id="yp-hide">
+    <div id="yoniu-poster">
+        <div class="yp-img" id="yp-img">
+            <div>
+                <span class="yp-sort"></span>
+                <span class="yp-name">使用 jsDelivr 为 Hexo 博客提供高效免费的CDN加速</span>
+            </div>
+        </div>
+        <div class="yp-des">    
+            
+                最近给博客做了升级，从3.x升级到了4.x，主要是在官网看到了关于静态页面生成效率提升的内容。众所周知，Hexo在文章数目增加以后会越来越慢。博...
+            
+        </div>
+        <div class="yp-qcode">
+            <span>扫描二维码阅读原文</span>
+            <img id="yp-qcode" width="64px" src="//api.qrserver.com/v1/create-qr-code/?data=https://qinyuanpei.github.io/posts/1417719502/">
+        </div>
+        <div class="yp-tips">
+            <span>一个人的孤落时辰</span>
+            <span><time class="post-time" title="2020-02-05 19:01:00" datetime="2020-02-05T19:01:00.000Z"  itemprop="datePublished">2020-02-05</time>
+</span>
+        </div>
+    </div>
+    <div class="yp-btns">
+        <span id="yp-load-yp" onClick="load_yp()">生成海报</span>
+        <span><a id="yp-download"></a></span>
+        <span id="yp-close" onClick="close_yp()">×</span>
+    </div>
+</div>
+<script type="text/javascript">
+    function show_yp(){
+        window.scrollTo(0, 0);
+        document.body.setAttribute("class","active-yp");
+        let cover = document.getElementsByTagName('img')[1];
+        if (cover != null && typeof(cover) != 'undefined') {
+            document.getElementById('yp-img').style.backgroundImage = `url(${cover.src})`;
+        } else {
+            document.getElementById('yp-img').style.backgroundColor = '#d7dbf0';
+        }
+        document.getElementById("yp-hide").style.visibility = "visible";
+    }
+    function close_yp(){
+        var domClass = document.body.getAttribute("class");
+        domClass = domClass.replace("active-yp","");
+        document.body.setAttribute("class",domClass);
+        document.getElementById("yp-hide").style.visibility = "hidden";
+    }
+    function load_yp(){
+        document.getElementById('yp-load-yp').textContent = '海报生成中...';
+        setTimeout(function() {
+            h2c_();
+        },2000);
+
+    }
+</script>
+
+</div>
+
+        <footer class="footer">
+    <div class="top">
+        
+   <p>
+      <span id="lc_counter_container_site_uv">
+         <i class="icon icon-user"></i><span id="lc_counter_value_site_uv"></span>
+      </span>
+      <span id="lc_counter_container_site_pv">
+         <i class="icon icon-eye"></i><span id="lc_counter_value_site_pv"></span>
+      </span>
+  </p>
+
+
+        <p>
+   <a id="jinrishici-sentence" href="https://www.jinrishici.com/" target="_blank" rel="noopener">加载中</a>
+</p>
+<script src="https://sdk.jinrishici.com/v2/browser/jinrishici.js" charset="utf-8"></script>
+<script>
+   jinrishici.load(function(result) {
+      document.querySelector('#subtitle').innerText = result.data.content;
+      document.querySelector('#jinrishici-sentence').innerText = result.data.content;
+  });
+</script>
+            <!--Todo: 考虑重构为插件 -->
+            <p>
+                
+                    <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
+                
+                <span>
+                    <a href="https://github.com/qinyuanpei" target="_blank" rel="license noopener" title="Github">
+                        <i class="icon icon-lg icon-github"></i>
+                    </a>
+                </span>
+                <span>
+                    <a href="https://weibo.com/1278609231/profile" target="_blank" rel="license noopener" title="微博">
+                        <i class="icon icon-lg icon-weibo"></i>
+                    </a>
+                </span>
+                <span>
+                    <a href="https://www.douban.com/people/60029335/" target="_blank" rel="license noopener" title="豆瓣">
+                        <i class="icon icon-lg icon-douban"></i>
+                    </a>
+                </span>
+                <span>
+                    <a href="https://www.zhihu.com/people/qinyuanpei" target="_blank" rel="license noopener" title="知乎">
+                        <i class="icon icon-lg icon-zhihu-square"></i>
+                    </a>
+                </span>
+                <span>
+                    <a href="https://blog.csdn.net/qinyuanpei" target="_blank" rel="license noopener" title="CSDN">
+                        <i class="icon icon-lg">C</i>
+                    </a>
+                </span>
+                <span>
+                    <a href="https://music.163.com/#/user/home?id=47002864" target="_blank" rel="license noopener" title="网易音乐">
+                        <i class="icon icon-lg icon-wangyiyunyinyue"></i>
+                    </a>
+                </span>
+            </p>
+        
+    </div>
+    <div class="bottom">
+        <p><span>飞鸿踏雪 &copy; 2014 - 2021</span><br>
+            
+                
+                Powered by <a href="http://hexo.io/" target="_blank">Hexo</a> & Theme by <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a><br>
+                
+                
+                    <p>Hosted by <a href="https://pages.github.com" target="_blank" rel="noopener" style="font-weight: bold">Github Pages</a></p>
+                
+        </p>
+    </div>
+</footer>
+    </main>
+    <div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span
+        class="icon icon-lg icon-chevron-up"></span></a>
+
+    
+
+<div class="global-share" id="globalShare">
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" target="_blank" href="http://service.weibo.com/share/share.php?url=https://qinyuanpei.github.io/posts/1417719502/&title=《使用 jsDelivr 为 Hexo 博客提供高效免费的CDN加速》 — 一个人的孤落时辰&pic=https://qinyuanpei.github.ioassets/images/avatar.jpg" data-title="微博">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns wxFab" href="javascript:;" data-title="微信">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" target="_blank" href="http://connect.qq.com/widget/shareqq/index.html?url=https://qinyuanpei.github.io/posts/1417719502/&title=《使用 jsDelivr 为 Hexo 博客提供高效免费的CDN加速》 — 一个人的孤落时辰&source=一个人的孤落时辰 | 纵有疾风起，人生不言弃 | 隐约雷鸣，阴霾天空，即使天无雨，我亦留此地。" data-title=" QQ">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://qinyuanpei.github.io/posts/1417719502/" data-title=" Facebook">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" target="_blank" href="https://twitter.com/intent/tweet?text=《使用 jsDelivr 为 Hexo 博客提供高效免费的CDN加速》 — 一个人的孤落时辰&url=https://qinyuanpei.github.io/posts/1417719502/&via=https://qinyuanpei.github.io" data-title=" Twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="google share-sns" target="_blank" href="https://plus.google.com/share?url=https://qinyuanpei.github.io/posts/1417719502/" data-title=" Google+">
+          <i class="icon icon-google-plus"></i>
+        </a>
+      </li>
+      
+      <li>
+        <a class="google share-sns" target="_blank" onClick="show_yp()" data-title=" 生成海报">
+          <i class="icon icon-file-image-o"></i>
+        </a>
+      </li>
+      
+    </ul>
+ </div>
+
+
+<div class="page-modal wx-share" id="wxShare">
+    <a class="close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <img src="//api.qrserver.com/v1/create-qr-code/?data=https://qinyuanpei.github.io/posts/1417719502/" alt="微信分享二维码">
+</div>
+
+
+
+    <script src="//cdn.bootcss.com/node-waves/0.7.6/waves.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/4.2.1/echarts.min.js"></script>
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/echarts-wordcloud.min.js" async></script>
+<script>
+    var BLOG = { ROOT: '/', SHARE: true, REWARD: true };
+
+
+</script>
+
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/main.min.js"></script>
+
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<template id="search-tpl">
+<li class="item">
+    <a href="{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
+</template>
+
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/search.min.js" async></script>
+
+
+
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/heart.min.js" async></script>
+
+
+
+
+
+
+
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/leancloud-counter.min.js"></script>
+<script>
+        (function () {
+            var appId = 'JbHqRp2eMrTgIwYpfERH0g79-gzGzoHsz';
+            var appKey = 'VsiKvLuiBGvJL1XrAfv7siY2';
+            new VisitorCounter().init({
+                appId: appId,       //应用ID, 必输
+                appKey: appKey,      //应用Key, 必输
+                region: '华北',      //华东,华北,国际, 默认华东
+                domain: '',      //自定义域名
+                collectIP: true, //是否收集IP及位置信息, 默认开启
+                collectUA: true  //是否收集UserAgent, 默认开启
+            });
+        })();
+</script>
+
+
+
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/vconsole.min.js"></script>
+<script type="text/javascript">
+    //当地址中存在debug=true时，实例化vConsole
+    if (location.href.indexOf('debug=true') > -1) {
+        var vConsole = new VConsole();
+    }
+</script>
+
+
+    <script>
+    //国内用户自动重定向Coding Pages镜像
+    // var ipInfo = JSON.parse(localStorage.getItem('ipInfo'));
+    // if (ipInfo.country_code == 'CN') {
+    //     location.href = location.href.replace('qinyuanpei.github.io', 'blog.yuanpei.me');
+    // }
+    </script>
+
+
+<script>
+titleArray = [];
+function scrollTitle() {
+    if (titleArray.length == 0) return;
+    titleArray.push(titleArray[0]);
+	titleArray.shift();
+	document.title = titleArray.join("");
+}
+setInterval(scrollTitle, 500);
+(function() {
+    var originTitile = document.title, titleTime;
+    document.addEventListener('visibilitychange', function() {
+        if (document.hidden) {
+            titleArray = originTitile.split('');
+            clearTimeout(titleTime);
+        } else {
+            document.title = originTitile;
+            titleArray = originTitile.split('');
+            titleTime = setTimeout(function() {
+                document.title = originTitile;
+                titleArray = [];
+            },2000);
+        }
+    });
+})();
+</script>
+
+
+<script src="//cdn.jsdelivr.net/gh/qinyuanpei/qinyuanpei.github.io@master/assets/scripts/ribbon.min.js"></script>
+</body>
+</html>

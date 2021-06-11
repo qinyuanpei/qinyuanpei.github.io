@@ -1,0 +1,16 @@
+{
+    "version": "1.0",
+    "columns": 2,
+    "tiles": [
+      {
+        "type": "PING",
+        "label": "Blog",
+        "params": { "hostname": "https://blog.yuanpei.me" }
+      },
+      {
+        "type": "PING",
+        "label": "LeanCloud",
+        "params": { "hostname": "https://www.leancloud.cn/"}
+      }
+    ]
+  }
