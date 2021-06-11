@@ -33,7 +33,7 @@ def submitSitemap(baseUrl):
         response = session.request("POST", 'http://data.zz.baidu.com/urls', data=payload, headers=headers, params=querystring)
         print(response.text)
         data = json.loads(response.text)
-        if(data['success'] == 1):
+        if('success' in data and data['success'] == 1):
             print('提交地址:{payload},至百度成功'.format(payload=payload))
         time.sleep(5)
 

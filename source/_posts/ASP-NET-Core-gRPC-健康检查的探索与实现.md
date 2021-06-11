@@ -352,6 +352,9 @@ brew install grpcurl
 // grpcui
 go get github.com/fullstorydev/grpcui/...
 go install github.com/fullstorydev/grpcui/cmd/grpcui
+
+// 安装后的路径为：C:\Users\<User>\go\bin\grpcui.exe
+grpcui -bind <Your-IP> -plaintext <Your-gRPC-Service>
 ```
 
 虽然这个说明简单而直白，可我还是没能装好，我不得不祭出Docker这个神器，果然它不会令我失望：
