@@ -43,7 +43,7 @@ jobs:
        git rev-parse HEAD > VERSION.txt
     - name: Deploy Github Pages
       run: |
-       node -v
+       hexo -v 
        sudo rm _config.yml
        sudo mv config-salve.yml _config.yml
        hexo generate
