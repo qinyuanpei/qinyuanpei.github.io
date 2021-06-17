@@ -208,6 +208,7 @@ ICP_license:
 
 #PWA特性
 pwa:
+  enable: false
   manifest: /manifest.json
 
 #桃心特效
