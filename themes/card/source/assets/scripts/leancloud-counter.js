@@ -1,4 +1,4 @@
-/**
+﻿/**
  * VisitorCounter
  * 基于LeanCloud的无后端访问统计
  * @version 1.0.0
@@ -226,7 +226,7 @@ function VisitorCounter() {
      **/
     this.injectScript = function () {
         var head = document.getElementsByTagName('head')[0]
-        var scripts = ['https://api.ip.sb/geoip?callback=handleIP', 'https://blog.yuanpei.me/assets/scripts/ua-parser.min.js'];
+        var scripts = ['https://api.ip.sb/geoip?callback=handleIP', 'https://cdn.jsdelivr.net/gh/qinyuanpei/blog.yuanpei.me@master/assets/scripts/ua-parser.min.js'];
         for (script of scripts) {
             var ele = document.createElement('script');
             ele.type = 'text/javascript';
