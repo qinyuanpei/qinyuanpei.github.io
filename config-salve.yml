@@ -168,9 +168,11 @@ build_version:
 
 # minifier插件
 html_minifier:
-  enable: false
+  enable: true
   ignore_error: false
   silent: true
+  minifyJS: true
+  minifyCSS: true
   exclude:
 css_minifier:
   enable: true
