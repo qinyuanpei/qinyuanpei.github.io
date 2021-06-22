@@ -125,8 +125,8 @@ gRPC-Web 在将 gRPC 带入前端世界的过程中，其实是牺牲了一部�
 ```shell
 go env -w GO111MODULE=on
 go env -w GOPROXY=https://goproxy.cn,direct
-go install github.com/grpc-ecosystem/grpc-gateway/protoc-gen-grpc-gateway \
-go install github.com/grpc-ecosystem/grpc-gateway/protoc-gen-swagger \
+go install github.com/grpc-ecosystem/grpc-gateway/protoc-gen-grpc-gateway 
+go install github.com/grpc-ecosystem/grpc-gateway/protoc-gen-swagger 
 go install github.com/golang/protobuf/protoc-gen-go
 ```
 
