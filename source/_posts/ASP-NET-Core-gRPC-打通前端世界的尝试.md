@@ -55,8 +55,8 @@ client.sayHello(request, metadata, function(error, response) {
 
 如果你更倾向于使用类型安全的 TypeScript，你还可以按下面的方式来生成代码：
 
-* import_style=commonjs+dts: CommonJS & .d.ts typings
-* import_style=typescript: 100% TypeScript
+* `import_style=commonjs+dts`: CommonJS & .d.ts typings
+* `import_style=typescript`: 100% TypeScript
 
 更多的细节请参考官方文档：[https://hub.fastgit.org/grpc/grpc-web#typescript-support](https://hub.fastgit.org/grpc/grpc-web#typescript-support)
 
