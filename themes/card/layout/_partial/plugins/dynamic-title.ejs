@@ -15,7 +15,7 @@ setInterval(scrollTitle, 500);
             titleArray = originTitile.split('');
             clearTimeout(titleTime);
         } else {
-            document.title = originTitile;
+            document.title = originTitile + '  ';
             titleArray = originTitile.split('');
             titleTime = setTimeout(function() {
                 document.title = originTitile;
