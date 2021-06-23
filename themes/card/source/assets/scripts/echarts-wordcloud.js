@@ -1,3 +1,4 @@
+﻿/*! For license information please see echarts-wordcloud.min.js.LICENSE.txt(2021/06/23) */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
 		module.exports = factory(require("echarts"));

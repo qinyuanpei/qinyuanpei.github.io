@@ -221,6 +221,9 @@ jsdelivr:
   gh_user: qinyuanpei
   gh_repo: qinyuanpei.github.io
   baseUrl: cdn.jsdelivr.net
+
+
+cdn_url: http://localhost:4000
   
 
 
