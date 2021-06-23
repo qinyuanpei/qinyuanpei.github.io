@@ -28,7 +28,7 @@
     <div id="chart6" class="child"></div>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/echarts@5.1.2/dist/echarts.min.js"></script>
-<script src="<%- url_for(theme_js('assets/scripts/echarts-wordcloud', cache)) %>" async></script>
+<script src="<%-theme.cdn_url %>/assets/scripts/echarts-wordcloud.js"></script>
 <script type="text/javascript">
     fetch('<%- config.cdn_url %>' + '/content.json')
         .then(function (res) {
@@ -62,7 +62,7 @@
             console.log('Fetch Error : %S', err);
         })
 
-    fetch('<%- config.cdn_url %>' + '/shanbay.json')
+    fetch('<%- config.url %>' + '/shanbay.json')
         .then(function (res) {
             res.json().then(function (data) {
                 data.sort(function (a, b) {
