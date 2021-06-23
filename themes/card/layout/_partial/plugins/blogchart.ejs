@@ -30,7 +30,7 @@
 <script src="https://cdn.jsdelivr.net/npm/echarts@5.1.2/dist/echarts.min.js"></script>
 <script src="<%- url_for(theme_js('assets/scripts/echarts-wordcloud', cache)) %>" async></script>
 <script type="text/javascript">
-    fetch('<%- config.url %>' + '/content.json')
+    fetch('<%- config.cdn_url %>' + '/content.json')
         .then(function (res) {
             res.json().then(function (data) {
                 var result = handleData(data);
@@ -62,7 +62,7 @@
             console.log('Fetch Error : %S', err);
         })
 
-    fetch('<%- config.url %>' + '/shanbay.json')
+    fetch('<%- config.cdn_url %>' + '/shanbay.json')
         .then(function (res) {
             res.json().then(function (data) {
                 data.sort(function (a, b) {
