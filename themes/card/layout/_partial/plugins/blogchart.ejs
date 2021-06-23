@@ -49,11 +49,11 @@
                 handleLanguageChart('chart4', data);
                 //等爬虫写好以后再换掉即可
                 handleLeetCodeChart('chart5', {
-                    categories:{
+                    categories: {
                         "简单": 53,
                         "中等": 21,
                         "困难": 1,
-                        "失败" : 10
+                        "失败": 10
                     }
                 })
             });
@@ -61,11 +61,11 @@
         .catch(function (err) {
             console.log('Fetch Error : %S', err);
         })
-    
-        fetch('<%- config.url %>' + '/shanbay.json')
+
+    fetch('<%- config.url %>' + '/shanbay.json')
         .then(function (res) {
             res.json().then(function (data) {
-                data.sort(function(a, b){
+                data.sort(function (a, b) {
                     var date_a = new Date(a.checkin_date);
                     var date_b = new Date(b.checkin_date);
                     return date_a - date_b;
@@ -76,7 +76,7 @@
         .catch(function (err) {
             console.log('Fetch Error : %S', err);
         })
-    
+
     function handleData(posts) {
         var tags = {};
         var yearly = {};
@@ -221,17 +221,23 @@
                 image: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAABAklEQVQ4T63TLyyFURjH8c8trs0UicDMNFMIBF3RkJhNoOmKzSapJgkKzZ8k0BWBQjQbAkUym5vYs513e++7l3fX9dvOTjjP893v+XNq2lStzXxFQC82MIOBAvwJZ9jCa/aWB/TjCn0Vrl4wgeeIywMOsIgLzOO9AOrGEaYRsUsZ4BydmEQHBhF2yxRlPeIzuW2Egx3MJetv2K0oYQ09iFKOAzCCa9RbnEgD4wFYT2cZC5itAJ3iEPvYDsBmShpNTb3H0A+QBwzjC7c4CcAK9nCDD0wVppNnReIlujCG1QBE56Oev6ie7UGQy5arDNoUmwHu0jTijl78pqbYf/9MLffhG9gELuqHjsg6AAAAAElFTkSuQmCC",
                 drawOutOfBound: false,
                 textStyle: {
-                    normal: {
-                        color: function () {
-                            return 'rgb(' + [
+                    color: function () {
+                        return (
+                            "rgb(" +
+                            [
                                 Math.round(Math.random() * 160),
                                 Math.round(Math.random() * 160),
-                                Math.round(Math.random() * 160)
-                            ].join(',') + ')';
-                        }
+                                Math.round(Math.random() * 160),
+                            ].join(",") +
+                            ")"
+                        );
                     },
-                    emphasis: {
-                        color: 'red'
+                },
+                emphasis: {
+                    textStyle: {
+                        shadowBlur: 10,
+                        shadowColor: "#333",
+                        color: "#409EFF"
                     }
                 },
                 data: seriesData.sort(function (a, b) {
@@ -354,7 +360,7 @@
                 boundaryGap: false,
                 data: data.map(x => x.checkin_date)
             },
-            yAxis : [{
+            yAxis: [{
                 type: 'value',
                 min: 0,
                 max: 30,
