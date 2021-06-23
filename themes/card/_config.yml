@@ -190,7 +190,7 @@ reading_time:
 
 # 动态定义title
 title_change: 
-  enable: true
+  enable: false
   normal: 但盼风雨来，能留你在此。
   leave: 即使天无雨，我亦留此地。
 
