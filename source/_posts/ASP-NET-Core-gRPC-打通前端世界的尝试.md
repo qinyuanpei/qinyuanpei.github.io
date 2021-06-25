@@ -286,6 +286,28 @@ app.AddGrpcGateway<Greeter.GreeterClient, HelloRequest, HelloReply>(
 
 此时，可以看到，这就真的和调用一个 Web API 一样，我们完全意识不到，这是一个 gRPC 服务。你觉得，这样子算是达到目的了吗？
 
+
 # 本文小结
 
 其实，本文完全是临时想起来决定要写的一篇文章，起因就是看到了项目中有人在手动地封装 gRPC 服务为 RESTful 服务，当时就在想有没有一种方案，可以让这个过程稍微好一点点。所以，你可以认为，我写这篇博客的初衷，原来就是为了炫耀我写的那几行代码。不过，人到了一定的阶段以后，不管是写作还是思考，都似乎越来越喜欢某种框架结构，这种体验就有点像是上学时候写论文一样，虽然你明确地知道自己在做什么，可当你真正要把你的思路或者过程复述出来的时候，你还是需要有一个“文献综述”的环节。我个人以为，这是一种由外及内的认知方法，通过内外世界的对比来寻找自我提升的突破口。对于本文而言，不管是 [gRPC-Web](https://github.com/grpc-ecosystem/grpc-gateway) 还是 [gRPC-Gateway](https://github.com/grpc-ecosystem/grpc-gateway)，从本质上来讲，它们都是 Protocol Buffers 工具链中的插件，在这个过程中发现了平时使用 gRPC 过程中被隐藏了的一部分细节，这些细节如果能和开发工具完美结合的话，就可以极大地提升我们在 gRPC 方面的开发效率，譬如 gRPC-Web 在 .NET 中的实现就利用了 MSBuild 的自定义编译任务，这就让底层的Protocol Buffers 工具链、前端构建工具等对使用者来说是无感知的，从开发体验上就给人心旷神怡的感觉。我个人还是倾向于结合 ASP.NET Core 或者容器级别的 Envoy 来解决这个问题，我觉得应该还有更好的方案，希望大家可以在评论区写下你的想法。好啦，这篇博客就先写到这里，谢谢大家！
+
+# 更新说明
+
+截至2021年6月25日，基于中间件的方案已支持以下特性：自动注入客户端、自动配置路由。详情请参考：[https://hub.fastgit.org/Regularly-Archive/2021/tree/master/src/GRPC.Logging/Grpc.Gateway](https://hub.fastgit.org/Regularly-Archive/2021/tree/master/src/GRPC.Logging/Grpc.Gateway)。在此方案下，只需要 4 行代码：
+
+```csharp
+public void ConfigureServices(IServiceCollection services)
+{
+    services.Configure<KestrelServerOptions>(x => x.AllowSynchronousIO = true);
+    services.Configure<IISServerOptions>(x => x.AllowSynchronousIO = true);
+    services.AddGrpcClients(opt => opt.Address = new Uri("https://localhost:8001"));
+}
+
+public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+{
+    // ...     
+    app.AddGrpcGateway();
+}
+```
+
+以上！
