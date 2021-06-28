@@ -29,6 +29,8 @@ def analyseLanguages(posts):
                    language = 'C#'
                 if language.lower() == "javascript" or language.lower() == "js":
                    language = 'JavaScript'
+                if language.lower() == "shell":
+                   language = 'Shell'
                 if language in ['shell','json','csharp','lua','yaml','yml']:
                     print(post)
                 if language in languages.keys():
