@@ -13,7 +13,7 @@ abbrlink: 3599307335
 date: 2021-07-01 22:49:47
 ---
 
-话说，博主第一次接触到`Envoy`，其实是在微软的示例项目 [eShopOnContainers](https://github.com/dotnet-architecture/eShopOnContainers)，在这个示例项目中，微软通过它来为Ordering API、Catalog API、Basket API 等多个服务提供网关的功能。当时，博主并没有对它做深入的探索。此刻回想起来，大概是因为那个时候更迷恋领域驱动开发的理念。直到最近这段时间，博主需要在一个项目中用到`Envoy`，终于决定花点时间来学习一下相关内容。所以，接下来这几篇博客，大体上会记录我学习`Envoy`的过程为主。考虑到`Envoy`的配置项特别多，在写作过程中难免会出现纰漏，，希望大家谅解。如对具体的配置项存在疑问，请以官方最新的 [文档](https://www.envoyproxy.io/docs/envoy/latest/) 为准，本文所用的示例代码已经上传至 [Github](https://hub.fastgit.org/Regularly-Archive/2021/tree/master/src/EnvoyGateway)，大家作为参考即可。对于今天这篇博客，我们来聊聊 ASP.NET Core 搭载 Envoy 实现微服务的反向代理 这个话题，或许你曾经接触过 [Nginx](https://www.nginx.com/) 或者 [Ocelot](https://github.com/ThreeMammals/Ocelot)，这次我们不妨来尝试一点新的东西，譬如，通过`Docker-Compose`来实现服务编排，如果对我说的这些东西感兴趣的话，请跟随我的脚步，一起来探索这广阔无垠的技术世界吧！
+话说，博主第一次接触到`Envoy`，其实是在微软的示例项目 [eShopOnContainers](https://github.com/dotnet-architecture/eShopOnContainers)，在这个示例项目中，微软通过它来为Ordering API、Catalog API、Basket API 等多个服务提供网关的功能。当时，博主并没有对它做深入的探索。此刻回想起来，大概是因为那个时候更迷恋领域驱动开发的理念。直到最近这段时间，博主需要在一个项目中用到`Envoy`，终于决定花点时间来学习一下相关内容。所以，接下来这几篇博客，大体上会记录我学习`Envoy`的过程为主。考虑到`Envoy`的配置项特别多，在写作过程中难免会出现纰漏，希望大家谅解。如对具体的配置项存在疑问，请以官方最新的 [文档](https://www.envoyproxy.io/docs/envoy/latest/) 为准，本文所用的示例代码已经上传至 [Github](https://hub.fastgit.org/Regularly-Archive/2021/tree/master/src/EnvoyGateway)，大家作为参考即可。对于今天这篇博客，我们来聊聊 ASP.NET Core 搭载 Envoy 实现微服务的反向代理 这个话题，或许你曾经接触过 [Nginx](https://www.nginx.com/) 或者 [Ocelot](https://github.com/ThreeMammals/Ocelot)，这次我们不妨来尝试一点新的东西，譬如，通过`Docker-Compose`来实现服务编排，如果对我说的这些东西感兴趣的话，请跟随我的脚步，一起来探索这广阔无垠的技术世界吧！
 
 # 走近 Envoy
 
