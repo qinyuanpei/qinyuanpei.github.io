@@ -39,7 +39,7 @@ date: 2021-07-01 22:49:47
 
 ![Envoy 的 Sidecar 模式](https://i.loli.net/2021/07/02/lMnPhZzBd38tpVF.png)
 
-* L3/L4/L7 架构：`Envoy`同时支持 OSI 七层模型中的第3层(网络层, IP 协议)、第四层(传输层，TCP / UDP 协议)、第七层(应用层，HTTP 协议)
+* L3/L4/L7 架构：`Envoy`同时支持 OSI 七层模型中的第三层(网络层, IP 协议)、第四层(传输层，TCP / UDP 协议)、第七层(应用层，HTTP 协议)
 * 顶级 HTTP/2 支持： 视 `HTTP/2` 为一等公民，且可以在 `HTTP/2` 和 `HTTP/1.1`间相互转换
 * gRPC 支持：`Envoy` 支持 `HTTP/2`，自然支持使用 `HTTP/2` 作为底层多路复用协议的 `gRPC`
 * 服务发现和动态配置：与 `Nginx` 等代理的热加载不同，`Envoy` 可以通过 `API` 接口动态更新配置，无需重启代理。
