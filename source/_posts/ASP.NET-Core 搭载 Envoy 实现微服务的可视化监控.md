@@ -147,7 +147,7 @@ rate(http_requests_total[5m])
 
 ![在 Grafana 中查询 Envoy 指标数据](https://i.loli.net/2021/07/12/5YzSxcUnIPE43Xm.png)
 
-此时，我们就完成了一个自定义图表的制作，其中的关键有两点，**其一是了解每一个指标的含义，其二是了解每一个内置函数的用法**。革命尚未成功，同志仍须努力。这些内容无法在一篇博客里全部讲到，如果需要做进一步的探索，还是建议大家去看[官方文档](https://prometheus.io/docs/prometheus/latest/querying/basics/)，这里博主给大家可以推荐一个不错的[中文文档](https://www.bookstack.cn/read/prometheus_practice/promql-summary.md)。
+此时，我们就完成了一个自定义图表的制作，其中的关键有两点，**其一是了解每一个指标的含义，其二是了解每一个内置函数的用法**。革命尚未成功，同志仍须努力。这些内容无法在一篇博客里全部讲到，如果需要做进一步的探索，还是建议大家去看[官方文档](https://prometheus.io/docs/prometheus/latest/querying/basics/)，这里博主可以给大家推荐一个不错的[中文文档](https://www.bookstack.cn/read/prometheus_practice/promql-summary.md)。
 
 
 # 文本小结
