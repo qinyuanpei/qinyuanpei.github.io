@@ -31,7 +31,7 @@ date: 2021-07-10 14:41:24
 
 # 原理说明
 
-首先，我们来简单阐述一下原理。在 Envoy 的早期版本中，通常是通过 [statsd](https://github.com/statsd/statsd) 来采集 Envoy 中的信息，这些信息会被存储在 Prometheus 中，然后由 Grafana 从 Prometheus 中读取数据并展示为图表。而在 Envoy最新的版本中，Envoy 本身就可以输出 Prometheus 需要的数据格式，故而就不再需要 [statsd](https://github.com/statsd/statsd) 这样一个监控工具。关于第一种方案，大家可以参考这篇文章：[Envoy Service Mesh、Prometheus和Grafana下的微服务监控](https://www.servicemesher.com/blog/microservices-monitoring-with-envoy-service-mesh-prometheus-grafana/)。这里，为了简单起见，我们采用第二种方案来进行集成。在接下来的例子中，我们会部署下面四个服务，我们希望在调用 gRPC 服务的时候，可以在 Grafana 看到相关的监控指标：
+首先，我们来简单阐述一下原理。在 Envoy 的早期版本中，通常是通过 [statsd](https://github.com/statsd/statsd) 来采集 Envoy 中的信息，这些信息会被存储在 Prometheus 中，然后由 Grafana 从 Prometheus 中读取数据并展示为图表。而在 Envoy 最新的版本中，Envoy 本身就可以输出 Prometheus 需要的数据格式，故而就不再需要 [statsd](https://github.com/statsd/statsd) 这样一个监控工具。关于第一种方案，大家可以参考这篇文章：[Envoy Service Mesh、Prometheus和Grafana下的微服务监控](https://www.servicemesher.com/blog/microservices-monitoring-with-envoy-service-mesh-prometheus-grafana/)。这里，为了简单起见，我们采用第二种方案来进行集成。在接下来的例子中，我们会部署下面四个服务，我们希望在调用 gRPC 服务的时候，可以在 Grafana 看到相关的监控指标：
 
 ```yaml
 version: "3"
