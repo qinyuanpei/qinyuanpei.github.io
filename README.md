@@ -1,18 +1,19 @@
 [![Build Status](https://www.travis-ci.org/qinyuanpei/qinyuanpei.github.io.svg?branch=blog)](https://www.travis-ci.org/qinyuanpei/qinyuanpei.github.io)
 [![jsDelivr](https://data.jsdelivr.com/v1/package/gh/qinyuanpei/qinyuanpei.github.io/badge)](https://www.jsdelivr.com/package/gh/qinyuanpei/qinyuanpei.github.io)
 
-本文档由脚本自动生成，最后更新时间：2021-07-12 11:24:35，最后部署版本：[5f662f9](https://github.com/qinyuanpei/qinyuanpei.github.io/commit/5f662f978
+本文档由脚本自动生成，最后更新时间：2021-07-17 22:44:35，最后部署版本：[5f662f9](https://github.com/qinyuanpei/qinyuanpei.github.io/commit/5f662f978
 )
 
 如果想订阅我的博客，请使用Github的Watch功能，**请不要fork此项目**
 
-Hi, Payne. 从2014-12-30至今，你撰写博客共计205篇，请继续努力！
+Hi, Payne. 从2014-12-30至今，你撰写博客共计206篇，请继续努力！
 
 Coding Pages版本：[https://blog.yuanpei.me](https://blog.yuanpei.me)
 
 Github Pages版本：[https://qinyuanpei.github.io](https://qinyuanpei.github.io)
 
-# 2021(共25篇)
+# 2021(共26篇)
+* 2021-07-12 - [浪客剑心：一曲幕末时代的挽歌](https://blog.yuanpei.me/posts/673523131/)
 * 2021-07-10 - [ASP.NET Core 搭载 Envoy 实现微服务的监控预警](https://blog.yuanpei.me/posts/1519021197/)
 * 2021-07-05 - [ASP.NET Core 搭载 Envoy 实现微服务的负载均衡](https://blog.yuanpei.me/posts/3599307336/)
 * 2021-07-01 - [ASP.NET Core 搭载 Envoy 实现微服务的反向代理](https://blog.yuanpei.me/posts/3599307335/)
