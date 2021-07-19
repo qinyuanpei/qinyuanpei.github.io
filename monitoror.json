@@ -1,0 +1,29 @@
+{
+  "version": "2.0",
+  "columns": 3,
+  "tiles": [
+    {
+      "type": "HTTP-STATUS",
+      "params": {
+        "url": "https://blog.yuanpei.me",
+        "statusCodeMax": 299
+      }
+    },
+    {
+      "type": "TRAVISCI-BUILD",
+      "params": {
+        "owner": "qinyuanpei",
+        "repository": "qinyuanpei.github.io",
+        "branch": "blog"
+      }
+    },
+    {
+      "type": "GITHUB-CHECKS",
+      "params": {
+        "owner": "qinyuanpei",
+        "repository": "qinyuanpei.github.io",
+        "ref": "blog"
+      }
+    }
+  ]
+}
