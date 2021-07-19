@@ -1,0 +1,23 @@
+{
+  "version": "2.0",
+  "columns": 4,
+  "tiles": [
+    {
+      "label": "健康检查",
+      "type": "HTTP-STATUS",
+      "params": {
+        "url": "https://blog.yuanpei.me",
+        "statusCodeMax": 299
+      }
+    },
+    {
+      "label": "部署状态",
+      "type": "TRAVISCI-BUILD",
+      "params": {
+        "owner": "qinyuanpei",
+        "repository": "qinyuanpei.github.io",
+        "branch": "blog"
+      }
+    }
+  ]
+}
