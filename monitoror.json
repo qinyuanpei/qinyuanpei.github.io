@@ -16,15 +16,6 @@
         "repository": "qinyuanpei.github.io",
         "branch": "blog"
       }
-    },
-    {
-      "type": "GITHUB-CHECKS",
-      "params": {
-        "owner": "qinyuanpei",
-        "repository": "qinyuanpei.github.io",
-        "ref": "blog"
-      },
-      "configVariant": "default"
     }
   ]
 }
