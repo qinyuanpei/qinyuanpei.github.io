@@ -23,7 +23,8 @@
         "owner": "qinyuanpei",
         "repository": "qinyuanpei.github.io",
         "ref": "blog"
-      }
+      },
+      "configVariant": "default"
     }
   ]
 }
