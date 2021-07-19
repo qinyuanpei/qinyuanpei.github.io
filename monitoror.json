@@ -1,16 +1,29 @@
 {
-    "version": "1.0",
-    "columns": 2,
-    "tiles": [
-      {
-        "type": "PING",
-        "label": "Blog",
-        "params": { "hostname": "https://blog.yuanpei.me" }
-      },
-      {
-        "type": "PING",
-        "label": "LeanCloud",
-        "params": { "hostname": "https://www.leancloud.cn/"}
+  "version": "2.0",
+  "columns": 3,
+  "tiles": [
+    {
+      "type": "HTTP-STATUS",
+      "params": {
+        "url": "https://blog.yuanpei.me",
+        "statusCodeMax": 299
       }
-    ]
-  }
+    },
+    {
+      "type": "TRAVISCI-BUILD",
+      "params": {
+        "owner": "qinyuanpei",
+        "repository": "qinyuanpei.github.io",
+        "branch": "blog"
+      }
+    },
+    {
+      "type": "GITHUB-CHECKS",
+      "params": {
+        "owner": "qinyuanpei",
+        "repository": "qinyuanpei.github.io",
+        "ref": "blog"
+      }
+    }
+  ]
+}
