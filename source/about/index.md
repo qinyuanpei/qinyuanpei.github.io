@@ -20,6 +20,8 @@ abbrlink: 994796909
 * 对博客进行重构
 * 设计数据交换平台
 * 领域驱动设计(**DDD**) 
+* 微服务架构(**Envoy**/**gRPC**)
+* 消息队列(**Kafka**)
 
 更多的页面：
 * [书单](https://blog.yuanpei.me/books/) / [歌单](https://blog.yuanpei.me/musics/) / [影单](https://blog.yuanpei.me/movies/) / [诗集](https://qinyuanpei.github.io/poems/) / [友人帐](https://blog.yuanpei.me/friends/)
