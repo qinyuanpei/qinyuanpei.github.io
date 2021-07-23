@@ -22,6 +22,7 @@ def analyseCheckin(page):
             record['words'] = checkin['stats'].get('abc', {'num_today': 0, 'used_time': 0})
             record['listen'] = checkin['stats'].get('listen', {'num_today': 0, 'used_time': 0})
             record['speak'] = checkin['stats'].get('speak', {'num_today': 0, 'used_time': 0})
+            record['read'] = checkin['stats'].get('read', {'num_today': 0, 'used_time': 0})
             records.append(record)
         return records
     return []
