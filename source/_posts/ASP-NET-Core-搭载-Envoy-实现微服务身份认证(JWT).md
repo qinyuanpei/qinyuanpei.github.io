@@ -17,7 +17,7 @@ date: 2021-07-25 09:41:24
 
 # 搭建 Keycloak
 
-对于 [JWT](https://jwt.io) ，即 Json Web Tokn ，我想大家应该都非常熟悉了，它是目前最流行的跨域认证解决方案。考虑到，传统的 Session 机制，在面对集群环境时，扩展性方面表现不佳。在日益服务化、集群化的今天，这种无状态的、轻量级的认证方案，自然越来越受到人们的青睐。在 ASP.NET Core 中整合JWT非常简单，因为有各种第三方库可以帮助你生成令牌，你唯一需要做的就是配置授权/认证中间件，它可以帮你完成令牌校验这个环节的工作。除此以外，你还可以选择更重量级的 [Identity Server 4](https://identityserver4.readthedocs.io/en/latest/)，它提供了更加完整的身份认证解决方案。在今天这篇博客里，我们使用的 [Keycloak](https://www.keycloak.org)，一个类似 Identity Server 4 的产品，它提供了一个更加友好的用户界面，可以更加方便的管理诸如客户端、用户、角色等等信息。其实，如果从头开始写不是不可以，可惜博主一时间无法实现 [JWKS](https://auth0.com/docs/tokens/json-web-tokens/json-web-key-sets)，所以，就请大家原谅在下拾人牙慧，关于 JWKS ，我们会在下一节进行揭晓。接触微服务以来，在做技术选型时，博主的一个关注点是，这个方案是否支持容器化。所以，在这一点上，显然是 Keycloak 略胜一筹，为了安装 Ketcloak ，我们准备了如下的服务编排文件：
+对于 [JWT](https://jwt.io) ，即 Json Web Token ，我想大家应该都非常熟悉了，它是目前最流行的跨域认证解决方案。考虑到，传统的 Session 机制，在面对集群环境时，扩展性方面表现不佳。在日益服务化、集群化的今天，这种无状态的、轻量级的认证方案，自然越来越受到人们的青睐。在 ASP.NET Core 中整合JWT非常简单，因为有各种第三方库可以帮助你生成令牌，你唯一需要做的就是配置授权/认证中间件，它可以帮你完成令牌校验这个环节的工作。除此以外，你还可以选择更重量级的 [Identity Server 4](https://identityserver4.readthedocs.io/en/latest/)，它提供了更加完整的身份认证解决方案。在今天这篇博客里，我们使用的 [Keycloak](https://www.keycloak.org)，一个类似 Identity Server 4 的产品，它提供了一个更加友好的用户界面，可以更加方便的管理诸如客户端、用户、角色等等信息。其实，如果从头开始写不是不可以，可惜博主一时间无法实现 [JWKS](https://auth0.com/docs/tokens/json-web-tokens/json-web-key-sets)，所以，就请大家原谅在下拾人牙慧，关于 JWKS ，我们会在下一节进行揭晓。接触微服务以来，在做技术选型时，博主的一个关注点是，这个方案是否支持容器化。所以，在这一点上，显然是 Keycloak 略胜一筹，为了安装 Ketcloak ，我们准备了如下的服务编排文件：
 
 ```yaml
 version: '3'
