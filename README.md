@@ -14,7 +14,6 @@ Github Pages版本：[https://qinyuanpei.github.io](https://qinyuanpei.github.io
 
 # 2021(共28篇)
 * 2021-07-25 - [ASP.NET Core 搭载 Envoy 实现微服务身份认证(JWT)](https://blog.yuanpei.me/posts/731808750/)
-* 2021-07-12 - [ASP.NET-Core 搭载 Envoy 实现 gRPC 服务代理](https://blog.yuanpei.me/posts/3942175942/)
 * 2021-07-12 - [浪客剑心：一曲幕末时代的挽歌](https://blog.yuanpei.me/posts/673523131/)
 * 2021-07-10 - [ASP.NET Core 搭载 Envoy 实现微服务的监控预警](https://blog.yuanpei.me/posts/1519021197/)
 * 2021-07-05 - [ASP.NET Core 搭载 Envoy 实现微服务的负载均衡](https://blog.yuanpei.me/posts/3599307336/)
