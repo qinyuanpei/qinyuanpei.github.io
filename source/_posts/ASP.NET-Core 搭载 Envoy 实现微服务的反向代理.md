@@ -157,7 +157,7 @@ static_resources:
 
 ### 负载均衡(Load Assignment)
 
-目前，`Envoy`支持一下负载均衡算法：
+目前，`Envoy`支持以下负载均衡算法：
 * ROUND_ROBIN：轮询
 * LEAST_REQUEST：最少请求
 * RING_HASH：哈希环
