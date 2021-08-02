@@ -31,6 +31,8 @@ def analyseLanguages(posts):
                    language = 'JavaScript'
                 if language.lower() == "shell":
                    language = 'Shell'
+                if language.lower() == "yaml" or language.lower() == "yml":
+                   language = language.upper()
                 if language in ['shell','json','csharp','lua','yaml','yml']:
                     print(post)
                 if language in languages.keys():
