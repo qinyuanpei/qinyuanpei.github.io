@@ -190,7 +190,7 @@ for (var i = 0; i < 5; i++)
 
 # 本文小结
 
-本文分享了通过 AOP 来简化缓存操作的一种思路，考虑到常规的缓存代码写法，读/写缓存与业务代码严重耦合在一起，而博主心目中的缓存应该像水、电、煤气一样普普通通，你只需要告诉我哪些数据需要缓存，而无需关心这些数据怎么缓存。基于这样一种考虑，博主基于`DispatchProxy`实现了一个针对缓存的 AOP 方案，我们只需要在接口上打上`[Cachable]`标签，它会自动对方法的返回值进行缓存，从而简化我们平时使用缓存的流程。[Catcher Wong](https://www.cnblogs.com/catcher1994) 在其缓存框架 [EasyCaching](https://www.cnblogs.com/catcher1994/p/10806607.html) 同样集成了这一特性，如果大家有类似的使用场景，可以直接使用这个[框架](https://github.com/dotnetcore/EasyCaching)。如果大家对此有更好的想法或者思路，欢迎大家在评论区留言，本文示例已上传至 [Github](https://hub.fastgit.org/Regularly-Archive/2021/tree/master/src/Caching.AOP)，供大家学习或者参考。好了，以上就是这篇博客的全部内容啦，谢谢大家！
+本文分享了通过 AOP 来简化缓存操作的一种思路，考虑到常规的缓存代码写法，读/写缓存与业务代码严重耦合在一起，而博主心目中的缓存应该像水、电、煤气一样普普通通，你只需要告诉我哪些数据需要缓存，而无需关心这些数据怎么缓存。基于这样一种考虑，博主基于`DispatchProxy`实现了一个针对缓存的 AOP 方案，我们只需要在接口上打上`[Cachable]`标签，它会自动对方法的返回值进行缓存，从而简化我们平时使用缓存的流程。[Catcher Wong](https://www.cnblogs.com/catcher1994) 大佬在其缓存框架 [EasyCaching](https://www.cnblogs.com/catcher1994/p/10806607.html) 同样集成了这一特性，如果大家有类似的使用场景，可以直接使用这个[框架](https://github.com/dotnetcore/EasyCaching)。如果大家对此有更好的想法或者思路，欢迎大家在评论区留言，本文示例已上传至 [Github](https://hub.fastgit.org/Regularly-Archive/2021/tree/master/src/Caching.AOP)，供大家学习或者参考。好了，以上就是这篇博客的全部内容啦，谢谢大家！
 
 
 
