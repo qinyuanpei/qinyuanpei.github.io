@@ -115,7 +115,7 @@ public class CacheInterceptor<TCacheService> : DispatchProxy
 }
 ```
 
-这里，最为关键的地方是`Invoke()`方法，它负责对被代理对象的方法进行拦截，这里的被代理对象，其实就是`_realObject`，即真实对象，因为，我们最终调用的，实际上是真实对象上对应的方法。因为`DispatchProxy`在创建代理对象时，要求这个代理基类，即这里的拦截器，必须要有一个无参的构造函数。所以，我们这里用属性注入的方式赖注入`IServiceProvider`。说回这个方法，首先，我们会判断它的返回值类型是不是`void`或者`Task`，因为无返回值的方法本身就不需要缓存。接下来，我们会检查当前方法上是否附加了`[Cacheable]`特性，因为我们只需要处理有这个特性的方法。接下来，通过`GetCacheKey()`方法来生成一个唯一的键名，通过这个键名我们就可以在缓存中查询数据啦，该方法的实现细节如下：
+这里，最为关键的地方是`Invoke()`方法，它负责对被代理对象的方法进行拦截，这里的被代理对象，其实就是`_realObject`，即真实对象，因为，我们最终调用的，实际上是真实对象上对应的方法。因为`DispatchProxy`在创建代理对象时，要求这个代理基类，即这里的拦截器，必须要有一个无参的构造函数。所以，我们这里用属性注入的方式来注入`IServiceProvider`。说回这个方法，首先，我们会判断它的返回值类型是不是`void`或者`Task`，因为无返回值的方法本身就不需要缓存。接下来，我们会检查当前方法上是否附加了`[Cacheable]`特性，因为我们只需要处理有这个特性的方法。接下来，通过`GetCacheKey()`方法来生成一个唯一的键名，通过这个键名我们就可以在缓存中查询数据啦，该方法的实现细节如下：
 
 ```csharp
 private string GetCacheKey(CacheableAttribute cacheableAttribute, MethodInfo methodInfo)
