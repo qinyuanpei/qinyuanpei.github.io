@@ -362,5 +362,5 @@ networks:
 
 # 文本小结
 
-本文分享了`Docker`及`Docker-Compose`中的进阶使用技巧，主要探索了服务编排场景下容器的启动顺序、健康检查、网络模式三类问题。默认情况下，`Docker-Compose`的`depends_on`选项，取决于容器是否处于`running`状态，因此，当我们有多个服务需要启动时，实际上启动顺序并不会受到`depends_on`选项的影响，因为此时容器都是`running`的状态。为了解决这个问题，官方提供了 [wait-for-it](https://github.com/vishnubob/wait-for-it) 的方案，这是一种利用 [Netcat](http://netcat.sourceforge.net/) 对`TCP`和`UDP`进行检测的机制，当检测条件被满足的时候，它会执行由用户指定的启动脚本。从这里看，其实已经有了一点健康检查的影子，而官方的健康检查，则允许用户使用更加自由的命令或者脚本去实现检测逻辑，所以，从这个角度上来讲，`HEALTHCHECK`结合`depends_on`，这才是实现容器启动顺序控制的终极方案。`Docker`的网络是一个相对复杂的概念，所以，这里就是简单的介绍了下常见的四种网络模式，更深入的话题比如网络驱动等，还需要花时间去做进一步的探索。以上就是这篇博客的全部内容啦，谢谢大家！
+本文分享了`Docker`及`Docker-Compose`中的进阶使用技巧，主要探索了服务编排场景下容器的启动顺序、健康检查、网络模式三类问题。默认情况下，`Docker-Compose`的`depends_on`选项，取决于容器是否处于`running`状态，因此，当我们有多个服务需要启动时，实际上启动顺序并不会受到`depends_on`选项的影响，因为此时容器都是`running`的状态。为了解决这个问题，官方提供了 [wait-for-it](https://github.com/vishnubob/wait-for-it) 的方案，这是一种利用 [Netcat](http://netcat.sourceforge.net/) 对`TCP`和`UDP`进行检测的机制，当检测条件被满足的时候，它会执行由用户指定的启动脚本。从这里看，其实已经有了一点健康检查的影子，而官方的健康检查，则允许用户使用更加自由的命令或者脚本去实现检测逻辑，所以，从这个角度上来讲，`HEALTHCHECK`结合`depends_on`，这才是实现容器启动顺序控制的终极方案。`Docker`的网络是一个相对复杂的概念，所以，这里就是简单的介绍了下常见的四种网络模式，更深入的话题比如网络驱动等，还需要花时间去做进一步的探索。本文示例以上传至[Github](https://github.com/Regularly-Archive/2021/tree/master/src/DockerTips)，供大家参考。好了，以上就是这篇博客的全部内容啦，谢谢大家！
 
