@@ -112,7 +112,7 @@ tajs:
 # google
 google_analytics: false
 google_site_verification: 8AqkWAh0QNZqCYB2oKA5yIrqEA3sgxUvglVmtWkuU0s
-google_adsense: false
+google_adsense: true
 
 # baidu
 baidu-site-verification: c50FGqYOSh
