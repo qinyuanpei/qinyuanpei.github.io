@@ -1,12 +1,12 @@
 ---
 toc: true
-title: 使用 Python 自动识别防疫二维码
+title: 使用 Python 自动识别防疫健康码
 categories:
   - 编程语言
 tags:
   - Python
   - OpenCV
-  - 二维码
+  - 健康码
   - 防疫
 copyright: true
 abbrlink: 1509692610
