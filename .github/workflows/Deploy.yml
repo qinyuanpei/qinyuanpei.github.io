@@ -43,15 +43,14 @@ jobs:
        git rev-parse HEAD > VERSION.txt
     - name: Deploy Github Pages
       run: |
-       hexo -v 
        sudo rm _config.yml
        sudo mv config-salve.yml _config.yml
        hexo generate
-       # python readme.py https://qinyuanpei.github.io/
+       python readme.py https://qinyuanpei.github.io/
        sudo cp README.md ./public/README.md
        sudo cp VERSION.txt ./public/VERSION.txt
        sudo mkdir /home/runner/work/publish
-       cp -r /home/runner/work/qinyuanpei.github.io/qinyuanpei.github.io/public  /home/runner/work/publish
+       cp -r /home/runner/work/qinyuanpei.github.io/qinyuanpei.github.io/public/  /home/runner/work/publish/
        cd /home/runner/work/publish
        sudo git init 
        sudo git config user.name "qinyuanpei"
@@ -62,15 +61,13 @@ jobs:
        sudo git push --force --quiet "https://${CI_TOKEN}@${GH_REF}" master:master
     - name: Deploy Vercel
       run: |
-       rm _config.yml
-       mv config-master.yml _config.yml
-       hexo recommend
-       hexo douban
+       sudo rm _config.yml
+       sudo mv config-master.yml _config.yml
        hexo generate
-       # python readme.py https://blog.yuanpei.me
-       cp README.md ./public/README.md
-       cp VERSION.txt ./public/VERSION.txt
-       cp -r /home/runner/work/qinyuanpei.github.io/qinyuanpei.github.io/public /home/runner/work/publish
+       python readme.py https://blog.yuanpei.me
+       sudo cp README.md ./public/README.md
+       sudo cp VERSION.txt ./public/VERSION.txt
+       cp -r /home/runner/work/qinyuanpei.github.io/qinyuanpei.github.io/public/ /home/runner/work/publish/
        cd /home/runner/work/publish
        sudo git init 
        sudo git config user.name "qinyuanpei"
