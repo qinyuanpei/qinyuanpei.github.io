@@ -50,7 +50,9 @@ jobs:
        # python readme.py https://qinyuanpei.github.io/
        sudo cp README.md ./public/README.md
        sudo cp VERSION.txt ./public/VERSION.txt
-       cd ./public
+       sudo mkdir /home/runner/work/publish
+       sudo cp /home/runner/work/qinyuanpei.github.io/qinyuanpei.github.io/public/ /home/runner/work/publish
+       cd /home/runner/work/publish
        git init 
        git config user.name "qinyuanpei"
        git config user.email "qinyuanpei@163.com"
@@ -68,7 +70,8 @@ jobs:
        # python readme.py https://blog.yuanpei.me
        cp README.md ./public/README.md
        cp VERSION.txt ./public/VERSION.txt
-       cd ./public
+       sudo cp /home/runner/work/qinyuanpei.github.io/qinyuanpei.github.io/public/ /home/runner/work/publish
+       cd /home/runner/work/publish
        git init 
        git config user.name "qinyuanpei"
        git config user.email "qinyuanpei@163.com"
