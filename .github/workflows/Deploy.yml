@@ -30,7 +30,7 @@ jobs:
         # python -m pip install setuptools==33.1.1 
         # python -m pip install --default-timeout=50000 -r requirements.txt 
     - name: Setup Hexo
-      run: npm install hexo-cli -g
+      run: npm install hexo-cli@4.3.0 -g
     - name: Node.js Packages
       run: npm install
     - name: Configure Git
