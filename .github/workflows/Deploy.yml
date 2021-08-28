@@ -55,10 +55,10 @@ jobs:
        sudo git branch -m master
        sudo git config user.name "qinyuanpei"
        sudo git config user.email "qinyuanpei@163.com"
-       sudo git remote add origin -m master https://github.com/qinyuanpei/qinyuanpei.github.io.git
+       sudo git remote add origin -m master "https://${GH_TOKEN}@${GH_REPO}"
        sudo git add .
        sudo git commit -m "Update Blog By Github Actions"
-       sudo git push --force --quiet "https://$GH_TOKEN@$GH_REPO" master:master  
+       sudo git push --force --quiet "https://${GH_TOKEN}@{$GH_REPO}" master:master  
       env:
         GH_REPO: github.com/qinyuanpei/qinyuanpei.github.io.git
         GH_TOKEN: ${{ secrets.CI_TOKEN }}
