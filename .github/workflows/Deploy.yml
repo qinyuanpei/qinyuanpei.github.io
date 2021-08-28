@@ -46,7 +46,6 @@ jobs:
        HostName github.com
        IdentityFile ~/.ssh/id_rsa
        EOT
-       ssh -T git@github.com 
       env:
         CI_SSH_KEY: ${{ secrets.CI_SSH_KEY }}
         SSH_AUTH_SOCK: /tmp/ssh_agent.sock
