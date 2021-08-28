@@ -58,7 +58,11 @@ jobs:
        sudo git remote add origin -m master https://github.com/qinyuanpei/qinyuanpe.github.io
        sudo git add .
        sudo git commit -m "Update Blog By Github Actions"
-      #  sudo git push --force --quiet "https://${{ secrets.CI_TOKEN }}@${GH_REF}" master:master
+       echo "https://$CI_TOKEN@$GH_REF"       
+       sudo git push --force --quiet "https://${CI_TOKEN}@${GH_REF}" master:master
+      env:
+        GH_REF: github.com/qinyuanpei/qinyuanpei.github.io
+        CI_TOKEN: ${{ secrets.CI_TOKEN }}
     - name: Deploy Vercel
       run: |
        sudo rm _config.yml
@@ -77,7 +81,6 @@ jobs:
        sudo git commit -m "Update Blog By Github Actions"
       #  sudo git push --force --quiet "https://${{ secrets.CI_TOKEN }}@${GO_REF}" master:master    
       env:
-        CI: true
         GH_REF: github.com/qinyuanpei/qinyuanpei.github.io
         CO_REF: github.com/qinyuanpei/blog.yuanpei.me
         CI_TOKEN: ${{ secrets.CI_TOKEN }}
