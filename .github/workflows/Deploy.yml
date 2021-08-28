@@ -52,7 +52,6 @@ jobs:
        sudo mkdir /home/runner/work/publish
        sudo cp -r /home/runner/work/qinyuanpei.github.io/qinyuanpei.github.io/public/*  /home/runner/work/publish/
        cd /home/runner/work/publish
-       sudo git config --global --unset credential.helper
        sudo git init 
        sudo git branch -m master
        sudo git config user.name "qinyuanpei"
