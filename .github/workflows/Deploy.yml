@@ -52,10 +52,12 @@ jobs:
        sudo mkdir /home/runner/work/publish
        sudo cp -r /home/runner/work/qinyuanpei.github.io/qinyuanpei.github.io/public/*  /home/runner/work/publish/
        cd /home/runner/work/publish
+       sudo git config --global --unset credential.helper
        sudo git init 
+       sudo git branch -m master
        sudo git config user.name "qinyuanpei"
        sudo git config user.email "qinyuanpei@163.com"
-       sudo git remote add origin -m master https://github.com/qinyuanpei/qinyuanpe.github.io.git
+       sudo git remote add origin -m master https://github.com/qinyuanpei/qinyuanpei.github.io.git
        sudo git add .
        sudo git commit -m "Update Blog By Github Actions"
     - name: Push Changes
