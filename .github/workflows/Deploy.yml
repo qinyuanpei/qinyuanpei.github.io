@@ -35,9 +35,14 @@ jobs:
       run: npm install
     - name: Configure Git
       run: | 
-       git config user.name "qinyuanpei"
-       git config user.email "qinyuanpei@163.com"
-    - name: Clean & Generate
+       git config --global user.name "qinyuanpei"
+       git config --global user.email "qinyuanpei@163.com"
+       sudo mkdir -p ~/.ssh/
+       sudo echo "$CI_SSH_KEY" > ~/.ssh/id_rsa 
+       sudo chmod 600 ~/.ssh/id_rsa
+      env:
+        CI_SSH_KEY: ${{ secrets.CI_SSH_KEY }}
+    - name: Hexo Clean
       run: | 
        hexo clean
        git rev-parse HEAD > VERSION.txt
@@ -53,39 +58,21 @@ jobs:
        cd /home/runner/work/publish
        sudo git init 
        sudo git branch -m master
-       sudo git config user.name "qinyuanpei"
-       sudo git config user.email "qinyuanpei@163.com"
-       sudo git remote add origin -m master https://${GH_TOKEN}@${GH_REPO}
+       sudo git remote add origin -m master git@github.com:qinyuanpei/qinyuanpei.github.io.git
        sudo git add .
        sudo git commit -m "Update Blog By Github Actions"
-       sudo git push --force --quiet https://${GH_TOKEN}@${GH_REPO} master:master  
-      env:
-        GH_REPO: github.com/qinyuanpei/qinyuanpei.github.io.git
-        GH_TOKEN: ${{ secrets.CI_TOKEN }}
-    - name: Push Changes
-      uses: ad-m/github-push-action@master
-      with:
-        github_token: ${{ secrets.CI_TOKEN }}
-        branch: 'master'
-        force: true
+       sudo git push --force --quiet origin master
     - name: Deploy Vercel
       run: |
        sudo rm _config.yml
        sudo mv config-master.yml _config.yml
        hexo generate
-       # python readme.py https://blog.yuanpei.me
        sudo cp README.md ./public/README.md
        sudo cp VERSION.txt ./public/VERSION.txt
        sudo cp -r /home/runner/work/qinyuanpei.github.io/qinyuanpei.github.io/public/* /home/runner/work/publish/
        cd /home/runner/work/publish
        sudo git init 
-       sudo git config user.name "qinyuanpei"
-       sudo git config user.email "qinyuanpei@163.com"
-       sudo git remote add origin -m master https://github.com/qinyuanpei/qinyuanpe.github.io
+       sudo git remote add origin -m master git@github.com:qinyuanpei/qinyuanpe.github.io.git
        sudo git add .
        sudo git commit -m "Update Blog By Github Actions"
-      #  sudo git push --force --quiet "https://${{ secrets.CI_TOKEN }}@${GO_REF}" master:master    
-      env:
-        GH_REF: github.com/qinyuanpei/qinyuanpei.github.io
-        CO_REF: github.com/qinyuanpei/blog.yuanpei.me
-        CI_TOKEN: ${{ secrets.CI_TOKEN }}
+       sudo git push --force --quiet origin master    
