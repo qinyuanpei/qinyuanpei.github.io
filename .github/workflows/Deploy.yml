@@ -58,11 +58,12 @@ jobs:
        sudo git remote add origin -m master https://github.com/qinyuanpei/qinyuanpe.github.io
        sudo git add .
        sudo git commit -m "Update Blog By Github Actions"
-       echo "https://${GITHUB_ACTOR}:$CI_TOKEN@$GH_REF"       
-       sudo git push --force --quiet "https://${GITHUB_ACTOR}:${CI_TOKEN}@${GH_REF}" master:master
+       echo "https://$CI_USER:$CI_TOKEN@$GH_REF"       
+       sudo git push --force --quiet "https://${CI_USER}:${CI_TOKEN}@${GH_REF}" master:master
       env:
         GH_REF: github.com/qinyuanpei/qinyuanpei.github.io.git
         CI_TOKEN: ${{ secrets.CI_TOKEN }}
+        CI_USER: qinyuanpei
     - name: Deploy Vercel
       run: |
        sudo rm _config.yml
