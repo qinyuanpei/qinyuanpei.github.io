@@ -37,9 +37,9 @@ jobs:
       run: | 
        git config --global user.name "qinyuanpei"
        git config --global user.email "qinyuanpei@163.com"
-       sudo mkdir -p ~/.ssh/
-       sudo echo "$CI_SSH_KEY" > ~/.ssh/id_rsa 
-       sudo chmod 600 ~/.ssh/id_rsa
+       sudo mkdir -p /home/runner/.ssh/
+       sudo echo "$CI_SSH_KEY" > /home/runner/.ssh/id_rsa 
+       sudo chmod 600 /home/runner/.ssh/id_rsa 
       env:
         CI_SSH_KEY: ${{ secrets.CI_SSH_KEY }}
     - name: Hexo Clean
