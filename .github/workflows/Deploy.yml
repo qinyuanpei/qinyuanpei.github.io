@@ -7,7 +7,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-18.04
     steps:
     - name: Checkout 
       uses: actions/checkout@v1
@@ -35,19 +35,13 @@ jobs:
       run: npm install
     - name: Configure Git
       run: | 
+       mkdir -p ~/.ssh
+       echo "$CI_SSH_KEY" > ~/.ssh/id_rsa
+       chmod 700 ~/.ssh
+       chmod 600 ~/.ssh/id_rsa
+       ssh-keyscan github.com >> ~/.ssh/known_hosts
        git config --global user.name "qinyuanpei"
        git config --global user.email "qinyuanpei@163.com"
-       mkdir -p ~/.ssh
-       ssh-keyscan github.com >> ~/.ssh/known_hosts
-       echo "${{ secrets.CI_SSH_KEY }}" > ~/.ssh/id_rsa
-       chmod 600 ~/.ssh/id_rsa
-       cat <<EOT >> ~/.ssh/config
-       Host github.com
-       HostName github.com
-       IdentityFile ~/.ssh/id_rsa
-       EOT
-       ssh-agent bash
-       sudo ssh-add ~/.ssh/id_rsa
       env:
         CI_SSH_KEY: ${{ secrets.CI_SSH_KEY }}
         SSH_AUTH_SOCK: /tmp/ssh_agent.sock
