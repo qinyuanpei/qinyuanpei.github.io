@@ -102,8 +102,8 @@ jobs:
        folder: qinyuanpei.github.io
        ssh-key: ${{ secrets.CI_SSH_KEY }}  
        repository-name: qinyuanpei/qinyuanpei.github.io
-       git-config-name: qinyuanpei
-       git-config-email: qinyuanpei@163.com
+       git-config-name: "qinyuanpei"
+       git-config-email: "qinyuanpei@163.com"
        commit-message: "Update Blog by Github Action"
       env:
         GITHUB_USER: qinyuanpei
