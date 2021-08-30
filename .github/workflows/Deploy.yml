@@ -6,22 +6,27 @@ on:
       - blog
 
 jobs:
-  build:
+  build_static_pages:
+    name: Build Static Pages
     runs-on: ubuntu-18.04
     steps:
     - name: Checkout 
       uses: actions/checkout@v1
+
     - name: Setup Node.js
       uses: actions/setup-node@v1
       with:
         node-version: 14.x
+
     - name: Setup Python
       uses: actions/setup-python@v2
       with:
         python-version: '3.x'
         architecture: 'x64'
+
     - name: Setup Python-Dev
       run: sudo apt-get install python-dev libxml2-dev libxslt1-dev zlib1g-dev
+
     - name: Python Packages
       run: |
         python -m pip install pip -U
@@ -29,10 +34,55 @@ jobs:
         python -m pip config set install.trusted-host mirrors.aliyun.com
         # python -m pip install setuptools==33.1.1 
         # python -m pip install --default-timeout=50000 -r requirements.txt 
+
     - name: Setup Hexo
       run: npm install hexo-cli@4.3.0 -g
-    - name: Node.js Packages
+
+    - name: Setup Node.js Packages
       run: npm install
+
+    - name: Hexo Clean
+      run: | 
+       hexo clean
+       git rev-parse HEAD > VERSION.txt
+
+    - name: Generate Artifacts(qinyuanpei.github.io)
+      run: |
+       sudo rm _config.yml
+       sudo mv config-salve.yml _config.yml
+       hexo generate
+       sudo cp README.md ./public/README.md
+       sudo cp VERSION.txt ./public/VERSION.txt
+       sudo cp mkdir /home/runner/work/artifacts/qinyuanpei.github.io
+       sudo cp -r /home/runner/work/qinyuanpei.github.io/qinyuanpei.github.io/public/* /home/runner/work/artifacts/qinyuanpei.github.io
+
+    - name: Upload Artifacts(qinyuanpei.github.io)
+      uses: actions/upload-artifact@v1
+      with:
+        name: qinyuanpei.github.io
+        path: /home/runner/work/artifacts/qinyuanpei.github.io
+
+    - name: Generate Artifacts(blog.yuanpei.me)
+      run: |
+       sudo rm _config.yml
+       sudo mv config-master.yml _config.yml
+       hexo generate
+       sudo cp README.md ./public/README.md
+       sudo cp VERSION.txt ./public/VERSION.txt
+       sudo cp mkdir /home/runner/work/artifacts/blog.yuanpei.me
+       sudo cp -r /home/runner/work/qinyuanpei.github.io/qinyuanpei.github.io/public/* /home/runner/work/artifacts/blog.yuanpei.me 
+
+    - name: Upload Artifacts(blog.yuanpei.me)
+      uses: actions/upload-artifact@v1
+      with:
+        name: blog.yuanpei.me
+        path: /home/runner/work/artifacts/blog.yuanpei.me
+  
+  deploy_static_pages:
+    name: Deploy Static Pages
+    needs: build_static_pages
+    runs-on: ubuntu-latest
+    steps:
     - name: Configure Git
       run: | 
        mkdir -p ~/.ssh
@@ -45,42 +95,46 @@ jobs:
       env:
         CI_SSH_KEY: ${{ secrets.CI_SSH_KEY }}
         SSH_AUTH_SOCK: /tmp/ssh_agent.sock
-    - name: Hexo Clean
-      run: | 
-       hexo clean
-       git rev-parse HEAD > VERSION.txt
-    - name: Deploy Github Pages
+
+    - name: Download Artifacts(qinyuanpei.github.io)
+      uses: actions/download-artifact@v1
+      with:
+        name: qinyuanpei.github.io
+
+    - name: Deploy Artifacts(qinyuanpei.github.io)
       run: |
-       sudo rm _config.yml
-       sudo mv config-salve.yml _config.yml
-       hexo generate
-       sudo cp README.md ./public/README.md
-       sudo cp VERSION.txt ./public/VERSION.txt
-       sudo mkdir /home/runner/work/publish
-       sudo cp -r /home/runner/work/qinyuanpei.github.io/qinyuanpei.github.io/public/*  /home/runner/work/publish/
-       cd /home/runner/work/publish
+       cd /qinyuanpei.github.io
        sudo git init 
-       sudo git branch -m master
-       sudo git remote add origin -m master "https://$GITHUB_TOKEN@$GITHUB_REPO"
+       sudo git remote add origin master https://github.com/qinyuanpei/qinyuanpe.github.io
        sudo git add .
        sudo git commit -m "Update Blog By Github Actions"
-       cd /home/runner/work/qinyuanpei.github.io/qinyuanpei.github.io
-       sudo git push "https://$GITHUB_TOKEN@$GITHUB_REPO" HEAD:master
+       sudo git push --force --quiet "https://${GITHUB_TOKEN}@${GITHUB_REPO}" master:master   
       env:
         GITHUB_USER: qinyuanpei
         GITHUB_REPO: github.com/qinyuanpei/qinyuanpei.github.io.git
         GITHUB_TOKEN: ${{ secrets.CI_TOKEN }}
-    - name: Deploy Vercel
+
+    - name: Download Artifacts(blog.yuanpei.me)
+      uses: actions/download-artifact@v1
+      with:
+        name: vercel-pages
+
+    - name: Deploy Artifacts(blog.yuanpei.me)
       run: |
-       sudo rm _config.yml
-       sudo mv config-master.yml _config.yml
-       hexo generate
-       sudo cp README.md ./public/README.md
-       sudo cp VERSION.txt ./public/VERSION.txt
-       sudo cp -r /home/runner/work/qinyuanpei.github.io/qinyuanpei.github.io/public/* /home/runner/work/publish/
-       cd /home/runner/work/publish
+       cd /blog.yuanpei.me
        sudo git init 
-       sudo git remote add origin -m master git@github.com:qinyuanpei/qinyuanpe.github.io.git
+       sudo git remote add origin master https://github.com/qinyuanpei/qinyuanpe.github.io
        sudo git add .
        sudo git commit -m "Update Blog By Github Actions"
-       sudo git push --force --quiet origin master    
+       sudo git push --force --quiet "https://${GITHUB_TOKEN}@${GITHUB_REPO}" master:master   
+      env:
+        GITHUB_USER: qinyuanpei
+        GITHUB_REPO: github.com/qinyuanpei/blog.yuanpei.me.git
+        GITHUB_TOKEN: ${{ secrets.CI_TOKEN }}
+
+
+      
+
+  
+    
+    
