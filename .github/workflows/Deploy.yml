@@ -96,17 +96,16 @@ jobs:
         name: qinyuanpei.github.io
 
     - name: Deploy Artifacts(qinyuanpei.github.io)
-      uses: JamesIves/github-pages-deploy-action@4.1.4
-      with:
-       branch: master
-       folder: qinyuanpei.github.io
-       ssh-key: ${{ secrets.CI_SSH_KEY }}  
-       repository-name: qinyuanpei/qinyuanpei.github.io
-       git-config-name: "qinyuanpei"
-       git-config-email: "qinyuanpei@163.com"
-       commit-message: "Update Blog by Github Action"
+      run: |
+       cd ./qinyuanpei.github.io
+       git init
+       git config user.name "qinyuanpei"
+       git config user.email "qinyuanpei@163.com"
+       git remote add origin master https://github.com/qinyuanpei/qinyuanpe.github.io 
+       git add .
+       git commit -m "Github Action Build v${GITHUB_RUN_NUMBER}"
+       git push --force --quiet "https://${GITHUB_TOKEN}@${GITHUB_REPO}" master:master
       env:
-        GITHUB_USER: qinyuanpei
         GITHUB_REPO: github.com/qinyuanpei/qinyuanpei.github.io.git
         GITHUB_TOKEN: ${{ secrets.CI_TOKEN }}
 
