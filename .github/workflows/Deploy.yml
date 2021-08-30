@@ -61,10 +61,13 @@ jobs:
        cd /home/runner/work/publish
        sudo git init 
        sudo git branch -m master
-       sudo git remote add origin -m master git@github.com:qinyuanpei/qinyuanpei.github.io.git
+       sudo git remote add origin -m master https://github.com/qinyuanpei/qinyuanpei.github.io.git
        sudo git add .
        sudo git commit -m "Update Blog By Github Actions"
-       sudo git push --force --quiet origin master
+       sudo git push https://${GITHUB_TOKEN}@${GITHUB_REPO}
+      env:
+        GITHUB_REPO: github.com/qinyuanpei/qinyuanpei.github.io.git
+        GITHUB_TOKEN: ${{ secrets.CI_TOKEN }}
     - name: Deploy Vercel
       run: |
        sudo rm _config.yml
