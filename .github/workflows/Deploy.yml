@@ -65,6 +65,7 @@ jobs:
        sudo git add .
        sudo git commit -m "Update Blog By Github Actions"
        cd /home/runner/work/qinyuanpei.github.io/qinyuanpei.github.io
+       echo "https://${GITHUB_USER}:${GITHUB_TOKEN}@${GITHUB_REPO}"
        sudo git push https://${GITHUB_USER}:${GITHUB_TOKEN}@${GITHUB_REPO}
       env:
         GITHUB_USER: qinyuanpei
