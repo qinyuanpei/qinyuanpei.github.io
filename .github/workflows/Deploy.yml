@@ -71,6 +71,16 @@ jobs:
       with:
         name: blog.yuanpei.me
         path: /home/runner/work/artifacts/blog.yuanpei.me
+    
+    - name: Create Release
+      uses: actions/create-release@v1
+      with:
+        repo_token: "${{ secrets.CI_TOKEN }}"
+        automatic_release_tag: ${{ env.ReleaseVersion }}
+        title: ${{ env.ReleaseVersion }}
+        prerelease: false
+        files: |
+          /home/runner/work/artifacts/*
   
   deploy_static_pages:
     name: Deploy Static Pages
@@ -90,18 +100,18 @@ jobs:
         CI_SSH_KEY: ${{ secrets.CI_SSH_KEY }}
         SSH_AUTH_SOCK: /tmp/ssh_agent.sock
 
-    - name: Download Artifacts(qinyuanpei.github.io)
+    - name: Download Artifacts for qinyuanpei.github.io
       uses: actions/download-artifact@v1
       with:
         name: qinyuanpei.github.io
 
-    - name: Deploy Artifacts(qinyuanpei.github.io)
+    - name: Deploy Artifacts for qinyuanpei.github.io
       run: |
        cd ./qinyuanpei.github.io
        git init
        git config user.name "qinyuanpei"
        git config user.email "qinyuanpei@163.com"
-       git remote add origin master https://github.com/qinyuanpei/qinyuanpe.github.io 
+       git remote add -m master origin https://github.com/qinyuanpei/qinyuanpe.github.io 
        git add .
        git commit -m "Github Action Build v${GITHUB_RUN_NUMBER}"
        git push --force --quiet "https://${GITHUB_TOKEN}@${GITHUB_REPO}" master:master
@@ -109,12 +119,12 @@ jobs:
         GITHUB_REPO: github.com/qinyuanpei/qinyuanpei.github.io.git
         GITHUB_TOKEN: ${{ secrets.CI_TOKEN }}
 
-    - name: Download Artifacts(blog.yuanpei.me)
+    - name: Download Artifacts for blog.yuanpei.me
       uses: actions/download-artifact@v1
       with:
         name: blog.yuanpei.me
 
-    - name: Deploy Artifacts(blog.yuanpei.me)
+    - name: Deploy Artifacts for blog.yuanpei.me
       uses: JamesIves/github-pages-deploy-action@4.1.4
       with:
        branch: master
