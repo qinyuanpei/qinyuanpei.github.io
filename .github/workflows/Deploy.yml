@@ -40,7 +40,7 @@ jobs:
        hexo clean
        git rev-parse HEAD > VERSION.txt
 
-    - name: Generate Artifacts(qinyuanpei.github.io)
+    - name: Generate Artifacts for qinyuanpei.github.io
       run: |
        sudo rm _config.yml
        sudo mv config-salve.yml _config.yml
@@ -50,13 +50,13 @@ jobs:
        sudo mkdir -p /home/runner/work/artifacts/qinyuanpei.github.io
        sudo cp -r /home/runner/work/qinyuanpei.github.io/qinyuanpei.github.io/public/* /home/runner/work/artifacts/qinyuanpei.github.io
 
-    - name: Upload Artifacts(qinyuanpei.github.io)
+    - name: Upload Artifacts for qinyuanpei.github.io
       uses: actions/upload-artifact@v1
       with:
         name: qinyuanpei.github.io
         path: /home/runner/work/artifacts/qinyuanpei.github.io
 
-    - name: Generate Artifacts(blog.yuanpei.me)
+    - name: Generate Artifactsfor blog.yuanpei.me
       run: |
        sudo rm _config.yml
        sudo mv config-master.yml _config.yml
@@ -66,21 +66,12 @@ jobs:
        sudo mkdir -p /home/runner/work/artifacts/blog.yuanpei.me
        sudo cp -r /home/runner/work/qinyuanpei.github.io/qinyuanpei.github.io/public/* /home/runner/work/artifacts/blog.yuanpei.me 
 
-    - name: Upload Artifacts(blog.yuanpei.me)
+    - name: Upload Artifacts for blog.yuanpei.me
       uses: actions/upload-artifact@v1
       with:
         name: blog.yuanpei.me
         path: /home/runner/work/artifacts/blog.yuanpei.me
-    
-    - name: Create Release
-      uses: actions/create-release@v1
-      with:
-        repo_token: "${{ secrets.CI_TOKEN }}"
-        automatic_release_tag: ${{ env.ReleaseVersion }}
-        title: ${{ env.ReleaseVersion }}
-        prerelease: false
-        files: |
-          /home/runner/work/artifacts/*
+  
   
   deploy_static_pages:
     name: Deploy Static Pages
