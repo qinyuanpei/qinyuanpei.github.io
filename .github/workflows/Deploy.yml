@@ -118,7 +118,7 @@ jobs:
       env:
         GH_REPO: github.com/qinyuanpei/blog.yuanpei.me.git
       run: |
-       cd ./qinyuanpei.github.io
+       cd ./blog.yuanpei.me
        git init
        git config user.name "qinyuanpei"
        git config user.email "qinyuanpei@163.com"
@@ -127,9 +127,32 @@ jobs:
        git commit -m "Github Action Build v$GITHUB_RUN_NUMBER"
        git push --force --quiet "https://${{ secrets.CI_TOKEN }}@$GH_REPO" master:master
 
+  audit_static_pages:
+    name: Audit Static Pages
+    needs: deploy_static_pages
+    runs-on: ubuntu-latest
+    steps:
+    - name: Lighthouse for blog.yuanpei.me
+      uses: jakejarvis/lighthouse-action@master
+      with:
+        url: 'https://blog.yuanpei.me'
 
-      
+    - name: Upload Report for blog.yuanpei.me
+      uses: actions/upload-artifact@master
+      with:
+        name: blog.yuanpei.me_report
+        path: './report'
 
+    - name: Lighthouse for qinyuanpei.github.io
+      uses: jakejarvis/lighthouse-action@master
+      with:
+        url: 'https://qinyuanpei.github.io'
+        
+    - name: Upload Report for qinyuanpei.github.io
+      uses: actions/upload-artifact@master
+      with:
+        name: qinyuanpei.github.io_report
+        path: './report'
   
     
     
