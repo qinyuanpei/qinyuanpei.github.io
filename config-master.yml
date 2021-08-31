@@ -86,7 +86,7 @@ deploy:
 # 豆瓣插件
 douban:
   user: 60029335
-  timeout: 50000
+  timeout: 100000
   builtin: true
   book:
     title: '书单'
