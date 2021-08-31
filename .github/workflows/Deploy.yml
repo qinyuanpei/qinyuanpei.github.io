@@ -35,13 +35,10 @@ jobs:
         # python -m pip install setuptools==33.1.1 
         # python -m pip install --default-timeout=50000 -r requirements.txt 
 
-    - name: Hexo Clean
-      run: | 
-       hexo clean
-       git rev-parse HEAD > VERSION.txt
-
     - name: Generate Artifacts for qinyuanpei.github.io
       run: |
+       hexo clean
+       git rev-parse HEAD > VERSION.txt
        sudo rm _config.yml
        sudo mv config-salve.yml _config.yml
        hexo generate
@@ -58,6 +55,8 @@ jobs:
 
     - name: Generate Artifactsfor blog.yuanpei.me
       run: |
+       hexo clean
+       git rev-parse HEAD > VERSION.txt
        sudo rm _config.yml
        sudo mv config-master.yml _config.yml
        hexo generate
