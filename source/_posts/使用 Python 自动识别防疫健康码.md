@@ -158,7 +158,7 @@ python -m pip install paddleocr
 
 ![“Microsoft Visual C++ 14.0 is required” 错误信息](https://i.loli.net/2021/08/20/Iqms8YS6G7l4zrC.png)
 
-因为 [PaddleOCR](https://github.com/PaddlePaddle/PaddleOCR) 接受的是`PIL`库中的`Image`类型，所以，在拆分图块的时候，实际上是为伟哥图块生成了一个对应的文件。此时，OCR 识别部分的代码实现如下。首先，我们需要初始化 PaddleOCR ，首次运行会自动下载训练好的模型文件:
+因为 [PaddleOCR](https://github.com/PaddlePaddle/PaddleOCR) 接受的是`PIL`库中的`Image`类型，所以，在拆分图块的时候，实际上是为每个图块生成了一个对应的文件。此时，OCR 识别部分的代码实现如下。首先，我们需要初始化 PaddleOCR ，首次运行会自动下载训练好的模型文件:
 
 ```python
 # PaddleOCR
