@@ -32,9 +32,6 @@ headers = {
     'Content-Type': "text/plain",
 }
 
-# leancloud.init("JbHqRp2eMrTgIwYpfERH0g79-gzGzoHsz", "VsiKvLuiBGvJL1XrAfv7siY2")
-# UrlSubmit = leancloud.Object.extend('UrlSubmit')
-
 # 文档实体结构定义
 class Post:
 

@@ -125,6 +125,20 @@ jobs:
        git add .
        git commit -m "Github Action Build v$GITHUB_RUN_NUMBER"
        git push --force --quiet "https://${{ secrets.CI_TOKEN }}@$GH_REPO" master:master
+    
+    - name: Generate README.md for github.com
+      env:
+       GH_REPO: github.com/qinyuanpei/qinyuanpei.git
+      run: |
+       cd /home/runner/work/artifacts/
+       git clone https://$GH_REPO
+       cd /home/runner/work/artifacts/qinyuanpei
+       python generator.py
+       git config user.name "qinyuanpei"
+       git config user.email "qinyuanpei@163.com"
+       git add .
+       git commit -m "Update README.md by Github Action"
+       git push --force --quiet "https://${{ secrets.CI_TOKEN }}@$GH_REPO" master:master
 
   audit_static_pages:
     name: Audit Static Pages
