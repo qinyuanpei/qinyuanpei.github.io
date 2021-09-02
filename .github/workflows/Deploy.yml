@@ -135,11 +135,11 @@ jobs:
        sudo git clone https://github.com/qinyuanpei/qinyuanpei.git 
        cd /home/runner/work/artifacts/qinyuanpei
        sudo python generator.py
-       git config user.name "qinyuanpei"
-       git config user.email "qinyuanpei@163.com"
-       git add .
-       git commit -m "Update README.md by Github Action"
-       git push --force --quiet "https://${{ secrets.CI_TOKEN }}@$GH_REPO" master:master
+       sudo git config user.name "qinyuanpei"
+       sudo git config user.email "qinyuanpei@163.com"
+       sudo git add .
+       sudo git commit -m "Update README.md by Github Action"
+       sudo git push --force --quiet "https://${{ secrets.CI_TOKEN }}@$GH_REPO" master:master
 
   audit_static_pages:
     name: Audit Static Pages
