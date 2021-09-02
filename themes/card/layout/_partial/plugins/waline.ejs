@@ -1,0 +1,25 @@
+<div id="comment"></div>
+<script src="//cdn.jsdelivr.net/npm/@waline/client"></script>
+<script type="text/javascript">
+Waline({
+    el: '#comment',
+    serverURL: 'https://waline-comments-woad.vercel.app/',
+    avatar: 'robohash',
+    requiredMeta: ['nick', 'mail', 'link'],
+    emoji: [
+    'https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/weibo',
+    'https://cdn.jsdelivr.net/gh/walinejs/emojis@1.0.0/bilibili',
+  ],
+});
+new Valine({
+    el: '#comment' ,
+    notify: false, 
+    verify: true, 
+    appId: '<%- theme.valine.appId %>',
+    appKey: '<%- theme.valine.appKey %>',
+    placeholder: '云中谁寄锦书来，雁字回时，月满西楼。&#10;Tips：如果希望收到我的评论回复，请至少留下你的邮箱哦:)',
+    path:'<%- post.permalink %>', 
+    avatar:'identicon',
+    requiredFields: ['nick','mail']
+});
+</script>
