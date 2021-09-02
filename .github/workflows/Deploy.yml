@@ -52,7 +52,7 @@ jobs:
         name: qinyuanpei.github.io
         path: /home/runner/work/artifacts/qinyuanpei.github.io
 
-    - name: Generate Artifactsfor blog.yuanpei.me
+    - name: Generate Artifacts for blog.yuanpei.me
       run: |
        hexo clean
        git rev-parse HEAD > VERSION.txt
