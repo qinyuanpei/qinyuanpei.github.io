@@ -105,7 +105,7 @@ jobs:
        git config user.email "qinyuanpei@163.com"
        git remote add origin https://$GH_REPO
        git add .
-       git commit -m "Build v1.0.$GITHUB_RUN_NUMBER.${{ github.ref }}"
+       git commit -m "Build v1.0.$GITHUB_RUN_NUMBER"
        git push --force --quiet "https://${{ secrets.CI_TOKEN }}@$GH_REPO" master:master
 
     - name: Download Artifacts for blog.yuanpei.me
@@ -123,7 +123,7 @@ jobs:
        git config user.email "qinyuanpei@163.com"
        git remote add origin https://$GH_REPO
        git add .
-       git commit -m "Build v1.0.$GITHUB_RUN_NUMBER.${{ github.ref }}"
+       git commit -m "Build v1.0.$GITHUB_RUN_NUMBER"
        git push --force --quiet "https://${{ secrets.CI_TOKEN }}@$GH_REPO" master:master
     
     - name: Generate README.md for github.com
