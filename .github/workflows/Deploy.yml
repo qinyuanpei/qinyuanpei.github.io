@@ -132,7 +132,7 @@ jobs:
       env:
        GH_REPO: github.com/qinyuanpei/qinyuanpei.git
       run: |
-       cd /home/runner/work/artifacts/
+       sudo mkdir -p /home/runner/work/artifacts/
        git clone https://$GH_REPO
        cd /home/runner/work/artifacts/qinyuanpei
        python generator.py
