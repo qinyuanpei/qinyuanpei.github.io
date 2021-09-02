@@ -105,7 +105,7 @@ jobs:
        git config user.email "qinyuanpei@163.com"
        git remote add origin https://$GH_REPO
        git add .
-       EXPORT COMMIT_HASH=${GUTHUB_REF:0:7}
+       export COMMIT_HASH=${GUTHUB_REF:0:7}
        git commit -m "Github Action Build (v1.0.$GITHUB_RUN_NUMBER.$COMMIT_HASH)"
        git push --force --quiet "https://${{ secrets.CI_TOKEN }}@$GH_REPO" master:master
 
@@ -124,7 +124,7 @@ jobs:
        git config user.email "qinyuanpei@163.com"
        git remote add origin https://$GH_REPO
        git add .
-       EXPORT COMMIT_HASH=${GUTHUB_REF:0:7}
+       export COMMIT_HASH=${GUTHUB_REF:0:7}
        git commit -m "Github Action Build (v1.0.$GITHUB_RUN_NUMBER.$COMMIT_HASH)"
        git push --force --quiet "https://${{ secrets.CI_TOKEN }}@$GH_REPO" master:master
     
