@@ -105,7 +105,7 @@ def baiduSitemap():
             for url in urls:
                 loc = url.getElementsByTagName("loc")[0]
                 loc.childNodes[0].data = loc.childNodes[0].data.replace(salver_url,master_url)
-            with open('.public/baidusitemap.xml', 'wt',encoding='utf-8') as fi:
+            with open('./public/baidusitemap.xml', 'wt',encoding='utf-8') as fi:
                 fi.write(DOMTree.toprettyxml())
 
 # 提交地址
