@@ -32,9 +32,8 @@ jobs:
        python -m pip install pip -U
        python -m pip config set global.index-url http://mirrors.aliyun.com/pypi/simple/
        python -m pip config set install.trusted-host mirrors.aliyun.com
-        # python -m pip install setuptools==33.1.1 
-        # python -m pip install --default-timeout=50000 -r requirements.txt 
-
+       python -m pip install setuptools == 33.1.1 
+       python -m pip install --default-timeout=50000 -r requirements.txt 
     - name: Generate Artifacts for qinyuanpei.github.io
       run: |
        hexo clean
@@ -42,6 +41,7 @@ jobs:
        sudo rm _config.yml
        sudo mv config-salve.yml _config.yml
        hexo generate
+       python readme.py https://blog.yuanpei.me
        sudo cp README.md ./public/README.md
        sudo cp VERSION.txt ./public/VERSION.txt
        sudo mkdir -p /home/runner/work/artifacts/qinyuanpei.github.io
@@ -60,6 +60,7 @@ jobs:
        sudo rm _config.yml
        sudo mv config-master.yml _config.yml
        hexo generate
+       python readme.py https://blog.yuanpei.me
        sudo cp README.md ./public/README.md
        sudo cp VERSION.txt ./public/VERSION.txt
        sudo mkdir -p /home/runner/work/artifacts/blog.yuanpei.me
