@@ -133,7 +133,8 @@ jobs:
        GH_REPO: github.com/qinyuanpei/qinyuanpei.git
       run: |
        sudo mkdir -p /home/runner/work/artifacts/
-       sudo git clone https://github.com/qinyuanpei/qinyuanpei.git
+       cd /home/runner/work/artifacts/
+       sudo git clone https://github.com/qinyuanpei/qinyuanpei.git 
        cd /home/runner/work/artifacts/qinyuanpei
        python generator.py
        git config user.name "qinyuanpei"
