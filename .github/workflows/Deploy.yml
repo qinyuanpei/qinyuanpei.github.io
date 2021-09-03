@@ -134,11 +134,11 @@ jobs:
        cd /home/runner/work/artifacts/
        sudo git clone https://github.com/qinyuanpei/qinyuanpei.git 
        cd /home/runner/work/artifacts/qinyuanpei
-       sudo rm -f README.md
-       sudo python generator.py
        sudo git config user.name "qinyuanpei"
        sudo git config user.email "qinyuanpei@163.com"
-       sudo git add .
+       sudo rm -f README.md
+       sudo python generator.py
+       sudo git add -f README.md
        sudo git commit -m "Update README.md by Github Action"
        sudo git push --force --quiet "https://${{ secrets.CI_TOKEN }}@$GH_REPO" master:master
 
