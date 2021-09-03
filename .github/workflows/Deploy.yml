@@ -134,6 +134,7 @@ jobs:
        cd /home/runner/work/artifacts/
        sudo git clone https://github.com/qinyuanpei/qinyuanpei.git 
        cd /home/runner/work/artifacts/qinyuanpei
+       sudo rm -f README.md
        sudo python generator.py
        sudo git config user.name "qinyuanpei"
        sudo git config user.email "qinyuanpei@163.com"
