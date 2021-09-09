@@ -77,19 +77,6 @@ jobs:
     needs: build_static_pages
     runs-on: ubuntu-latest
     steps:
-    - name: Configure Git
-      run: | 
-       mkdir -p ~/.ssh
-       echo "$CI_SSH_KEY" > ~/.ssh/id_rsa
-       chmod 700 ~/.ssh
-       chmod 600 ~/.ssh/id_rsa
-       ssh-keyscan github.com >> ~/.ssh/known_hosts
-       git config --global user.name "qinyuanpei"
-       git config --global user.email "qinyuanpei@163.com"
-      env:
-        CI_SSH_KEY: ${{ secrets.CI_SSH_KEY }}
-        SSH_AUTH_SOCK: /tmp/ssh_agent.sock
-
     - name: Download Artifacts for qinyuanpei.github.io
       uses: actions/download-artifact@v1
       with:
