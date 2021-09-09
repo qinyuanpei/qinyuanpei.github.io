@@ -12,7 +12,7 @@ tags:
 title: Unity3D游戏开发之使用disunity提取Unity3D游戏资源
 ---
 
-&emsp;&emsp;各位朋友，大家好，我是秦元培。今天博主想和分享的是使用disunity提取Unity3D游戏素材。这个工具呢，博主在[Unity3D游戏开发之反编译AssetBundle提取游戏资源](http://www.qinyuanpei.com/2015/04/02/unity3d-development-with-assetbundle/)这篇文章中其实已经提到过了，不过因为有些朋友对如何使用这个工具依然存在问题，所以博主决定特地写一篇文章来讲解如何使用disunity来提取Unity3D游戏中的素材。
+&emsp;&emsp;各位朋友，大家好，我是秦元培。今天博主想和分享的是使用 disunity 提取 Unity3D 游戏素材。这个工具呢，博主在[Unity3D游戏开发之反编译AssetBundle提取游戏资源](http://www.qinyuanpei.com/2015/04/02/unity3d-development-with-assetbundle/)这篇文章中其实已经提到过了，不过因为有些朋友对如何使用这个工具依然存在问题，所以博主决定特地写一篇文章来讲解如何使用disunity来提取Unity3D游戏中的素材。
 
 <!--more-->
 
@@ -103,7 +103,7 @@ disunity extract C:\Users\Robin\Desktop\resources.assets
 ![蜃楼中游戏连招视频2](https://ww1.sinaimg.cn/large/4c36074fly1fyzcu600c0j208w0500sp.jpg)
 
 
-#总结
+# 总结
 * 不同的游戏采用的资源配置方案都不同，不过一般可以从resources.assets这个文件入手作为突破点。
 * 如果能拿到游戏中数据配置方案，对于我们提取游戏中的素材会有较大的帮助，因为这样方向性会更强些。
 * 通过AssetBundle动态加载到场景中最好还是采用一个配置表来进行配置，这样便于我们管理和维护整个游戏项目。
