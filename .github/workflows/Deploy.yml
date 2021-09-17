@@ -124,6 +124,11 @@ jobs:
        sudo git config user.name "qinyuanpei"
        sudo git config user.email "qinyuanpei@163.com"
        sudo rm -f README.md
+       sudo apt-get install python-dev libxml2-dev libxslt1-dev zlib1g-dev
+       sudo python -m pip install pip -U
+       sudo python -m pip config set global.index-url http://mirrors.aliyun.com/pypi/simple/
+       sudo python -m pip config set install.trusted-host mirrors.aliyun.com
+       sudo python -m pip install -r requirements.txt 
        sudo python generator.py
        sudo git add -f README.md
        sudo git commit -m "Update README.md by Github Action"
