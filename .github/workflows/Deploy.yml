@@ -126,7 +126,7 @@ jobs:
        sudo rm -f README.md
        sudo apt-get install python-dev libxml2-dev libxslt1-dev zlib1g-dev
        sudo apt-get install python3-pip
-       sudo python -m pip install pip -U
+       # sudo python -m pip install pip -U
        sudo python -m pip config set global.index-url http://mirrors.aliyun.com/pypi/simple/
        sudo python -m pip config set install.trusted-host mirrors.aliyun.com
        sudo python -m pip install -r requirements.txt 
