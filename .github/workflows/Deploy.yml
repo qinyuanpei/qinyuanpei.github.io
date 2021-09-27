@@ -35,6 +35,7 @@ jobs:
        python -m pip install -r requirements.txt 
     - name: Generate Artifacts for qinyuanpei.github.io
       run: |
+       sudo rm -rf node_modules && npm install --force
        hexo clean
        git rev-parse HEAD > VERSION.txt
        sudo rm _config.yml
@@ -54,6 +55,7 @@ jobs:
 
     - name: Generate Artifacts for blog.yuanpei.me
       run: |
+       sudo rm -rf node_modules && npm install --force
        hexo clean
        git rev-parse HEAD > VERSION.txt
        sudo rm _config.yml
