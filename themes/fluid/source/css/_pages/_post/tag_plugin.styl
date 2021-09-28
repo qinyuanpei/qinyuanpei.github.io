@@ -1,0 +1,115 @@
+// note
+.note
+  padding 0.75rem
+  border-left 0.35rem solid
+  border-radius 0.25rem
+  margin 1.5rem 0
+  color $text-color
+  font-size 0.9rem
+
+  a
+    color $text-color
+
+  *:last-child
+    margin-bottom 0
+
+.note-primary
+  background-color #f5f0fa
+  border-color #6f42c1
+
+.note-secondary, note-default
+  background-color #f7f7f7
+  border-color #777
+
+.note-success
+  background-color #eff8f0
+  border-color #5cb85c
+
+.note-danger
+  background-color #fcf1f2
+  border-color #d9534f
+
+.note-warning
+  background-color #fdf8ea
+  border-color #f0ad4e
+
+.note-info
+  background-color #eef7fa
+  border-color #428bca
+
+.note-light
+  background-color #fefefe
+  border-color #0f0f0f
+
+// label
+.label
+  display inline
+  border-radius 3px
+  font-size 85%
+  margin 0
+  padding .2em .4em
+  color $text-color
+
+.label-default
+  background #f7f7f7
+
+.label-primary
+  background #f5f0fa
+
+.label-info
+  background #eef7fa
+
+.label-success
+  background #eff8f0
+
+.label-warning
+  background #fdf8ea
+
+.label-danger
+  background #fcf1f2
+
+// button
+.markdown-body .btn
+  background #2F4154
+  border-radius .25rem
+  color #fff !important
+  display inline-block
+  font-size .875em
+  line-height 2
+  padding 0 .75rem
+  text-decoration none
+  transition-property background
+  transition-delay 0s
+  transition-duration 0.2s
+  transition-timing-function ease-in-out
+  -webkit-box-shadow 0 2px 5px 0 rgba(0, 0, 0, 0.16), 0 2px 10px 0 rgba(0, 0, 0, 0.12)
+  box-shadow 0 2px 5px 0 rgba(0, 0, 0, 0.16), 0 2px 10px 0 rgba(0, 0, 0, 0.12)
+  margin-bottom 1rem
+
+  &:hover
+    background #23ae92
+    color #fff !important
+    text-decoration none
+
+// group-image
+.group-image-container
+  margin 1.5rem auto
+
+  & img
+    margin 0 auto
+    border-radius 3px
+    background-color transparent
+    box-shadow 0 3px 9px 0 rgba(0, 0, 0, 0.15), 0 3px 9px 0 rgba(0, 0, 0, 0.15)
+
+.group-image-row
+  margin-bottom .5rem
+  display flex
+  justify-content center
+
+.group-image-wrap
+  flex 1
+  display flex
+  justify-content center
+
+  &:not(:last-child)
+    margin-right .25rem
