@@ -3,11 +3,11 @@
   "version": "0.0.0",
   "private": true,
   "hexo": {
-    "version": "5.4.0"
+    "version": "4.2.1"
   },
   "dependencies": {
     "gifsicle": "^5.1.0",
-    "hexo": "^5.0.0",
+    "hexo": "^4.2.0",
     "hexo-abbrlink": "^2.0.5",
     "hexo-all-minifier": "^0.5.3",
     "hexo-codepen": "^0.1.1",
