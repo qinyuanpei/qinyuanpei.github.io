@@ -78,6 +78,11 @@ jobs:
     needs: build_static_pages
     runs-on: ubuntu-latest
     steps:
+    - name: Setup Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.7'
+        architecture: 'x64'
     - name: Download Artifacts for qinyuanpei.github.io
       uses: actions/download-artifact@v1
       with:
@@ -126,8 +131,6 @@ jobs:
        sudo git config user.email "qinyuanpei@163.com"
        sudo rm -f README.md
        sudo apt-get install python-dev libxml2-dev libxslt1-dev zlib1g-dev
-       sudo python -m ensurepip
-       sudo easy_install pip
        sudo python -m pip install pip -U
        sudo python -m pip config set global.index-url http://mirrors.aliyun.com/pypi/simple/
        sudo python -m pip config set install.trusted-host mirrors.aliyun.com
