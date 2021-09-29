@@ -1,7 +1,7 @@
 ﻿---
 toc: false
 title: 关于
-layout: post
+layout: about
 copyright: false
 abbrlink: 994796909
 ---

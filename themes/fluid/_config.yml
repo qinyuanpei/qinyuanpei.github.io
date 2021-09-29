@@ -1,4 +1,4 @@
-#---------------------------
+﻿#---------------------------
 # Hexo Theme Fluid
 # Author: Fluid-dev
 # Github: https://github.com/fluid-dev/hexo-theme-fluid
@@ -87,7 +87,7 @@ fun_features:
 
     # 游标字符
     # Cursor character
-    cursorChar: "_"
+    cursorChar: ""
 
     # 是否循环播放效果
     # If true, loop animation
@@ -426,7 +426,7 @@ footer:
 index:
   # 首页 Banner 头图，可以是相对路径或绝对路径，以下相同
   # Path of Banner image, can be a relative path or an absolute path, the same on other pages
-  banner_img: /img/default.png
+  banner_img: /img/cover.webp
 
   # 头图高度，屏幕百分比
   # Height ratio of banner image
@@ -856,15 +856,17 @@ about:
   banner_img_height: 60
   banner_mask_alpha: 0.3
   subtitle:
-  avatar: /img/avatar.png
-  name: "Fluid"
-  intro: "An elegant theme for Hexo"
+  avatar: /img/avatar.jpg
+  name: "飞鸿踏雪"
+  intro: "纵有疾风起，人生不言弃"
   # 更多图标可从 https://hexo.fluid-dev.com/docs/icon/ 查找，`class` 代表图标的 css class，添加 `qrcode` 后，图标不再是链接而是悬浮二维码
   # More icons can be found from https://hexo.fluid-dev.com/docs/en/icon/  `class` is the css class of the icon. If adding `qrcode`, The icon is no longer a link, but a hovering QR code
   icons:
-    - { class: "iconfont icon-github-fill", link: "https://github.com", tip: "GitHub" }
-    - { class: "iconfont icon-douban-fill", link: "https://douban.com", tip: "豆瓣" }
-    - { class: "iconfont icon-wechat-fill", qrcode: "/img/favicon.png" }
+    - { class: "iconfont icon-github-fill", link: "https://github.com/qinyuanpei", tip: "GitHub" }
+    - { class: "iconfont icon-douban-fill", link: "https://www.douban.com/people/60029335/", tip: "豆瓣" }
+    - { class: "iconfont icon-zhihu-fill", link: "https://www.zhihu.com/people/qinyuanpei", tip: "知乎" }   
+    - { class: "iconfont icon-weibo-fill", link: "https://weibo.com/1278609231/profile", tip: "微博" }    
+    - { class: "iconfont icon-bilibili-fill", link: "https://space.bilibili.com/145476539", tip: "B站" }              
 
 
 #---------------------------
