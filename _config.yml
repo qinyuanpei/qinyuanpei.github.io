@@ -89,10 +89,10 @@ douban:
   builtin: true
   book:
     title: '读书'
-    quote: '1'
+    quote: ''
   movie:
     title: '电影'
-    quote: '2'
+    quote: ''
 
 # JSON内容
 jsonContent:

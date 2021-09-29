@@ -312,7 +312,17 @@ navbar:
     - { key: "category", link: "/categories/", icon: "iconfont icon-category-fill" }
     - { key: "tag", link: "/tags/", icon: "iconfont icon-tags-fill" }
     - { key: "about", link: "/about/", icon: "iconfont icon-user-fill" }
-    #- { key: "links", link: "/links/", icon: "iconfont icon-link-fill" }
+    - {
+        key: 'more',
+        icon: 'iconfont icon-arrowdown',
+        submenu: [
+          { key: 'books', link: '/books', icon: "iconfont icon-books" },
+          { key: 'movies', link: '/movies', icon: "iconfont icon-books" },
+          { key: 'musics', link: '/musics', icon: "iconfont icon-books" },
+          { key: 'works', link: '/works', icon: "iconfont icon-books" },
+          { key: 'links', link: '/links', icon: "iconfont icon-books" },
+        ]
+  }
 
 # 搜索功能，基于 hexo-generator-search 插件，若已安装其他搜索插件请关闭此功能，以避免生成多余的索引文件
 # Search feature, based on hexo-generator-search. If you have installed other search plugins, please disable this feature to avoid generating redundant index files

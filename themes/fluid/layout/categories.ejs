@@ -62,6 +62,7 @@ var orderBy = theme.category.order_by || 'name'
   </div>
 <% } %>
 
+<%- partial('_partial/charts/categoriesChart') %>
 <div class="category-list">
   <% cats = site.categories.find({parent: {$exists: false}}).sort(orderBy).filter(cat => cat.length) %>
   <%- render_categories(cats) %>

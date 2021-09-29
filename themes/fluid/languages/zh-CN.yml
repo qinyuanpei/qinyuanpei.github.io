@@ -1,4 +1,4 @@
-search:
+﻿search:
   title: 搜索
   keyword: 关键词
   status:
@@ -42,3 +42,23 @@ page404:
 links:
   title: 友链
   subtitle: 友情链接
+
+more:
+  title: 更多
+  subtitle: 更多
+
+books:
+  title: 书单
+  subtitle: 书单
+
+movies:
+  title: 影单
+  subtitle: 影单
+
+musics:
+  title: 音乐
+  subtitle: 音乐
+
+works:
+  title: 项目
+  subtitle: 项目

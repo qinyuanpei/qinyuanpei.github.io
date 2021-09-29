@@ -12,7 +12,7 @@
     "hexo-all-minifier": "^0.5.3",
     "hexo-codepen": "^0.1.1",
     "hexo-deployer-git": "^0.3.1",
-    "hexo-douban-plus": "^1.1.5",
+    "hexo-douban": "^1.1.3",
     "hexo-generator-archive": "^1.0.0",
     "hexo-generator-baidu-sitemap": "^0.1.2",
     "hexo-generator-category": "^1.0.0",
