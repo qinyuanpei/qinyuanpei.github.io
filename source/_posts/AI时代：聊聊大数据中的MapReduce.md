@@ -1,7 +1,7 @@
----
+﻿---
 abbrlink: 2911923212
 categories:
-  - 人工智能
+  - 编程语言
 date: 2018-01-19 00:45:08
 description: '因此，这些论文的问世直接催生了Hadoop的诞生，可以说今天主流的大数据框架如Hadoop、Spark等，无一不是受到Google这些论文的影响，而这正是MapReduce由来，其得名则是因为函数式编程中的两个内置函数:
   map()和reduce();我们提到，MapReduce之得名，其灵感来自函数式编程中的两个内置函数：map()和reduce();通过梳理Web检索的一般流程，我们意识到，Web检索可以分为两部分，即获取网页内容并建立索引、根据网页索引来处理查询关键字，从而引出了Mapper和Reducer两个基本的数据处理单元，MapReduce是分治思想在大规模机器集群时代的集中体现，其中，Mapper负责任务的划分，Reducer负责结果的汇总'
