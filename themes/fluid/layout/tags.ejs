@@ -1,26 +1,133 @@
-<%
-page.layout = "tags"
-page.title = theme.tag.title || __('tag.title')
-page.subtitle = theme.tag.subtitle || __('tag.subtitle')
-page.banner_img = theme.tag.banner_img
-page.banner_img_height = theme.tag.banner_img_height
-page.banner_mask_alpha = theme.tag.banner_mask_alpha
 
-var min_font = theme.tag.tagcloud.min_font || 15
-var max_font = theme.tag.tagcloud.max_font || 30
-var unit = theme.tag.tagcloud.unit || 'px'
-var start_color = theme.tag.tagcloud.start_color || '#BBBBEE'
-var end_color = theme.tag.tagcloud.end_color || '#337ab7'
+<% 
+  page.layout="tags" 
+  page.title=theme.tag.title || __('tag.title') 
+  page.subtitle=theme.tag.subtitle || __('tag.subtitle') 
+  page.banner_img=theme.tag.banner_img 
+  page.banner_img_height=theme.tag.banner_img_height
+  page.banner_mask_alpha=theme.tag.banner_mask_alpha 
+  var min_font=theme.tag.tagcloud.min_font || 15 
+  var max_font=theme.tag.tagcloud.max_font || 30 
+  var unit=theme.tag.tagcloud.unit || 'px' 
+  varstart_color=theme.tag.tagcloud.start_color || '#BBBBEE' 
+  var end_color=theme.tag.tagcloud.end_color || '#337ab7' 
 %>
 
-<div class="text-center tagcloud">
-  <%- tagcloud({
-    min_font: min_font,
-    max_font: max_font,
-    amount: 999,
-    unit: unit,
-    color: true,
-    start_color,
-    end_color
-  }) %>
-</div>
+  <div id="chart" style="height: 450px;"></div>
+  <script src="https://cdn.jsdelivr.net/npm/echarts@5.1.2/dist/echarts.min.js"></script>
+  <script
+    src="https://cdn.jsdelivr.net/gh/qinyuanpei/blog.yuanpei.me@master/assets/scripts/echarts-wordcloud.js"></script>
+  <script type="text/javascript">
+    fetch('/content.json')
+      .then(function (res) {
+        res.json().then(function (data) {
+          var result = handleData(data);
+          handleTagsChart('chart', result);
+        });
+      })
+      .catch(function (err) {
+        console.log('Fetch Error : %S', err);
+      })
+
+    function handleData(posts) {
+      var tags = {};
+      var yearly = {};
+      var categories = {};
+      for (post of posts) {
+        //统计不同年份
+        var post_date = new Date(post.date);
+        var post_year = post_date.getFullYear().toString();
+        if (post_year in yearly) {
+          yearly[post_year] = yearly[post_year] + 1;
+        } else {
+          yearly[post_year] = 1;
+        }
+
+        //统计不同分类
+        for (category of post.categories) {
+          if (category.name in categories) {
+            categories[category.name] = categories[category.name] + 1;
+          } else {
+            categories[category.name] = 1;
+          }
+        }
+
+        //统计标签
+        for (tag of post.tags) {
+          if (tag.name in tags) {
+            tags[tag.name] = tags[tag.name] + 1;
+          } else {
+            tags[tag.name] = 1;
+          }
+        }
+      }
+
+      return {
+        yearly: yearly,
+        categories: categories,
+        tags: tags
+      };
+    }
+
+    function handleTagsChart(el, data) {
+      var maskImage = new Image();
+      var chart = echarts.init(document.getElementById(el));
+      chart.on('click', function (param) {
+        if (typeof param.seriesIndex == 'undefined') {
+          return;
+        }
+        if (param.type == 'click') {
+          location.href = '<%- config.url %>' + '/tags/' + encodeURI(param.data.name);
+        }
+      });
+      var seriesData = [];
+      for (var key in data.tags) {
+        seriesData.push({
+          name: key,
+          value: data.tags[key]
+        });
+      }
+      var option = {
+        title: {
+          text: '',
+          x: 'center'
+        },
+        series: [{
+          type: 'wordCloud',
+          sizeRange: [10, 100],
+          rotationRange: [-90, 90],
+          rotationStep: 45,
+          gridSize: 2,
+          shape: 'circle',
+          image: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAABAklEQVQ4T63TLyyFURjH8c8trs0UicDMNFMIBF3RkJhNoOmKzSapJgkKzZ8k0BWBQjQbAkUym5vYs513e++7l3fX9dvOTjjP893v+XNq2lStzXxFQC82MIOBAvwJZ9jCa/aWB/TjCn0Vrl4wgeeIywMOsIgLzOO9AOrGEaYRsUsZ4BydmEQHBhF2yxRlPeIzuW2Egx3MJetv2K0oYQ09iFKOAzCCa9RbnEgD4wFYT2cZC5itAJ3iEPvYDsBmShpNTb3H0A+QBwzjC7c4CcAK9nCDD0wVppNnReIlujCG1QBE56Oev6ie7UGQy5arDNoUmwHu0jTijl78pqbYf/9MLffhG9gELuqHjsg6AAAAAElFTkSuQmCC",
+          drawOutOfBound: false,
+          textStyle: {
+            color: function () {
+              return (
+                "rgb(" +
+                [
+                  Math.round(Math.random() * 160),
+                  Math.round(Math.random() * 160),
+                  Math.round(Math.random() * 160),
+                ].join(",") +
+                ")"
+              );
+            },
+          },
+          emphasis: {
+            textStyle: {
+              shadowBlur: 10,
+              shadowColor: "#333",
+              color: "#409EFF"
+            }
+          },
+          data: seriesData.sort(function (a, b) {
+            return b.value - a.value;
+          })
+        }]
+      };
+
+      chart.setOption(option);
+    }
+</script>
+  
