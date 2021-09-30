@@ -1,4 +1,4 @@
----
+﻿---
 toc: true
 title: gRPC 搭配 Swagger 实现微服务文档化
 categories:
@@ -19,7 +19,7 @@ date: 2021-09-28 14:13:32
 
 当视角从 RESTful 转向 gRPC 的时候，本质上是接口的描述语言发生了变化，前者是 JSON 而后者则是 Protobuf，因此，gRPC 服务的文档化自然而然地就落在 Protobuf 上。事实上，官方提供了 [protoc-gen-doc](https://github.com/pseudomuto/protoc-gen-doc) 这个方案，如果大家阅读过我以前的博客，就会意识到这是 Protobuf 编译器，即 [protoc](https://github.com/protocolbuffers/protobuf/releases) 的插件，因为我们曾经通过这个编译器来生成代码、服务描述文件等等。protoc-gen-doc 这个插件的基本用法如下：
 
-```shell
+```bash
 protoc \
   --plugin=protoc-gen-doc=./protoc-gen-doc \
   --doc_out=./doc \
@@ -29,7 +29,7 @@ protoc \
 
 其中，官方更推荐使用 Docker 来进行部署：
 
-```shell
+```bash
 docker run --rm \
   -v $(pwd)/examples/doc:/out \
   -v $(pwd)/examples/proto:/protos \
@@ -42,7 +42,7 @@ docker run --rm \
 
 除此以外，这个插件还可以生成 Markdown 格式的接口文档，这个就挺符合程序员的审美，因为此时此刻，你眼前看到的这篇文章，就是通过 Markdown 写成的：
 
-```shell
+```bash
 docker run --rm \
   -v $(pwd)/examples/doc:/out \
   -v $(pwd)/examples/proto:/protos \
