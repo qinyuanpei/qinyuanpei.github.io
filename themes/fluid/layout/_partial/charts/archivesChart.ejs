@@ -1,4 +1,4 @@
-<div id="chart" style="height:500px"></div>
+﻿<div id="chart" style="height:350px; width:100%"></div>
 <script src="https://cdn.jsdelivr.net/npm/echarts@5.1.2/dist/echarts.min.js"></script>
 <script type="text/javascript">
     fetch('/content.json')
@@ -56,7 +56,7 @@
         var chart = echarts.init(document.getElementById(el));
         var option = {
             title: {
-                text: '文章统计',
+                text: '',
                 x: 'center'
             },
             tooltip: {},

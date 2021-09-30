@@ -1,9 +1,12 @@
----
+﻿---
 toc: false
 title: 友人帐
 abbrlink: 1089846036
 copyright: false
 date: 2020-02-20 15:44:58
+banner_img: https://i.loli.net/2020/04/13/DQaTRFbOt7UMfz1.gif
+banner_img_height: 60
+banner_mask_alpha: 0.5
 ---
 
 @card{

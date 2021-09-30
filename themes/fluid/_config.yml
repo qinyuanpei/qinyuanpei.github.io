@@ -910,7 +910,7 @@ page404:
 #---------------------------
 links:
   enable: true
-  banner_img: /img/default.png
+  banner_img: https://i.loli.net/2020/04/13/DQaTRFbOt7UMfz1.gif
   banner_img_height: 60
   banner_mask_alpha: 0.3
   subtitle:
@@ -918,21 +918,39 @@ links:
   # Member item of page
   items:
     - {
-      title: "Fluid Blog",
-      intro: "主题博客",
-      link: "https://hexo.fluid-dev.com/",
+      title: "Steve Sanderson",
+      intro: "Steve Sanderson",
+      link: "https://blog.stevensanderson.com/",
       avatar: "/img/favicon.png"
     }
     - {
-      title: "Fluid Docs",
-      intro: "主题使用指南",
-      link: "https://hexo.fluid-dev.com/docs/",
+      title: "阮一峰的网络日志",
+      intro: "阮一峰的网络日志",
+      link: "http://www.ruanyifeng.com/blog/",
       avatar: "/img/favicon.png"
     }
     - {
-      title: "Fluid Repo",
-      intro: "主题 GitHub 仓库",
-      link: "https://github.com/fluid-dev/hexo-theme-fluid",
+      title: "Catcher Wong",
+      intro: "Catcher Wong",
+      link: "http://www.c-sharpcorner.com/members/catcher-wong",
+      avatar: "/img/favicon.png"
+    }
+    - {
+      title: "咕咚",
+      intro: "咕咚",
+      link: "https://gudong.site",
+      avatar: "/img/favicon.png"
+    }
+    - {
+      title: "小凡梦",
+      intro: "小凡梦",
+      link: "https://www.xiaofm.cn",
+      avatar: "/img/favicon.png"
+    }
+    - {
+      title: "素履独行",
+      intro: "素履独行",
+      link: "https://blog.csdn.net/qinyuanpei",
       avatar: "/img/favicon.png"
     }
 

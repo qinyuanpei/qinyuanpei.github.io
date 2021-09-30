@@ -7,5 +7,8 @@ page.banner_img_height = theme.archive.banner_img_height
 page.banner_mask_alpha = theme.archive.banner_mask_alpha
 %>
 
-<%- partial('_partial/charts/archivesChart') %>
+<div class="list-group">
+    <%- partial('_partial/charts/post-calendar') %>
+</div>
+
 <%- partial('_partial/archive-list.ejs', { params: { postTotal: site.posts.length } }) %>
