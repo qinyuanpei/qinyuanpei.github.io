@@ -88,10 +88,10 @@ douban:
   timeout: 50000
   builtin: true
   book:
-    title: '读书'
+    title: '书单'
     quote: ''
   movie:
-    title: '电影'
+    title: '影单'
     quote: ''
 
 # JSON内容

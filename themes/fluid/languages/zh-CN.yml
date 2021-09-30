@@ -56,8 +56,8 @@ movies:
   subtitle: 影单
 
 musics:
-  title: 音乐
-  subtitle: 音乐
+  title: 歌单
+  subtitle: 歌单
 
 works:
   title: 项目
