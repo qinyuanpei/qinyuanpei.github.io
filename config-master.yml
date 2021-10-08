@@ -67,7 +67,7 @@ pagination_dir: pages
 ## Plugins: http://hexo.io/plugins/
 ## Themes: http://hexo.io/themes/
 #theme: card
-theme: card
+theme: fluid
 
 # RSS订阅
 feed:
