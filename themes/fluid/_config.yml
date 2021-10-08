@@ -721,7 +721,7 @@ gitalk:
 valine:
   appId:  JbHqRp2eMrTgIwYpfERH0g79-gzGzoHsz
   appKey: VsiKvLuiBGvJL1XrAfv7siY2
-  path: window.location.pathname
+  path: window.location
   placeholder: 雁过留声，欢迎在这里留下你的声音...
   avatar: 'retro'
   meta: ['nick', 'mail', 'link']
