@@ -1,0 +1,97 @@
+name: Deploy Salve
+
+on:
+  push:
+    branches:    
+      - v5.0.0
+
+jobs:
+  build_static_pages:
+    name: Build Static Pages
+    runs-on: ubuntu-18.04
+    steps:
+    - name: Checkout 
+      uses: actions/checkout@v1
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v1
+      with:
+        node-version: 14.17.0
+
+    - name: Setup Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.7'
+        architecture: 'x64'
+
+    - name: Setup Dependency
+      run: |
+       npm install hexo-cli@4.3.0 -g
+       npm install
+       npm install js-yaml --save
+       sudo apt-get install python-dev libxml2-dev libxslt1-dev zlib1g-dev
+       python -m pip install pip -U
+       python -m pip config set global.index-url http://mirrors.aliyun.com/pypi/simple/
+       python -m pip config set install.trusted-host mirrors.aliyun.com
+       python -m pip install -r requirements.txt 
+
+    - name: Generate Artifacts for qinyuanpei.github.io
+      run: |
+       hexo clean
+       git rev-parse HEAD > VERSION.txt
+       sudo rm _config.yml
+       sudo mv config-salve.yml _config.yml
+       hexo generate
+       python readme.py https://blog.yuanpei.me
+       sudo cp README.md ./public/README.md
+       sudo cp VERSION.txt ./public/VERSION.txt
+       sudo mkdir -p /home/runner/work/artifacts/qinyuanpei.github.io
+       sudo cp -r /home/runner/work/qinyuanpei.github.io/qinyuanpei.github.io/public/* /home/runner/work/artifacts/qinyuanpei.github.io
+
+    - name: Upload Artifacts for qinyuanpei.github.io
+      uses: actions/upload-artifact@v1
+      with:
+        name: qinyuanpei.github.io
+        path: /home/runner/work/artifacts/qinyuanpei.github.io
+  
+  deploy_static_pages:
+    name: Deploy Static Pages
+    needs: build_static_pages
+    runs-on: ubuntu-latest
+    steps:
+    - name: Download Artifacts for qinyuanpei.github.io
+      uses: actions/download-artifact@v1
+      with:
+        name: qinyuanpei.github.io
+
+    - name: Deploy Artifacts for qinyuanpei.github.io
+      env:
+       GH_REPO: github.com/qinyuanpei/qinyuanpei.github.io.git
+      run: |
+       cd ./qinyuanpei.github.io
+       git init
+       git config user.name "qinyuanpei"
+       git config user.email "qinyuanpei@163.com"
+       git remote add origin https://$GH_REPO
+       git add .
+       git commit -m "${{ github.event.head_commit.message }}"
+       git push --force --quiet "https://${{ secrets.CI_TOKEN }}@$GH_REPO" master:master
+
+  audit_static_pages:
+    name: Audit Static Pages
+    needs: deploy_static_pages
+    runs-on: ubuntu-latest
+    steps:
+    - name: Lighthouse for qinyuanpei.github.io
+      uses: jakejarvis/lighthouse-action@master
+      with:
+        url: 'https://qinyuanpei.github.io'
+        
+    - name: Upload Report for qinyuanpei.github.io
+      uses: actions/upload-artifact@master
+      with:
+        name: qinyuanpei.github.io_report
+        path: './report'
+  
+    
+    
