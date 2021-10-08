@@ -4,6 +4,7 @@ title: 关于
 layout: about
 copyright: false
 abbrlink: 994796909
+comment: true
 ---
 ![在这世界的角落-剧照](https://i.loli.net/2020/02/25/S8knQoPDYct9jHq.jpg)
 
