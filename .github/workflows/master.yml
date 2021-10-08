@@ -60,10 +60,10 @@ jobs:
     needs: build_static_pages
     runs-on: ubuntu-latest
     steps:
-    - name: Download Artifacts for qinyuanpei.github.io
+    - name: Download Artifacts for blog.yuanpei.me
       uses: actions/download-artifact@v1
       with:
-        name: qinyuanpei.github.io
+        name: blog.yuanpei.me
 
     - name: Deploy Artifacts for blog.yuanpei.me
       env:
