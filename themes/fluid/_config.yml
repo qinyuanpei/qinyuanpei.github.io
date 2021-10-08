@@ -727,7 +727,7 @@ valine:
   lang: 'zh-CN'
   highlight: false
   recordIP: true
-  serverURLs: 'JbHqRp2e.api.lncld.net'
+  serverURLs: ''
   emojiCDN:
   emojiMaps:
   enableQQ: false
