@@ -935,7 +935,7 @@ links:
       title: "Catcher Wong",
       intro: "Catcher Wong",
       link: "http://www.c-sharpcorner.com/members/catcher-wong",
-      avatar: "/img/favicon.png"
+      avatar: "https://p9-passport.byteacctimg.com/img/user-avatar/2d36ee7e4b6337660d9ab946d799f0bb~300x300.image"
     }
     - {
       title: "咕咚",
@@ -953,7 +953,7 @@ links:
       title: "素履独行",
       intro: "素履独行",
       link: "https://blog.csdn.net/qinyuanpei",
-      avatar: "https://raw.githubusercontent.com/qinyuanpei/blog.yuanpei.me/master/assets/images/avatar-20191118.jpg"
+      avatar: "/assets/images/avatar-20191118.jpg"
     }
 
   # 当成员头像加载失败时，替换为指定图片
