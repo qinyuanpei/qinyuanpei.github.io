@@ -21,5 +21,8 @@ Fluid.boot.initPlugins = function() {
 document.addEventListener('DOMContentLoaded', function() {
   Fluid.boot.registerEvents();
   Fluid.boot.initPlugins();
-  document.getElementById('board').style.borderRadius = 0;
+  let board = document.getElementById('board');
+  if ( board != null ) {
+      board.style.borderRadius = 0;
+ };
 });
