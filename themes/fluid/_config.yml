@@ -395,8 +395,11 @@ footer:
   # 页脚第一行文字的 HTML，建议保留 Fluid 的链接，用于向更多人推广本主题
   # HTML of the first line of the footer, it is recommended to keep the Fluid link to promote this theme to more people
   content: '
-    <p><span>飞鸿踏雪 © 2014 - 2021</span><br>Powered by <a href="http://hexo.io/" target="_blank">Hexo</a> &amp; Theme by <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank">fluid</a><br></p>
-    <p>Hosted by <a href="https://vercel.com/" target="_blank" rel="noopener" style="font-weight:700">Vercel</a></p>
+    <p>
+    <span>飞鸿踏雪 © 2014 - 2021</span><br>
+    Powered by <a href="http://hexo.io/" target="_blank">Hexo</a> &amp; Theme by <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank">Fluid</a><br>
+    Hosted by <a href="https://vercel.com/" target="_blank" rel="noopener" style="font-weight:700">Vercel</a>
+    </p>
   '
 
   # 展示网站的 PV、UV 统计数
