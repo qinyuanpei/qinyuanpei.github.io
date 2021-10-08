@@ -3,7 +3,7 @@ abbrlink: 169430744
 categories:
 - 编程语言
 date: 2019-09-06 14:53:46
-description: 通过Vue文档中关于[数据校验](<https://cn.vuejs.org/v2/cookbook/form-validation.html>)这一节的内容，我们了解到官方推荐的两个表单验证插件是[vuelidate](https://github.com/monterail/vuelidate)和[VeeValidate](http://vee-validate.logaretm.com/)，而实际上这篇博客中的第一个例子，就是由文档中的例子演化而来;<div
+description: 通过Vue文档中关于[数据校验](https://cn.vuejs.org/v2/cookbook/form-validation.html)这一节的内容，我们了解到官方推荐的两个表单验证插件是[vuelidate](https://github.com/monterail/vuelidate)和[VeeValidate](http://vee-validate.logaretm.com/)，而实际上这篇博客中的第一个例子，就是由文档中的例子演化而来;<div
   class="form-group" name="password" rules="required">;-- script of LoginForm -->
 tags:
 - Vue
@@ -18,7 +18,7 @@ title: Vue快速实现通用表单验证
 
 # 最简单的表单验证
 
-OK，作为国内最接“地气”的前端框架，Vue的文档可以说是相当地“亲民”啦！为什么这样说呢，因为其实在[官方文档](<https://cn.vuejs.org/v2/cookbook/form-validation.html>)中，尤大已经提供了一个表单验证的示例，这个示例让我想起给某银行做自动化工具时的情景，因为这两者都是采用MVVM的思想，所以，理解起来是非常容易的，即：通过一个列表来存储错误信息，而这个错误信息会绑定到视图层，所以，验证的过程其实就是向这个列表里添加错误信息的过程。我们一起来看这个例子：
+OK，作为国内最接“地气”的前端框架，Vue的文档可以说是相当地“亲民”啦！为什么这样说呢，因为其实在[官方文档](https://cn.vuejs.org/v2/cookbook/form-validation.html)中，尤大已经提供了一个表单验证的示例，这个示例让我想起给某银行做自动化工具时的情景，因为这两者都是采用MVVM的思想，所以，理解起来是非常容易的，即：通过一个列表来存储错误信息，而这个错误信息会绑定到视图层，所以，验证的过程其实就是向这个列表里添加错误信息的过程。我们一起来看这个例子：
 
 ```HTML
 <div>
