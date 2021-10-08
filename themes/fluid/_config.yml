@@ -395,9 +395,8 @@ footer:
   # 页脚第一行文字的 HTML，建议保留 Fluid 的链接，用于向更多人推广本主题
   # HTML of the first line of the footer, it is recommended to keep the Fluid link to promote this theme to more people
   content: '
-    <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a>
-    <i class="iconfont icon-love"></i>
-    <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a>
+    <p><span>飞鸿踏雪 © 2014 - 2021</span><br>Powered by <a href="http://hexo.io/" target="_blank">Hexo</a> &amp; Theme by <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank">fluid</a><br></p>
+    <p>Hosted by <a href="https://vercel.com/" target="_blank" rel="noopener" style="font-weight:700">Vercel</a></p>
   '
 
   # 展示网站的 PV、UV 统计数
@@ -455,7 +454,7 @@ index:
 
     # 为空则按 hexo config.subtitle 显示
     # If empty, text based on `subtitle` in hexo config
-    text: "An elegant Material-Design theme for Hexo"
+    text: ""
 
     # 通过 API 接口作为首页副标题的内容，必须返回的是 JSON 格式，如果请求失败则按 text 字段显示，该功能必须先开启 typing 打字机功能
     # Subtitle of the homepage through the API, must be returned a JSON. If the request fails, it will be displayed in `text` value. This feature must first enable the typing animation
@@ -651,11 +650,11 @@ post:
   # 评论插件
   # Comment plugin
   comments:
-    enable: false
+    enable: true
     # 指定的插件，需要同时设置对应插件的必要参数
     # The specified plugin needs to set the necessary parameters at the same time
     # Options: utterances | disqus | gitalk | valine | waline | changyan | livere | remark42 | twikoo | cusdis
-    type: disqus
+    type: valine
 
 
 #---------------------------
@@ -717,17 +716,17 @@ gitalk:
 # Based on LeanCloud
 # See: https://valine.js.org/
 valine:
-  appId:
-  appKey:
+  appId:  JbHqRp2eMrTgIwYpfERH0g79-gzGzoHsz
+  appKey: VsiKvLuiBGvJL1XrAfv7siY2
   path: window.location.pathname
-  placeholder:
+  placeholder: 雁过留声，欢迎在这里留下你的声音...
   avatar: 'retro'
   meta: ['nick', 'mail', 'link']
-  requiredFields: []
+  requiredFields: ['nick','mail']
   pageSize: 10
   lang: 'zh-CN'
   highlight: false
-  recordIP: false
+  recordIP: true
   serverURLs: ''
   emojiCDN:
   emojiMaps:
