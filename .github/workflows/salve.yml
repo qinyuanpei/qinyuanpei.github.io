@@ -76,6 +76,11 @@ jobs:
        git add .
        git commit -m "${{ github.event.head_commit.message }}"
        git push --force --quiet "https://${{ secrets.CI_TOKEN }}@$GH_REPO" master:master
+       git fetch --tags
+       git tag 'latest'
+       git push origin --delete $(git tag -l)
+       git tag 'latest'
+       git push --force --quiet "https://${{ secrets.CI_TOKEN }}@$GH_REPO" master:master --tags
 
   audit_static_pages:
     name: Audit Static Pages

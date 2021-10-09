@@ -82,8 +82,8 @@ jobs:
        git add .
        git commit -m "${{ github.event.head_commit.message }}"
        git push --force --quiet "https://${{ secrets.CI_TOKEN }}@$GH_REPO" master:master
-       git tag -d $(git tag -l)
-       git fetch
+       git fetch --tags
+       git tag 'latest'
        git push origin --delete $(git tag -l)
        git tag 'latest'
        git push --force --quiet "https://${{ secrets.CI_TOKEN }}@$GH_REPO" master:master --tags
