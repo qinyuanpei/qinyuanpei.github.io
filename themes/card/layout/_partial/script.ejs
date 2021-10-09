@@ -79,7 +79,9 @@
     </script>
 <% } %>
 <%- partial('plugins/dynamic-title') %>
+<% if (config.ribbon.enable) { %>
 <script src="<%- url_for(theme_js('assets/scripts/ribbon', cache)) %>"></script>
+<% } %>
 <script>
     var blocks = document.getElementsByTagName('blockquote');
     if (blocks.length > 0  && blocks[0].id != "post-copyright") {
