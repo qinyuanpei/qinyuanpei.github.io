@@ -65,10 +65,10 @@ jobs:
       with:
         python-version: '3.7'
         architecture: 'x64'
-    - name: Download Artifacts for qinyuanpei.github.io
+    - name: Download Artifacts for blog.yuanpei.me
       uses: actions/download-artifact@v1
       with:
-        name: qinyuanpei.github.io
+        name: blog.yuanpei.me
 
     - name: Deploy Artifacts for blog.yuanpei.me
       env:
