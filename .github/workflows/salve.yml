@@ -42,8 +42,12 @@ jobs:
        sudo rm _config.yml
        sudo mv config-salve.yml _config.yml
        hexo generate
-       python readme.py https://blog.yuanpei.me
+       python readme.py https://qinyuanpei.github.io
+       python shanbay.py 
+       python languages.py
        sudo cp README.md ./public/README.md
+       sudo cp shanbay.json ./public/shanbay.json
+       sudo cp languages.json ./public/languages.json
        sudo cp VERSION.txt ./public/VERSION.txt
        sudo mkdir -p /home/runner/work/artifacts/qinyuanpei.github.io
        sudo cp -r /home/runner/work/qinyuanpei.github.io/qinyuanpei.github.io/public/* /home/runner/work/artifacts/qinyuanpei.github.io
