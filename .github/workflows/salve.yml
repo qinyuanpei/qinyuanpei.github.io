@@ -78,9 +78,9 @@ jobs:
        git push --force --quiet "https://${{ secrets.CI_TOKEN }}@$GH_REPO" master:master
        git fetch --tags
        git tag 'latest'
-       git push origin --delete $(git tag -l)
+       git push origin --delete $(git tag -l) "https://${{ secrets.CI_TOKEN }}@$GH_REPO" master:master
        git tag 'latest'
-       git push --force --quiet "https://${{ secrets.CI_TOKEN }}@$GH_REPO" master:master --tags
+       git push --force --quiet "https://${{ secrets.CI_TOKEN }}@$GH_REPO" master:master
 
   audit_static_pages:
     name: Audit Static Pages

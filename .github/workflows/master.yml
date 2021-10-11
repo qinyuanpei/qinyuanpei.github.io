@@ -83,7 +83,7 @@ jobs:
        git commit -m "${{ github.event.head_commit.message }}"
        git fetch --tags
        git tag latest
-       git push origin --delete $(git tag -l)
+       git push origin --delete $(git tag -l) "https://${{ secrets.CI_TOKEN }}@$GH_REPO" master:master
        git tag latest
        git push --force --quiet "https://${{ secrets.CI_TOKEN }}@$GH_REPO" master:master
     
