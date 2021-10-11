@@ -86,7 +86,7 @@ jobs:
        git add .
        git commit -m "${{ github.event.head_commit.message }}"
        git tag latest
-       git push tags --force --quiet "https://${{ secrets.CI_TOKEN }}@$GH_REPO" master:master
+       git push --tags --force --quiet "https://${{ secrets.CI_TOKEN }}@$GH_REPO" master:master
     
     - name: Generate README.md for github.com
       env:
