@@ -44,7 +44,7 @@ def analyseLanguages(posts):
     languages = sorted(languages.items(), key=lambda d:d[1], reverse = True)
     return dict(languages[:6])
 
-posts = listPosts('.\source\_posts')
+posts = listPosts('./source/_posts')
 languages = analyseLanguages(posts)
 with open('languages.json','wt',encoding='utf-8') as f:
     f.write(json.dumps(languages))
