@@ -226,4 +226,6 @@ jsdelivr:
 cdn_url: http://localhost:4000
   
 
+ribbon:
+  enable: false
 
