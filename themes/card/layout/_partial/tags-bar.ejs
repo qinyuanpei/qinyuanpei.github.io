@@ -20,17 +20,12 @@ if(type === 'categories' || type === 'tags'){ %>
             var order = 0
             options.forEach(function(tag, i){
 
-                if(index <= 1) {
+                if (index <= 1) {
                     order = i
                 } else {
-
-                    if( i < index - 1) {
-                        order = len - (index - 1) + i
-                    } else {
-                        order = i - (index - 1)
-                    }
+  
                 }
-
+                
             %>
 
             <a href="<%- url_for(tag.path) %>" style="-webkit-order:<%= order%>;order:<%= order%>" class="tags-list-item waves-effect waves-button waves-light<% if(is_current(tag.path)){%> active<%}%>"><%-tag.name%></a>
