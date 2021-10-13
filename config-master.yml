@@ -142,8 +142,11 @@ albums:
 # APlayer
 aplayer:
   meting: true
-  script_dir: assets/scripts
+  cdn: https://cdn.jsdelivr.net/npm/aplayer@1.10.1/dist/APlayer.min.js
+  style_cdn: https://cdn.jsdelivr.net/npm/aplayer@1.10.1/dist/APlayer.min.css
+  script_dir: assets/scripts                        # Script asset path in public directory, default: 'assets/js'
   style_dir: assets/styles
+  meting_cdn: https://cdn.jsdelivr.net/npm/meting@2.0.1/dist/Meting.min.js
 
 # 版权设置
 license: by-nc-sa
