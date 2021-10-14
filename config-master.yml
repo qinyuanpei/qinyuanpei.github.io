@@ -209,7 +209,7 @@ vConsole:
 jsdelivr:
   enable: true
   gh_user: qinyuanpei
-  gh_repo: blog.yuanpei.me
+  gh_repo: qinyuanpei.github.io
   baseUrl: cdn.jsdelivr.net
 
 offline:
