@@ -15,7 +15,7 @@ date: 2021-06-01 11:37:36
 
 ![健康检查-服务注册-服务发现示意图](https://i.loli.net/2021/06/02/oVS3YkPIncr2xM9.jpg)
 
-关于“健康检查”，大家都知道的一点是，它起到一种“防微杜渐”的作用。不知道大家还记不记得，语文课本里的经典故事《扁鹊见蔡桓公》，扁鹊一直在告知蔡桓公其病情如何，而蔡桓公讳疾忌医，直至病入骨髓、不治而亡。其实，对应到我们的领域知识，后端依赖的各种服务譬如数据库、消息队列、Redis、API等等，都需要这样一个“**扁鹊**”来实时地“**望闻问切**”，当发现问题的时候及时地采取相应措施，不要像“**蔡桓公**”一样病入骨髓，等到整个系统都瘫痪了，这时候火急火燎地去“救火”，难免会和蔡桓公一样，发出“悔之晚矣”的喟叹。当我们决定使用`gRPC`来构建微服务架构的时候，我们如何确保这些服务一直是可用的呢？所以，提供一种针对`gRPC`服务的健康检查方案就会显得非常迫切。这里，博主主要为大家介绍两种实现方式，它们分别是：基于`IHostedService`的实现方式 以及 基于`Consul`的实现方式。
+关于“健康检查”，大家都知道的一点是，它起到一种“防微杜渐”的作用。不知道大家还记不记得，语文课本里的经典故事《扁鹊见蔡桓公》，扁鹊一直在告知蔡桓公其病情如何，而蔡桓公讳疾忌医，直至病入骨髓、不治而亡。其实，对应到我们的领域知识，后端依赖的各种服务譬如数据库、消息队列、Redis、API 等等，都需要这样一个“**扁鹊**”来实时地“**望闻问切**”，当发现问题的时候及时地采取相应措施，不要像“**蔡桓公**”一样病入骨髓，等到整个系统都瘫痪了，这时候火急火燎地去“救火”，难免会和蔡桓公一样，发出“悔之晚矣”的喟叹。当我们决定使用`gRPC`来构建微服务架构的时候，我们如何确保这些服务一直是可用的呢？所以，提供一种针对`gRPC`服务的健康检查方案就会显得非常迫切。这里，博主主要为大家介绍两种实现方式，它们分别是：基于`IHostedService`的实现方式 以及 基于`Consul`的实现方式。
 
 # 基于 IHostedService 的实现方式
 
@@ -204,7 +204,7 @@ public static void AddGrpcHealthCheck<TService>(this IServiceCollection services
     RegisterConsul<TService>(services).Wait();
 }
 ```
-其中，`RegisterConsul()`方法负责告诉`Consul`，某个服务对应的IP和端口号分别是多少，采用什么样的方式进行健康检查。
+其中，`RegisterConsul()`方法负责告诉`Consul`，某个服务对应的 IP 和端口号分别是多少，采用什么样的方式进行健康检查。
 
 不过，由于`Consul`默认不支持`gRPC`的健康检查，所以，我们使用了更为常见的基于`TCP`方式的健康检查。你可以认为，只要服务器连接畅通，`gRPC`服务就是健康的。
 
@@ -245,7 +245,7 @@ private static async Task RegisterConsul<TService>(
     }) ;
 }
 ```
-对于`Consul`中的健康检查，更常用的是基于`HTTP`的健康检查，简单来说，就是我们提供一个接口，供`Consul`来调用，我们可以去设置请求的头(Header)、消息体(Body)、方法(Method)等等。所以，对于这里的实现，你还可以替换为更一般的实现，即提供一个API接口，然后在这个接口中调用`gRPC`的客户端。除此以外，如果你擅长写脚本，`Consul`同样支持脚本级别的健康检查。
+对于`Consul`中的健康检查，更常用的是基于`HTTP`的健康检查，简单来说，就是我们提供一个接口，供`Consul`来调用，我们可以去设置请求的头(Header)、消息体(Body)、方法(Method)等等。所以，对于这里的实现，你还可以替换为更一般的实现，即提供一个 API 接口，然后在这个接口中调用`gRPC`的客户端。除此以外，如果你擅长写脚本，`Consul`同样支持脚本级别的健康检查。
 
 在这里，博主水平扩展(复制)了两套服务，它们分别被部署在`5001`和`6001`两个端口上，通过`Consul`能达到什么效果呢？我们一起来看一下：
 
@@ -303,7 +303,7 @@ var client = new var client = new Calculator.CalculatorClient(channel);
 await client.CalcAsync(new CalculatorRequest() { Num1 = 10, Op = "+", Num2 = 12 });
 ```
 
-可以看出，基本思路就是从`Consul`里拿到对应服务的终结点信息，然后构造出`GrpcChannel`，再通过`GrpcChannel`构造出Client即可。
+可以看出，基本思路就是从`Consul`里拿到对应服务的终结点信息，然后构造出`GrpcChannel`，再通过`GrpcChannel`构造出 Client 即可。
 
 不过，博主觉得这个过程有一点繁琐，我们有没有办法让这些细节隐藏起来呢？于是，我们有了下面的改进方案：
 
@@ -339,7 +339,7 @@ await client.CalcAsync(new CalculatorRequest() { Num1 = 1, Num2 = 2, Op = "+" })
 
 ## gRPC 接口的测试工具
 
-我猜，大多数看到这个标题会一脸鄙夷，心里大概会想，就测试工具这种东西值得特地写出来吗？诚然，以前写API接口的时候，大家都是用 [Postman](https://www.postman.com/downloads/) 或者 [Apifox](https://www.apifox.cn/) 这样的工具来进行测试的，可是突然有一天你要调试一个`gRPC`的接口，你总不能每次都调用客户端啊，所以，这里要给大家推荐两个`gRPC`接口的测试工具，它们分别是: [grpcurl](https://github.com/fullstorydev/grpcurl) 和 [grpcui](https://github.com/fullstorydev/grpcui)，它们都出自同一个人 [FullStory](https://github.com/fullstorydev) 之手，基于Go语言开发，简单介绍下使用方法：
+我猜，大多数看到这个标题会一脸鄙夷，心里大概会想，就测试工具这种东西值得特地写出来吗？诚然，以前写 API 接口的时候，大家都是用 [Postman](https://www.postman.com/downloads/) 或者 [Apifox](https://www.apifox.cn/) 这样的工具来进行测试的，可是突然有一天你要调试一个`gRPC`的接口，你总不能每次都调用客户端啊，所以，这里要给大家推荐两个`gRPC`接口的测试工具，它们分别是: [grpcurl](https://github.com/fullstorydev/grpcurl) 和 [grpcui](https://github.com/fullstorydev/grpcui)，它们都出自同一个人 [FullStory](https://github.com/fullstorydev) 之手，基于 Go 语言开发，简单介绍下使用方法：
 
 ```shell
 // 建议使用国内源
@@ -357,7 +357,7 @@ go install github.com/fullstorydev/grpcui/cmd/grpcui
 grpcui -bind <Your-IP> -plaintext <Your-gRPC-Service>
 ```
 
-虽然这个说明简单而直白，可我还是没能装好，我不得不祭出Docker这个神器，果然它不会令我失望：
+虽然这个说明简单而直白，可我还是没能装好，我不得不祭出 Docker 这个神器，果然它不会令我失望：
 
 ```shell
 docker pull wongnai/grpcui
@@ -372,4 +372,4 @@ docker run -e GRPCUI_SERVER=localhost:5001 -p 8080:8080 wongnai/grpcui
 
 # 本文小结
 
-本文探索并实现了`gRPC`服务健康检查，主要提供了两种思路：基于`IHostedService` + `Timer`的轮询的方案 以及 基于`Consul`的集服务注册、服务发现、健康检查于一身的方案。特别地，对于后者而言，我们可以顺理成章地联想到客户端的负载均衡，其原理是：`Consul`中注册了所有`gRPC`服务的终结点信息，通过`IConsulClient`可以拿到所有可用的终结点信息，只要以此为基础来构建`GrpcChannel`即可。根据这个原理，我们引申出了`gRPC`客户端负载均衡的相关话题，这里我们采用的是随机选择一个终结点信息的做法，事实上，按照一般负载均衡的理论，我们还可以采取轮询、加权、Hash等等的算法，大家可以按照自己的业务场景来选择合适的方法。最后，我们简单介绍了下`gRPC`接口测试方面的内容，它可以帮助我们更高效地编写、验证`gRPC`接口。好了，以上就是这篇博客的全部内容啦，欢迎大家在评论区留言、参与讨论，谢谢大家！
+本文探索并实现了`gRPC`服务健康检查，主要提供了两种思路：基于`IHostedService` + `Timer`的轮询的方案 以及 基于`Consul`的集服务注册、服务发现、健康检查于一身的方案。特别地，对于后者而言，我们可以顺理成章地联想到客户端的负载均衡，其原理是：`Consul`中注册了所有`gRPC`服务的终结点信息，通过`IConsulClient`可以拿到所有可用的终结点信息，只要以此为基础来构建`GrpcChannel`即可。根据这个原理，我们引申出了`gRPC`客户端负载均衡的相关话题，这里我们采用的是随机选择一个终结点信息的做法，事实上，按照一般负载均衡的理论，我们还可以采取轮询、加权、Hash 等等的算法，大家可以按照自己的业务场景来选择合适的方法。最后，我们简单介绍了下`gRPC`接口测试方面的内容，它可以帮助我们更高效地编写、验证`gRPC`接口。好了，以上就是这篇博客的全部内容啦，欢迎大家在评论区留言、参与讨论，谢谢大家！

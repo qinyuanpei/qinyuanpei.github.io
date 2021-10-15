@@ -1,6 +1,6 @@
 ---
 toc: true
-title: 再话AOP，从简化缓存操作说起
+title: 再话 AOP，从简化缓存操作说起
 categories:
   - 编程语言
 tags:
@@ -14,7 +14,7 @@ date: 2021-08-04 20:49:47
 ---
 AOP，即：**面向切面编程**，关于这个概念，博主其实写过好几篇[博客](https://blog.yuanpei.me/tags/AOP/)啦！从这个概念，我们可以引申出诸如代理模式、动态代理、装饰器模式、过滤器、拦截器等等相互关联的概念。从实现方式上而言，微软官方的 [.NET Remoting](https://docs.microsoft.com/zh-cn/previous-versions/dotnet/articles/ms973857(v=msdn.10)?redirectedfrom=MSDN) 提供了真实代理和透明代理的支持，我们熟悉的 `WebService` 和 `WCF` 均和这项技术息息相关，作为最早的分布式 RPC 解决方案，其本身更是与客户端的动态代理密不可分。或许，各位曾经接触过 `Unity`、`Castle`、`AspectCore`、[PostSharp](https://www.postsharp.net) 等等这些支持 AOP 特性的库，那么，我们是否已经抵达了 AOP 的边界呢？事实上，如果你仔细研究过 `Stub` 和 `Mock` 这样两个术语，你就发现 AOP 的应用范围远比我们想象的宽广。今天这篇文章，我不打算再介绍一遍这些第三方库的“**奇技淫巧**”，我更想聊聊，如何通过 AOP 来简化一个缓存操作。
 
-缓存，一个面试时命中率100%的话题，曾记否？来自面试官的灵魂发问三连：**缓存击穿**、**缓存穿透**、**缓存雪崩**。与此同时，缓存是一个令人爱恨交加的东西，其一致性、持久化、高可用等等，均是实际应用中需要去考虑的东西。狭义的缓存主要指 [Redis](https://redis.io/)、[Memcached](https://www.memcached.org) 等分布式缓存系统，而广义的缓存则可以是 [HTTP 响应缓存](https://docs.microsoft.com/zh-cn/aspnet/core/performance/caching/response?view=aspnetcore-5.0)、EF/EF Core 查询缓存、二级缓存等等。我们都知道，使用缓存可以显著地提升软件性能，而究其本质，则是因为减少了和数据库交互的频次。于是，我们注意到，大多数的缓存代码，都是下面这样的风格：
+缓存，一个面试时命中率 100%的话题，曾记否？来自面试官的灵魂发问三连：**缓存击穿**、**缓存穿透**、**缓存雪崩**。与此同时，缓存是一个令人爱恨交加的东西，其一致性、持久化、高可用等等，均是实际应用中需要去考虑的东西。狭义的缓存主要指 [Redis](https://redis.io/)、[Memcached](https://www.memcached.org) 等分布式缓存系统，而广义的缓存则可以是 [HTTP 响应缓存](https://docs.microsoft.com/zh-cn/aspnet/core/performance/caching/response?view=aspnetcore-5.0)、EF/EF Core 查询缓存、二级缓存等等。我们都知道，使用缓存可以显著地提升软件性能，而究其本质，则是因为减少了和数据库交互的频次。于是，我们注意到，大多数的缓存代码，都是下面这样的风格：
 
 ```csharp
 var cacheKey = "GetAllStudents";
@@ -59,7 +59,7 @@ public class CacheableAttribute : Attribute
 }
 ```
 
-其中，`CacheKeyPrefix`用于指定缓存键名前缀，`Expiration`用于指定缓存过期时间，单位为秒。接下来，博主通过`DispatchProxy`来实现动态代理，它可以视为`RealProxy`在后.NET时代的替代品：
+其中，`CacheKeyPrefix`用于指定缓存键名前缀，`Expiration`用于指定缓存过期时间，单位为秒。接下来，博主通过`DispatchProxy`来实现动态代理，它可以视为`RealProxy`在后.NET 时代的替代品：
 
 ```csharp
 public class CacheInterceptor<TCacheService> : DispatchProxy

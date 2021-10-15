@@ -1,6 +1,6 @@
 ﻿---
 toc: true
-title: .NET Core原生DI扩展之基于名称的注入实现
+title: .NET Core 原生 DI 扩展之基于名称的注入实现
 categories:
   - 编程语言
 tags:
@@ -14,16 +14,16 @@ date: 2020-06-10 13:08:03
 ---
 接触 `.NET Core` 有一段时间了，最大的感受无外乎无所不在的依赖注入，以及抽象化程度更高的全新框架设计。想起三年前 Peter 大神手写 IoC 容器时的惊艳，此时此刻，也许会有不一样的体会。的确，那个基于字典实现的 IoC 容器相当“简陋”，就像 `.NET Core` 里的依赖注入，默认(原生)都是采用构造函数注入的方式，可其实从整个依赖注入的理论上而言，属性注入和方法注入的方式，同样是依赖注入的实现方式啊。最近一位朋友找我讨论，`.NET Core` 里该如何实现 `Autowried`，这位朋友本身是 Java 出身，一番攀谈了解到原来是指属性注入啊。所以，我打算用两篇博客来聊聊 `.NET Core` 中的原生 DI 的扩展，而今天这篇，则单讲基于名称的注入的实现。
 
-[Autofac](https://autofac.org/)是一个非常不错的 IoC 容器，通常我们会使用它来替换微软内置的 IoC 容器。为什么要这样做呢？其实，微软在其官方[文档](https://docs.microsoft.com/zh-cn/aspnet/core/fundamentals/dependency-injection?view=aspnetcore-3.1)中早已给出了说明，即微软内置的 IoC 容器实际上是不支持以下特性的： **属性注入、基于名称的注入、子容器、自定义生存期管理、对迟缓初始化的 Func<T> 支持、基于约定的注册**。这是我们为什么要替换微软内置的 IoC  容器的原因，除了Autofac 以外，我们还可以考虑 `Unity` 、`Castle` 等容器，对我个人而言，其实最需要的一个功能是“扫描”，即它可以针对程序集中的组件或者服务进行自动注册。这个功能可以让人写起代码更省心一点，果然，人类的本质就是让自己变得更加懒惰呢。好了，话题拉回到本文主题，我们为什么需要基于名称的注入呢？它其实针对的是“**同一个接口对应多种不同的实现**”这种场景。
+[Autofac](https://autofac.org/)是一个非常不错的 IoC 容器，通常我们会使用它来替换微软内置的 IoC 容器。为什么要这样做呢？其实，微软在其官方[文档](https://docs.microsoft.com/zh-cn/aspnet/core/fundamentals/dependency-injection?view=aspnetcore-3.1)中早已给出了说明，即微软内置的 IoC 容器实际上是不支持以下特性的： **属性注入、基于名称的注入、子容器、自定义生存期管理、对迟缓初始化的 Func<T> 支持、基于约定的注册**。这是我们为什么要替换微软内置的 IoC  容器的原因，除了 Autofac 以外，我们还可以考虑 `Unity` 、`Castle` 等容器，对我个人而言，其实最需要的一个功能是“扫描”，即它可以针对程序集中的组件或者服务进行自动注册。这个功能可以让人写起代码更省心一点，果然，人类的本质就是让自己变得更加懒惰呢。好了，话题拉回到本文主题，我们为什么需要基于名称的注入呢？它其实针对的是“**同一个接口对应多种不同的实现**”这种场景。
 
-OK ，假设我们现在有一个接口ISayHello，它对外提供一个方法SayHello：
+OK ，假设我们现在有一个接口 ISayHello，它对外提供一个方法 SayHello：
 ``` CSharp
 public interface ISayHello
 {
   string SayHello(string receiver);
 }
 ```
-相对应地，我们有两个实现类，ChineseSayHello和EnglishSayHello：
+相对应地，我们有两个实现类，ChineseSayHello 和 EnglishSayHello：
 ```CSharp
 //ChineseSayHello
 public class ChineseSayHello : ISayHello
@@ -114,7 +114,7 @@ public class NamedServiceProvider : INamedServiceProvider
   }
 }
 ```
-可以注意到，我们这里用一个字典来维护名称和类型间的关系，一切仿佛又回到三年前Peter大神手写IoC的那个下午。接下来，我们定义一个`INamedServiceProviderBuilder`, 它可以让我们使用链式语法注册服务：
+可以注意到，我们这里用一个字典来维护名称和类型间的关系，一切仿佛又回到三年前 Peter 大神手写 IoC 的那个下午。接下来，我们定义一个`INamedServiceProviderBuilder`, 它可以让我们使用链式语法注册服务：
 ```CSharp
 public interface INamedServiceProviderBuilder
 {
@@ -125,7 +125,7 @@ public interface INamedServiceProviderBuilder
   void Build();
 }
 ```
-这里，Add和TryAdd的区别就是后者会对已有的键进行检查，如果键存在则不会继续注册，和微软自带的DI中的Add/TryAdd对应，我们一起来看它的实现：
+这里，Add 和 TryAdd 的区别就是后者会对已有的键进行检查，如果键存在则不会继续注册，和微软自带的 DI 中的 Add/TryAdd 对应，我们一起来看它的实现：
 ```CSharp
 public class NamedServiceProviderBuilder : INamedServiceProviderBuilder
 {
@@ -180,9 +180,9 @@ public class NamedServiceProviderBuilder : INamedServiceProviderBuilder
   }
 }
 ```
-相信到这里，大家都明白博主的意图了吧，核心其实是在`Build()`方法中，因为我们最终需要的是其实是`NamedServiceProvider`，而在此之前的种种，都属于收集依赖、构建ServiceProvider的过程，所以，它被定义为`NamedServiceProviderBuilder`，我们在这里维护的这个字典，最终会被传入到`NamedServiceProvider`的构造函数中，这样我们就知道根据名称应该返回哪一个服务了。
+相信到这里，大家都明白博主的意图了吧，核心其实是在`Build()`方法中，因为我们最终需要的是其实是`NamedServiceProvider`，而在此之前的种种，都属于收集依赖、构建 ServiceProvider 的过程，所以，它被定义为`NamedServiceProviderBuilder`，我们在这里维护的这个字典，最终会被传入到`NamedServiceProvider`的构造函数中，这样我们就知道根据名称应该返回哪一个服务了。
 
-接下来，为了让它和微软自带的DI无缝粘合，我们需要编写一点扩展方法：
+接下来，为了让它和微软自带的 DI 无缝粘合，我们需要编写一点扩展方法：
 ```CSharp
 public static class ServiceCollectionExstension
 {
@@ -215,4 +215,4 @@ var serviceProvider = services.BuildServiceProvier();
 var chineseSayHello = serviceProvider.GetNamedService<ISayHello>("Chinese");
 var englishSayHello = serviceProvider.GetNamedService<ISayHello>("English");
 ```
-这个时候，对调用方而已，依然是熟悉的ServiceProvider，它只需要传入一个名称来获取服务即可，由此，我们就实现了基于名称的依赖注入。回顾一下它的实现过程，其实是一个逐步推进的过程，我们使用依赖注入，本来是希望依赖抽象，即针对同一个接口，可以无痛地从一种实现切换到另外一种实现。可我们发现，当这些实现同时被注册到容器里的时候，容器一样会迷惑于到底用哪一种实现，这就让我们开始思考，这种基于字典的IoC容器设计方案是否存在缺陷。所以，在.NET Core里的DI设计中还引入了工厂的概念，因为并不是所以的Resolve<T>都可以通过`Activator.Create`来实现，更不必说Autofac和Castle中还有子容器的概念，只能说人生不同的阶段总会有不同的理解吧！好了，这篇博客就先写到这里，欢迎大家给我留言，晚安！
+这个时候，对调用方而已，依然是熟悉的 ServiceProvider，它只需要传入一个名称来获取服务即可，由此，我们就实现了基于名称的依赖注入。回顾一下它的实现过程，其实是一个逐步推进的过程，我们使用依赖注入，本来是希望依赖抽象，即针对同一个接口，可以无痛地从一种实现切换到另外一种实现。可我们发现，当这些实现同时被注册到容器里的时候，容器一样会迷惑于到底用哪一种实现，这就让我们开始思考，这种基于字典的 IoC 容器设计方案是否存在缺陷。所以，在.NET Core 里的 DI 设计中还引入了工厂的概念，因为并不是所以的 Resolve<T>都可以通过`Activator.Create`来实现，更不必说 Autofac 和 Castle 中还有子容器的概念，只能说人生不同的阶段总会有不同的理解吧！好了，这篇博客就先写到这里，欢迎大家给我留言，晚安！

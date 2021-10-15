@@ -11,7 +11,7 @@ title: ASP.NET Core gRPC 打通前端世界的尝试
 date: 2021-06-20 21:37:36
 ---
 
-在构建以 gRPC 为核心的微服务架构的过程中，我们逐渐接触到了 gRPC 的过滤器、健康检查、重试等方面的内容。虽然， Protocol Buffers 搭配 HTTP/2 ，在整个传输层上带来了显著的性能提升，可当这套微服务方案面对前后端分离的浪潮时，我们能明显地有点“**水土不服**”。其实，如果单单是以 Protocol Buffers 来作为 HTTP 通信的载体，通过 [protobuf.js](https://github.com/dcodeIO/protobuf.js) 就可以实现前端的二进制化。考虑到 gRPC 实际的通信过程远比这个复杂，同时还要考虑`.proto`文件在前/后端共享的问题，所以，我们面对的其实是一个相当复杂的问题。现代的前端世界，是一个`React`、`Angular`和`Vue`三足鼎立的世界，如果这个世界不能和微服务的世界打通，我们面对的或许并不是一个真实的世界。因为博主注意到，项目中有一部分 gRPC 服务被封装为`Web API`并提供给前端，这说明大家都意识到了这个问题。所以，这篇博客想和大家分享的是，如何打通 gRPC 和 前端 两个不同的世界，这里介绍四种方式：**gRPC-Web**、**gRpc-Gateway**、**封装Web API**、**编写中间件**，希望能给大家带来一点启发。
+在构建以 gRPC 为核心的微服务架构的过程中，我们逐渐接触到了 gRPC 的过滤器、健康检查、重试等方面的内容。虽然， Protocol Buffers 搭配 HTTP/2 ，在整个传输层上带来了显著的性能提升，可当这套微服务方案面对前后端分离的浪潮时，我们能明显地有点“**水土不服**”。其实，如果单单是以 Protocol Buffers 来作为 HTTP 通信的载体，通过 [protobuf.js](https://github.com/dcodeIO/protobuf.js) 就可以实现前端的二进制化。考虑到 gRPC 实际的通信过程远比这个复杂，同时还要考虑`.proto`文件在前/后端共享的问题，所以，我们面对的其实是一个相当复杂的问题。现代的前端世界，是一个`React`、`Angular`和`Vue`三足鼎立的世界，如果这个世界不能和微服务的世界打通，我们面对的或许并不是一个真实的世界。因为博主注意到，项目中有一部分 gRPC 服务被封装为`Web API`并提供给前端，这说明大家都意识到了这个问题。所以，这篇博客想和大家分享的是，如何打通 gRPC 和 前端 两个不同的世界，这里介绍四种方式：**gRPC-Web**、**gRpc-Gateway**、**封装 Web API**、**编写中间件**，希望能给大家带来一点启发。
 
 # gRPC-Web
 
@@ -30,7 +30,7 @@ protoc greetjs.proto \
 
 其中：
 * `--js_out` 和 `--grpc-web_out` 分别指定了我们要生成的`JavaScript`代码的模块化标准，这里使用的是 [CommonJS](http://javascript.ruanyifeng.com/nodejs/module.html) 规范。
-* `mode=grpcwebtext` 指定 gRPC-Web 的数据传输方式。目前：支持两种方式，application/grpc-web-text(Base64编码，文本格式) 和 application/grpc-web+proto(二进制格式)，前者支持 Unary Calls 和 Server Streaming Calls，后者只支持 Unary Calls。
+* `mode=grpcwebtext` 指定 gRPC-Web 的数据传输方式。目前：支持两种方式，application/grpc-web-text(Base64 编码，文本格式) 和 application/grpc-web+proto(二进制格式)，前者支持 Unary Calls 和 Server Streaming Calls，后者只支持 Unary Calls。
 
 在这个例子中，会生成下面两个文件，它们分别定义了`客户端`和`消息`这两个部分：
 
@@ -103,7 +103,7 @@ sendInput.onclick = function () {
 };
 ```
 
-gRPC-Web 在将 gRPC 带入前端世界的过程中，其实是牺牲了一部分重要特性的，譬如浏览器中无法实现 HTTP/2，相对应地，gRPC-Web不再支持客户端流和双向流，依然支持服务端流，博主猜测可能是利用了服务端发送事件(**Server Sent Event**)。不过，这并不影响我们对这个项目的敬意，感谢它将 gRPC 带入了前端的世界。
+gRPC-Web 在将 gRPC 带入前端世界的过程中，其实是牺牲了一部分重要特性的，譬如浏览器中无法实现 HTTP/2，相对应地，gRPC-Web 不再支持客户端流和双向流，依然支持服务端流，博主猜测可能是利用了服务端发送事件(**Server Sent Event**)。不过，这并不影响我们对这个项目的敬意，感谢它将 gRPC 带入了前端的世界。
 
 # gRPC-Gateway
 
@@ -156,7 +156,7 @@ protoc \
 
 而关于 [gRPC-Gateway](https://github.com/grpc-ecosystem/grpc-gateway) 这个插件的使用，最直观的用法，其实应该来自`.proto`文件：
 
-```
+```plain
 syntax = "proto3";
 
 // Go里面的包名，必选
@@ -189,7 +189,7 @@ message HelloReply {
 
 # 封装 Web API
 
-封装 Web API，这是一个非常朴实无华的方案，博主目前的公司就是采用这种方案，所以，你能想象得到，基本就是在控制器中调用客户端。唯一的弊病在于，这是一个非常低效的工作。当年，博主的前公司，就是风风火火地要这样替换掉WCF，结果最终还是不了了之。所以说，世间没有银弹，历史不过是一次次地重复上演。下面是一个简单的示例：
+封装 Web API，这是一个非常朴实无华的方案，博主目前的公司就是采用这种方案，所以，你能想象得到，基本就是在控制器中调用客户端。唯一的弊病在于，这是一个非常低效的工作。当年，博主的前公司，就是风风火火地要这样替换掉 WCF，结果最终还是不了了之。所以说，世间没有银弹，历史不过是一次次地重复上演。下面是一个简单的示例：
 
 ```csharp
 public async Task<ActionResult> SayHello(HelloRequestDTO requestDTO)
@@ -224,7 +224,7 @@ fetch("https://localhost:44372/Greet/SayHello", options)
 
 # 编写中间件
 
-其实，读到这里，你就会明白，这才是我真正要分享的内容，而此前种种，不过是我为了丰富这个话题而抛出的它山之石。既然觉得手写 Web API 太麻烦，那么我们能不能用一种新的思路来解决这个问题呢？这里说一下博主的思路，用户传入JSON，经过中间件反序列化为`.proto`对应的类型，我们将这个类型传递给 gRPC 的客户端作为请求参数，等拿到结果以后，我们再将它序列化为 JSON 即可。这样，我们就实现了将一个 gRPC 服务转化为 Web API 的想法。下面是具体的代码，其实这个代码并不复杂，我最初打算用反射来解决，可惜 gRPC 生成的这个客户端方法重载实在太多啦，所以，我最后决定用下面的这种方式。当然啦，缺点就和 gRPC-Gateway 一样，每一个接口都要单独写，好处大概是代码量减少了好多。
+其实，读到这里，你就会明白，这才是我真正要分享的内容，而此前种种，不过是我为了丰富这个话题而抛出的它山之石。既然觉得手写 Web API 太麻烦，那么我们能不能用一种新的思路来解决这个问题呢？这里说一下博主的思路，用户传入 JSON，经过中间件反序列化为`.proto`对应的类型，我们将这个类型传递给 gRPC 的客户端作为请求参数，等拿到结果以后，我们再将它序列化为 JSON 即可。这样，我们就实现了将一个 gRPC 服务转化为 Web API 的想法。下面是具体的代码，其实这个代码并不复杂，我最初打算用反射来解决，可惜 gRPC 生成的这个客户端方法重载实在太多啦，所以，我最后决定用下面的这种方式。当然啦，缺点就和 gRPC-Gateway 一样，每一个接口都要单独写，好处大概是代码量减少了好多。
 
 ```csharp
 // 定义扩展方法：AddGrpcGateway
@@ -289,11 +289,11 @@ app.AddGrpcGateway<Greeter.GreeterClient, HelloRequest, HelloReply>(
 
 # 本文小结
 
-其实，本文完全是临时想起来决定要写的一篇文章，起因就是看到了项目中有人在手动地封装 gRPC 服务为 RESTful 服务，当时就在想有没有一种方案，可以让这个过程稍微好一点点。所以，你可以认为，我写这篇博客的初衷，原来就是为了炫耀我写的那几行代码。不过，人到了一定的阶段以后，不管是写作还是思考，都似乎越来越喜欢某种框架结构，这种体验就有点像是上学时候写论文一样，虽然你明确地知道自己在做什么，可当你真正要把你的思路或者过程复述出来的时候，你还是需要有一个“文献综述”的环节。我个人以为，这是一种由外及内的认知方法，通过内外世界的对比来寻找自我提升的突破口。对于本文而言，不管是 [gRPC-Web](https://github.com/grpc-ecosystem/grpc-gateway) 还是 [gRPC-Gateway](https://github.com/grpc-ecosystem/grpc-gateway)，从本质上来讲，它们都是 Protocol Buffers 工具链中的插件，在这个过程中发现了平时使用 gRPC 过程中被隐藏了的一部分细节，这些细节如果能和开发工具完美结合的话，就可以极大地提升我们在 gRPC 方面的开发效率，譬如 gRPC-Web 在 .NET 中的实现就利用了 MSBuild 的自定义编译任务，这就让底层的Protocol Buffers 工具链、前端构建工具等对使用者来说是无感知的，从开发体验上就给人心旷神怡的感觉。我个人还是倾向于结合 ASP.NET Core 或者容器级别的 Envoy 来解决这个问题，我觉得应该还有更好的方案，希望大家可以在评论区写下你的想法。好啦，这篇博客就先写到这里，谢谢大家！
+其实，本文完全是临时想起来决定要写的一篇文章，起因就是看到了项目中有人在手动地封装 gRPC 服务为 RESTful 服务，当时就在想有没有一种方案，可以让这个过程稍微好一点点。所以，你可以认为，我写这篇博客的初衷，原来就是为了炫耀我写的那几行代码。不过，人到了一定的阶段以后，不管是写作还是思考，都似乎越来越喜欢某种框架结构，这种体验就有点像是上学时候写论文一样，虽然你明确地知道自己在做什么，可当你真正要把你的思路或者过程复述出来的时候，你还是需要有一个“文献综述”的环节。我个人以为，这是一种由外及内的认知方法，通过内外世界的对比来寻找自我提升的突破口。对于本文而言，不管是 [gRPC-Web](https://github.com/grpc-ecosystem/grpc-gateway) 还是 [gRPC-Gateway](https://github.com/grpc-ecosystem/grpc-gateway)，从本质上来讲，它们都是 Protocol Buffers 工具链中的插件，在这个过程中发现了平时使用 gRPC 过程中被隐藏了的一部分细节，这些细节如果能和开发工具完美结合的话，就可以极大地提升我们在 gRPC 方面的开发效率，譬如 gRPC-Web 在 .NET 中的实现就利用了 MSBuild 的自定义编译任务，这就让底层的 Protocol Buffers 工具链、前端构建工具等对使用者来说是无感知的，从开发体验上就给人心旷神怡的感觉。我个人还是倾向于结合 ASP.NET Core 或者容器级别的 Envoy 来解决这个问题，我觉得应该还有更好的方案，希望大家可以在评论区写下你的想法。好啦，这篇博客就先写到这里，谢谢大家！
 
 # 更新说明
 
-截至2021年6月25日，基于中间件的方案已支持以下特性：自动注入客户端、自动配置路由。详情请参考：[https://hub.fastgit.org/Regularly-Archive/2021/tree/master/src/GRPC.Logging/Grpc.Gateway](https://hub.fastgit.org/Regularly-Archive/2021/tree/master/src/GRPC.Logging/Grpc.Gateway)。在此方案下，只需要 4 行代码：
+截至 2021 年 6 月 25 日，基于中间件的方案已支持以下特性：自动注入客户端、自动配置路由。详情请参考：[https://hub.fastgit.org/Regularly-Archive/2021/tree/master/src/GRPC.Logging/Grpc.Gateway](https://hub.fastgit.org/Regularly-Archive/2021/tree/master/src/GRPC.Logging/Grpc.Gateway)。在此方案下，只需要 4 行代码：
 
 ```csharp
 public void ConfigureServices(IServiceCollection services)
