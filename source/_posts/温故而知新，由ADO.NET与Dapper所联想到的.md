@@ -1,6 +1,6 @@
 ---
 toc: true
-title: 温故而知新，由 ADO.NET 与 Dapper 所联想到的
+title: 温故而知新，由ADO.NET与Dapper所联想到的
 categories:
   - 编程语言
 tags:
@@ -12,14 +12,14 @@ copyright: true
 abbrlink: 2621074915
 date: 2020-12-30 12:49:47
 ---
- 这段时间在维护一个“遗产项目”，体验可以说是相当地难受，因为它的数据持久化层完全由 ADO.NET 纯手工打造，所以，你可以在项目中看到无所不在的 DataTable，不论是读操作还是写操作。这个 DataTable 让我这个习惯了 Entity Framework 的人感到非常别扭，我并不排斥写手写 SQL 语句，我只是拥有某种自觉并且清醒地知道，自己写的 SQL 语句未必就比 ORM 生成的 SQL 语句要好。可至少应该是像 Dapper 这种程度的封装啊，因为关系型数据库天生就和面向对象编程存在隔离，所以，频繁地使用 DataTable 无疑意味着你要写很多的转换的代码，当我看到`DbConnection`、`DbCommand`、`DbDataReader`、`DbDataAdapter`这些熟悉的“底层”的时候，我意识到我可以结合着 Dapper 的实现，从中梳理出一点改善的思路，所以，这篇博客想聊一聊**ADO.NET**、**Dapper**和**Dynamic**这三者间交叉的部分，希望能给大家带来新的启发。
+ 这段时间在维护一个“遗产项目”，体验可以说是相当地难受，因为它的数据持久化层完全由ADO.NET纯手工打造，所以，你可以在项目中看到无所不在的DataTable，不论是读操作还是写操作。这个DataTable让我这个习惯了Entity Framework的人感到非常别扭，我并不排斥写手写SQL语句，我只是拥有某种自觉并且清醒地知道，自己写的SQL语句未必就比ORM生成的SQL语句要好。可至少应该是像Dapper这种程度的封装啊，因为关系型数据库天生就和面向对象编程存在隔离，所以，频繁地使用DataTable无疑意味着你要写很多的转换的代码，当我看到`DbConnection`、`DbCommand`、`DbDataReader`、`DbDataAdapter`这些熟悉的“底层”的时候，我意识到我可以结合着Dapper的实现，从中梳理出一点改善的思路，所以，这篇博客想聊一聊**ADO.NET**、**Dapper**和**Dynamic**这三者间交叉的部分，希望能给大家带来新的启发。
 
-# 重温 ADO.NET
-相信大家都知道，我这里提到的`DbConnection`、`DbCommand`、`DbDataReader`、`DbDataAdapte`以及`DataTable`、`DataSet`，实际上就是 ADO.NET 中核心的组成部分，譬如`DbConnection`负责管理数据库连接，`DbCommand`负责 SQL 语句的执行，`DbDataReader`和`DbDataAdapter`负责数据库结果集的读取。需要注意的是，这些类型都是抽象类，而各个数据库的具体实现，则是由对应的厂商来完成，即我们称之为“驱动”的部分，它们都遵循同一套接口规范，而`DataTable`和`DataSet`则是“装”数据库结果集的容器。关于 ADO.NET 的设计理念，可以从下图中得到更清晰的答案：
+# 重温ADO.NET
+相信大家都知道，我这里提到的`DbConnection`、`DbCommand`、`DbDataReader`、`DbDataAdapte`以及`DataTable`、`DataSet`，实际上就是ADO.NET中核心的组成部分，譬如`DbConnection`负责管理数据库连接，`DbCommand`负责SQL语句的执行，`DbDataReader`和`DbDataAdapter`负责数据库结果集的读取。需要注意的是，这些类型都是抽象类，而各个数据库的具体实现，则是由对应的厂商来完成，即我们称之为“驱动”的部分，它们都遵循同一套接口规范，而`DataTable`和`DataSet`则是“装”数据库结果集的容器。关于ADO.NET的设计理念，可以从下图中得到更清晰的答案：
 
 ![ADO.NET架构](https://i.loli.net/2020/12/31/dEN2tajehboDiTl.png)
 
-在这种理念的指引，使用 ADO.NET 访问数据库通常会是下面的画风。博主相信，大家在各种各样的`DbHelper`或者`DbUtils`中都见过类似的代码片段，在更复杂的场景中，我们会使用`DbParameter`来辅助`DbCommand`，而这就是所谓的**SQL 参数化查询**。
+在这种理念的指引，使用ADO.NET访问数据库通常会是下面的画风。博主相信，大家在各种各样的`DbHelper`或者`DbUtils`中都见过类似的代码片段，在更复杂的场景中，我们会使用`DbParameter`来辅助`DbCommand`，而这就是所谓的**SQL参数化查询**。
 
 ```CSharp
 var fileName = Path.Combine(Directory.GetCurrentDirectory(), "Chinook.db");
@@ -61,13 +61,13 @@ Console.WriteLine($"Title={reader.GetFieldValue<string>("Title")}");
 Console.WriteLine($"ArtistId={reader.GetInt32("ArtistId")}");
 ```
 
-在这个“遗产项目”中，`DbDataReader`和`DbDataAdapter`都有所涉猎，后者在结果集不大的情况下还是可以的，唯一的遗憾就是`DataTable`和`LINQ`的违和感实在太强烈了，虽然可以勉强使用`AsEnumerable()`拯救一下，而前者就有一点魔幻了，你能看到各种`GetValue(1)`、`GetValue(2)`这样的写法，这简直就是成心不想让后面维护的人好过，因为加字段的时候要小心翼翼地，确保字段顺序不会被修改。明明这个世界上有[Dapper](https://github.com/StackExchange/Dapper)、[SqlSugar](https://github.com/donet5/SqlSugar)、[SmartSql](https://smartsql.net/)这样优秀的 ORM 存在，为什么就要如此执著地写这种代码呢？是觉得 MyBatis 在 XML 里写 SQL 语句很时尚吗？
+在这个“遗产项目”中，`DbDataReader`和`DbDataAdapter`都有所涉猎，后者在结果集不大的情况下还是可以的，唯一的遗憾就是`DataTable`和`LINQ`的违和感实在太强烈了，虽然可以勉强使用`AsEnumerable()`拯救一下，而前者就有一点魔幻了，你能看到各种`GetValue(1)`、`GetValue(2)`这样的写法，这简直就是成心不想让后面维护的人好过，因为加字段的时候要小心翼翼地，确保字段顺序不会被修改。明明这个世界上有[Dapper](https://github.com/StackExchange/Dapper)、[SqlSugar](https://github.com/donet5/SqlSugar)、[SmartSql](https://smartsql.net/)这样优秀的ORM存在，为什么就要如此执著地写这种代码呢？是觉得MyBatis在XML里写SQL语句很时尚吗？
 
-所以，我开始尝试改进这些代码，我希望它可以像 Dapper 一样，提供`Query<T>()`和`Execute()`两个方法足矣！如果要把结果集映射到一个具体的类型上，大家都能想到使用反射，我更想实现的是 Dapper 里的`DapperRow`，它可以通过“·”或者字典的形式来访问字段，现在的问题来了，你能实现类似 Dapper 里 DapperRow 的效果吗？因为想偷懒的时候，dynamic 不比 DataRow 更省事儿吗？那玩意儿光转换类型就要烦死人了，更不用说要映射到某个 DTO 啦！
+所以，我开始尝试改进这些代码，我希望它可以像Dapper一样，提供`Query<T>()`和`Execute()`两个方法足矣！如果要把结果集映射到一个具体的类型上，大家都能想到使用反射，我更想实现的是Dapper里的`DapperRow`，它可以通过“·”或者字典的形式来访问字段，现在的问题来了，你能实现类似Dapper里DapperRow的效果吗？因为想偷懒的时候，dynamic不比DataRow更省事儿吗？那玩意儿光转换类型就要烦死人了，更不用说要映射到某个DTO啦！
 
-# 实现 DynamicRow
+# 实现DynamicRow
 
-通过阅读 Dapper 的源代码，我们知道，Dapper 中用[DapperTable](https://github.com/StackExchange/Dapper/blob/main/Dapper/SqlMapper.DapperTable.cs)和[DapperRow](https://github.com/StackExchange/Dapper/blob/main/Dapper/SqlMapper.DapperRowMetaObject.cs)替换掉了 DataTable 和 DataRow，可见这两个玩意儿有多不好用，果然，英雄所见略同啊，哈哈哈！其实，这背后的一切的功臣是[IDynamicMetaObjectProvider](https://docs.microsoft.com/zh-cn/dotnet/api/system.dynamic.idynamicmetaobjectprovider?view=net-5.0)，通过这个接口我们就能实现类似的功能，我们熟悉的`ExpendoObject`就是最好的例子：
+通过阅读Dapper的源代码，我们知道，Dapper中用[DapperTable](https://github.com/StackExchange/Dapper/blob/main/Dapper/SqlMapper.DapperTable.cs)和[DapperRow](https://github.com/StackExchange/Dapper/blob/main/Dapper/SqlMapper.DapperRowMetaObject.cs)替换掉了DataTable和DataRow，可见这两个玩意儿有多不好用，果然，英雄所见略同啊，哈哈哈！其实，这背后的一切的功臣是[IDynamicMetaObjectProvider](https://docs.microsoft.com/zh-cn/dotnet/api/system.dynamic.idynamicmetaobjectprovider?view=net-5.0)，通过这个接口我们就能实现类似的功能，我们熟悉的`ExpendoObject`就是最好的例子：
 
 ```CSharp
 dynamic person = new ExpandoObject(); 
@@ -79,7 +79,7 @@ person.LastName = "Holmes";
 (person as IDctionary<string, object>)["LastName"] = "Holmes";
 ```
 
-这里，我们用一种简单的方式，让 DynamicRow 继承者 DynamicObject，下面一起来看具体的代码：
+这里，我们用一种简单的方式，让DynamicRow继承者DynamicObject，下面一起来看具体的代码：
 
 ```CSharp
 public class DynamicRow : DynamicObject
@@ -102,9 +102,9 @@ public class DynamicRow : DynamicObject
        _record.GetOrdinal(field) > 0 ? _record[field] : null;
 }
 ```
-对于`DynamicObject`这个类型而言，里面最重要的两个方法其实是`TryGetMember()`和`TrySetMember()`，因为这决定了这个动态对象的读和写两个操作。因为我们这里不需要反向地去操作数据库，所以，我们只需要关注`TryGetMember()`即可，一旦实现这个方法，我们就可以使用类似`foo.bar`这种形式访问字段，而提供一个索引器，则是为了提供类似`foo["bar"]`的访问方式，这一点同样是为了像 Dapper 看齐，无非是 Dapper 的 DynamicRow 本来就是一个字典！
+对于`DynamicObject`这个类型而言，里面最重要的两个方法其实是`TryGetMember()`和`TrySetMember()`，因为这决定了这个动态对象的读和写两个操作。因为我们这里不需要反向地去操作数据库，所以，我们只需要关注`TryGetMember()`即可，一旦实现这个方法，我们就可以使用类似`foo.bar`这种形式访问字段，而提供一个索引器，则是为了提供类似`foo["bar"]`的访问方式，这一点同样是为了像Dapper看齐，无非是Dapper的DynamicRow本来就是一个字典！
 
-现在，我们来着手实现一个简化版的 Dapper，给`IDbConnection`这个接口扩展出`Query<T>()`和`Execute()`两个方法，我们注意到`Query<T>()`需要用到`DbDataReader`或者`DbDataAdapter`其一，对于`DbDataAdapter`而言，它的实现完全由具体的子类决定，所以，对于`IDbConnection`接口而言，它完全不知道对应的子类是什么，此时，我们只能通过判断`IDbConnection`的类型来返回对应的 DbDataAdapter。读过我之前[博客](https://blog.yuanpei.me/posts/3086300103/)的朋友，应该对 Dapper 里的数据库类型的字典有印象，不好意思，这里历史要再次上演啦！
+现在，我们来着手实现一个简化版的Dapper，给`IDbConnection`这个接口扩展出`Query<T>()`和`Execute()`两个方法，我们注意到`Query<T>()`需要用到`DbDataReader`或者`DbDataAdapter`其一，对于`DbDataAdapter`而言，它的实现完全由具体的子类决定，所以，对于`IDbConnection`接口而言，它完全不知道对应的子类是什么，此时，我们只能通过判断`IDbConnection`的类型来返回对应的DbDataAdapter。读过我之前[博客](https://blog.yuanpei.me/posts/3086300103/)的朋友，应该对Dapper里的数据库类型的字典有印象，不好意思，这里历史要再次上演啦！
 
 ```CSharp
 public static IEnumerable<dynamic> Query(this IDbConnection connection, string sql, 
@@ -169,7 +169,7 @@ public static int Execute(this IDbConnection connection, string sql,
 ```
 # 实现参数化查询
 
-大家可以注意到，我这里的参数 param 完全没有用上，这是因为`IDbCommand`的`Paraneters`属性显然是一个抽象类的集合。所以，从`IDbConnection`的角度来看这个问题的时候，它又不知道这个参数要如何来给了，而且像 Dapper 里的参数，涉及到集合类型会存在`IN`和`NOT IN`以及批量操作的问题，比普通的字符串替换还要稍微复杂一点。如果我们只考虑最简单的情况，它还是可以尝试一番的：
+大家可以注意到，我这里的参数param完全没有用上，这是因为`IDbCommand`的`Paraneters`属性显然是一个抽象类的集合。所以，从`IDbConnection`的角度来看这个问题的时候，它又不知道这个参数要如何来给了，而且像Dapper里的参数，涉及到集合类型会存在`IN`和`NOT IN`以及批量操作的问题，比普通的字符串替换还要稍微复杂一点。如果我们只考虑最简单的情况，它还是可以尝试一番的：
 
 ```CSharp
 private static void SetDbParameter(this IDbCommand command, object param = null)
@@ -225,13 +225,13 @@ private static IDataReader CreateDataReader(this IDbConnection connection, strin
 }
 ```
 
-现在，唯一的问题就剩下`DbType`和`@`啦，前者在不同的数据库中可能对应不同的类型，后者则要面临 Oracle 这朵奇葩的兼容性问题，相关内容可以参考在这篇博客：[Dapper.Contrib 在 Oracle 环境下引发 ORA-00928 异常问题的解决](https://blog.yuanpei.me/posts/3086300103/)。到这一步，我们基本上可以实现类似 Dapper 的效果。当然，我并不是为了重复制造轮子，只是像从 Dapper 这样一个结果反推出相关的技术细节，从而可以串联起整个 ASO.NET 甚至是 Entity Framework 的知识体系，工作中解决类似的问题非常简单，直接通过 NuGet 安装 Dapper 即可，可如果你想深入了解某一个事物，最好的方法就是亲自去探寻其中的原理。现在基础设施越来越完善了，可有时候我们再找不回编程的那种快乐，大概是我们内心深处放弃了什么……
+现在，唯一的问题就剩下`DbType`和`@`啦，前者在不同的数据库中可能对应不同的类型，后者则要面临Oracle这朵奇葩的兼容性问题，相关内容可以参考在这篇博客：[Dapper.Contrib在Oracle环境下引发ORA-00928异常问题的解决](https://blog.yuanpei.me/posts/3086300103/)。到这一步，我们基本上可以实现类似Dapper的效果。当然，我并不是为了重复制造轮子，只是像从Dapper这样一个结果反推出相关的技术细节，从而可以串联起整个ASO.NET甚至是Entity Framework的知识体系，工作中解决类似的问题非常简单，直接通过NuGet安装Dapper即可，可如果你想深入了解某一个事物，最好的方法就是亲自去探寻其中的原理。现在基础设施越来越完善了，可有时候我们再找不回编程的那种快乐，大概是我们内心深处放弃了什么.....
 
-考虑到，从微软的角度，它鼓励我们为每一家数据库去实现数据库驱动，所以，它定义了很多的抽象类。而从 ORM 的角度来考虑，它要抹平不同数据库的差异，Dapper 的做法是给`IDbConnection`写扩展方法，而针对每个数据库的“方言”，实际上不管什么 ORM 都要去做这部分“脏活儿”，以前是分给数据库厂商去做，现在是交给 ORM 设计者去做，我觉得 ADO.NET 里似乎缺少了一部分东西，它需要提供一个 IDbAdapterProvider 的接口，返回 IDbAdapter 接口，这样就可以不用关心它是被如何创建出来的。你看，同样是设计接口，可微软和 ServiceStack 俨然是两种不同的思路，这其中的差异，足可窥见一斑矣！实际上，Entity Framework 就是在以 ADO.NET 为基础发展而来的，在这个过程中，还是由厂商来实现对应的 Provider。此时此刻，你悟到了我所说的“温故而知新”了嘛？
+考虑到，从微软的角度，它鼓励我们为每一家数据库去实现数据库驱动，所以，它定义了很多的抽象类。而从ORM的角度来考虑，它要抹平不同数据库的差异，Dapper的做法是给`IDbConnection`写扩展方法，而针对每个数据库的“方言”，实际上不管什么ORM都要去做这部分“脏活儿”，以前是分给数据库厂商去做，现在是交给ORM设计者去做，我觉得ADO.NET里似乎缺少了一部分东西，它需要提供一个IDbAdapterProvider的接口，返回IDbAdapter接口，这样就可以不用关心它是被如何创建出来的。你看，同样是设计接口，可微软和ServiceStack俨然是两种不同的思路，这其中的差异，足可窥见一斑矣！实际上，Entity Framework就是在以ADO.NET为基础发展而来的，在这个过程中，还是由厂商来实现对应的Provider。此时此刻，你悟到了我所说的“温故而知新”了嘛？
 
 # 本文小结
 
-本文实则由针对 DataSet/DataTable 的吐槽而引出，在这个过程中，我们重新温习了 ADO.NET 中`DbConnection`、`DbCommand`、`DbDataReader`、`DbDataAdapter`这些关键的组成部分，而为了解决 DataTable 在使用上的种种不变，我们想到了借鉴 Dapper 中的 DapperRow 来实现“动态查询”，由此引出了.NET 中实现 dynamic 最重要的一个接口：`IDynamicMetaObjectProvide`，这使得我们可以在查询数据库的时候返回一个 dynamic 的集合。而为了更接近 Dapper 一点，我们基于扩展方法的形式为`IDbConnection`编写了`Query<T>()`和`Execute()`方法，在数据库读写层面上彻底终结了 DataSet/DataTable 的生命。最后，我们实现了一个简化版本的参数化查询，同样是借鉴 Dapper 的思路。这说明一件什么事情呢？**当你在一个看似合理、结局固定的现状中无法摆脱的时候，“平躺”虽然能让你获得一丝喘息的机会，但与此同时，你永远失去了跳出这个层级去看待事物的机会**，就像我以前吐槽同事天天用`StringBuider`拼接字符串一样，一味地吐槽是没有什么用的，重要的是你会选择怎么做，所以，后来我向大家推荐了[Linquid](https://github.com/dotliquid/dotliquid)，**2021 年已经来了，希望你不只是增长了年龄和皱纹**，晚安！
+本文实则由针对DataSet/DataTable的吐槽而引出，在这个过程中，我们重新温习了ADO.NET中`DbConnection`、`DbCommand`、`DbDataReader`、`DbDataAdapter`这些关键的组成部分，而为了解决DataTable在使用上的种种不变，我们想到了借鉴Dapper中的DapperRow来实现“动态查询”，由此引出了.NET中实现dynamic最重要的一个接口：`IDynamicMetaObjectProvide`，这使得我们可以在查询数据库的时候返回一个dynamic的集合。而为了更接近Dapper一点，我们基于扩展方法的形式为`IDbConnection`编写了`Query<T>()`和`Execute()`方法，在数据库读写层面上彻底终结了DataSet/DataTable的生命。最后，我们实现了一个简化版本的参数化查询，同样是借鉴Dapper的思路。这说明一件什么事情呢？**当你在一个看似合理、结局固定的现状中无法摆脱的时候，“平躺”虽然能让你获得一丝喘息的机会，但与此同时，你永远失去了跳出这个层级去看待事物的机会**，就像我以前吐槽同事天天用`StringBuider`拼接字符串一样，一味地吐槽是没有什么用的，重要的是你会选择怎么做，所以，后来我向大家推荐了[Linquid](https://github.com/dotliquid/dotliquid)，**2021年已经来了，希望你不只是增长了年龄和皱纹**，晚安！
 
 
 

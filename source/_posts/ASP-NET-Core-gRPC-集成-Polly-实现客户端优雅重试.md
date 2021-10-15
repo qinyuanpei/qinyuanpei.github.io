@@ -18,7 +18,7 @@ date: 2021-06-07 15:19:11
 
 # 引言 
 
-在此之前，博主曾经介绍过 [HttpClient](https://blog.yuanpei.me/posts/2070070822/) 的重试。所以，今天这篇博客我们来聊聊`gRPC`的客户端重试，因为要构建一个高可用的微服务架构，除了需要高可用的服务提供者，同样还需要高可用的服务消费者。下面，博主将由浅入深地为大家分享 4 种重试方案的实现，除了 [官方](https://docs.microsoft.com/zh-cn/aspnet/core/grpc/retries?view=aspnetcore-3.1) 内置的方案，基本上都需要搭配 Polly 来使用，所以，到这里你可以理解这篇博客的标题，为什么博主会 [毁人不倦](https://music.163.com/#/song?id=167720) 地尝试不同的重试方案，因为每一种方案都有它自身的局限性，博主想要的是一种更优雅的方案。具体来讲，主要有：**基于 gRPC RetryPolicy**、**基于 HttpClientFactory**、**基于 gRPC 拦截器** 以及 **基于 CallInvoker**  4 种方案。如果大家还有更好的思路，欢迎大家在博客评论区积极留言、参与讨论。
+在此之前，博主曾经介绍过 [HttpClient](https://blog.yuanpei.me/posts/2070070822/) 的重试。所以，今天这篇博客我们来聊聊`gRPC`的客户端重试，因为要构建一个高可用的微服务架构，除了需要高可用的服务提供者，同样还需要高可用的服务消费者。下面，博主将由浅入深地为大家分享 4 种重试方案的实现，除了 [官方](https://docs.microsoft.com/zh-cn/aspnet/core/grpc/retries?view=aspnetcore-3.1) 内置的方案，基本上都需要搭配 Polly 来使用，所以，到这里你可以理解这篇博客的标题，为什么博主会 [毁人不倦](https://music.163.com/#/song?id=167720) 地尝试不同的重试方案，因为每一种方案都有它自身的局限性，博主想要的是一种更优雅的方案。具体来讲，主要有：**基于 gRPC RetryPolicy**、**基于 HttpClientFactory**、**基于 gRPC 拦截器** 以及 **基于CallInvoker**  4 种方案。如果大家还有更好的思路，欢迎大家在博客评论区积极留言、参与讨论。
 
 # 基于 gRPC RetryPolicy
 
@@ -41,11 +41,11 @@ var channel = GrpcChannel.ForAddress("https://localhost:5001", new GrpcChannelOp
 });
 ```
 
-在上面的代码中，`MethodConfig`可以为指定的方法配置一个重试策略，当传入的方法名为`MethodName.Default`时，它将应用于该通道下的所有 gRPC 方法。如你所见，在重试策略中我们可以指定重试次数、重试间隔等参数。**这个方案本身没有太多心智上的负担，唯一的缺点是，它没有预留出可扩展的接口**，以至于我们想要验证它到底有没有重试的时候，居然要通过`Fiddler`抓包这种方式，换句话讲，我们没有办法自定义整个重试行为，譬如你想在重试过程中记录日志，这种方案就会鸡肋起来，**对使用者来说，这完全就是一个黑盒子**。
+在上面的代码中，`MethodConfig`可以为指定的方法配置一个重试策略，当传入的方法名为`MethodName.Default`时，它将应用于该通道下的所有gRPC方法。如你所见，在重试策略中我们可以指定重试次数、重试间隔等参数。**这个方案本身没有太多心智上的负担，唯一的缺点是，它没有预留出可扩展的接口**，以至于我们想要验证它到底有没有重试的时候，居然要通过`Fiddler`抓包这种方式，换句话讲，我们没有办法自定义整个重试行为，譬如你想在重试过程中记录日志，这种方案就会鸡肋起来，**对使用者来说，这完全就是一个黑盒子**。
 
 ![官方自带的 “黑盒子” 重试机制](https://i.loli.net/2021/06/09/QzjaH4VqWMnEFcb.png)
 
-除此之外，官方还提供了一种成为 `Hedging` 重试策略作为备选方案。类似地，它通过 `HedgingPolicy` 属性来指定重试策略。对比 `RetryPolicy`，它可以同时发送单个 gRPC 请求的多个副本，并使用第一个成功的结果作为返回值，所以，**一个显而易见的约束是，它要求这个 gRPC 方法是无副作用的、幂等的函数**。其实，这是所有重试方案都应该考虑的一个问题，而不单单是 `HedgingPolicy`。由于这两种策略有着本质上的不同，请记住：**RetryPolicy 不能与 HedgingPolicy 一起使用。**
+除此之外，官方还提供了一种成为 `Hedging` 重试策略作为备选方案。类似地，它通过 `HedgingPolicy` 属性来指定重试策略。对比 `RetryPolicy`，它可以同时发送单个gRPC请求的多个副本，并使用第一个成功的结果作为返回值，所以，**一个显而易见的约束是，它要求这个gRPC方法是无副作用的、幂等的函数**。其实，这是所有重试方案都应该考虑的一个问题，而不单单是 `HedgingPolicy`。由于这两种策略有着本质上的不同，请记住：**RetryPolicy不能与HedgingPolicy一起使用。**
 
 ```csharp
 var defaultMethodConfig = new MethodConfig {
@@ -144,7 +144,7 @@ public override AsyncUnaryCall<TResponse> AsyncUnaryCall<TRequest, TResponse>(
 
 # 基于 CallInvoker
 
-如果说，前面的 3 种方案都属于“**见招拆招**”的外家功夫。那么，接下来我要分享的思路，绝对可以称得上是“**打通任督二脉**”的玄门内功。
+如果说，前面的3种方案都属于“**见招拆招**”的外家功夫。那么，接下来我要分享的思路，绝对可以称得上是“**打通任督二脉**”的玄门内功。
 
 ![gRPC客户端底层原理说明](https://i.loli.net/2021/06/09/IOwrYtdLXGxMeHf.png)
 
@@ -235,7 +235,7 @@ protected CallInvocationDetails<TRequest, TResponse> CreateCall<TRequest, TRespo
 }
 ```
 
-接下来，`CreatePollyPolicy()`这个方法就非常的明确啦，通过注入的`GrpcPollyPolicyOptions`来构造一个 Policy。考虑到我们要做的是一个通用的方案，这里预留了**断路器**、**重试**、**超时**三种不同策略的参数。如果希望对构建 Policy 的过程进行自定义，则可以通过重写该方法来实现：
+接下来，`CreatePollyPolicy()`这个方法就非常的明确啦，通过注入的`GrpcPollyPolicyOptions`来构造一个Policy。考虑到我们要做的是一个通用的方案，这里预留了**断路器**、**重试**、**超时**三种不同策略的参数。如果希望对构建Policy的过程进行自定义，则可以通过重写该方法来实现：
 
 ```csharp
 public virtual Policy<TResult> CreatePollyPolicy<TResult>()

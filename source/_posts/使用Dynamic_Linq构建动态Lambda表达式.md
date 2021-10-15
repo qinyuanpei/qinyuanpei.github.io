@@ -12,14 +12,14 @@ tags:
 - Linq
 - Lambda
 - 表达式树
-title: 使用 Dynamic Linq 构建动态 Lambda 表达式
+title: 使用Dynamic Linq构建动态Lambda表达式
 toc: true
 ---
 
-相信大家都有这样一种感觉，`Linq`和`Lambda`是.NET 中一以贯之的存在，从最早的 Linq to Object 到 Linq to SQL，再到 EF/EF Core 甚至如今的.NET Core，我们可以看到`Lambda`表达式的身影出现地越来越频繁。虽然 Linq to Object 和 Linq to SQL，分别是以`IEnumerable<T>`和`IQueryable <T>`为基础来实现的。我个人以为，`Lambda`呢，其实就是匿名委托的“变种”，而`Linq`则是对`Lambda`的进一步封装。在`System.Linq.Expressions`命名空间下，提供大量关于表达式树的 API，而我们都知道，这些表达式树最终都会被编译为委托。所以，动态创建 Lambda 表达式，实际上就是指从一个字符串生成对应委托的过程，而一旦这个委托被生成，可以直接传递给 Where()方法作为参数，显然，它可以对源数据进行过滤，这正是我们想要的结果。
+相信大家都有这样一种感觉，`Linq`和`Lambda`是.NET中一以贯之的存在，从最早的Linq to Object到Linq to SQL，再到EF/EF Core甚至如今的.NET Core，我们可以看到`Lambda`表达式的身影出现地越来越频繁。虽然Linq to Object和Linq to SQL，分别是以`IEnumerable<T>`和`IQueryable <T>`为基础来实现的。我个人以为，`Lambda`呢，其实就是匿名委托的“变种”，而`Linq`则是对`Lambda`的进一步封装。在`System.Linq.Expressions`命名空间下，提供大量关于表达式树的API，而我们都知道，这些表达式树最终都会被编译为委托。所以，动态创建Lambda表达式，实际上就是指从一个字符串生成对应委托的过程，而一旦这个委托被生成，可以直接传递给Where()方法作为参数，显然，它可以对源数据进行过滤，这正是我们想要的结果。
 
 # 事出有因
-在今天这篇博客中，我们主要介绍`System.Linq.Dynamic.Core`这个库，即我所说的 Dynamic Linq。本着“艺术源于生活的态度”，在介绍它的用法之前，不妨随博主一起看看，一个“简单“的查询是如何随着业务演进而变得越来越复杂。从某种意义上来说，正是它让博主想起了 Dynamic Linq。我们为客户编写了一个生成订单的接口，它从一张数据表中“消费”订单数据。最开始，它只需要过滤状态为“未处理”的记录，对应的 CRUD 可以表示为这样：
+在今天这篇博客中，我们主要介绍`System.Linq.Dynamic.Core`这个库，即我所说的Dynamic Linq。本着“艺术源于生活的态度”，在介绍它的用法之前，不妨随博主一起看看，一个“简单“的查询是如何随着业务演进而变得越来越复杂。从某种意义上来说，正是它让博主想起了Dynamic Linq。我们为客户编写了一个生成订单的接口，它从一张数据表中“消费”订单数据。最开始，它只需要过滤状态为“未处理”的记录，对应的CRUD可以表示为这样：
 ```CSharp
 var orderInfos = repository.GetByQuery<tt_wg_order>(x => x.STATUS == 10);
 ```
@@ -36,12 +36,12 @@ searchParameters.QueryModel.Items.Add(new ConditionItem { Field = "Isdelete", Me
 //此处省略更多的查询条件:)
 var orderInfos = repository.GetByPage<tt_wg_order>(searchParameters);
 ```
-可以想象得出，终极终终极的查询会变成下面这张图。这种方式看起来很美好对不对？可谁能想到，就在五一放假前的某一天里，博主还在替某个“刁钻”客户排查一组同样“刁钻”的过滤条件为什么没有生效。显然，我需要有一种更友好的方式，它可以从一个字符串变成一个委托，就像 JavaScript 里"邪恶"的 Eval()函数一样，说它邪恶，是因为它的输入是不可控的，"机智"的人类习惯把事件万物都当成 SQL 语句，其实，RESTful 接口里传 SQL、调存储过程难道不可以吗？同样，是因为这种做法太"邪恶"。
+可以想象得出，终极终终极的查询会变成下面这张图。这种方式看起来很美好对不对？可谁能想到，就在五一放假前的某一天里，博主还在替某个“刁钻”客户排查一组同样“刁钻”的过滤条件为什么没有生效。显然，我需要有一种更友好的方式，它可以从一个字符串变成一个委托，就像JavaScript里"邪恶"的Eval()函数一样，说它邪恶，是因为它的输入是不可控的，"机智"的人类习惯把事件万物都当成SQL语句，其实，RESTful接口里传SQL、调存储过程难道不可以吗？同样，是因为这种做法太"邪恶"。
 
 ![过滤条件在风中凌乱]](https://i.loli.net/2020/05/11/QEDHwA9bZUTInJY.png)
 
 # ParseLambda
-首先，通过`nuget`安装：`System.Linq.Dynamic.Core`。这里主要介绍的是介绍的是其中的 ParseLambda()方法，顾名思义，它可以把一个字符串转换为指定类型的委托，一起来看下面的例子。首先，我们定义一个通用方法 BuildLambda<T>：
+首先，通过`nuget`安装：`System.Linq.Dynamic.Core`。这里主要介绍的是介绍的是其中的ParseLambda()方法，顾名思义，它可以把一个字符串转换为指定类型的委托，一起来看下面的例子。首先，我们定义一个通用方法BuildLambda<T>：
 ```CSharp
 Func<T, bool> BuildLambda<T>(string exps)
 {
@@ -85,7 +85,7 @@ var condAndAlso = Expression.AndAlso(condStatus, condIsDelete);
 //x => x.STATUS == 10 && x.Isdelete == 0
 var lambda = Expression.Lambda<Func<tt_wg_order,bool>>(condAndAlso, parameter);
 ```
-我们可以注意到，一个Lmabda表达式，可以抽象为:参数(`Parameter`)和函数体(`Body`)两部分，而`Body`实际上是由一个`操作符`和一个`值`组成。譬如这里的第一个条件：`x.STATUS == 10`。在这里基础上，我们可以定义一个类型：SearchParameters，它将每个条件抽象为字段(Field)、查询方法(QueryMethod)、值(Value)和或分组(OrGroup)。所以，它的处理逻辑就是，将相同 OrGroup 的条件放在一起用 Or 连接，然后再和其它条件放在一起用 And 连接。故而，它可以通过表达式构造出一个 Predict<T>类型的委托，而我们的数据持久层是使用 EF 来实现的，所以，它可以顺利成章地和 IQueryable<T>搭配使用，这就是我们这个 SearchParameters 的实现原理，它唯一让我觉得不好的地方是，字段(Field)不能通过一个 Lambda 表达式去构造，而必须传入一个字符串，这给了使用者写错字段名称的机会(逃：
+我们可以注意到，一个Lmabda表达式，可以抽象为:参数(`Parameter`)和函数体(`Body`)两部分，而`Body`实际上是由一个`操作符`和一个`值`组成。譬如这里的第一个条件：`x.STATUS == 10`。在这里基础上，我们可以定义一个类型：SearchParameters，它将每个条件抽象为字段(Field)、查询方法(QueryMethod)、值(Value)和或分组(OrGroup)。所以，它的处理逻辑就是，将相同OrGroup的条件放在一起用Or连接，然后再和其它条件放在一起用And连接。故而，它可以通过表达式构造出一个Predict<T>类型的委托，而我们的数据持久层是使用EF来实现的，所以，它可以顺利成章地和IQueryable<T>搭配使用，这就是我们这个SearchParameters的实现原理，它唯一让我觉得不好的地方是，字段(Field)不能通过一个Lambda表达式去构造，而必须传入一个字符串，这给了使用者写错字段名称的机会(逃：
 ```CSharp
  public static class LambdaExpressionBuilder 
  {
@@ -178,9 +178,9 @@ var lambda = LambdaExpressionBuilder.BuildLambda<Foo>(searchParameters.Query);
 var where = lambda.Compile();
 var result = list.Where(where);
 ```
-这种实现可以说相当巧妙啦，因为通过有限的条件，我们就可以覆盖到大部分查询的场景，而如果直接去解析一个 Lambda 表达式，难度显然会增加不少。这里是以一个普通的泛型列表作为示例的，而在实际使用中，常常是结合 EntityFramework 这类 ORM 来使用的。相应地，我们只需要为 IQueryable 接口扩展出支持 SearchParameter 作为参数进行查询地扩展方法即可，这分别对应了我们在文章一开头所提到的`IEnumerable<T>`和`IQueryable <T>`。
+这种实现可以说相当巧妙啦，因为通过有限的条件，我们就可以覆盖到大部分查询的场景，而如果直接去解析一个Lambda表达式，难度显然会增加不少。这里是以一个普通的泛型列表作为示例的，而在实际使用中，常常是结合EntityFramework这类ORM来使用的。相应地，我们只需要为IQueryable接口扩展出支持SearchParameter作为参数进行查询地扩展方法即可，这分别对应了我们在文章一开头所提到的`IEnumerable<T>`和`IQueryable <T>`。
 
-可如果遇上 Dapper 这样的轻量级 ORM，我们要考虑的问题就变成了怎么通过 Lambda 表达式生成 SQL 语句，所以，通过 Dapper 来扩展功能的时候，最困难的地方，往往在于没法儿像 EF/EF Core 一样去随心所欲地 Where()，像 Dapper.Contrib 则只能先查询出所有结果再去做进一步的过滤，这种在数据量特别大的时候就会出问题。通过 Lambda 生成 SQL，最难的地方是，你压根不知道，人家会写一个什么样的表达式，而这个表达式，又怎么通过 SQL 去表达。那么，退而求其次，我们继续用 SearchParameters 来实现，因为它里面的 QueryMethod 是有限的，下面给出一个简单的实现：
+可如果遇上Dapper这样的轻量级ORM，我们要考虑的问题就变成了怎么通过Lambda表达式生成SQL语句，所以，通过Dapper来扩展功能的时候，最困难的地方，往往在于没法儿像EF/EF Core一样去随心所欲地Where()，像Dapper.Contrib则只能先查询出所有结果再去做进一步的过滤，这种在数据量特别大的时候就会出问题。通过Lambda生成SQL，最难的地方是，你压根不知道，人家会写一个什么样的表达式，而这个表达式，又怎么通过SQL去表达。那么，退而求其次，我们继续用SearchParameters来实现，因为它里面的QueryMethod是有限的，下面给出一个简单的实现：
 ```CSharp
 public static class SearchParametersExtension 
 {
@@ -308,9 +308,9 @@ public class QueryModel : List<Condition>
     }
   }
 ```
-其实，这还是表达式树的内容，在上面的代码片段中，早已出现过它的身影，回想起多年前用这个东西改造 INotifyPropertyChanged 的时候，总觉得一切似曾相识：
+其实，这还是表达式树的内容，在上面的代码片段中，早已出现过它的身影，回想起多年前用这个东西改造INotifyPropertyChanged的时候，总觉得一切似曾相识：
 ```CSharp
 searchParameters.Query.Add(new Condition<Foo>() { Field = x => x.StringValue, Op = Operation.Contains, Value = "有朋", OrGroup = "StringValue" });
 ```
 # 本文小结
-和博主的大多数博客一样，这篇博客是一个“醉翁之意不在酒”的博客。听起来在说如何动态创建 Lambda 表达式，实际上讲的还是表达式树，至于原因，则还是博客开篇所提到的“一以贯之”。博主想写这篇博客，是源于实际工作中遇到的“查询”问题，而最后解决的还真就是查询的问题。不管是 Dynamic Linq 中的 ParseLambda()还是表达式树中的 LambdaExpression，本质上都是同一个东西，最终的命运都是 Predict<T>这个委托。SearchParameters 则是对前者的一种简化，通过控制 Lambda 表达式的复杂度来简化问题，相比起直接传一个字符串过来，这种在风险的控制上要更高一点，之所以要传字符串，则是又一个非关技术的无聊的问题了，用 Jira 里的概念说应该叫做设计如此(By Design)。好了，以上就是这篇博客的内容啦，谢谢大家！
+和博主的大多数博客一样，这篇博客是一个“醉翁之意不在酒”的博客。听起来在说如何动态创建Lambda表达式，实际上讲的还是表达式树，至于原因，则还是博客开篇所提到的“一以贯之”。博主想写这篇博客，是源于实际工作中遇到的“查询”问题，而最后解决的还真就是查询的问题。不管是Dynamic Linq中的ParseLambda()还是表达式树中的LambdaExpression，本质上都是同一个东西，最终的命运都是Predict<T>这个委托。SearchParameters则是对前者的一种简化，通过控制Lambda表达式的复杂度来简化问题，相比起直接传一个字符串过来，这种在风险的控制上要更高一点，之所以要传字符串，则是又一个非关技术的无聊的问题了，用Jira里的概念说应该叫做设计如此(By Design)。好了，以上就是这篇博客的内容啦，谢谢大家！
