@@ -207,7 +207,7 @@ vConsole:
 
 # jsdelivr CDN
 jsdelivr:
-  enable: false
+  enable: true
   gh_user: qinyuanpei
   gh_repo: qinyuanpei.github.io
   baseUrl: cdn.jsdelivr.net
