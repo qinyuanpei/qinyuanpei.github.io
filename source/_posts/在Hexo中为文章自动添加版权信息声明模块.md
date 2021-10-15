@@ -3,13 +3,13 @@ abbrlink: 2950334112
 categories:
 - 独立博客
 date: 2015-11-15 13:12:22
-description: 大家可以看到这里就是一段HTML代码，因为我们要引入的这个模板和article.ejs在同一个页面中，所以我们可以直接在这里调用item这个变量，而item这个变量里是封装了当前文章的标题和链接的，因此我们可以顺利成章的构造这样一段HTML代码，因为博主不会写CSS样式，所以使用了一个默认的代码样式来完成这个工作，如果大家懂CSS，请自行发挥你的创意将它做得更好;<div
+description: 大家可以看到这里就是一段 HTML 代码，因为我们要引入的这个模板和 article.ejs 在同一个页面中，所以我们可以直接在这里调用 item 这个变量，而 item 这个变量里是封装了当前文章的标题和链接的，因此我们可以顺利成章的构造这样一段 HTML 代码，因为博主不会写 CSS 样式，所以使用了一个默认的代码样式来完成这个工作，如果大家懂 CSS，请自行发挥你的创意将它做得更好;<div
   class="article-content">;<div class="article-content">
 tags:
 - Hexo
 - 版权
 - 知识共享
-title: 在Hexo中为文章自动添加版权信息声明模块
+title: 在 Hexo 中为文章自动添加版权信息声明模块
 ---
 
 &emsp;&emsp;各位朋友，大家好，欢迎大家关注我的博客，我是秦元培，我的博客地址是[http://qinyuanpei.com](http://qinyuanpei.com)。今天想和大家说说博客文章版权这件事情。每当提到版权的时候，我知道大家内心深处都是对此不以为然的，因为国内版权意识薄弱，所以版权在我们的眼中就变成了这样一件可有可无的东西，可是事实真的是这样的吗？首先我们必须承认一件事情，即你从互联网上获得的知识都是有价值的，即使这些知识的创造者并未因此而获得利益。<!--more-->相对其它的行业，因为程序员这个职业本身需要其通过不断地学习新知识来适应新变化，因此程序员这个群体更喜欢在互联网上分享知识和经验，而这些知识的受众面窄、技术门槛高则决定了程序员们无法像普通的博客作者一样有更多的机会来获得收入。大部分的程序员都是从分享知识、记录学习和技术交流这样的角度来撰写博客的。那么这样就会造成一个问题，在国内版权意识薄弱和技术博客变现困难的双重夹缝中，博客作者该如何寻求新的突破呢？
@@ -23,7 +23,7 @@ title: 在Hexo中为文章自动添加版权信息声明模块
 
 # 谈谈如何保护博客文章版权
 &emsp;&emsp;在保护博客文章版权这个问题上，我们可以采取的方式固然很多，但是这件事情的根本原因在于人们普遍不重视知识产权的保护，所以我们这里提到的这些方式都是外家功夫，真正要根除这等沉疴痼疾需要人们不断提升自我、勤修内功。
-* 第一种方式，我们称为通过技术方式提醒，比如通过编写JavaScript脚本，实现当对方复制你的博客内容的时候，程序可以自动在这段复制的内容中增加署名和连接。当然我们可以通过修改文章的模板来在文章中加入版权信息，这个我们留到最后会说，因为实际上这个是我们今天要重点研究的内容，博主是个程序员，我们当然要用技术的方式来实现了，前面的这些大家看完心里有个数就是了，哈哈！
+* 第一种方式，我们称为通过技术方式提醒，比如通过编写 JavaScript 脚本，实现当对方复制你的博客内容的时候，程序可以自动在这段复制的内容中增加署名和连接。当然我们可以通过修改文章的模板来在文章中加入版权信息，这个我们留到最后会说，因为实际上这个是我们今天要重点研究的内容，博主是个程序员，我们当然要用技术的方式来实现了，前面的这些大家看完心里有个数就是了，哈哈！
 * 第二种方式，我们称为增加文章内链的方式，就是在文章中尽可能地使用指向这个博客的连接，这样可以保证在文章转载后为博客带来一定的反向访客。
 * 第三种方式，在图片上增加水印，这样读者在看到图片的时候就可以很容易地找到原始出处，可是如果你不能保证拥有所引用的图片得版权，建议不要轻易地使用这种方式。
 * 第四种方式，逐渐形成个性化的写作风格，这样当读者读到这些文字的时候，可以通过文章的风格知道文章的作者和出处。
@@ -32,9 +32,9 @@ title: 在Hexo中为文章自动添加版权信息声明模块
 博主之所以要使用[http://qinyuanpei.com](http://qinyuanpei.com)这个独立博客的原因正是基于这个原因。博主目前采用的[知识共享](http://baike.baidu.com/link?url=jcl0t2y3iwHPETIXjXM5yhQtujk2iUJE9Fy7dCoti7xtNDMxHYlUlXcW0GsorpaAWGq_Y1OSduIXVEpHlpSm1qHhV7mkGnU56J6JSRUuCRlwnWHNJL6K913N5mm9sMqiw1BXlmSprfhmwc1sxsjU3X7gMRd7z9OfBR446a__T3Gp90js_NnS6Dq-TkbmBeWB)许可是署名(BY)-非商业性使用(NC)-相同方式共享(SA)，请各位在转载文章的时候注意保留作者署名和文章出处，谢谢！
 
 # 保护博客文章版权，独立博客在行动
-&emsp;&emsp;我的博客是采用[Hexo](http://hexo.io/)这个博客系统来搭建的，说到底程序员是天生爱折腾的命吧，都有对掌控事物的欲望，不喜欢受到条件制约。CSDN的博客虽然还不错，可是“限制因素 + 服务器奔溃”这样的强效组合实在让我很难有继续坚持下去的动力，所以果断就自己搭了博客买了域名，老老实实地开始管理起独立博客。好了，废话少说，放码过来，我们下面来看看怎么在Hexo中的文章中增加一个展示版权信息的模块，这里以[Jacman](https://github.com/wuchong/jacman)主题为例，我们首先定位到该主题文件夹下的\layout\_partial\post\article.ejs文件：
+&emsp;&emsp;我的博客是采用[Hexo](http://hexo.io/)这个博客系统来搭建的，说到底程序员是天生爱折腾的命吧，都有对掌控事物的欲望，不喜欢受到条件制约。CSDN 的博客虽然还不错，可是“限制因素 + 服务器奔溃”这样的强效组合实在让我很难有继续坚持下去的动力，所以果断就自己搭了博客买了域名，老老实实地开始管理起独立博客。好了，废话少说，放码过来，我们下面来看看怎么在 Hexo 中的文章中增加一个展示版权信息的模块，这里以[Jacman](https://github.com/wuchong/jacman)主题为例，我们首先定位到该主题文件夹下的\layout\_partial\post\article.ejs 文件：
 
-```
+```plain
 <div id="main" class="<%= item.layout %>" itemscope itemprop="blogPost">
   <% if (page.layout=='photo' && item.photos && item.photos.length){ %>
     <%- partial('gallery') %>
@@ -60,14 +60,14 @@ title: 在Hexo中为文章自动添加版权信息声明模块
 	<%- partial('comment') %>
 </div>  
 ```
-我们可以注意到文章的内容是在<%- item.content %>这个标签里，因此我们如果要在文章中增加内容，只需要在<%- item.content %>的后面引入一个ejs模板文件即可，所以我们接下在article.ejs的同级目录下创建一个declare.ejs文件：
+我们可以注意到文章的内容是在<%- item.content %>这个标签里，因此我们如果要在文章中增加内容，只需要在<%- item.content %>的后面引入一个 ejs 模板文件即可，所以我们接下在 article.ejs 的同级目录下创建一个 declare.ejs 文件：
 
-```
+```plain
 <pre><code><b>    版权声明</b>:本文由<b><a href="<%= config.root %>about" target="_blank" title="<%= config.author %>"><%= config.author %></a></b>创作和发表,采用<b>署名(BY)</b>-<b>非商业性使用(NC)</b>-<b>相同方式共享(SA)</b>国际许可协议进行许可,转载请注明作者及出处,本文作者为<b><a href="<%= config.root %>about" target="_blank" title="<%= config.author %>"><%= config.author %></a></b>,本文标题为<b><a href="<%- config.root %><%- item.path %>" target="_blank" title="<%= item.title %>"><%= item.title %></a></b>,本文链接为<b><a href="<%- config.root %><%- item.path %>" target="_blank" title="<%= item.title %>"><%- config.url %>/<%- item.path %></a></b>.</code></pre>
 ```
-大家可以看到这里就是一段HTML代码，因为我们要引入的这个模板和article.ejs在同一个页面中，所以我们可以直接在这里调用item这个变量，而item这个变量里是封装了当前文章的标题和链接的，因此我们可以顺利成章的构造这样一段HTML代码，因为博主不会写CSS样式，所以使用了一个默认的代码样式来完成这个工作，如果大家懂CSS，请自行发挥你的创意将它做得更好。好了，下面我们要做的工作就是将这个模版引用到article.ejs文件中，类似地我们可以使用<%- partial('footer') %>这样的结构来引入这个模板，这里给出完整的article.ejs文件内容：
+大家可以看到这里就是一段 HTML 代码，因为我们要引入的这个模板和 article.ejs 在同一个页面中，所以我们可以直接在这里调用 item 这个变量，而 item 这个变量里是封装了当前文章的标题和链接的，因此我们可以顺利成章的构造这样一段 HTML 代码，因为博主不会写 CSS 样式，所以使用了一个默认的代码样式来完成这个工作，如果大家懂 CSS，请自行发挥你的创意将它做得更好。好了，下面我们要做的工作就是将这个模版引用到 article.ejs 文件中，类似地我们可以使用<%- partial('footer') %>这样的结构来引入这个模板，这里给出完整的 article.ejs 文件内容：
 
-```
+```plain
 <div id="main" class="<%= item.layout %>" itemscope itemprop="blogPost">
   <% if (page.layout=='photo' && item.photos && item.photos.length){ %>
     <%- partial('gallery') %>
