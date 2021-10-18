@@ -94,7 +94,7 @@ def mkMarkdown(items):
 # 更新百度站点地图
 def baiduSitemap():
     with open('_config.yml', 'rt', encoding='utf-8') as f:
-        conf = yaml.load(f)
+        conf = yaml.load(f, Loader=yaml.FullLoader)
         if(conf['image_version'] !="master"):
             DOMTree = xml.dom.minidom.parse('./public/baidusitemap.xml')
             root = DOMTree.documentElement
@@ -108,7 +108,7 @@ def baiduSitemap():
 # 提交地址
 def submitSitemap():
     with open('_config.yml', 'rt', encoding='utf-8') as f:
-        conf = yaml.load(f)
+        conf = yaml.load(f, Loader=yaml.FullLoader)
         session = requests.session()
         if(conf['image_version'] == "master"):
 
