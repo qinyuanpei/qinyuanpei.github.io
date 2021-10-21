@@ -1,4 +1,4 @@
-﻿import os
+import os
 import sys
 import re
 import json
@@ -26,6 +26,8 @@ def analyseLanguages(posts):
             if len(matches) > 0:
                 for match in matches:
                     language = match[3:]
+                    if language.lower() == "plain":
+                        continue
                     if language.lower() == "csharp":
                         language = 'C#'
                     if language.lower() == "javascript" or language.lower() == "js":
@@ -35,7 +37,7 @@ def analyseLanguages(posts):
                     if language.lower() == "yaml" or language.lower() == "yml":
                         language = language.upper()
                     if language in ['shell','json','csharp','lua','yaml','yml','plain']:
-                        print(f'{post} maybe need a check for code blocks' )
+                        print(f'{post} maybe need a check for code blocks.' )
                     if language in languages.keys():
                         languages[language] = languages[language] + 1
                     else:
