@@ -30,6 +30,8 @@ def analyseLanguages(posts):
                         continue
                     if language.lower() == "csharp":
                         language = 'C#'
+                    if language.lower() == "python":
+                        language = 'Python'
                     if language.lower() == "javascript" or language.lower() == "js":
                         language = 'JavaScript'
                     if language.lower() == "shell" or language.lower() == "bash":
