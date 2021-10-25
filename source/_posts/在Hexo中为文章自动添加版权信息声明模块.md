@@ -60,7 +60,7 @@ title: 在 Hexo 中为文章自动添加版权信息声明模块
 	<%- partial('comment') %>
 </div>  
 ```
-我们可以注意到文章的内容是在<%- item.content %>这个标签里，因此我们如果要在文章中增加内容，只需要在<%- item.content %>的后面引入一个 ejs 模板文件即可，所以我们接下在 article.ejs 的同级目录下创建一个 declare.ejs 文件：
+我们可以注意到文章的内容是在 `<%- item.content %>` 这个标签里，因此我们如果要在文章中增加内容，只需要在 `<%- item.content %>` 的后面引入一个 ejs 模板文件即可，所以我们接下在 `article.ejs` 的同级目录下创建一个 `declare.ejs` 文件：
 
 ```html
 <pre>
