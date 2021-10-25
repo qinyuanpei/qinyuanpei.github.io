@@ -34,22 +34,22 @@ title: 使用 Love2D 引擎开发贪吃蛇游戏
 --计算下一个目标点
 function getNextPoint()
   --计算下一个目标点
-  snake={}
-  if(dir==0) then
-    snake.x=snakes[1].x
-    snake.y=snakes[1].y-20
+  snake = {}
+  if (dir == 0) then
+    snake.x = snakes[1].x
+    snake.y = snakes[1].y - 20
   end
-  if(dir==1) then
-    snake.x=snakes[1].x
-    snake.y=snakes[1].y+20
+  if (dir == 1) then
+    snake.x = snakes[1].x
+    snake.y = snakes[1].y + 20
   end
-  if(dir==2) then
-    snake.x=snakes[1].x-20
-    snake.y=snakes[1].y
+  if (dir == 2) then
+    snake.x = snakes[1].x - 20
+    snake.y = snakes[1].y
   end
-  if(dir==3) then
-    snake.x=snakes[1].x+20
-    snake.y=snakes[1].y
+  if (dir == 3) then
+    snake.x = snakes[1].x + 20
+    snake.y = snakes[1].y
   end
 
   return snake
@@ -60,9 +60,9 @@ end
 --核心算法——蛇的移动
 function SnakeUpdate()
   --获取元素个数
-  local n=table.maxn(snakes)
-  if(table.maxn(snakes)>0) then
-    if(getNextPoint().x==foodX and getNextPoint().y==foodY) then
+  local n = table.maxn(snakes)
+  if (table.maxn(snakes) > 0) then
+    if (getNextPoint().x == foodX and getNextPoint().y == foodY) then
       --将下一个目标点的位置插入表中
       table.insert(snakes, 1, getNextPoint())
       --将食物状态设置为BeEated
@@ -81,10 +81,10 @@ end
 我们知道蛇碰到四周墙壁的时候就会死亡，此时游戏结束。这个比较简单，只要判断蛇头的坐标和屏幕的关系就可以了。因为在这个游戏中屏幕的尺寸为 640X640，所以判断游戏是否结束的代码可以这样写：
 ```Lua
 --判断游戏状态
-  if(snakes[1].x<=0 or snakes[1].x>=640 or snakes[1].y<=0 or snakes[1].y>=640) then
-    gameState=0
+  if(snakes[1].x <= 0 or snakes[1].x >= 640 or snakes[1].y <= 0 or snakes[1].y >= 640) then
+    gameState = 0
   else
-    gameState=1
+    gameState = 1
   end
 ```
 这里 gameState 为 0 表示游戏结束，gameState 为 1 表示游戏正常进行。
