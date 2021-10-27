@@ -139,7 +139,7 @@ public class LuckyRoll2 : MonoBehaviour {
     void Start () 
     {
         //初始化奖品
-        allItems=new List<WrapItem>()
+        allItems = new List<WrapItem>()
         {
            //圆心角为5°，概率为10%，以此类推
             new WrapItem("奖品1", 10, 0, 30),

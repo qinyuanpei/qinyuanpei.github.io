@@ -21,7 +21,7 @@ title: 通过动态 Controller 实现从 WCF 到 Web API 的迁移.
 
 好了，不卖关子啦，下面隆重请出 Castle 中的 Dynamic Proxy，我们曾经介绍过 Castle 中的动态代理，它可以为指定的类和接口创建对应的代理类，除此以外，它提供了一种称为**AdditionalInterfaces**的接口，这个接口可以在某个代理对象上“组合”一个或者多个接口，换句话说，代理对象本身包含被代理对象的全部功能，同时又可以包含某个接口的全部功能，这样就实现了一个类和一个接口的组合。为什么我们会需要这样一个功能呢？因为假如我们可以把一个 ApiController 类和指定的接口类如 CalculatorService 进行组合，在某种程度上，CalculatorService 就变成了一个 ApiController，这样就实现了我们的目标的第一步，即动态生成一个 ApiController。与此同时，它会包含我们现有的全部功能，为了方便大家理解，我们从下面这个简单的例子开始：
 
-```CSharp
+```csharp
 /// <summary>
  /// IEchoService定义
  /// </summary>
