@@ -33,7 +33,10 @@ if (os.path.exists(summaryFile)):
         summaries = json.load(fp)
 
 for blogFile in blogFiles:
-    with open(os.path.join(blogDir,blogFile),'r+', encoding='utf-8') as f:
+    filePath = os.path.join(blogDir,blogFile)
+    if not os.path.isfile(filePath):
+        continue
+    with open(filePath,'r+', encoding='utf-8') as f:
         print('Analysing-->' + blogFile)
         post = frontmatter.loads(f.read())
         summary = {}
