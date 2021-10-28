@@ -1,4 +1,4 @@
----
+﻿---
 abbrlink: 123663202
 categories:
 - 读书笔记
@@ -10,10 +10,10 @@ tags:
 - 面试
 - 剑指Offer
 - 技术
-title: 剑指Offer读书笔记(1)
+title: 剑指 Offer 读书笔记(1)
 ---
 
-&emsp;&emsp;在此将【剑指Offer】中的经典问题和重要内容整理出来，便于以后遇到类似的问题再次查阅。博主强烈为大家推荐这本书，因为这本书中的题目都来自真实的公司笔试，对于大家求职、找工作会有很大的帮助。
+在此将【剑指 Offer】中的经典问题和重要内容整理出来，便于以后遇到类似的问题再次查阅。博主强烈为大家推荐这本书，因为这本书中的题目都来自真实的公司笔试，对于大家求职、找工作会有很大的帮助。
 
 <!--more-->
 
@@ -23,15 +23,15 @@ title: 剑指Offer读书笔记(1)
 *  是否释放实例已有的内存，如果我们忘记在分配新内存之前释放自身已有的空间，恒旭将出现内存泄漏。
 *  是否判断传入的参数和当前的实例是否是同一个实例。如果是同一个，则不进行赋值运算，直接返回，如果事先不判断就进行赋值，那么在释放实例自身内存的时候就会导致严重的问题，当*this和传入的参数是同一个实例时，一旦释放了自身的内存，传入的参数的内存将同时被释放，因此将再也找不到需要赋值的内容了。
 
-&emsp;&emsp;当我们完整的考虑了上述四个方面以后，我们可以写出如下的代码：
-```
+当我们完整的考虑了上述四个方面以后，我们可以写出如下的代码：
+```cpp
 CMyString& CMyString::operator = (const CMyString &str)
 {
-	if(this==&str)
+	if(this == &str)
 	  return;
 	delete []m_pData;
-	m_pData=NULL;
-	m_pData=new char[strlen(str.m_pData)+1];
+	m_pData = NULL;
+	m_pData = new char[strlen(str.m_pData) + 1];
 	strcpy(m_pData,str.m_pData);
 
 	return *this;
@@ -41,17 +41,17 @@ CMyString& CMyString::operator = (const CMyString &str)
 *  方法一：先用new分配新内容再用delete释放已有内容。这样只有当分配内容成功后再释放原来的内容，换句话说当分配内存失败时我们可以确定CMyString的实例不会被修改。
 *  方法二：先创建一个临时实例，再交换临时实例和原来的实例
 
-&emsp;&emsp;下面给出第二种方法的实现代码：
-```
+下面给出第二种方法的实现代码：
+```cpp
 CMyString& CMyString::operator = (const CMyString &str)
 {
-	if(this！=&str){
+	if(this != &str){
 
 	  CMyString strTemp(str);
 
-	  char* pTemp=strTemp.m_pData;
-	  strTemp.m_pData=m_pData;
-	  m_pData=pTemp;
+	  char* pTemp = strTemp.m_pData;
+	  strTemp.m_pData = m_pData;
+	  m_pData = pTemp;
   }
 
   return *this
@@ -65,7 +65,7 @@ CMyString& CMyString::operator = (const CMyString &str)
 ### 4、在C#中实现单例模式
 *  原理：在C#语法中C#是在调用静态函数时初始化静态变量，.NET运行时可以保证只调用一次静态构造函数，这样我们就可以保证仅初始化一次Instance;
 下面给出代码示例：
-```
+```csharp
 public sealed class Singleton
 {
 	private Singleton()
@@ -96,22 +96,22 @@ public sealed class Singleton
 *  链表是一种动态数据结构，因为在创建链表的时候，不需要知道链表的长度。当插入一个结点时，我们只需要为新结点分配内存，然后调整指针的指向来确保新结点被链接到链表当中。内存分配不是在创建链表时一次性完成，而是每添加一个结点分配一次内存。由于没有闲置的内存，因此链表的空间效率比数组要高。
 *  因为链表中的内存不是一次性分配的，所以我们不能确定链表的内存和数组一样是连续的，因此如果想在链表中找到第i个结点，我们只能从头结点开始，沿着指向下一个结点的指针遍历链表，其效率是O(n)。而在数组中，我们可以根据下标i直接找到第i个元素，其效率是O(1)。
 *  当我们需要从尾到头输出链表时，第一个遍历到的结点最后一个输出，而最后一个遍历到的结点第一个输出，这是典型的后进先出，因此我们可以考虑使用栈来实现这种顺序。下面是具体的代码实现：
-```
+```cpp
 void PrintListReversingly_Iteratively(ListNode* pHead)
 {
 	std::stack<ListNode*> nodes;
 
-	ListNode* pNode=pHead;
-	while(pNode!=NULL)
+	ListNode* pNode = pHead;
+	while (pNode != NULL)
 	{
       nodes.push(pNode);
-      pNode=pNode->m_pNext;
+      pNode = pNode->m_pNext;
     }
 
-    while(!nodes.empty())
+    while (!nodes.empty())
     {
-      pNode=nodes.top();
-      printf("%d\t",pNode->m_nValue);
+      pNode = nodes.top();
+      printf("%d\t", pNode->m_nValue);
       nodes.pop();
     }
 }
@@ -130,21 +130,21 @@ void PrintListReversingly_Iteratively(ListNode* pHead)
 ### 10、递归与循环
 *  递归实现的效率无法和循环相比，因此函数调用会造成时间和空间的损失、会造成重复计算、可能会造成栈溢出。
 在经典的斐波那契数列问题中，我们可以采用下面的方法来代替传统的递归方法：
-```
+```csharp
 int Fiboncci(int n)
 {
-  int[] result=new int[]{0,1};
-  if(n<2)
+  int[] result=new int[] { 0, 1 };
+  if (n < 2)
      return result[n];
 
-  int m=1;
-  int n=0;
-  int k=0;
-  for(int i=2;i<=n;i++)
+  int m = 1;
+  int n = 0;
+  int k = 0;
+  for (int i = 2; i <= n; i++)
   {
-     k=m+n;
-     n=m;
-     m=k;
+     k = m + n;
+     n = m;
+     m = k;
   }
 
   return k;
@@ -152,9 +152,9 @@ int Fiboncci(int n)
 ```
 
 ### 11、位运算
-*  左移m<<n表示把m左移n位。左移n位的时候，最左边的n位将被丢弃，同时在最右边补上n个0。如：
->  00001010<<2=00101000
->  10001010<<3=01010000
-*  右移m>>n表示把m右移n位。右移n位的时候，最右边的n位将被丢弃。此时如果数字是一个无符号数值，则用0填补最左边的n位;如果数字是一个正数，则在右移之后在左边补n个0;如果数字是一个负数，则右移之后在左边补n个1。如：
->  00001010>>2=00000010
->  10001010>>3=11110001
+*  左移`m << n`表示把 m 左移 n 位。左移 n 位的时候，最左边的 n 位将被丢弃，同时在最右边补上 n 个0。如：
+>  00001010 << 2 = 00101000
+>  10001010 << 3 = 01010000
+*  右移`m >> n`表示把 m 右移 n 位。右移 n 位的时候，最右边的 n 位将被丢弃。此时如果数字是一个无符号数值，则用0填补最左边的 n 位;如果数字是一个正数，则在右移之后在左边补 n 个0;如果数字是一个负数，则右移之后在左边补 n 个1。如：
+>  00001010 >> 2 = 00000010
+>  10001010 >> 3 = 11110001
