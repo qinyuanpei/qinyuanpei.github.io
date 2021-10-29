@@ -31,7 +31,7 @@ menu:
   #   url: https://qinyuanpei.github.io/poems/
   battery:
     text: 专栏
-    url: /column
+    url: /columns
   code:
     text: 实验室
     url: /works
