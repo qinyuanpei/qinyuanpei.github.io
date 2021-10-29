@@ -29,6 +29,9 @@ menu:
   # folder-open:
   #   text: 诗集
   #   url: https://qinyuanpei.github.io/poems/
+  battery:
+    text: 专栏
+    url: /column
   code:
     text: 实验室
     url: /works
