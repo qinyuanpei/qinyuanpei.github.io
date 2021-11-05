@@ -231,5 +231,5 @@ offline:
 cdn_url: https://cdn.jsdelivr.net/gh/qinyuanpei/blog.yuanpei.me@master
 
 ribbon:
-  enable: false
+  enable: true
 
