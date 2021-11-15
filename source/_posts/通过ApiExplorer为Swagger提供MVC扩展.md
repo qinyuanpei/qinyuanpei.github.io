@@ -2,7 +2,7 @@
 abbrlink: 4116164325
 categories:
 - 编程语言
-date: 2019-08-06 23:02:5
+date: 2019-08-06 23:02:50
 description: 这个接口位于`System.Web.Http.Description`命名空间下，而显然这是 WebApi 相关的命名空间，所以，对于一般的 WebApi 项目，因为微软已经帮我们实现了默认的 ApiExplorer，所以，Swagger 可以识别出项目中的 Controller 及其 Action，并通过 XML 注释文档进一步填充接口相关的描述信息;我们的想法是通过反射取出所有的 MVC 控制器及其 Action，然后组织出这些接口的描述信息，再将它们添加到默认的 IApiExplorer 实现中去，这样 MVC 和 WebApi 都可以被 Swagger 识别，为此，我们继承默认的 ApiExplorer，并实现我们自定义的`MvcApiExplorer`：;一旦想到这一层，我们就会明白，为什么 Swagger 不支持 MVC 项目，因为 MVC 里压根就没有实现 IApiExplorer 接口啊
 tags:
 - Swagger
