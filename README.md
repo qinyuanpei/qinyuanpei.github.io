@@ -1,18 +1,19 @@
 [![Build Status](https://www.travis-ci.org/qinyuanpei/qinyuanpei.github.io.svg?branch=blog)](https://www.travis-ci.org/qinyuanpei/qinyuanpei.github.io)
 [![jsDelivr](https://data.jsdelivr.com/v1/package/gh/qinyuanpei/qinyuanpei.github.io/badge)](https://www.jsdelivr.com/package/gh/qinyuanpei/qinyuanpei.github.io)
 
-本文档由脚本自动生成，最后更新时间：2021-11-29 09:28:32，最后部署版本：[5f662f9](https://github.com/qinyuanpei/qinyuanpei.github.io/commit/5f662f978
+本文档由脚本自动生成，最后更新时间：2021-12-09 09:09:11，最后部署版本：[5f662f9](https://github.com/qinyuanpei/qinyuanpei.github.io/commit/5f662f978
 )
 
 如果想订阅我的博客，请使用Github的Watch功能，**请不要fork此项目**
 
-Hi, Payne. 从2014-12-30至今，你撰写博客共计219篇，请继续努力！
+Hi, Payne. 从2014-12-30至今，你撰写博客共计220篇，请继续努力！
 
 Coding Pages版本：[https://blog.yuanpei.me](https://blog.yuanpei.me)
 
 Github Pages版本：[https://qinyuanpei.github.io](https://qinyuanpei.github.io)
 
-# 2021(共39篇)
+# 2021(共40篇)
+* 2021-12-01 - [分布式丛林探险系列之 Redis 集群模式](https://blog.yuanpei.me/posts/1213387651/)
 * 2021-11-26 - [写在冬阳升起以前](https://blog.yuanpei.me/posts/2145169599/)
 * 2021-11-16 - [分布式丛林探险系列之 Redis 主从复制模式](https://blog.yuanpei.me/posts/1748863652/)
 * 2021-10-26 - [通过 Python 预测 2021 年双十一交易额](https://blog.yuanpei.me/posts/735074641/)
