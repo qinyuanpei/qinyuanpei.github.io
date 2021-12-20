@@ -186,6 +186,35 @@ client.Ping(new { X = 0, Y = 1, Z = 0 }.Pack());
 
 这样看起来是不是非常酷？我始终认为，这件事情是有意义的，一个系统中最多的接口显然是查询接口，此时，我们可以构建一个通用的 [查询](https://github.com/qinyuanpei/DynamicSearch) 来处理，使用者只需要传递一个实体、一个Proto，一组过滤条件，它就可以返回对应的数据，这样是不是比写一个又一个差不多的接口要好一点呢？过去我们开发 API，主张用数据传输对象(DTO)来隔离持久化层和业务层，从这个角度来看，Protobuf 本身就是 一种 DTO ，对于大多数相似的、模板化的、套路化的接口，我们完全可以考虑用这种方案来实现，只要双方约定好类型即可。
 
+```csharp
+// 在业务层构建通用的查询
+public QueryReply Query<TInput, TOutput>(SearchParameters searchParameters) where TInput : class
+{
+    var result = _chinookContext.Set<TInput>().AsQueryable().Search(searchParameters).ToList();
+    var output = result.Adapt<List<TOutput>>();
+
+    var reply = new QueryReply();
+    reply.List.AddRange(output.Select(x => x.Pack()));
+    return reply;
+}
+
+// x => { 1, 2, 3 }.Contains(x.AlbumId)
+var searchParameters = SearchParameters();
+searchParameters.QueryModel = new QueryModel();
+searchParameters.QueryModel.Add(new Condition() { Field = "AlbumId", Op = Operation.StdIn, Value = new int[] { 1, 2, 3} });
+
+// 在服务层解析参数，完全可以由调用方提供 SearchParameters
+var inputType = Type.GetType(request.InputType);
+var outputType = Type.GetType(request.OutputType);
+if (inputType != null && outputType != null)
+{
+    var queryMethod = _queryService.GetType().GetMethod("Query").MakeGenericMethod(inputType, outputType);
+    QueryReply queryResult = (QueryReply)queryMethod.Invoke(_queryService, new object[] { 
+      new DynamicSearch.Core.SearchParameters()
+    });
+    return Task.FromResult(queryResult);
+}
+```
 
 # 本文小结
 对于编程语言中的动与静、强与弱，我个人觉得还是要看场景，只要双方定义好契约，我相信，它都可以运作起来，当然，更多的时候，我们是在灵活与严谨间反复横跳。作为一门 DSL，Protobuf 虽然可以对服务提供/消费方产生一定约束，可当我们面对需要泛型或者模板类的场景的时候，这种做法就变成了一种负担，更不必说它缺乏对继承的支持。想象一下，你要写二十多个大同小异的接口，譬如为每一张数据表写一个 `GetXXXById()` 的接口。此时，我们可以借助 `Any` 类型来实现类似泛型、模板类的东西，它本质上还是 ` IMessage` 接口的实现类，唯一的不同是增加了 Pack/Unpack 这组静态方法，可以帮助我们实现 `Any` 和 `IMessage` 的相互转换，关于本文中使用的的实例，可以参考：[ProtobufAny](https://github.com/Regularly-Archive/2021/tree/master/src/ProtobufAny)，好了，以上就是这篇博客的全部内容，如果有朋友对文章中的内容和观点存在疑问，欢迎在评论区积极留言，谢谢大家！
