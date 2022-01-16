@@ -19,7 +19,7 @@ date: 2022-01-14 16:46:23
 
 如果要追溯分布式跟踪的起源，我想，Google 的这篇名为 [《Dapper, a Large-Scale Distributed Systems Tracing Infrastructure》](https://dirtysalt.github.io/html/dapper.html) 的论文功不可没，因为后来主流的分布式跟踪系统，譬如 [Zipkin](https://zipkin.io/)、[Jeager](https://www.jaegertracing.io/)、[Skywalking](https://skywalking.apache.org/)、[LightStep](https://lightstep.com)……等等，均以这篇论文作为理论基础，它们在功能上或许存在差异，原理上则是一脉相承，一个典型的分布式跟踪系统，大体上可以分为代码埋点、数据存储和查询展示三个步骤，如下图所示，Tracing 系统可以展示出服务在时序上的调用层级，这对于我们分析微服务系统中的调用关系会非常有用。
 
-![分布式跟踪系统基本原理](分布式跟踪系统基本原理.drawio.png)
+![分布式跟踪系统基本原理](Basic-Principles-Of-Distributed-Tracking-System.png)
 
 一个非常容易想到的思路是，我们在前端发出的请求的时候，动态生成一个唯一的 `x-request-id`，并保证它可以传递到与之交互的所有服务中去，那么，此时系统产生的日志中就会携带这一信息，只要以此作为关键字，就可以检索到当前请求的所有日志。这的确是个不错的方案，但它无法告诉你每个调用完成的先后顺序，以及每个调用花费了多少时间。基于这样的想法，人们在这上面传递了更多的信息(`Tag`)，使得它可以表达层级关系、调用时长等等的特征。如图所示，这是一个由 `Jaeger` 产生的跟踪信息，我们从中甚至可以知道请求由哪台服务器处理，以及上/下游集群信息等等：
 
