@@ -233,5 +233,3 @@ services:
 # 本文小结
 
 可观测性(Logging、Metrics & Tracing) 是当下微服务中重要的一个组成部分，从 ELk 收集日志，到 Prometheus 监控指标， 再到 Jeager 跟踪调用链，我们看到了一种完全不同于单体系统中打断点、单步调试的诊断思路，这是否说明，微服务的治理永远是一个绕不过去的话题。在这篇文章里，我们简单介绍了分布式跟踪系统，比如最常见的 [Zipkin](https://zipkin.io/)、[Jeager](https://www.jaegertracing.io/)、[Skywalking](https://skywalking.apache.org/)、[LightStep](https://lightstep.com)...等等，其基本思想是生成一个 `x-request-id`，并在不同的服务或者应用中传递这个信息。在此基础上，我们介绍了 [OpenTracing](https://opentracing.io/) 规范，即 一个调用链(Trace)，是由多个 `Span` 组成的有向无环图，而每个 `Span` 则可以含有多个键值对组成的 Tag。目前，Envoy 官方主推的是 `Sidecar` 模式，即每个服务分配一个 Envoy 作为代理，考虑到博主目前使用 `Gateway` 模式更多一点，故结合 ASP.NET Core 和 Jeager 实现了一个简单的示例，这个示例唯一的不足在于，服务或者应用必须显式地传递这些请求头，如果直接集成 SDK，效果应该会比现在好很多，可这样的话，就显得不那么云原生了，如果大家有更好的做法，欢迎在评论区留言和交流。大家可以稍微注意一下 [OpenTelemetry](https://opentelemetry.io/) 这个项目，如果你需要更完备的可观测性信息收集。好了，以上就是这篇博客的全部内容，晚安，世界。
-
-```
