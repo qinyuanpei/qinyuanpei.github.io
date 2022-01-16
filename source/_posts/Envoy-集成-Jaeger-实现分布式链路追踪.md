@@ -46,7 +46,7 @@ date: 2022-01-14 16:46:23
 事实上，我们上面提到的 [Zipkin](https://zipkin.io/) 和 [Jeager](https://www.jaegertracing.io/) 都兼容这一规范，这使得我们可以更加灵活和自由地更换 Tracing 系统。除了 [OpenTracing](https://opentracing.io/) 规范，目前，[OpenTelemetry](https://opentelemetry.io/) 在考虑统一 Logging、Metrics 和 Tracing，即我们通常所说的 APM，如果大家对这个感兴趣，可以做更进一步的了解。
 # Envoy & Jaeger
 
-目前，主流的服务网格平台如 [Istio](https://istio.io/latest)，选择 [Envoy](https://www.envoyproxy.io/) 作为其数据平面的核心组件。通俗地来讲，Envoy 主要是作为代理层来调节服务网格中所有服务的进/出站流量，它可以实现诸如负载均衡、服务发现、流量转移、速率限制、可观测性等等的功能。考虑到不同的服务都可以通过 `Gateway` 或者 `Sidecar` 来互相访问，我们更希望通过 Envoy 这个代理层来实现分布式跟踪，而不是在每个应用内都去集成 SDK，这正是服务网络区别于传统微服务的地方，即微服务治理需要的各种能力，逐步下沉到基础设施层。如果你接触过微软的 [Dpar](https://docs.microsoft.com/zh-cn/dotnet/architecture/dapr-for-net-developers/getting-started)，大概就能体会到我这里描述的这种变化。
+目前，主流的服务网格平台如 [Istio](https://istio.io/latest)，选择 [Envoy](https://www.envoyproxy.io/) 作为其数据平面的核心组件。通俗地来讲，Envoy 主要是作为代理层来调节服务网格中所有服务的进/出站流量，它可以实现诸如负载均衡、服务发现、流量转移、速率限制、可观测性等等的功能。考虑到不同的服务都可以通过 `Gateway` 或者 `Sidecar` 来互相访问，我们更希望通过 Envoy 这个代理层来实现分布式跟踪，而不是在每个应用内都去集成 SDK，这正是服务网络区别于传统微服务的地方，即微服务治理需要的各种能力，逐步下沉到基础设施层。如果你接触过微软的 [Dapr](https://docs.microsoft.com/zh-cn/dotnet/architecture/dapr-for-net-developers/getting-started)，大概就能体会到我这里描述的这种变化。
 
 ![Envoy 在 Istio 中扮演着重要角色](Manaing-Microservice-With-Istio.png)
 
@@ -232,8 +232,6 @@ services:
 
 # 本文小结
 
-可观测性(Logging、Metrics & Tracing) 是当下微服务中重要的一个组成部分，从 ELk 收集日志，到 Prometheus 监控指标， 再到 Jeager 跟踪调用链，我们看到了一种完全不同于单体系统中打断点、单步调试的诊断思路，这是否说明，微服务的治理永远是一个绕不过去的话题，我一直在想，是不是我们有时候太在乎编写服务这件事情了？我们写了那么多的代码，最终是依靠别人喊一嗓子“接口报错”这种相当原始的“人治”来管理，难道不觉得惭愧且对不起这个世界吗？明明我们这个社会都在提倡“法治”。诚然，推崇法家的商君，最后等来的是一次车裂。技术革新步履不停，到底是技术远远达不到人类的要求，还是因为我们无知，诸如相对论、黑洞、量子力学、黎曼猜想、二向箔......都不曾窥见天空的一角，却自以为能掌控一切，就像你能操作计算机，并不是因为你比它聪明，而是它让你显得那么聪明。这篇文章里的做法同样算不上聪明，可能写这篇文章我原本就不是一个聪明的人，每当某种纠缠不清、模棱两可的思绪涌上心头的时候，果然程序员的生涯让我失去了对混乱的耐心，我很想对着这团混乱说一声：
-```
-Are you paying attention? 
-Good. If you’re not listening carefully, you will miss things.
+可观测性(Logging、Metrics & Tracing) 是当下微服务中重要的一个组成部分，从 ELk 收集日志，到 Prometheus 监控指标， 再到 Jeager 跟踪调用链，我们看到了一种完全不同于单体系统中打断点、单步调试的诊断思路，这是否说明，微服务的治理永远是一个绕不过去的话题。在这篇文章里，我们简单介绍了分布式跟踪系统，比如最常见的 [Zipkin](https://zipkin.io/)、[Jeager](https://www.jaegertracing.io/)、[Skywalking](https://skywalking.apache.org/)、[LightStep](https://lightstep.com)...等等，其基本思想是生成一个 `x-request-id`，并在不同的服务或者应用中传递这个信息。在此基础上，我们介绍了 [OpenTracing](https://opentracing.io/) 规范，即 一个调用链(Trace)，是由多个 `Span` 组成的有向无环图，而每个 `Span` 则可以含有多个键值对组成的 Tag。目前，Envoy 官方主推的是 `Sidecar` 模式，即每个服务分配一个 Envoy 作为代理，考虑到博主目前使用 `Gateway` 模式更多一点，故结合 ASP.NET Core 和 Jeager 实现了一个简单的示例，这个示例唯一的不足在于，服务或者应用必须显式地传递这些请求头，如果直接集成 SDK，效果应该会比现在好很多，可这样的话，就显得不那么云原生了，如果大家有更好的做法，欢迎在评论区留言和交流。大家可以稍微注意一下 [OpenTelemetry](https://opentelemetry.io/) 这个项目，如果你需要更完备的可观测性信息收集。好了，以上就是这篇博客的全部内容，晚安，世界。
+
 ```
