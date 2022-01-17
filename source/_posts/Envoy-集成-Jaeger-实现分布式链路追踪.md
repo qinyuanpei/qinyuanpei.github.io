@@ -11,7 +11,7 @@ copyright: true
 abbrlink: 768684858
 date: 2022-01-14 16:46:23
 ---
-当我们的应用架构，从单体系统演变为微服务时，一个永远不可能回避的现实是，业务逻辑会被拆分到不同的服务中。因此，微服务实际就是不同服务间的互相请求和调用。更重要的是，随着容器/虚拟化技术的发展，传统的物理服务器开始淡出我们的视野，软件被大量地部署在云服务器或者虚拟资源上。在这种情况下，分布式环境中的运维和诊断变得越来越复杂。如果按照功能来划分，目前主要有 Logging、Metrics 和 Tracing 三个方向，如下图所示，可以注意到，这三个方向上彼此都有交叉、重叠的部分。在我过去的博客里，我分享过关于 [ELK](/posts/3687594958) 和 [Prometheus](1519021197) 的内容，可以粗略地认为，这是对 Logging 和 Metrics 这两个方向的涉猎。所以，这篇文章我想和大家分享是 Tracing，即分布式跟踪，本文会结合 Envoy、Jaeger 以及 .NET Core 来实现一个分布式链路跟踪的案例，希望能带给大家一点 Amazing 的东西。
+当我们的应用架构，从单体系统演变为微服务时，一个永远不可能回避的现实是，业务逻辑会被拆分到不同的服务中。因此，微服务实际就是不同服务间的互相请求和调用。更重要的是，随着容器/虚拟化技术的发展，传统的物理服务器开始淡出我们的视野，软件被大量地部署在云服务器或者虚拟资源上。在这种情况下，分布式环境中的运维和诊断变得越来越复杂。如果按照功能来划分，目前主要有 Logging、Metrics 和 Tracing 三个方向，如下图所示，可以注意到，这三个方向上彼此都有交叉、重叠的部分。在我过去的博客里，我分享过关于 [ELK](/posts/3687594958) 和 [Prometheus](/posts/1519021197) 的内容，可以粗略地认为，这是对 Logging 和 Metrics 这两个方向的涉猎。所以，这篇文章我想和大家分享是 Tracing，即分布式跟踪，本文会结合 Envoy、Jaeger 以及 .NET Core 来实现一个分布式链路跟踪的案例，希望能带给大家一点 Amazing 的东西。
 
 ![可观测性：Metrics、Tracing & Logging](Obserability_Metrics_Tracing_Logging.jpg)
 
@@ -46,7 +46,7 @@ date: 2022-01-14 16:46:23
 事实上，我们上面提到的 [Zipkin](https://zipkin.io/) 和 [Jeager](https://www.jaegertracing.io/) 都兼容这一规范，这使得我们可以更加灵活和自由地更换 Tracing 系统。除了 [OpenTracing](https://opentracing.io/) 规范，目前，[OpenTelemetry](https://opentelemetry.io/) 在考虑统一 Logging、Metrics 和 Tracing，即我们通常所说的 APM，如果大家对这个感兴趣，可以做更进一步的了解。
 # Envoy & Jaeger
 
-目前，主流的服务网格平台如 [Istio](https://istio.io/latest)，选择 [Envoy](https://www.envoyproxy.io/) 作为其数据平面的核心组件。通俗地来讲，Envoy 主要是作为代理层来调节服务网格中所有服务的进/出站流量，它可以实现诸如负载均衡、服务发现、流量转移、速率限制、可观测性等等的功能。考虑到不同的服务都可以通过 `Gateway` 或者 `Sidecar` 来互相访问，我们更希望通过 Envoy 这个代理层来实现分布式跟踪，而不是在每个应用内都去集成 SDK，这正是服务网络区别于传统微服务的地方，即微服务治理需要的各种能力，逐步下沉到基础设施层。如果你接触过微软的 [Dapr](https://docs.microsoft.com/zh-cn/dotnet/architecture/dapr-for-net-developers/getting-started)，大概就能体会到我这里描述的这种变化。
+目前，主流的服务网格平台如 [Istio](https://istio.io/latest)，选择 [Envoy](https://www.envoyproxy.io/) 作为其数据平面的核心组件。通俗地来讲，Envoy 主要是作为代理层来调节服务网格中所有服务的进/出站流量，它可以实现诸如负载均衡、服务发现、流量转移、速率限制、可观测性等等的功能。考虑到不同的服务都可以通过 `Gateway` 或者 `Sidecar` 来互相访问，我们更希望通过 Envoy 这个代理层来实现分布式跟踪，而不是在每个应用内都去集成 SDK，这正是服务网格区别于传统微服务的地方，即微服务治理需要的各种能力，逐步下沉到基础设施层。如果你接触过微软的 [Dapr](https://docs.microsoft.com/zh-cn/dotnet/architecture/dapr-for-net-developers/getting-started)，大概就能体会到我这里描述的这种变化。
 
 ![Envoy 在 Istio 中扮演着重要角色](Manaing-Microservice-With-Istio.png)
 
@@ -190,7 +190,7 @@ services:
                 port_value: 9411
 ```
 
-还记得 Envoy 支撑系统内的分布式跟踪的三个支撑策略是什么吗？显然，我们恶意通过 `generate_request_id` 字段来控制 Envoy 生成作用于 `x-request-id` 的 `UUID`，我们希望用户从 前端 或者 cURL 中发送的请求，都能自动地带上 `x-request-id` 请求头，所以，我们这里将其设为 `true`，这意味着，从现在开始，我们的请求有了这样一个 `x-request-id`， 其实，如果不考虑 Jeager 的话，我们请求已经可以实现跟踪了，只要后续的请求都像我这里一样传递 `x-request-id` 即可。原因我们已经在前面说过，此时，这些请求没有一个上下文的概念，更不要说要理清楚其中的调用层级，所以，接下来，我们还要做一点微不足道的工作：
+还记得 Envoy 支撑系统内的分布式跟踪的三个支撑策略是什么吗？显然，我们可以通过 `generate_request_id` 字段来控制 Envoy 生成作用于 `x-request-id` 的 `UUID`，我们希望用户从 前端 或者 cURL 中发送的请求，都能自动地带上 `x-request-id` 请求头，所以，我们这里将其设为 `true`，这意味着，从现在开始，我们的请求有了这样一个 `x-request-id`， 其实，如果不考虑 Jeager 的话，我们请求已经可以实现跟踪了，只要后续的请求都像我这里一样传递 `x-request-id` 即可。原因我们已经在前面说过，此时，这些请求没有一个上下文的概念，更不要说要理清楚其中的调用层级，所以，接下来，我们还要做一点微不足道的工作：
 
 ```yaml
             virtual_hosts:
