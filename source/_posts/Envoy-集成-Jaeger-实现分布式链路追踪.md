@@ -220,7 +220,7 @@ services:
 
 ![JeagerUI 数据查询](Envoy-JeagerUI-01.png)
 
-从图中我们可以非常容易地识别出 Service 和 Operation 在 Envoy 中分别对应着什么，我们注意到这里检索到了三个 Span，因为博主后来又加了一个 `EchoService`，从这里我们能看到它整个过程从何时开始，经过多长时间以后结束。如哦我们点击它，会看到更加详细的说明，如下图所示：
+从图中我们可以非常容易地识别出 Service 和 Operation 在 Envoy 中分别对应着什么，我们注意到这里检索到了三个 Span，因为博主后来又加了一个 `EchoService`，从这里我们能看到它整个过程从何时开始，经过多长时间以后结束。如果我们点击它，会看到更加详细的说明，如下图所示：
 
 ![JeagerUI 数据展示](Envoy-JeagerUI-02.png)
 
