@@ -57,7 +57,7 @@ date: 2022-01-14 16:46:23
 * 集成外部跟踪服务：Envoy 支持可插拔的外部跟踪可视化服务，例如 LightStep、Zipkin 或者 Zipkin 兼容的后端（比如说 Jaeger）等等。
 * 客户端跟踪 ID 连接：`x-client-trace-id` 这个 HTTP 头部可以用来把不信任的请求 ID 连接到受信的 `x-request-id` HTTP 头部上。
 
-这意味着，我们可以从客户端或者由 Envoy 来产生一个 `x-request-id`，只要应用转发这个 `x-request-id` 或者 外部跟踪系统需要的 HTTP 头部，Envoy 就可以帮我们完成把这些跟踪信息告诉这些外部跟踪系统，甚至在 `SIdecar` 模式下这一切都是自动完成的。我在写这篇博客时发现，官方还是比较推崇 `Sidecar` 模式，即一个服务就是一个 `Pod`，每个 `Pod` 里自带一个 Envoy 作为代理，对于 `Sidecar` 模式而言，它的分布式跟踪呈现出下面这样的结构，如果你认真阅读过官方的文档和示例，就会发现其 [示例](https://github.com/envoyproxy/envoy/tree/main/examples) 基本都是这种结构：
+这意味着，我们可以从客户端或者由 Envoy 来产生一个 `x-request-id`，只要应用转发这个 `x-request-id` 或者 外部跟踪系统需要的 HTTP 头部，Envoy 就可以帮我们完成把这些跟踪信息告诉这些外部跟踪系统，甚至在 `Sidecar` 模式下这一切都是自动完成的。我在写这篇博客时发现，官方还是比较推崇 `Sidecar` 模式，即一个服务就是一个 `Pod`，每个 `Pod` 里自带一个 Envoy 作为代理，对于 `Sidecar` 模式而言，它的分布式跟踪呈现出下面这样的结构，如果你认真阅读过官方的文档和示例，就会发现其 [示例](https://github.com/envoyproxy/envoy/tree/main/examples) 基本都是这种结构：
 
 ![Sidecar 模式下的分布式跟踪示意图](Envoy-Tracing-Sidecar.drawio.png)
 
@@ -216,7 +216,7 @@ services:
                   operation: OrderService
 ```
 
-如上所示，如果我们希望 Envoy 能记录我们的请求，那么，我们的请求必须要从它这里经过，这听起来像一句废话，可是在我调用 `PaymentService`经确保我的请求是从 `/Payment` 这个路由上发起。默认情况下，在生成 `Span` 的时候，Envoy 会使用 `--service-cluster` 这个参数来作为 `Span` 的名称，这个参数通常写在 Envoy 的启动命令里，在这个示例中，它的取值是 `reverse-proxy`。仔细一想，会觉得哪里不太对，这样一来，所以的 `Span` 不就是同一个名字了吗？事实上，一开始我做实验的时候，确实是这个结果。解决方是设置一个 `operation`。此时，如果我们通过 `Postman` 访问订单接口 `/Order`，不出意外的话，我们会收到订单创建成功的结果，在浏览器里输入`http://localhost:16686`，我们来看看 Jeager 都收集到了哪些信息：
+如上所示，如果我们希望 Envoy 能记录我们的请求，那么，我们的请求必须要从它这里经过。这听起来像一句废话，可是在我调用 `PaymentService`已经确保我的请求是从 `/Payment` 这个路由上发起。默认情况下，在生成 `Span` 的时候，Envoy 会使用 `--service-cluster` 这个参数来作为 `Span` 的名称，这个参数通常写在 Envoy 的启动命令里，在这个示例中，它的取值是 `reverse-proxy`。仔细一想，会觉得哪里不太对，这样一来，所以的 `Span` 不就是同一个名字了吗？事实上，一开始我做实验的时候，确实是这个结果。解决方是设置一个 `operation`。此时，如果我们通过 `Postman` 访问订单接口 `/Order`，不出意外的话，我们会收到订单创建成功的结果，在浏览器里输入`http://localhost:16686`，我们来看看 Jeager 都收集到了哪些信息：
 
 ![JeagerUI 数据查询](Envoy-JeagerUI-01.png)
 
