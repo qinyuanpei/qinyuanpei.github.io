@@ -1,0 +1,1003 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>读书笔记 on 元视角</title><link>http://example.org/categories/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/</link><description>Recent content in 读书笔记 on 元视角</description><generator>Hugo</generator><language>zh-cn</language><lastBuildDate>Tue, 28 May 2019 12:00:53 +0000</lastBuildDate><atom:link href="http://example.org/categories/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/index.xml" rel="self" type="application/rss+xml"/><item><title>《Web API 的设计与开发》读书笔记</title><link>http://example.org/posts/3677280829/</link><pubDate>Tue, 28 May 2019 12:00:53 +0000</pubDate><guid>http://example.org/posts/3677280829/</guid><description>设计优美的 Web API 易于使用、便于更改、健壮性好、不怕公开
+REST 的两层含义 指符合 Fielding 的 REST 架构风格的 Web 服务系统 指使用符合 RPC 风格的 XML 或 JSON + HTTP 接口的系统(不使用 SOAP) 端点的基本设计 短小便于输入的 URI- 人可以读懂的 URI 没有大小写混用的 URI 修改方便的 URI 不暴露服务端架构的 URI 规则统一的 URI HTTP 方法和端点 GET 获取资源 POST 新增资源 PUT 更新已有资源 DELETE 删除资源 PATCH 更新部分资源 查询参数和路径的使用区别 表示唯一资源时，放在路径中 当参数可以忽略时，放在查询参数中 RESTful 的设计级别 使用 HTTP 引入资源的概念 引入 HTTP 动词 引入 HATEOAS 如何指定数据格式 查询参数：url?format=xml 扩展名：/url.json Accept 头部字段 让用户决定响应的内容 GraphQL 通过状态码表示错误信息 1xx：消息 2xx：成功 3xx：重定向 4xx：客户端原因造成的错误 5xx：服务端原因造成的错误</description></item><item><title>爱情像一场霍乱</title><link>http://example.org/posts/3782208845/</link><pubDate>Tue, 22 May 2018 09:05:34 +0000</pubDate><guid>http://example.org/posts/3782208845/</guid><description>距离读完马尔克斯的《霍乱时期的爱情》这本书，差不多已经有一个月左右的时间啦。相比小说中错综复杂的人物关系，更加让人印象深刻的或许是“百年孤独”式的开头。不论是多年后面对行刑队的布恩迪亚上校，还是拍打鹦鹉结果从梯子上摔下来的乌尔比诺医生。在这一刻，因为人物的过去与现在层叠出的这种时空感，或许就是马尔克斯想要去描绘的魔幻现实主义。最近看了由小说改编的同名电影，感觉对这部小说的印象更为具体化，小说的时间跨度将近半个世纪，是选择乌尔比诺和费尔米纳这样稳定的婚姻关系，还是选择阿里萨和费尔米纳这样偏执的爱情故事。我想，这是一个值得去思考的问题吧。
+当乌尔比诺从梯子上摔下来即将离开人世的时候，他拼尽最后一口气对费尔米纳说：“只有上帝才知道我有多爱你”。单单从这句话来看，他们两个人或许是相爱的。可明明不久前，两个人还在为了一块肥皂的事情而争吵。现在大家对出轨这个问题看得特别重，重要到不要说是肉体出轨，连精神出轨都是不能被原谅的。从去年至今，网络上各种出轨的舆论消息层出不穷，好像爱情越来越不值得期待。可你看乌尔比诺和费尔米纳的婚姻是什么样的呢？乌尔比诺在妻子外出期间出轨了一名黑人女子，虽然他选择主动向妻子承认出轨，及时回归家庭，可在我们这些外人看来，这样的婚姻是含有杂质的婚姻。从妻子费尔米纳的角度，她结婚以前是不吃茄子的，而结婚以后则适应了茄子，你可以说两个人在一起，一定会有一方选择妥协。可在一个动辄讲三观、讲兴趣、讲地位的年代，你是否会觉得两个人合适呢？
+合适，是一个特别巧妙的词汇，巧妙之处在于它真正可以做到“以不变应万变”。乌尔比诺夫妇的婚姻，或许是大多数人的真实写照。两个人第一次见面，源于费尔米纳的一场疾病。当时外面正流行着霍乱疫病，费尔米纳因为怀疑被感染了霍乱不得不寻找医生治疗，恰好乌尔比诺正从巴黎旅行回来。在医学技术不发达的年代，医生是没有听诊器的，所以乌尔比诺必须贴着费尔米纳裸露的胸部听心跳。书作和电影中都详细地描绘了这个过程，两个青年男女在这种情况下发生了身体上的接触，费尔米纳更是被对方身上的男性气概所吸引。可这算是爱情吗？我更愿意相信，这是一种原始的欲望冲动，可你说这两个人间没有爱情，估计所有人都会反对，谁让我们都喜欢用海枯石烂表示爱情的忠贞，这两个人在一起生活 50 年，甚至作者都表示：一对恩爱的夫妻最重要的不是幸福，而是稳定的关系。
+所以，不管你愿不愿意承认，爱情最终都会部分地转化为亲情，爱情本身是有瑕疵的、有缺陷的，争吵不可避免，犯错不可避免。诚然，我们都希望对方忠诚的对待自己，可人归根到底是一种对自我忠诚的动物，你说你不能接受对方变心，可人、时间和空间无时无刻不在发生着变化，喜欢或者不喜欢，不过是某一瞬间的状态，你必须相信，爱情本来就不完美、充满瑕疵，可这就是真实的爱情的样子啊，人们会记得你婚礼上的海誓山盟，唯独不会记得你每天柴米油盐的平平淡淡；人们会给他们愿意看到的表面现象去点赞，唯独不会关注你是不是真正的快乐。爱情里有人不厌其烦地寻找真爱，有人沉溺在回忆里不敢再触碰爱情，对我来说，这两种选择我都表示尊重，因为爱情本来就有它真实的样子。
+我不知道，还会不会有人为了别人而苦等 51 年 9 个月零 4 天，一个人究竟有多大的勇气和执念，才能从一个朝气蓬勃的青年变成一个白发苍苍的老人。金庸先生的名篇《射雕英雄传》里，神算子瑛姑因为失去爱子而一夜白头，我想，这其中有对段皇爷见死不救的怨恨，有对周伯通求而不得的执念。可对阿里萨而言，从他遇见费尔米纳那天开始，他的生命就仿佛注定是属于她的，他坚持给她写信，在楼下为她拉小提琴，在长椅上刻下她的名字，甚至是喝花露水、吃玫瑰花。如果说爱情像一场霍乱，应该会没有怀疑，因为阿里萨的确像是生了一场霍乱，不然怎么会疯狂地爱直至偏执甚至有些荒唐。我完全可以理解阿里萨的举动，因为年轻时的我们都曾做出过类似的举动。我并不反对这样的爱情，可当你回头来看这两个人的爱情的时候，费尔米纳对阿里萨这个人几乎一无所知，除了知道对方的职业是报务员。
+电影中费尔米纳甚至给阿里萨回了信，可就如同费尔米纳所言，“他们两个人之间只有虚幻，爱情蒙蔽了彼此的双眼”，大概所有一见钟情的人都没能考虑一个问题，那就是你真的了解对方这个人吗？非常不幸的是，即使亲近如父母、妻子和丈夫这样的关系，一个人也永远不可能了解另外一个人。一个人究竟要爱得多卑微，才会心心念念地等着对方的丈夫死掉，甚至怕对方比丈夫先死掉。假如阿里萨只是这样痴痴等待 50 年的话，我们最多只是替他感到惋惜而已，可偏偏阿里萨为了“报复”费尔米纳，缓解被她伤害的心，开始一次又一次地疯狂纵欲，在肉体的狂欢中不断强化精神层面上对费尔米纳的爱，据他自己记载，他和寡妇、少妇甚至少女都发生过关系，可当他终于等来费尔米纳的时候，他声称自己是一个处男。
+人常常复杂到让你我怀疑人生，而阿里萨则是一个复杂到，让你觉得他还有点可怜的人。他视其它女性的肉体如无物，唯独将费尔米纳推上女神的圣坛。更微妙的是，费尔米纳居然是喜欢过阿里萨这个人的。她不过是在乌尔比诺和阿里萨间选择了更好的一个而已，可阿里萨这种病态的爱在我看来是极为自私的，因为无论两个人多么地爱彼此，一旦出现这种肉体的出轨，就意味着永远无法挽回。虽然费尔米纳选择嫁给了乌尔比诺，可假如有一个人在别人的身体上出轨无数次，在你的丈夫逝世以后告诉你，他等这一天已经等了 51 年 9 个月零 4 天，我不知道你会作何感想。我没有任何的封建思想残留，我尊重女性在丈夫死后改嫁的自由，可选择这样一个充满“缺点”的人，我觉得还是需要去认真想一想的。
+两个人如果真心相爱，即便是满头白发的蹒跚老者，我认为结婚都是没有问题的，可当两个 70 多岁的老人坦诚相见时，当阿里萨看到费尔米纳干瘪下垂的胸部时，当各自看到对方充满皱纹和赘肉的身体时，我真的想知道，这 50 多年的等待真的值吗？或许是值的的，就像这两个人喜欢的都是有点幻想成分的对方一样，我向往永远靠精神慰藉彼此的帕拉图之恋，也不排斥男欢女爱的肉体之欢，可无论哪一种都必须建立在真实的现实中，一个虚幻的爱慕者，一个你并不真正了解的人，当幻想被打破的一瞬间，或许就是爱情破碎的时候，所以，我希望我们对待感情更慎重些，即使没有人爱你，学会自爱未尝不可。我们的生命原本就短暂，何苦要将这生命浪费在别人身上，况且我们有时候我们就像费尔米纳一样，分不清到底是爱还是孤独，人在经历枯燥和乏味以后是会变的，会变得对事物充满新鲜感，即使是曾经不喜欢的东西。
+从某种角度而言，阿里萨是成功的，因为他用一生的时间得到了喜欢的女人。可我时常觉得人生有比这更重要的事情，就像你小时候看到喜欢的东西，却发现自己买不起的时候，你会怎么样做呢？我想大多数人都会选择不要了或者是等以后有机会再买。可人就是这样奇怪的动物，明明以前非常非常喜欢，可突然有一天发现咋再喜欢不起来。为什么我们对这件事情可以坦然接受，唯独在面对感情的时候常常无法自拔呢？你当初有没有得到这样一件喜欢的东西，或许会影响你在未来的人生轨迹，可在大多数情况下，我们的生命实在泛不起多少涟漪。有人说，人生下来的时候，结局就早已注定，我们唯一能做的事情，就是努力去填补和丰富这五六十年的时间。这样说来，人生实在是没有什么事情非做不可的，如果有，那只有一件事情，那就是努力地活下去。
+《Unnatural》里中堂系一直对恋人的死无法释怀，整整八年时间一直都在调查恋人的死亡原因，直到真相被查明，得到恋人父亲的原谅。我不是说，人生不可以有执念，我只是希望大家明白，执念只会让你太关注结果而忽略过程，而我们的生命是需要一天天去度过的。就像阿里萨终于得到了费尔米纳，可两个 70 多岁的老人，在这个世界上还有多少时间可以挥霍呢？我倒情愿日子过得稍微慢一些，用一辈子的时间去了解对方，我们一直所希望看到的，不就是被人理解和认同吗？如果永远一个可以同你交流灵魂的人，那么就努力学习一个人去生活，人生没有那么多必须做的事情，只有你愿不愿意去做的事情。起风了，就当努力生存。活着不好吗？我实在不愿意再看到罗密欧与朱丽叶这样的悲剧，虽然我们都曾歌颂过这样的故事，可只要活着就会有新的机会啊。
+有时候想想我们父母这一代人，几乎在毫无准备的情况下，被动地步入了婚姻的殿堂。时隔多年以后，或消融在柴米油盐的平淡里，或交织在子女亲情的羁绊中，或穿行在流水光阴的得失间……直至爱情彻底消亡最终变成亲情，像一滴松胶油慢慢变成一颗精美的琥珀。有人说，婚姻是爱情的坟墓，甚至结过婚的人会觉得婚姻非常无趣。那么，罗曼蒂克是否一定会消亡？如果是，是不是婚姻里有没有爱情都可以，因为总有一天它会枯竭，人生里充满太多无可奈何的事情，单单是爱情这一件事情就可以写满整个历史，爱情里有像童话一般美好的故事，同样有像悲剧一般哀伤的故事。
+或许是我们这一代独生子女们，在接触到更广阔的网络世界后，极大地影响了我们对这个世界的认知，以至于我们觉得自己就是活得太明白了。可如果要这样稀里糊涂地度过余生中的五六十年，每个人突然间又不甘心接受这残酷的命运。当我发现，我要远离父母生活，甚至完全能力能力和精力照顾他们的时候，我很容易地想到我的未来，是不是会和他们一样。有人说，婚姻是为了找到一个人陪你一起往前走，可我们这些独生子女们，早就习惯了一个人去生活，生命里总是充满着无尽的变故，或许她曾经特别特别喜欢你，可突然有一天她就不再喜欢你了；或许你们曾经是特别特别友好的朋友，可突然有一天对方就突然离你远去；或许你们朝夕相处亲密无间，可到最后突然发现根本不了解彼此……
+人明明都是会变的，可偏偏总爱把希望寄托在变化的事物上面。在一个周围一切都在变化的世界里，追求一成不变毫无疑问是贪心的，我们能追求的只有稳定，可难免会问一个不理智的问题：稳定可以理解为爱吗？这正是乌尔比诺和费尔米纳两个人的感情生活留给我们的谜题。年少时或许会憧憬阿里萨这样因爱成痴的故事，可正如村上春树所说，“哪里会有人喜欢孤独，不过是不喜欢失望罢了”。如果爱情是一场霍乱，我希望每个生病的人，都能尽早地从这场疾病中治愈。“起风了，当努力生存”，就像石原里美饰演的三橙说过的，“有时间绝望还不如去吃点好吃的呢”，比起找到心爱的人，学会如何爱自己不是更重要吗？</description></item><item><title>我是猫，一只特立独行的猫</title><link>http://example.org/posts/352037321/</link><pubDate>Tue, 06 Mar 2018 08:57:48 +0000</pubDate><guid>http://example.org/posts/352037321/</guid><description>终于在除夕夜到来前，在 Kindle 上读完了 2017 年的最后一本书，来自夏目漱石先生的《我是猫》。起初买这本书的动机说起来非常滑稽，一来以为这会是一本诙谐幽默的书，二来对夏目这个名字莫名地充满好感。我读的是曹曼翻译的中文译本，读时觉得这位作者的文字清新素雅，即使全书行文节奏堪称缓慢到极点，想来应该是我们这个时代的人物。及至翻阅作者生平，始知这位被誉为“国民大作家”的日本作家，早在 100 年前就在日本文学史上享有盛名。这种感觉如何去形容呢？大概就是杨过从剑冢石刻的寥寥数语中，遥想独孤求败“生平求一敌手而不可得”的寂寥难堪。这位老先生的文字可以说非常”摩登“了，因为在 100 年后的今天再次读来，竟完全读不出违和感来，所谓”嬉笑怒骂皆成文章“，讽刺与幽默杂然相陈，这是我喜欢这本书的理由。
+对于《我是猫》这本书，按照作者的话说，它是一部没有什么情节的小说，因为它完全是以一只猫的视角来行文，这只生活在一个教师家庭里的猫，每天都会接触到形形色色的文人，譬如：不食人间烟火，空有一番理论而不去实践的独仙；整天磨玻璃球，做事一丝不苟甚至古板木呐的寒月；表面上每天都很乐观，实则唯恐天下不乱的米亭；做事三分钟热情，自命清高的苦沙弥……等等。在猫的眼睛这里，这些人整天聚在一起讨论没有意义的事情，对现实世界心怀不满，不思进取就会怨天尤人，甚至金田及其夫人的”拜金主义“，为金钱而陷害苦沙弥的邻居，唯利是图、虚伪圆滑的铃木，这些人在猫的眼睛里都是丑陋而黑暗的。这只猫平静地叙述着它的见闻，仿佛它早已经整个人类和社会看穿看透，或许带着些嘲讽，或许带着些同情。
+每年的 2 月 22 日是日本的猫节，这是我在读完这本书以后知道的。而猫在日本的文化形象中是非常神圣的，据说这是因为猫最早由遣唐使带来日本，首先作为宫廷宠物出现，直至江户时代进入”寻常百姓家“。除此之外，日本作为重度渔业国度，对稻米的珍惜使其在捕鼠护粮方面极为重视，猫作为老鼠的天敌自然而然地受到喜爱。相传招财猫起源于东京世田谷的豪德寺，因此猫在日本被人们当作神明供奉。再比如日本动漫中的机器猫、龙猫和 Hello Kitty 都是猫在日本文化中的经典形象，日本的文学作品比如《草枕子》、《源氏物语》等里面都有关于猫的故事。时至今日，依然有大量德川家族与猫的故事流传。因此，猫在日本人眼中有一种浓厚的贵族气息。陈凯歌导演的《妖猫传》，改编自日本作家梦枕貘的小说《沙门空海》，猫在其中的重要性不言自明。
+这是一本“猫眼看世界”的书，这是一个怎样的世界呢？1871 年，日本历史上最为大刀阔斧的一次改革——明治维新，开始在全国范围内推行。改革带来经济飞速发展的同时，带来了各种矛盾日益突出的社会问题。36 年的 1905 年，时年 38 岁的夏目漱石，以猫的视角，如初入人类社会一般，探讨当时知识分子的心理状态和对社会变迁的感慨，并因此一举成名，获得社会广泛关注，被认为是日本批判现实主义文学的丰碑。每一个时代都有它的无奈，或许我们今天难以想象老先生当时的心境，不过从这些猫的口吻里，从这些辛辣的讽刺和戏谑中，我们总能读出作者当时内心的苦闷。猫眼里那些荒诞不经的行为，恰恰就是你我每天的生活，我们总说人类和猫是好朋友，可那仅仅是我们以为的，在猫的眼睛里，我们就像一群神经病。
+猫是如何看待人类的呢？猫说：世间的奢侈往往是无能的表现。猫一年到头都穿着同一件衣服，而人类好像不把尽可能多的东西往身上照顾就难受，人类给羊添麻烦，受蚕照顾，承蒙棉花的恩泽，你看吧，我们的所作所为连只猫都看不下去。人类羡慕猫的悠闲，故而感慨道：什么时候能像猫一样轻松就好了。可明明是人类自己制造出一堆乱七八糟的事情给自己，到头来还抱怨真痛苦真痛苦，就像自己生起一堆火，到头来嚷着热死了热死了。这一切在猫看来都是庸庸碌碌的。猫甚至断言道：人类不可能永远繁荣昌盛下去。嗯，我愿静候属于猫族时代的到来。从前是“人类一思考，上帝就发笑”，而现在是“人类一思考，猫君就发笑”。猫觉得人类模仿它们的声音时是愚蠢的，尤其是在抚摸它们的时候，因为根本不存在撒娇声，只有被撒娇声，因为我们期待的是，猫向我们撒娇，可难道不是我们在向猫撒娇？
+个体的荒谬，在人类的个性面前根本不值一提，就如同人类的个性得到完全解放以后，永远像一锅众口难调的羹汤。小说中苦沙弥、迷亭、寒月、东风和独仙时常在一起聊天，话题涉及哲学、艺术，爱情、生活等多个方面，这只“毒舌”的猫，就在无意识地引导和放大这些观点，“我认为这个世界上，没有比爱和美更受人尊重的了”，所以这本书里的观点，其实并不是完全的消极的，就像这只猫平静地看着这个世界，它对人类有过嘲讽，有过同情，它甚至没有自己的名字，当它失足淹死在水缸里的时候，对这个世界更多的是种悲天悯人吧！我们这个世界上有五种毒药，佛家所谓的“贪嗔痴慢疑”，作者提到“可没有任何一个人，能够全然抛开自己去研究外界，如果人类能够把自己疏离出来，那么疏离的瞬间，也就没有了自己”，人类常常不愿放过自己，更不愿放过别人，因为所有无解的问题，都可以制造一个意义出来，而我们早已习惯这一切。
+曾经有朋友问我，为什么喜欢猫这种动物，我回答说，因为我就像一只猫，一只特立独行的猫，对所有人都很友善和蔼，却喜欢独来独往。因为维护这种若即若离的关系，对我来说比任何事情都要困难。人类以为猫都是傲娇的动物，其实这是人类的一厢情愿，因为从智力上来说，猫的智力是不及狗的。猫自然对人是有感情的，不过在人类驯养动物的历程中，狗更聪明、更懂得如何向人类索取，我们所认定的感情，在狗的世界里或许并不是。人类难以理解的事物，所谓阳春白雪，所谓曲高和寡，不自然地背负上高冷的名声，对一只猫而已，到底是我们不了解猫，还是不了解我们自己。人总在试图驯化猫这种动物，可猫无非是人类的一种折射而已，它就像那些独立潇洒的人一样，不藉由粘人和撒娇来获取安全感，在这个世上没有谁会离不开谁。你走，我不必送你；你来，不管多大风多大雨，我都去接你。这是我——一只猫的自白。
+有时候，难免会觉得人类自作聪明，喜欢给世间的事物贴上不同的标签，譬如二哈、喵星人、汪星人、猫主子……可你知道猫如何评价人类的吗？作者说，“这些人虽然看起来快活，但是如果叩问他们的心底，却可以听见悲凉的回响”。为什么会听见悲凉的回响呢？大概是人类丰富而有趣的个性，不断地尝试挑战世俗的眼光，结果被世俗打败而变得世俗，这听起来简直就像是，英雄杀死魔王又变成魔王的故事的翻版。“每个人地位都提高，等同于每个人的地位都下降。人类不再做让自己委屈的事情，正是个人力量变强的证明；几乎不再插手别人的事情，反而是群体力量变弱的证明”。一点亏都不愿意吃，一点小便宜就要占，无一不是为了证明个人意志的强化，可人与人间的空间越来越狭窄，日益窘迫，为了扩充自己膨胀到近乎爆炸。人与人之间那点空间，是一切痛苦的根源，你说这还不算作悲凉吗？没有谁可以完全了解一个人，不完全认知是人类关系的反应剂，痛苦、误会、偏见……等等纷至沓来，你以为你模仿猫叫，猫就真的听懂了吗？
+夏目先生在后记里写道，“世事变迁就像猫的眼珠一样变幻莫测，短短几个月世间，就可以去那极乐世界，或者可以把薪水花光光。年底过去了，正月过去了，花朵凋谢，新叶又生。以后世界将如何变化，我不了解，只不过水缸中猫的瞳孔，应该可以凝成永恒”。我想，世界会一如既往地这样无奈下去，时间会一如既往地这样消逝下去，而你和我会一如既往地平庸且烦恼下去。假如有这样一只猫，通过瞳孔记下了我的生平，不知道它会如何评价我呢？就像在某一个下雨天，突然想到某一个人，单单是因为怕这世界里，从此再没了对方的音讯。可单单是想到又有什么意义呢？《笑傲江湖》里令狐冲率领江湖群雄，前往少林寺解救被困的圣姑，这个将来会成为他妻子的人，而眼下更是生死未知、前途未明，可在一片寂静中听到雪花簌簌落下时，他想到的却是：小师妹不知这时候不知在干甚么。及至岳林珊为林平之所杀，临死托付令狐冲替她照顾小林子，内心却又不知做何感想了吧……</description></item><item><title>《C#多线程编程实战》读书笔记</title><link>http://example.org/posts/345410188/</link><pubDate>Sun, 07 Jan 2018 21:34:36 +0000</pubDate><guid>http://example.org/posts/345410188/</guid><description>本文是一篇读书笔记，由《C#多线程编程实战》一书中的内容整理而来，主要梳理了.NET 中多线程编程相关的知识脉络，从 Thread、ThreadPool、Task、async/await、并发集合、Parallel、PLINQ 到 Rx 及异步 I/O 等内容，均有所覆盖。为了帮助大家理解本文内容，首先给出博主在阅读该书过程中绘制的思维导图，大家可以根据个人需要针对性的查漏补缺。
+《多线程编程实战》思维导图线程基础 Tips1：暂停线程，即通过 Thread.Sleep()方法让线程等待一段时间而不用消耗操作系统资源。当线程处于休眠状态时，它会占用尽可能少的 CPU 时间。 Tips2：线程等待，即通过 Join()方法等待另一个线程结束，因为不知道执行所需要花费的时间，此时 Thread.Sleep()方法无效，并且第一个线程等待时是处于阻塞状态的。 Tips3：终止线程，调用 Abort()方法会给线程注入 ThreadAbortException 异常，该异常会导致程序崩溃，且该方法不一定总是能终止线程，目标线程可以通过处理该异常并调用 Thread.ResetAbort()方法来拒绝被终止，因此不推荐使用 Abort()方法来终止线程，理想的方式是通过 CancellationToken 来实现线程终止。 Tips4：线程优先级，线程优先级决定了该线程可占用多少 CPU 时间，通过设置 IsBackground 属性可以指定一个线程是否为后台线程，默认情况下，显式创建的线程都是前台线程。其主要区别是：进程会等待所有的前台线程完成后再结束工作，但是如果只剩下后台线程，则会直接结束工作。需要注意的是，如果程序定义了一个不会赞成的前台线程，主程序并不会正常结束。 Tips5：向线程传递参数，可以通过 ThreadStart 或者 lambda 表达式来向一个线程传递参数，需要注意的是，由 lambda 表达式带来的闭包问题 Tips6：竞争条件是多线程环境中非常常见的导致错误的原因，通过 lock 关键字锁定一个静态对象(static&amp;amp;readonly)时，需要访问该对象的所有其它线程都会处于阻塞状态，并等待直到该对象解除锁定，这可能会导致严重的性能问题， Tips7：发生死锁的原因是锁定的静态对象永远无法解除锁定，通常 Monitor 类用以解除死锁，而 lock 关键字用以创建死锁，Monitor 类的 TryEnter()方法可以用以检测静态对象是否可以解锁，lock 关键字本质上是 Monitor 类的语法糖。 bool acquiredLock = false; try { Monitor.Enter(lockObject, ref acquiredLock) } finally { if(acquiredLock) { Monitor.Exit(lockObject) } } Tips8：不要在线程中抛出异常，而是在线程代码中使用 try……catch 代码块。 线程同步 Tips9：无须共享对象，则无须进行线程同步，通过重新设计程序来移除共享状态，从而避免复杂的同步构造；使用原子操作，这意味着一个操作只占用一个量子的时间，一次就可以完成，并且只有当前操作完成后，其它线程方可执行其它操作，因此，无须实现其它线程等待当前操作完成，进而避免了使用锁，排除了死锁。 Tips10：为了实现线程同步，我们不得不使用不同的方式来协调线程，方式之一是将等待的线程设为阻塞，当线程处于阻塞状态时，会占用尽可能少的 CPU 时间，然而这意味着会引入至少一次的上下文切换。上下文切换，是指操作系统的线程调度器，该调度器会保存等待的线程状态，并切换到另一个线程，依次恢复等待的线程状态，而这需要消耗更多的资源。 Tips11：线程调度模式，当线程挂起很长时间时，需要操作系统内核来阻止线程使用 CPU 时间，这种模式被称为内核模式；当线程只需要等待一小段时间，而不需要将线程切换到阻塞状态，这种模式被称为用户模式；先尝试按照用户模式进行等待，如线程等待足够长时间，则切换到阻塞状态以节省 CPU 资源，这种模式被称为混合模式。 Tips12：Mutex 是一种原始的同步方法，其只对一个线程授予对共享资源的独占访问，Mutex 可以在不同的程序中同步线程。 Tips13：SemaphoreSlim 是 Semaphore 的轻量级版本，用以限制同时访问同一个资源的线程数量，超过该数量的线程需要等待，直到之前的线程中某一个完成工作，并调用 Release()方法发出信号，其使用了混合模式，而 Semaphore 则使用内核模式，可以在跨程序同步的场景下使用。 Tips14：AutoResetEvent 类用以从一个线程向另一个线程发送通知，该类可以通知等待的线程有某个事件发生，其实例在默认情况下初始状态为 unsignaled，调用 WaitOne()方法时将会被阻塞，直到我们调用了 Set 方法；相反地，如果初始状态为 signaled，调用 WaitOne()方法时将会被立即处理，需要我们再调用一次 Set 方法，以便向其它线程发出信号。 Tips15：ManualResetEventSlim 类是使用混合模式的线程信号量，相比使用内核模式的 AutoResetEvent 类更好(因为等待时间不能太长)，AutoResetEvent 像一个旋转门，一次仅允许一个人通过，而 ManualResetEventSlim 是 ManualResetEvent 的混合版本，一直保持大门开启直到手动屌用 Reset 方法。 Tips16：EventWaitHandle 类是 AutoResetEvent 和 ManualResetEvent 的基类，可以通过调用其 WaitOne()方法来阻塞线程，直到 Set()方法被调用，它有两种状态，即终止态和非终止态，这两种状态可以相互转换，调用 Set()方法可将其实例设为终止态，调用 Reset()方法可以将其实例设为非终止态。 Tips17：CountdownEvent 类可以用以等到直到一定数量的操作完成，需要注意的是，如果其实例方法 Signal()没有达到指定的次数，则其实例方法 Wait()将一直等待。所以，请确保使用 CountdownEvent 时，所有线程完成后都要调用 Signal()方法。 Tips18：ReaderWriterLockSlim 用以创建一个线程安全的机制，在多线程中对一个集合进行读写操作，ReaderWriterLockSlim 代表了一个管理资源访问的锁，允许多个线程同时读取，以及独占写。其中，读锁允许多线程读取数据，写锁在被释放前会阻塞其它线程的所有操作。 Tips19：SpinWait 类是一个混合同步构造，被设计为使用用户模式等待一段时间，然后切换到内核模式以节省 CPU 时间。 使用线程池 Tips20：volatile 关键字指出一个字段可能会被同时执行的多个线程修改，声明为 volatile 的字段不会被编译器和处理器优化为只能被单线程访问。 Tips21：创建线程是昂贵的操作，所以为每个短暂的异步操作创建线程会产生显著的开销。线程池的用途是执行运行时间短的操作，使用线程池可以减少并行度耗费及节省操作系统资源。在 ASP.</description></item><item><title>函数式编程常用术语</title><link>http://example.org/posts/2171683728/</link><pubDate>Thu, 02 Feb 2017 19:21:12 +0000</pubDate><guid>http://example.org/posts/2171683728/</guid><description>&lt;p>近年来函数式编程这种概念渐渐流行起来，尤其是在 React/Vuejs 这两个前端框架的推动下，函数式编程就像股新思潮一般瞬间席卷整个技术圈。虽然博主接触到的前端技术并不算深入，可这并不妨碍我们通过类似概念的延伸来理解这种概念。首先，函数式编程是一种编程范式，而我们所熟悉的常见编程范式则有&lt;strong>命令式编程(Imperative Programmming)&lt;/strong>、&lt;strong>函数式编程(Functional Programming)&lt;/strong>、&lt;strong>逻辑式编程(Logic Programming)&lt;/strong>、**声明式编程(Declarative Programming)&lt;strong>和&lt;/strong>响应式编程(Reactive Programming)**等。现代编程语言 在发展过程中实际上都在借鉴不同的编程范式，比如 Lisp 和 Haskell 是最经典的函数式编程语言，而 SmartTalk、C++和 Java 则是最经典的命令式编程语言。微软的 C#语言最早主要借鉴 Java 语言，在其引入 lambda 和 LINQ 特性以后，使得 C#开始具备实施函数式编程的基础，而最新的 Java8 同样开始强化 lambda 这一特性，为什么 lambda 会如此重要呢？这或许要从函数式编程的基本术语开始说起。&lt;/p></description></item><item><title>生命的朝圣者</title><link>http://example.org/posts/3657008967/</link><pubDate>Sat, 05 Nov 2016 21:44:52 +0000</pubDate><guid>http://example.org/posts/3657008967/</guid><description>&lt;script type="text/javascript" src="http://example.org/js/douban.js">&lt;/script>
+&lt;script type="text/javascript">
+ var ele = document.currentScript
+ var douban = window.$DoubanCard(ele, '24934182', 'https:\/\/douban.edui.fun\/v2\/book\/id\/24934182', 'book', '{\u0022charts\u0022:[],\u0022comment\u0022:\u0022这本书我最近正在读，虽然看起来不像一本畅销书，可它会告诉你怎么样，去坚持做一件事情，人生有时候是需要认真的，即使输了又怎么样？\u0022,\u0022create_time\u0022:\u00222016-11-06 18:34:17\u0022,\u0022id\u0022:1099237554,\u0022is_private\u0022:false,\u0022platforms\u0022:[],\u0022rating\u0022:null,\u0022sharing_text\u0022:\u0022这本书我最近正在读，虽然看起来不像一本畅销书，可它会告诉你怎么样，去坚持做一件事情，人生有时候是需要认真的，即使输了又怎么样？ https:\/\/www.douban.com\/doubanapp\/dispatch\/book\/24934182 来自@豆瓣App\u0022,\u0022sharing_url\u0022:\u0022https:\/\/www.douban.com\/doubanapp\/dispatch?uri=\/subject\/24934182\/interest\/1099237554\u0022,\u0022status\u0022:\u0022done\u0022,\u0022subject\u0022:{\u0022article_intros\u0022:[],\u0022author\u0022:[\u0022[英] 蕾秋·乔伊斯\u0022],\u0022book_subtitle\u0022:\u0022\u0022,\u0022buy_more_uri\u0022:\u0022\u0022,\u0022card_subtitle\u0022:\u0022[英] 蕾秋·乔伊斯 \/ 2013 \/ 北京联合出版公司\u0022,\u0022color_scheme\u0022:{\u0022_avg_color\u0022:[0.11363636363636369,0.3027522935779816,0.8549019607843137],\u0022_base_color\u0022:[0.1202185792349727,0.2640692640692641,0.9058823529411765],\u0022is_dark\u0022:true,\u0022primary_color_dark\u0022:\u00227f765d\u0022,\u0022primary_color_light\u0022:\u0022a59979\u0022,\u0022secondary_color\u0022:\u0022f9f8f4\u0022},\u0022controversy_reason\u0022:\u0022\u0022,\u0022cover_url\u0022:\u0022https:\/\/dou.img.lithub.cc\/book\/24934182.jpg\u0022,\u0022has_ebook\u0022:true,\u0022honor_infos\u0022:[{\u0022kind\u0022:\u0022book\u0022,\u0022rank\u0022:2,\u0022title\u0022:\u00222023年出版10周年图书\u0022,\u0022uri\u0022:\u0022douban:\/\/douban.com\/subject_collection\/ECWQ6BC2I?type=rank\\u0026category=book\\u0026rank_type=year\u0022}],\u0022id\u0022:\u002224934182\u0022,\u0022intro\u0022:\u0022★2013年欧洲首席畅销小说，入围2012年布克文学奖，同名电影拍摄中\\n★台湾读者表示“很久没有读一本书读到凌晨”、“是一个简单、素朴但会令人深深感动的故事”、“笑泪交织的阅读”\\n★2013年春季英国最具影响力“理查与茱蒂”读书俱乐部书单第1 名；欧普拉读书俱乐部夏日选书、美国图书馆协会选书；2012年英国最畅销新人小说；《出版人周刊》、《纽约时报》、《泰晤士报》、《嘉人》、《今日美国》等各大媒体高评价推荐\\n★他以为人生就这么过去了，直到收到那封信\\n★1个人，87天，627英里\\n★有关爱的回归、自我发现、日常生活的信念以及万物之美\\n★这一年，我们都需要哈罗德安静而勇敢的陪伴\\n哈罗德·弗莱，六十岁，在酿酒厂干了四十年销售代表后默默退休，没有升迁，既无朋友，也无敌人，退休时公司甚至连欢送会都没开。他跟隔阂很深的妻子住在英国的乡间，生活平静，夫妻疏离，日复一日。\\n一天早晨，他收到一封信，来自二十年未见的老友奎妮。她患了癌症，写信告别。震惊、悲痛之下，哈罗德写了回信，在寄出的路上，他由奎妮想到了自己的人生，经过了一个又一个邮筒，越走越远，最后，他从英国最西南一路走到了最东北，横跨整个英格兰。87天，627英里，只凭一个信念：只要他走，老友就会活下去！\\n这是哈罗德千里跋涉的故事。从他脚步迈开的那一刻起，与他六百多英里旅程并行的，是他穿越时光隧道的另一场旅行。\u0022,\u0022is_released\u0022:true,\u0022is_show\u0022:false,\u0022min_sale_price\u0022:null,\u0022null_rating_reason\u0022:\u0022\u0022,\u0022other_versions_count\u0022:13,\u0022pages\u0022:[\u0022320\u0022],\u0022pic\u0022:{\u0022large\u0022:\u0022https:\/\/img2.doubanio.com\/view\/subject\/l\/public\/s26936721.jpg\u0022,\u0022normal\u0022:\u0022https:\/\/qnmob3.doubanio.com\/view\/subject\/m\/public\/s26936721.jpg?imageView2\/2\/q\/80\/w\/200\/h\/300\/format\/jpg\/sharpen\/1\u0022},\u0022press\u0022:[\u0022北京联合出版公司\u0022],\u0022pubdate\u0022:[\u00222013-9-1\u0022],\u0022rating\u0022:{\u0022count\u0022:80268,\u0022max\u0022:10,\u0022star_count\u0022:4,\u0022value\u0022:8.1},\u0022sharing_url\u0022:\u0022https:\/\/www.douban.com\/doubanapp\/dispatch\/book\/24934182\u0022,\u0022subtype\u0022:\u0022book\u0022,\u0022title\u0022:\u0022一个人的朝圣\u0022,\u0022type\u0022:\u0022book\u0022,\u0022uri\u0022:\u0022douban:\/\/douban.com\/book\/24934182\u0022,\u0022url\u0022:\u0022https:\/\/book.douban.com\/subject\/24934182\/\u0022,\u0022vendor_icons\u0022:[\u0022https:\/\/img9.doubanio.com\/f\/frodo\/88a62f5e0cf9981c910e60f4421c3e66aac2c9bc\/pics\/vendors\/bilibili.png\u0022,\u0022https:\/\/img1.doubanio.com\/f\/frodo\/f6f620132e6d8a02d171f03114bbe2339aa8af97\/pics\/vendors\/logo_doubanread@2x.png\u0022],\u0022vendor_original_price\u0022:\u0022\u0022,\u0022vendor_sale_price\u0022:\u0022\u0022},\u0022tags\u0022:[\u0022一个人的朝圣\u0022,\u0022自我发现\u0022,\u0022外国文学\u0022],\u0022vote_count\u0022:1}');
+&lt;/script>
+&lt;style>
+ .douban-card {
+ width: 100%;
+ max-width: 100%;
+ background: white;
+ border-radius: 16px;
+ box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+ overflow: hidden;
+ display: flex;
+ text-decoration: none;
+ color: #333;
+ transition: transform 0.2s, box-shadow 0.2s;
+ position: relative;
+ margin-top: 1.5rem;
+ }
+
+ .douban-card:hover {
+ box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+ border: 1px solid var(--main-card-border);
+ }
+
+ .card-content {
+ flex: 8;
+ padding: 16px;
+ display: flex;
+ flex-direction: column;
+ }
+
+ .card-cover {
+ flex: 2;
+ position: relative;
+ overflow: hidden;
+ min-height: 200px;
+ }
+
+ .card-cover img {
+ position: absolute;
+ height: 100%;
+ width: 100%;
+ object-fit: cover;
+ object-position: center;
+ }
+
+ .card-title {
+ font-size: 18px;
+ font-weight: bold;
+ margin-bottom: 8px;
+ color: #333;
+ line-height: 1.4;
+ }
+
+ .card-meta {
+ display: flex;
+ align-items: center;
+ margin-bottom: 12px;
+ font-size: 14px;
+ color: #666;
+ }
+
+ .card-rating {
+ margin-right: 8px;
+ font-weight: bold;
+ color: #e09015;
+ }
+
+ .card-stars {
+ margin: 2.5px 0 2.5px;
+ font-size: 12px;
+ line-height: 1;
+ display: flex;
+ align-items: center
+ }
+
+ .card-stars .card-stars-dark {
+ position: relative;
+ color: #f99b01;
+ height: 16px;
+ width: 80px;
+ background-size: auto 100%;
+ margin-right: 8px;
+ background-repeat: repeat;
+ background-image: url(data:image/svg+xml;base64,PHN2ZyBjbGFzcz0iaWNvbiIgdmlld0JveD0iMCAwIDEwMjQgMTAyNCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB3aWR0aD0iMzIiIGhlaWdodD0iMzIiPjxwYXRoIGQ9Ik05MDguMSAzNTMuMWwtMjUzLjktMzYuOUw1NDAuNyA4Ni4xYy0zLjEtNi4zLTguMi0xMS40LTE0LjUtMTQuNS0xNS44LTcuOC0zNS0xLjMtNDIuOSAxNC41TDM2OS44IDMxNi4ybC0yNTMuOSAzNi45Yy03IDEtMTMuNCA0LjMtMTguMyA5LjMtMTIuMyAxMi43LTEyLjEgMzIuOS42IDQ1LjNsMTgzLjcgMTc5LjEtNDMuNCAyNTIuOWMtMS4yIDYuOS0uMSAxNC4xIDMuMiAyMC4zIDguMiAxNS42IDI3LjYgMjEuNyA0My4yIDEzLjRMNTEyIDc1NGwyMjcuMSAxMTkuNGM2LjIgMy4zIDEzLjQgNC40IDIwLjMgMy4yIDE3LjQtMyAyOS4xLTE5LjUgMjYuMS0zNi45bC00My40LTI1Mi45IDE4My43LTE3OS4xYzUtNC45IDguMy0xMS4zIDkuMy0xOC4zIDIuNy0xNy41LTkuNS0zMy43LTI3LTM2LjN6TTY2NC44IDU2MS42bDM2LjEgMjEwLjNMNTEyIDY3Mi43IDMyMy4xIDc3MmwzNi4xLTIxMC4zLTE1Mi44LTE0OUw0MTcuNiAzODIgNTEyIDE5MC43IDYwNi40IDM4MmwyMTEuMiAzMC43LTE1Mi44IDE0OC45eiIgZmlsbD0iI2Y5OWIwMSIvPjwvc3ZnPg==)
+ }
+
+ .card-stars .card-stars-light {
+ position: absolute;
+ left: 0;
+ color: #f99b01;
+ height: 16px;
+ overflow: hidden;
+ background-size: auto 100%;
+ background-repeat: repeat;
+ background-image: url(data:image/svg+xml;base64,PHN2ZyBjbGFzcz0iaWNvbiIgdmlld0JveD0iMCAwIDEwMjQgMTAyNCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB3aWR0aD0iMzIiIGhlaWdodD0iMzIiPjxwYXRoIGQ9Ik05MDguMSAzNTMuMWwtMjUzLjktMzYuOUw1NDAuNyA4Ni4xYy0zLjEtNi4zLTguMi0xMS40LTE0LjUtMTQuNS0xNS44LTcuOC0zNS0xLjMtNDIuOSAxNC41TDM2OS44IDMxNi4ybC0yNTMuOSAzNi45Yy03IDEtMTMuNCA0LjMtMTguMyA5LjMtMTIuMyAxMi43LTEyLjEgMzIuOS42IDQ1LjNsMTgzLjcgMTc5LjEtNDMuNCAyNTIuOWMtMS4yIDYuOS0uMSAxNC4xIDMuMiAyMC4zIDguMiAxNS42IDI3LjYgMjEuNyA0My4yIDEzLjRMNTEyIDc1NGwyMjcuMSAxMTkuNGM2LjIgMy4zIDEzLjQgNC40IDIwLjMgMy4yIDE3LjQtMyAyOS4xLTE5LjUgMjYuMS0zNi45bC00My40LTI1Mi45IDE4My43LTE3OS4xYzUtNC45IDguMy0xMS4zIDkuMy0xOC4zIDIuNy0xNy41LTkuNS0zMy43LTI3LTM2LjN6IiBmaWxsPSIjZjk5YjAxIi8+PC9zdmc+);
+
+ }
+
+ .card-description {
+ font-size: 12px;
+ line-height: 1.6;
+ color: #666;
+ overflow: hidden;
+ display: -webkit-box;
+ -webkit-line-clamp: 3;
+ -webkit-box-orient: vertical;
+ margin-bottom: 12px;
+ }
+
+ .card-info {
+ font-size: 12px;
+ color: #999;
+ line-height: 1.6;
+ }
+
+ .card-tags {
+ margin-top: 12px;
+ display: flex;
+ flex-wrap: wrap;
+ }
+
+ .card-tag {
+ font-size: 12px;
+ color: var(--main-color);
+ background: #f5f5f5;
+ padding: 2px 8px;
+ border-radius: 3px;
+ margin-right: 6px;
+ margin-bottom: 6px;
+ }
+
+
+
+
+ .link-overlay {
+ position: absolute;
+ top: 0;
+ left: 0;
+ width: 100%;
+ height: 100%;
+ z-index: 1;
+ }
+
+ @media (max-width: 520px) {
+ .douban-card {
+ flex-direction: column;
+ }
+
+ .card-content {
+ flex: none;
+ width: 100%;
+ padding: 12px;
+ }
+
+ .card-cover {
+ flex: none;
+ width: 100%;
+ height: 180px;
+ order: -1;
+ }
+
+ .card-title {
+ font-size: 16px;
+ margin-bottom: 6px;
+ }
+
+ .card-meta {
+ margin-bottom: 8px;
+ font-size: 12px;
+ }
+
+ .card-description {
+ font-size: 13px;
+ -webkit-line-clamp: 2;
+ margin-bottom: 8px;
+ }
+
+ .card-info {
+ font-size: 11px;
+ }
+
+ .card-tags {
+ margin-top: 8px;
+ }
+
+ .card-tag {
+ font-size: 11px;
+ padding: 1px 6px;
+ margin-right: 4px;
+ margin-bottom: 4px;
+ }
+ }
+&lt;/style>
+&lt;p>最初开始读这本书的时候，并没有想到这本书会讲这样一个故事，甚至它不像一本畅销书一样让人充满期待，可是当你逐渐理清整个故事的来龙去脉以后，或许你会喜欢这个故事甚至被这个这个故事所震撼。我从未对宗教意义上的朝圣进行过深入了解，我所知道的朝圣，比如每年伊斯兰教历的第十二月，都会有数以百万计的伊斯兰教徒前往麦加参与朝觐仪式，而国内每年都会有从各地前往布达拉宫下的大昭寺朝佛的佛教信徒，而对藏传佛教信众来说“叩长头”是最为至诚的礼佛方式之一。所以朝圣是一项具有重大的道德或者灵性意义的旅程或者探寻，它关乎对信仰的思考同时注重身体力行，因为朝圣者始终相信前往一个重要的地方，能够从中获得灵性或者是得到治愈。&lt;/p></description></item><item><title>当黑客遇见画家</title><link>http://example.org/posts/4205536912/</link><pubDate>Sun, 09 Oct 2016 18:38:03 +0000</pubDate><guid>http://example.org/posts/4205536912/</guid><description>&lt;script type="text/javascript" src="http://example.org/js/douban.js">&lt;/script>
+&lt;script type="text/javascript">
+ var ele = document.currentScript
+ var douban = window.$DoubanCard(ele, '6021440', 'https:\/\/douban.edui.fun\/v2\/book\/id\/6021440', 'book', '{\u0022charts\u0022:[],\u0022comment\u0022:\u0022\u0022,\u0022create_time\u0022:\u00222016-10-19 00:26:11\u0022,\u0022id\u0022:1099240204,\u0022is_private\u0022:false,\u0022platforms\u0022:[],\u0022rating\u0022:null,\u0022sharing_text\u0022:\u0022https:\/\/www.douban.com\/doubanapp\/dispatch\/book\/6021440 来自@豆瓣App\u0022,\u0022sharing_url\u0022:\u0022https:\/\/www.douban.com\/doubanapp\/dispatch?uri=\/subject\/6021440\/interest\/1099240204\u0022,\u0022status\u0022:\u0022done\u0022,\u0022subject\u0022:{\u0022article_intros\u0022:[],\u0022author\u0022:[\u0022[美] Paul Graham\u0022],\u0022book_subtitle\u0022:\u0022硅谷创业之父Paul Graham文集\u0022,\u0022buy_more_uri\u0022:\u0022\u0022,\u0022card_subtitle\u0022:\u0022[美] Paul Graham \/ 2011 \/ 人民邮电出版社\u0022,\u0022color_scheme\u0022:{\u0022_avg_color\u0022:[0.08333333333333333,0.012345679012345637,0.6352941176470588],\u0022_base_color\u0022:[0.27777777777777773,0.10344827586206896,0.22745098039215686],\u0022is_dark\u0022:true,\u0022primary_color_dark\u0022:\u0022767f72\u0022,\u0022primary_color_light\u0022:\u00229aa594\u0022,\u0022secondary_color\u0022:\u0022f6f9f4\u0022},\u0022controversy_reason\u0022:\u0022\u0022,\u0022cover_url\u0022:\u0022https:\/\/dou.img.lithub.cc\/book\/6021440.jpg\u0022,\u0022has_ebook\u0022:false,\u0022honor_infos\u0022:[{\u0022kind\u0022:\u0022book\u0022,\u0022rank\u0022:3,\u0022title\u0022:\u0022热门互联网图书TOP10\u0022,\u0022uri\u0022:\u0022douban:\/\/douban.com\/subject_collection\/EC7MKUDQI?type=rank\\u0026category=book\\u0026rank_type=topn_book\u0022}],\u0022id\u0022:\u00226021440\u0022,\u0022intro\u0022:\u0022本书是硅谷创业之父Paul Graham 的文集，主要介绍黑客即优秀程序员的爱好和动机，讨论黑客成长、黑客对世界的贡献以及编程语言和黑客工作方法等所有对计算机时代感兴趣的人的一些话题。书中的内容不但有助于了解计算机编程的本质、互联网行业的规则，还会帮助读者了解我们这个时代，迫使读者独立思考。\\n本书适合所有程序员和互联网创业者，也适合一切对计算机行业感兴趣的读者。\u0022,\u0022is_released\u0022:true,\u0022is_show\u0022:false,\u0022min_sale_price\u0022:null,\u0022null_rating_reason\u0022:\u0022\u0022,\u0022other_versions_count\u0022:7,\u0022pages\u0022:[\u0022264\u0022],\u0022pic\u0022:{\u0022large\u0022:\u0022https:\/\/img9.doubanio.com\/view\/subject\/l\/public\/s4669554.jpg\u0022,\u0022normal\u0022:\u0022https:\/\/qnmob3.doubanio.com\/view\/subject\/m\/public\/s4669554.jpg?imageView2\/2\/q\/80\/w\/200\/h\/300\/format\/jpg\/sharpen\/1\u0022},\u0022press\u0022:[\u0022人民邮电出版社\u0022],\u0022pubdate\u0022:[\u00222011-4\u0022],\u0022rating\u0022:{\u0022count\u0022:23460,\u0022max\u0022:10,\u0022star_count\u0022:4.5,\u0022value\u0022:8.7},\u0022sharing_url\u0022:\u0022https:\/\/www.douban.com\/doubanapp\/dispatch\/book\/6021440\u0022,\u0022subtype\u0022:\u0022book\u0022,\u0022title\u0022:\u0022黑客与画家\u0022,\u0022type\u0022:\u0022book\u0022,\u0022uri\u0022:\u0022douban:\/\/douban.com\/book\/6021440\u0022,\u0022url\u0022:\u0022https:\/\/book.douban.com\/subject\/6021440\/\u0022,\u0022vendor_icons\u0022:[],\u0022vendor_original_price\u0022:\u0022\u0022,\u0022vendor_sale_price\u0022:\u0022\u0022},\u0022tags\u0022:[\u0022Hacker\u0022,\u0022编程艺术\u0022,\u0022计算机科学\u0022],\u0022vote_count\u0022:0}');
+&lt;/script>
+&lt;style>
+ .douban-card {
+ width: 100%;
+ max-width: 100%;
+ background: white;
+ border-radius: 16px;
+ box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+ overflow: hidden;
+ display: flex;
+ text-decoration: none;
+ color: #333;
+ transition: transform 0.2s, box-shadow 0.2s;
+ position: relative;
+ margin-top: 1.5rem;
+ }
+
+ .douban-card:hover {
+ box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+ border: 1px solid var(--main-card-border);
+ }
+
+ .card-content {
+ flex: 8;
+ padding: 16px;
+ display: flex;
+ flex-direction: column;
+ }
+
+ .card-cover {
+ flex: 2;
+ position: relative;
+ overflow: hidden;
+ min-height: 200px;
+ }
+
+ .card-cover img {
+ position: absolute;
+ height: 100%;
+ width: 100%;
+ object-fit: cover;
+ object-position: center;
+ }
+
+ .card-title {
+ font-size: 18px;
+ font-weight: bold;
+ margin-bottom: 8px;
+ color: #333;
+ line-height: 1.4;
+ }
+
+ .card-meta {
+ display: flex;
+ align-items: center;
+ margin-bottom: 12px;
+ font-size: 14px;
+ color: #666;
+ }
+
+ .card-rating {
+ margin-right: 8px;
+ font-weight: bold;
+ color: #e09015;
+ }
+
+ .card-stars {
+ margin: 2.5px 0 2.5px;
+ font-size: 12px;
+ line-height: 1;
+ display: flex;
+ align-items: center
+ }
+
+ .card-stars .card-stars-dark {
+ position: relative;
+ color: #f99b01;
+ height: 16px;
+ width: 80px;
+ background-size: auto 100%;
+ margin-right: 8px;
+ background-repeat: repeat;
+ background-image: url(data:image/svg+xml;base64,PHN2ZyBjbGFzcz0iaWNvbiIgdmlld0JveD0iMCAwIDEwMjQgMTAyNCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB3aWR0aD0iMzIiIGhlaWdodD0iMzIiPjxwYXRoIGQ9Ik05MDguMSAzNTMuMWwtMjUzLjktMzYuOUw1NDAuNyA4Ni4xYy0zLjEtNi4zLTguMi0xMS40LTE0LjUtMTQuNS0xNS44LTcuOC0zNS0xLjMtNDIuOSAxNC41TDM2OS44IDMxNi4ybC0yNTMuOSAzNi45Yy03IDEtMTMuNCA0LjMtMTguMyA5LjMtMTIuMyAxMi43LTEyLjEgMzIuOS42IDQ1LjNsMTgzLjcgMTc5LjEtNDMuNCAyNTIuOWMtMS4yIDYuOS0uMSAxNC4xIDMuMiAyMC4zIDguMiAxNS42IDI3LjYgMjEuNyA0My4yIDEzLjRMNTEyIDc1NGwyMjcuMSAxMTkuNGM2LjIgMy4zIDEzLjQgNC40IDIwLjMgMy4yIDE3LjQtMyAyOS4xLTE5LjUgMjYuMS0zNi45bC00My40LTI1Mi45IDE4My43LTE3OS4xYzUtNC45IDguMy0xMS4zIDkuMy0xOC4zIDIuNy0xNy41LTkuNS0zMy43LTI3LTM2LjN6TTY2NC44IDU2MS42bDM2LjEgMjEwLjNMNTEyIDY3Mi43IDMyMy4xIDc3MmwzNi4xLTIxMC4zLTE1Mi44LTE0OUw0MTcuNiAzODIgNTEyIDE5MC43IDYwNi40IDM4MmwyMTEuMiAzMC43LTE1Mi44IDE0OC45eiIgZmlsbD0iI2Y5OWIwMSIvPjwvc3ZnPg==)
+ }
+
+ .card-stars .card-stars-light {
+ position: absolute;
+ left: 0;
+ color: #f99b01;
+ height: 16px;
+ overflow: hidden;
+ background-size: auto 100%;
+ background-repeat: repeat;
+ background-image: url(data:image/svg+xml;base64,PHN2ZyBjbGFzcz0iaWNvbiIgdmlld0JveD0iMCAwIDEwMjQgMTAyNCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB3aWR0aD0iMzIiIGhlaWdodD0iMzIiPjxwYXRoIGQ9Ik05MDguMSAzNTMuMWwtMjUzLjktMzYuOUw1NDAuNyA4Ni4xYy0zLjEtNi4zLTguMi0xMS40LTE0LjUtMTQuNS0xNS44LTcuOC0zNS0xLjMtNDIuOSAxNC41TDM2OS44IDMxNi4ybC0yNTMuOSAzNi45Yy03IDEtMTMuNCA0LjMtMTguMyA5LjMtMTIuMyAxMi43LTEyLjEgMzIuOS42IDQ1LjNsMTgzLjcgMTc5LjEtNDMuNCAyNTIuOWMtMS4yIDYuOS0uMSAxNC4xIDMuMiAyMC4zIDguMiAxNS42IDI3LjYgMjEuNyA0My4yIDEzLjRMNTEyIDc1NGwyMjcuMSAxMTkuNGM2LjIgMy4zIDEzLjQgNC40IDIwLjMgMy4yIDE3LjQtMyAyOS4xLTE5LjUgMjYuMS0zNi45bC00My40LTI1Mi45IDE4My43LTE3OS4xYzUtNC45IDguMy0xMS4zIDkuMy0xOC4zIDIuNy0xNy41LTkuNS0zMy43LTI3LTM2LjN6IiBmaWxsPSIjZjk5YjAxIi8+PC9zdmc+);
+
+ }
+
+ .card-description {
+ font-size: 12px;
+ line-height: 1.6;
+ color: #666;
+ overflow: hidden;
+ display: -webkit-box;
+ -webkit-line-clamp: 3;
+ -webkit-box-orient: vertical;
+ margin-bottom: 12px;
+ }
+
+ .card-info {
+ font-size: 12px;
+ color: #999;
+ line-height: 1.6;
+ }
+
+ .card-tags {
+ margin-top: 12px;
+ display: flex;
+ flex-wrap: wrap;
+ }
+
+ .card-tag {
+ font-size: 12px;
+ color: var(--main-color);
+ background: #f5f5f5;
+ padding: 2px 8px;
+ border-radius: 3px;
+ margin-right: 6px;
+ margin-bottom: 6px;
+ }
+
+
+
+
+ .link-overlay {
+ position: absolute;
+ top: 0;
+ left: 0;
+ width: 100%;
+ height: 100%;
+ z-index: 1;
+ }
+
+ @media (max-width: 520px) {
+ .douban-card {
+ flex-direction: column;
+ }
+
+ .card-content {
+ flex: none;
+ width: 100%;
+ padding: 12px;
+ }
+
+ .card-cover {
+ flex: none;
+ width: 100%;
+ height: 180px;
+ order: -1;
+ }
+
+ .card-title {
+ font-size: 16px;
+ margin-bottom: 6px;
+ }
+
+ .card-meta {
+ margin-bottom: 8px;
+ font-size: 12px;
+ }
+
+ .card-description {
+ font-size: 13px;
+ -webkit-line-clamp: 2;
+ margin-bottom: 8px;
+ }
+
+ .card-info {
+ font-size: 11px;
+ }
+
+ .card-tags {
+ margin-top: 8px;
+ }
+
+ .card-tag {
+ font-size: 11px;
+ padding: 1px 6px;
+ margin-right: 4px;
+ margin-bottom: 4px;
+ }
+ }
+&lt;/style>
+&lt;p>其实一直想读《黑客与画家》这本书，所以在我买了 Kindle 以后，这本书就成为我读完的第一本书。本书作者是美国互联网界举足轻重、有“创业教父”之称的哈佛大学计算机博士保罗·格雷厄姆 (Paul Graham )，而这本书是由他的思考整理而成的一本文集，虽然这本书的名字叫做《黑客与画家》，可实际上作者在这本书中观点，并非局限于黑客与画家本身，相反地它涉及编程、软件、创业、财富、设计、研究等等多个领域。我认为这本书带给我的，更多的是一种思想上的提升，当我们沉迷在代码中无法自拔的时候，我们其实应该意识到，这个世界原本是由理性和感性两种认识混合而成的。当科技与人文发生碰撞进而共鸣，这本书会告诉你这一切是如此的美妙。&lt;/p></description></item><item><title>像诗人一样睿智，像天才一样疯狂</title><link>http://example.org/posts/3653716295/</link><pubDate>Sat, 01 Oct 2016 17:12:43 +0000</pubDate><guid>http://example.org/posts/3653716295/</guid><description>&lt;script type="text/javascript" src="http://example.org/js/douban.js">&lt;/script>
+&lt;script type="text/javascript">
+ var ele = document.currentScript
+ var douban = window.$DoubanCard(ele, '10463953', 'https:\/\/api.wmdb.tv\/movie\/api?id=10463953', 'movie', '{\u0022charts\u0022:[],\u0022comment\u0022:\u0022\u0022,\u0022create_time\u0022:\u00222018-10-25 23:48:47\u0022,\u0022id\u0022:1504037846,\u0022is_private\u0022:false,\u0022platforms\u0022:[],\u0022rating\u0022:{\u0022count\u0022:1,\u0022max\u0022:5,\u0022star_count\u0022:5,\u0022value\u0022:5},\u0022sharing_text\u0022:\u0022我的评分：★★★★★ https:\/\/www.douban.com\/doubanapp\/dispatch\/movie\/10463953 来自@豆瓣App\u0022,\u0022sharing_url\u0022:\u0022https:\/\/www.douban.com\/doubanapp\/dispatch?uri=\/subject\/10463953\/interest\/1504037846\u0022,\u0022status\u0022:\u0022done\u0022,\u0022subject\u0022:{\u0022actors\u0022:[{\u0022name\u0022:\u0022本尼迪克特·康伯巴奇\u0022},{\u0022name\u0022:\u0022凯拉·奈特莉\u0022},{\u0022name\u0022:\u0022马修·古迪\u0022},{\u0022name\u0022:\u0022罗里·金尼尔\u0022},{\u0022name\u0022:\u0022艾伦·里奇\u0022},{\u0022name\u0022:\u0022马修·比尔德\u0022},{\u0022name\u0022:\u0022查尔斯·丹斯\u0022},{\u0022name\u0022:\u0022马克·斯特朗\u0022},{\u0022name\u0022:\u0022詹姆斯·诺斯科特\u0022},{\u0022name\u0022:\u0022汤姆·古德曼-希尔\u0022},{\u0022name\u0022:\u0022史蒂芬·威丁顿\u0022},{\u0022name\u0022:\u0022伊兰·古德曼\u0022},{\u0022name\u0022:\u0022杰克·塔尔登\u0022},{\u0022name\u0022:\u0022埃里克斯·劳瑟\u0022},{\u0022name\u0022:\u0022杰克·巴农\u0022},{\u0022name\u0022:\u0022塔彭丝·米德尔顿\u0022},{\u0022name\u0022:\u0022安德鲁·哈维尔\u0022},{\u0022name\u0022:\u0022威尔·鲍登\u0022},{\u0022name\u0022:\u0022李·阿斯奎斯-柯\u0022},{\u0022name\u0022:\u0022海莉·乔安妮·培根\u0022},{\u0022name\u0022:\u0022安库塔·布雷班\u0022},{\u0022name\u0022:\u0022格雷斯·卡尔德\u0022},{\u0022name\u0022:\u0022理查德·坎贝尔\u0022},{\u0022name\u0022:\u0022温斯顿·丘吉尔\u0022},{\u0022name\u0022:\u0022克里斯·考林\u0022},{\u0022name\u0022:\u0022汉娜·弗林\u0022},{\u0022name\u0022:\u0022卢克·霍普\u0022},{\u0022name\u0022:\u0022斯图尔特·马修斯\u0022},{\u0022name\u0022:\u0022亚当·诺威尔\u0022},{\u0022name\u0022:\u0022哈里·S·杜鲁门\u0022}],\u0022album_no_interact\u0022:false,\u0022article_intros\u0022:[],\u0022card_subtitle\u0022:\u00222014 \/ 英国 美国 \/ 剧情 同性 传记 战争 \/ 莫滕·泰杜姆 \/ 本尼迪克特·康伯巴奇 凯拉·奈特莉\u0022,\u0022color_scheme\u0022:{\u0022_avg_color\u0022:[0.08333333333333333,0.16,0.39215686274509803],\u0022_base_color\u0022:[0.2499999999999997,0.037037037037037035,0.21176470588235294],\u0022is_dark\u0022:true,\u0022primary_color_dark\u0022:\u00224b4c49\u0022,\u0022primary_color_light\u0022:\u002270726e\u0022,\u0022secondary_color\u0022:\u0022f7f9f4\u0022},\u0022controversy_reason\u0022:\u0022\u0022,\u0022cover_url\u0022:\u0022https:\/\/dou.img.lithub.cc\/movie\/10463953.jpg\u0022,\u0022directors\u0022:[{\u0022name\u0022:\u0022莫滕·泰杜姆\u0022}],\u0022genres\u0022:[\u0022剧情\u0022,\u0022同性\u0022,\u0022传记\u0022],\u0022has_linewatch\u0022:true,\u0022honor_infos\u0022:[{\u0022kind\u0022:\u0022movie\u0022,\u0022rank\u0022:155,\u0022title\u0022:\u0022豆瓣电影Top250\u0022,\u0022uri\u0022:\u0022douban:\/\/douban.com\/subject_collection\/movie_top250\u0022}],\u0022id\u0022:\u002210463953\u0022,\u0022is_released\u0022:true,\u0022is_show\u0022:false,\u0022null_rating_reason\u0022:\u0022\u0022,\u0022pic\u0022:{\u0022large\u0022:\u0022https:\/\/img3.doubanio.com\/view\/photo\/m_ratio_poster\/public\/p2255040492.jpg\u0022,\u0022normal\u0022:\u0022https:\/\/img3.doubanio.com\/view\/photo\/s_ratio_poster\/public\/p2255040492.jpg\u0022},\u0022pubdate\u0022:[\u00222015-07-21(中国大陆)\u0022],\u0022rating\u0022:{\u0022count\u0022:700837,\u0022max\u0022:10,\u0022star_count\u0022:4.5,\u0022value\u0022:8.8},\u0022release_date\u0022:null,\u0022sharing_url\u0022:\u0022https:\/\/www.douban.com\/doubanapp\/dispatch\/movie\/10463953\u0022,\u0022subtype\u0022:\u0022movie\u0022,\u0022title\u0022:\u0022模仿游戏\u0022,\u0022type\u0022:\u0022movie\u0022,\u0022uri\u0022:\u0022douban:\/\/douban.com\/movie\/10463953\u0022,\u0022url\u0022:\u0022https:\/\/movie.douban.com\/subject\/10463953\/\u0022,\u0022vendor_desc\u0022:\u0022\u0022,\u0022vendor_icons\u0022:[\u0022https:\/\/img9.doubanio.com\/f\/frodo\/fbc90f355fc45d5d2056e0d88c697f9414b56b44\/pics\/vendors\/tencent.png\u0022,\u0022https:\/\/img9.doubanio.com\/f\/frodo\/88a62f5e0cf9981c910e60f4421c3e66aac2c9bc\/pics\/vendors\/bilibili.png\u0022],\u0022year\u0022:\u00222014\u0022},\u0022tags\u0022:[\u0022传记\u0022,\u0022英国\u0022,\u0022图灵\u0022,\u0022历史\u0022,\u0022二战\u0022,\u0022战争\u0022,\u0022同性\u0022,\u0022美国\u0022,\u0022人生\u0022,\u0022军事\u0022,\u0022经典\u0022,\u0022剧情\u0022],\u0022vote_count\u0022:0}');
+&lt;/script>
+&lt;style>
+ .douban-card {
+ width: 100%;
+ max-width: 100%;
+ background: white;
+ border-radius: 16px;
+ box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+ overflow: hidden;
+ display: flex;
+ text-decoration: none;
+ color: #333;
+ transition: transform 0.2s, box-shadow 0.2s;
+ position: relative;
+ margin-top: 1.5rem;
+ }
+
+ .douban-card:hover {
+ box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+ border: 1px solid var(--main-card-border);
+ }
+
+ .card-content {
+ flex: 8;
+ padding: 16px;
+ display: flex;
+ flex-direction: column;
+ }
+
+ .card-cover {
+ flex: 2;
+ position: relative;
+ overflow: hidden;
+ min-height: 200px;
+ }
+
+ .card-cover img {
+ position: absolute;
+ height: 100%;
+ width: 100%;
+ object-fit: cover;
+ object-position: center;
+ }
+
+ .card-title {
+ font-size: 18px;
+ font-weight: bold;
+ margin-bottom: 8px;
+ color: #333;
+ line-height: 1.4;
+ }
+
+ .card-meta {
+ display: flex;
+ align-items: center;
+ margin-bottom: 12px;
+ font-size: 14px;
+ color: #666;
+ }
+
+ .card-rating {
+ margin-right: 8px;
+ font-weight: bold;
+ color: #e09015;
+ }
+
+ .card-stars {
+ margin: 2.5px 0 2.5px;
+ font-size: 12px;
+ line-height: 1;
+ display: flex;
+ align-items: center
+ }
+
+ .card-stars .card-stars-dark {
+ position: relative;
+ color: #f99b01;
+ height: 16px;
+ width: 80px;
+ background-size: auto 100%;
+ margin-right: 8px;
+ background-repeat: repeat;
+ background-image: url(data:image/svg+xml;base64,PHN2ZyBjbGFzcz0iaWNvbiIgdmlld0JveD0iMCAwIDEwMjQgMTAyNCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB3aWR0aD0iMzIiIGhlaWdodD0iMzIiPjxwYXRoIGQ9Ik05MDguMSAzNTMuMWwtMjUzLjktMzYuOUw1NDAuNyA4Ni4xYy0zLjEtNi4zLTguMi0xMS40LTE0LjUtMTQuNS0xNS44LTcuOC0zNS0xLjMtNDIuOSAxNC41TDM2OS44IDMxNi4ybC0yNTMuOSAzNi45Yy03IDEtMTMuNCA0LjMtMTguMyA5LjMtMTIuMyAxMi43LTEyLjEgMzIuOS42IDQ1LjNsMTgzLjcgMTc5LjEtNDMuNCAyNTIuOWMtMS4yIDYuOS0uMSAxNC4xIDMuMiAyMC4zIDguMiAxNS42IDI3LjYgMjEuNyA0My4yIDEzLjRMNTEyIDc1NGwyMjcuMSAxMTkuNGM2LjIgMy4zIDEzLjQgNC40IDIwLjMgMy4yIDE3LjQtMyAyOS4xLTE5LjUgMjYuMS0zNi45bC00My40LTI1Mi45IDE4My43LTE3OS4xYzUtNC45IDguMy0xMS4zIDkuMy0xOC4zIDIuNy0xNy41LTkuNS0zMy43LTI3LTM2LjN6TTY2NC44IDU2MS42bDM2LjEgMjEwLjNMNTEyIDY3Mi43IDMyMy4xIDc3MmwzNi4xLTIxMC4zLTE1Mi44LTE0OUw0MTcuNiAzODIgNTEyIDE5MC43IDYwNi40IDM4MmwyMTEuMiAzMC43LTE1Mi44IDE0OC45eiIgZmlsbD0iI2Y5OWIwMSIvPjwvc3ZnPg==)
+ }
+
+ .card-stars .card-stars-light {
+ position: absolute;
+ left: 0;
+ color: #f99b01;
+ height: 16px;
+ overflow: hidden;
+ background-size: auto 100%;
+ background-repeat: repeat;
+ background-image: url(data:image/svg+xml;base64,PHN2ZyBjbGFzcz0iaWNvbiIgdmlld0JveD0iMCAwIDEwMjQgMTAyNCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB3aWR0aD0iMzIiIGhlaWdodD0iMzIiPjxwYXRoIGQ9Ik05MDguMSAzNTMuMWwtMjUzLjktMzYuOUw1NDAuNyA4Ni4xYy0zLjEtNi4zLTguMi0xMS40LTE0LjUtMTQuNS0xNS44LTcuOC0zNS0xLjMtNDIuOSAxNC41TDM2OS44IDMxNi4ybC0yNTMuOSAzNi45Yy03IDEtMTMuNCA0LjMtMTguMyA5LjMtMTIuMyAxMi43LTEyLjEgMzIuOS42IDQ1LjNsMTgzLjcgMTc5LjEtNDMuNCAyNTIuOWMtMS4yIDYuOS0uMSAxNC4xIDMuMiAyMC4zIDguMiAxNS42IDI3LjYgMjEuNyA0My4yIDEzLjRMNTEyIDc1NGwyMjcuMSAxMTkuNGM2LjIgMy4zIDEzLjQgNC40IDIwLjMgMy4yIDE3LjQtMyAyOS4xLTE5LjUgMjYuMS0zNi45bC00My40LTI1Mi45IDE4My43LTE3OS4xYzUtNC45IDguMy0xMS4zIDkuMy0xOC4zIDIuNy0xNy41LTkuNS0zMy43LTI3LTM2LjN6IiBmaWxsPSIjZjk5YjAxIi8+PC9zdmc+);
+
+ }
+
+ .card-description {
+ font-size: 12px;
+ line-height: 1.6;
+ color: #666;
+ overflow: hidden;
+ display: -webkit-box;
+ -webkit-line-clamp: 3;
+ -webkit-box-orient: vertical;
+ margin-bottom: 12px;
+ }
+
+ .card-info {
+ font-size: 12px;
+ color: #999;
+ line-height: 1.6;
+ }
+
+ .card-tags {
+ margin-top: 12px;
+ display: flex;
+ flex-wrap: wrap;
+ }
+
+ .card-tag {
+ font-size: 12px;
+ color: var(--main-color);
+ background: #f5f5f5;
+ padding: 2px 8px;
+ border-radius: 3px;
+ margin-right: 6px;
+ margin-bottom: 6px;
+ }
+
+
+
+
+ .link-overlay {
+ position: absolute;
+ top: 0;
+ left: 0;
+ width: 100%;
+ height: 100%;
+ z-index: 1;
+ }
+
+ @media (max-width: 520px) {
+ .douban-card {
+ flex-direction: column;
+ }
+
+ .card-content {
+ flex: none;
+ width: 100%;
+ padding: 12px;
+ }
+
+ .card-cover {
+ flex: none;
+ width: 100%;
+ height: 180px;
+ order: -1;
+ }
+
+ .card-title {
+ font-size: 16px;
+ margin-bottom: 6px;
+ }
+
+ .card-meta {
+ margin-bottom: 8px;
+ font-size: 12px;
+ }
+
+ .card-description {
+ font-size: 13px;
+ -webkit-line-clamp: 2;
+ margin-bottom: 8px;
+ }
+
+ .card-info {
+ font-size: 11px;
+ }
+
+ .card-tags {
+ margin-top: 8px;
+ }
+
+ .card-tag {
+ font-size: 11px;
+ padding: 1px 6px;
+ margin-right: 4px;
+ margin-bottom: 4px;
+ }
+ }
+&lt;/style>
+&lt;p>我不知道大家如何定义程序员这个工作，在我看来，在某种意义上，程序员和艺术家们具有相同之处，我们都是创作者，和诗人、画家、作家等等这些职业相近，我们都在试图创作出优秀的作品，我们借助编程语言来重构我们对这个世界的认识、借助抽象的概念来创造这个世界上不存在的东西，所以我们对自由和创造的渴望，来源自我们在这个世界上写下的第一行代码，或许这像是一个充满理想主义的臆想，可这并不重要，重要的是你如何看待这个世界、如何看待你自己，我更喜欢将程序员视为造梦者，就像每一个孩子在搭积木的时候，都有一个建筑师的梦一样，你可以选择让代码简洁、优雅，你同样选择让代码肮脏、丑陋，你相信什么，你执着什么，它就会是什么，所以为什么不给我们自己更多创造的机会。&lt;/p></description></item><item><title>你了解爱的艺术吗？</title><link>http://example.org/posts/2275646954/</link><pubDate>Sat, 24 Sep 2016 22:42:44 +0000</pubDate><guid>http://example.org/posts/2275646954/</guid><description>&lt;script type="text/javascript" src="http://example.org/js/douban.js">&lt;/script>
+&lt;script type="text/javascript">
+ var ele = document.currentScript
+ var douban = window.$DoubanCard(ele, '3026879', 'https:\/\/douban.edui.fun\/v2\/book\/id\/3026879', 'book', '{\u0022charts\u0022:[],\u0022comment\u0022:\u0022\u0022,\u0022create_time\u0022:\u00222016-10-19 00:30:58\u0022,\u0022id\u0022:1099241678,\u0022is_private\u0022:false,\u0022platforms\u0022:[],\u0022rating\u0022:null,\u0022sharing_text\u0022:\u0022https:\/\/www.douban.com\/doubanapp\/dispatch\/book\/3026879 来自@豆瓣App\u0022,\u0022sharing_url\u0022:\u0022https:\/\/www.douban.com\/doubanapp\/dispatch?uri=\/subject\/3026879\/interest\/1099241678\u0022,\u0022status\u0022:\u0022done\u0022,\u0022subject\u0022:{\u0022article_intros\u0022:[],\u0022author\u0022:[\u0022[美] 艾·弗洛姆\u0022],\u0022book_subtitle\u0022:\u0022\u0022,\u0022buy_more_uri\u0022:\u0022\u0022,\u0022card_subtitle\u0022:\u0022[美] 艾·弗洛姆 \/ 2008 \/ 上海译文出版社\u0022,\u0022color_scheme\u0022:{\u0022_avg_color\u0022:[0.9583333333333336,0.01680672268907569,0.9333333333333333],\u0022_base_color\u0022:[0.9333333333333333,0.021276595744680778,0.9215686274509803],\u0022is_dark\u0022:false,\u0022primary_color_dark\u0022:\u0022f2edef\u0022,\u0022primary_color_light\u0022:\u0022f2edef\u0022,\u0022secondary_color\u0022:\u0022f9f4f6\u0022},\u0022controversy_reason\u0022:\u0022\u0022,\u0022cover_url\u0022:\u0022https:\/\/dou.img.lithub.cc\/book\/3026879.jpg\u0022,\u0022has_ebook\u0022:true,\u0022honor_infos\u0022:[{\u0022kind\u0022:\u0022book\u0022,\u0022rank\u0022:168,\u0022title\u0022:\u0022豆瓣图书Top250\u0022,\u0022uri\u0022:\u0022douban:\/\/douban.com\/subject_collection\/book_top250\u0022}],\u0022id\u0022:\u00223026879\u0022,\u0022intro\u0022:\u0022《爱的艺术》是德裔美籍心理学家和哲学家、法兰克福学派重要成员艾里希-弗洛姆最著名的作品，自1956年出版至今已被翻译成32种文字，在全世界畅销不衰，被誉为当代爱的艺术理论专著最著名的作品。\\n在这本书中，弗洛姆认为，爱情不是一种与人的成熟程度无关，只需要投入身心的感情。如果不努力发展自己的全部人格并以此达到一种创造倾向性，那么每种爱的试图都会失败，如果没有爱他人的能力，如果不能真正谦恭地、勇敢地、真诚地和有纪律地爱他人，那么人们在自己的爱情生活中也永远得不到满足。\\n弗洛姆进而提出，爱是一门艺术，要求想要掌握这门艺术的人有这方面的知识并付出努力。在这里，爱不仅仅是狭隘的男女爱情，也并非通过磨练增进技巧即可获得。爱是人格整体的展现，要发展爱的能力，就需要努力发展自己的人格，并朝着有益的目标迈进。\\n此版特别收录弗洛姆学术助手纪念文章《弗洛姆生命中的爱》。\u0022,\u0022is_released\u0022:true,\u0022is_show\u0022:false,\u0022min_sale_price\u0022:null,\u0022null_rating_reason\u0022:\u0022\u0022,\u0022other_versions_count\u0022:30,\u0022pages\u0022:[\u0022144\u0022],\u0022pic\u0022:{\u0022large\u0022:\u0022https:\/\/img9.doubanio.com\/view\/subject\/l\/public\/s2990934.jpg\u0022,\u0022normal\u0022:\u0022https:\/\/qnmob3.doubanio.com\/view\/subject\/m\/public\/s2990934.jpg?imageView2\/2\/q\/80\/w\/200\/h\/300\/format\/jpg\/sharpen\/1\u0022},\u0022press\u0022:[\u0022上海译文出版社\u0022],\u0022pubdate\u0022:[\u00222008-4\u0022],\u0022rating\u0022:{\u0022count\u0022:53284,\u0022max\u0022:10,\u0022star_count\u0022:4.5,\u0022value\u0022:8.8},\u0022sharing_url\u0022:\u0022https:\/\/www.douban.com\/doubanapp\/dispatch\/book\/3026879\u0022,\u0022subtype\u0022:\u0022book\u0022,\u0022title\u0022:\u0022爱的艺术\u0022,\u0022type\u0022:\u0022book\u0022,\u0022uri\u0022:\u0022douban:\/\/douban.com\/book\/3026879\u0022,\u0022url\u0022:\u0022https:\/\/book.douban.com\/subject\/3026879\/\u0022,\u0022vendor_icons\u0022:[\u0022https:\/\/img1.doubanio.com\/f\/frodo\/f6f620132e6d8a02d171f03114bbe2339aa8af97\/pics\/vendors\/logo_doubanread@2x.png\u0022],\u0022vendor_original_price\u0022:\u0022\u0022,\u0022vendor_sale_price\u0022:\u0022\u0022},\u0022tags\u0022:[\u0022心理学\u0022,\u0022弗洛姆\u0022,\u0022爱的艺术\u0022,\u0022哲学\u0022],\u0022vote_count\u0022:0}');
+&lt;/script>
+&lt;style>
+ .douban-card {
+ width: 100%;
+ max-width: 100%;
+ background: white;
+ border-radius: 16px;
+ box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+ overflow: hidden;
+ display: flex;
+ text-decoration: none;
+ color: #333;
+ transition: transform 0.2s, box-shadow 0.2s;
+ position: relative;
+ margin-top: 1.5rem;
+ }
+
+ .douban-card:hover {
+ box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+ border: 1px solid var(--main-card-border);
+ }
+
+ .card-content {
+ flex: 8;
+ padding: 16px;
+ display: flex;
+ flex-direction: column;
+ }
+
+ .card-cover {
+ flex: 2;
+ position: relative;
+ overflow: hidden;
+ min-height: 200px;
+ }
+
+ .card-cover img {
+ position: absolute;
+ height: 100%;
+ width: 100%;
+ object-fit: cover;
+ object-position: center;
+ }
+
+ .card-title {
+ font-size: 18px;
+ font-weight: bold;
+ margin-bottom: 8px;
+ color: #333;
+ line-height: 1.4;
+ }
+
+ .card-meta {
+ display: flex;
+ align-items: center;
+ margin-bottom: 12px;
+ font-size: 14px;
+ color: #666;
+ }
+
+ .card-rating {
+ margin-right: 8px;
+ font-weight: bold;
+ color: #e09015;
+ }
+
+ .card-stars {
+ margin: 2.5px 0 2.5px;
+ font-size: 12px;
+ line-height: 1;
+ display: flex;
+ align-items: center
+ }
+
+ .card-stars .card-stars-dark {
+ position: relative;
+ color: #f99b01;
+ height: 16px;
+ width: 80px;
+ background-size: auto 100%;
+ margin-right: 8px;
+ background-repeat: repeat;
+ background-image: url(data:image/svg+xml;base64,PHN2ZyBjbGFzcz0iaWNvbiIgdmlld0JveD0iMCAwIDEwMjQgMTAyNCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB3aWR0aD0iMzIiIGhlaWdodD0iMzIiPjxwYXRoIGQ9Ik05MDguMSAzNTMuMWwtMjUzLjktMzYuOUw1NDAuNyA4Ni4xYy0zLjEtNi4zLTguMi0xMS40LTE0LjUtMTQuNS0xNS44LTcuOC0zNS0xLjMtNDIuOSAxNC41TDM2OS44IDMxNi4ybC0yNTMuOSAzNi45Yy03IDEtMTMuNCA0LjMtMTguMyA5LjMtMTIuMyAxMi43LTEyLjEgMzIuOS42IDQ1LjNsMTgzLjcgMTc5LjEtNDMuNCAyNTIuOWMtMS4yIDYuOS0uMSAxNC4xIDMuMiAyMC4zIDguMiAxNS42IDI3LjYgMjEuNyA0My4yIDEzLjRMNTEyIDc1NGwyMjcuMSAxMTkuNGM2LjIgMy4zIDEzLjQgNC40IDIwLjMgMy4yIDE3LjQtMyAyOS4xLTE5LjUgMjYuMS0zNi45bC00My40LTI1Mi45IDE4My43LTE3OS4xYzUtNC45IDguMy0xMS4zIDkuMy0xOC4zIDIuNy0xNy41LTkuNS0zMy43LTI3LTM2LjN6TTY2NC44IDU2MS42bDM2LjEgMjEwLjNMNTEyIDY3Mi43IDMyMy4xIDc3MmwzNi4xLTIxMC4zLTE1Mi44LTE0OUw0MTcuNiAzODIgNTEyIDE5MC43IDYwNi40IDM4MmwyMTEuMiAzMC43LTE1Mi44IDE0OC45eiIgZmlsbD0iI2Y5OWIwMSIvPjwvc3ZnPg==)
+ }
+
+ .card-stars .card-stars-light {
+ position: absolute;
+ left: 0;
+ color: #f99b01;
+ height: 16px;
+ overflow: hidden;
+ background-size: auto 100%;
+ background-repeat: repeat;
+ background-image: url(data:image/svg+xml;base64,PHN2ZyBjbGFzcz0iaWNvbiIgdmlld0JveD0iMCAwIDEwMjQgMTAyNCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB3aWR0aD0iMzIiIGhlaWdodD0iMzIiPjxwYXRoIGQ9Ik05MDguMSAzNTMuMWwtMjUzLjktMzYuOUw1NDAuNyA4Ni4xYy0zLjEtNi4zLTguMi0xMS40LTE0LjUtMTQuNS0xNS44LTcuOC0zNS0xLjMtNDIuOSAxNC41TDM2OS44IDMxNi4ybC0yNTMuOSAzNi45Yy03IDEtMTMuNCA0LjMtMTguMyA5LjMtMTIuMyAxMi43LTEyLjEgMzIuOS42IDQ1LjNsMTgzLjcgMTc5LjEtNDMuNCAyNTIuOWMtMS4yIDYuOS0uMSAxNC4xIDMuMiAyMC4zIDguMiAxNS42IDI3LjYgMjEuNyA0My4yIDEzLjRMNTEyIDc1NGwyMjcuMSAxMTkuNGM2LjIgMy4zIDEzLjQgNC40IDIwLjMgMy4yIDE3LjQtMyAyOS4xLTE5LjUgMjYuMS0zNi45bC00My40LTI1Mi45IDE4My43LTE3OS4xYzUtNC45IDguMy0xMS4zIDkuMy0xOC4zIDIuNy0xNy41LTkuNS0zMy43LTI3LTM2LjN6IiBmaWxsPSIjZjk5YjAxIi8+PC9zdmc+);
+
+ }
+
+ .card-description {
+ font-size: 12px;
+ line-height: 1.6;
+ color: #666;
+ overflow: hidden;
+ display: -webkit-box;
+ -webkit-line-clamp: 3;
+ -webkit-box-orient: vertical;
+ margin-bottom: 12px;
+ }
+
+ .card-info {
+ font-size: 12px;
+ color: #999;
+ line-height: 1.6;
+ }
+
+ .card-tags {
+ margin-top: 12px;
+ display: flex;
+ flex-wrap: wrap;
+ }
+
+ .card-tag {
+ font-size: 12px;
+ color: var(--main-color);
+ background: #f5f5f5;
+ padding: 2px 8px;
+ border-radius: 3px;
+ margin-right: 6px;
+ margin-bottom: 6px;
+ }
+
+
+
+
+ .link-overlay {
+ position: absolute;
+ top: 0;
+ left: 0;
+ width: 100%;
+ height: 100%;
+ z-index: 1;
+ }
+
+ @media (max-width: 520px) {
+ .douban-card {
+ flex-direction: column;
+ }
+
+ .card-content {
+ flex: none;
+ width: 100%;
+ padding: 12px;
+ }
+
+ .card-cover {
+ flex: none;
+ width: 100%;
+ height: 180px;
+ order: -1;
+ }
+
+ .card-title {
+ font-size: 16px;
+ margin-bottom: 6px;
+ }
+
+ .card-meta {
+ margin-bottom: 8px;
+ font-size: 12px;
+ }
+
+ .card-description {
+ font-size: 13px;
+ -webkit-line-clamp: 2;
+ margin-bottom: 8px;
+ }
+
+ .card-info {
+ font-size: 11px;
+ }
+
+ .card-tags {
+ margin-top: 8px;
+ }
+
+ .card-tag {
+ font-size: 11px;
+ padding: 1px 6px;
+ margin-right: 4px;
+ margin-bottom: 4px;
+ }
+ }
+&lt;/style>
+&lt;p>或许我不是一个懂得如何去爱人的人，我时常陷入一种自我否定的焦虑当中，当我发觉自己喜欢上一个人的时候，从某种意义上它会让我身上的缺点被无情地放大，我并不畏惧在喜欢的人面前暴露这些缺点，因为这就是真实的我，因此我从来不喜欢去塑造别人，让别人成为我心目中期待的样子，可是我会忍不住去塑造我自己，尤其是在和别人相处的过程中，发现我身上的缺点或者问题的时候，我习惯了对自我严格，虽然我知道这个过程注定痛苦，可是你能告诉我，爱到底是什么吗？如果爱不足以让我们改变，我们喜欢的究竟是一个怎样的自己、怎样的别人？&lt;/p></description></item><item><title>《Cg Programming in Unity》读书笔记</title><link>http://example.org/posts/1670305415/</link><pubDate>Fri, 25 Dec 2015 12:29:20 +0000</pubDate><guid>http://example.org/posts/1670305415/</guid><description>&lt;p>  最近开始着手Shader语言的学习，因为Unity3D没有提供类似虚幻四引擎的材质编辑器功能，所以当在Unity3D中碰到需要提供引擎默认材质以外的效果的时候，就需要我们来编写Shader以实现各种特效，本文主要是结合《Cg Programming in Unity》这本书和&lt;a href="http://blog.csdn.net/poem_qianmo/article/details/49405909">浅墨&lt;/a>博客中关于Shader的这部分内容来学习和整理，目的是帮助博主快速掌握Shader语言。&lt;/p></description></item><item><title>贝塞尔曲线学习笔记</title><link>http://example.org/posts/2186770732/</link><pubDate>Wed, 08 Apr 2015 12:25:28 +0000</pubDate><guid>http://example.org/posts/2186770732/</guid><description>&lt;p>贝塞尔曲线(Bezier Curve)是由法国工程师皮埃尔·贝塞尔(Pierre Bezier)于 1962 年提出的一种曲线。在数学的数值分析领域中，贝塞尔曲线是计算机图形学中相当重要的参数曲线，其主要意义在于无论是直线还是曲线都能在数学上予以描述。最早贝塞尔曲线被用来对汽车主体进行设计，现在贝塞尔曲线被广泛地运用到计算机图形软件(如 Photoshop、Flash 等)中，是计算机图形领域重要的一个数学曲线。&lt;/p></description></item><item><title>HTML5 游戏开发技术基础整理</title><link>http://example.org/posts/2038378679/</link><pubDate>Sun, 08 Mar 2015 19:14:44 +0000</pubDate><guid>http://example.org/posts/2038378679/</guid><description>&lt;p>随着 HTML5 标准最终敲定，HTML5 将有望成为游戏开发领域的的热门平台。HTML5 游戏能够运行于包括 iPhone 系列和 iPad 系列在内的计算机、智能手机以及平板电脑上，是目前跨平台应用开发的最佳实施方案。本文系根据 《HML5 Canvas 游戏开发实战》 一书中的内容整理而成，是了解和学习 HTML5 游戏开发的基础内容，希望能够帮助到那些和博主一样致力于游戏开发的朋友们！&lt;/p></description></item><item><title>互联网黑洞读书笔记(2)</title><link>http://example.org/posts/1930050594/</link><pubDate>Wed, 11 Feb 2015 15:50:55 +0000</pubDate><guid>http://example.org/posts/1930050594/</guid><description>&lt;p>  在移动互联网时代地大潮中，微信无疑是整个行业的弄潮儿。从“微信之父”张小龙最初定义微信这个产品的那一刻开始，就注定微信将走上一条平台化的道路，各种各样可能的商业模式成为人们开始不断探索微信的价值，可是这一切和你有关系吗？&lt;/p></description></item><item><title>脚本语言编程：Lua 脚本编程入门</title><link>http://example.org/posts/1940333895/</link><pubDate>Tue, 03 Feb 2015 16:06:31 +0000</pubDate><guid>http://example.org/posts/1940333895/</guid><description>&lt;p>Lua 是一门简单而强大的语言，其本身强大的扩展性使得这门语言在游戏设计等领域发挥着重要的作用。博主曾在 Unity3D 中使用过这门语言，并且针对 Lua 和 Unity、C++等方面的内容进行了学习和讨论。最近因为在【游戏脚本高级编程】这本书中详细介绍了 Lua 脚本的相关内容，因此在这里记录下博主的读书心得，方便以后在需要的时候查阅。&lt;/p></description></item><item><title>互联网黑洞读书笔记(1)</title><link>http://example.org/posts/1478979553/</link><pubDate>Tue, 03 Feb 2015 09:45:57 +0000</pubDate><guid>http://example.org/posts/1478979553/</guid><description>&lt;p>  互联网是什么？当我们都渐渐习惯将互联网当作生活的一部分的时候，面对这样一个问题，我们似乎是迷茫和困惑的。因为当互联网渐渐地开始改变我们生活的那一刻起，我们就在和互联网不断地发生着剧烈反应。&lt;/p></description></item><item><title>剑指 Offer 读书笔记(1)</title><link>http://example.org/posts/123663202/</link><pubDate>Tue, 20 Jan 2015 10:04:41 +0000</pubDate><guid>http://example.org/posts/123663202/</guid><description>&lt;script type="text/javascript" src="http://example.org/js/douban.js">&lt;/script>
+&lt;script type="text/javascript">
+ var ele = document.currentScript
+ var douban = window.$DoubanCard(ele, '25910559', 'https:\/\/douban.edui.fun\/v2\/book\/id\/25910559', 'book', '');
+&lt;/script>
+&lt;style>
+ .douban-card {
+ width: 100%;
+ max-width: 100%;
+ background: white;
+ border-radius: 16px;
+ box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+ overflow: hidden;
+ display: flex;
+ text-decoration: none;
+ color: #333;
+ transition: transform 0.2s, box-shadow 0.2s;
+ position: relative;
+ margin-top: 1.5rem;
+ }
+
+ .douban-card:hover {
+ box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+ border: 1px solid var(--main-card-border);
+ }
+
+ .card-content {
+ flex: 8;
+ padding: 16px;
+ display: flex;
+ flex-direction: column;
+ }
+
+ .card-cover {
+ flex: 2;
+ position: relative;
+ overflow: hidden;
+ min-height: 200px;
+ }
+
+ .card-cover img {
+ position: absolute;
+ height: 100%;
+ width: 100%;
+ object-fit: cover;
+ object-position: center;
+ }
+
+ .card-title {
+ font-size: 18px;
+ font-weight: bold;
+ margin-bottom: 8px;
+ color: #333;
+ line-height: 1.4;
+ }
+
+ .card-meta {
+ display: flex;
+ align-items: center;
+ margin-bottom: 12px;
+ font-size: 14px;
+ color: #666;
+ }
+
+ .card-rating {
+ margin-right: 8px;
+ font-weight: bold;
+ color: #e09015;
+ }
+
+ .card-stars {
+ margin: 2.5px 0 2.5px;
+ font-size: 12px;
+ line-height: 1;
+ display: flex;
+ align-items: center
+ }
+
+ .card-stars .card-stars-dark {
+ position: relative;
+ color: #f99b01;
+ height: 16px;
+ width: 80px;
+ background-size: auto 100%;
+ margin-right: 8px;
+ background-repeat: repeat;
+ background-image: url(data:image/svg+xml;base64,PHN2ZyBjbGFzcz0iaWNvbiIgdmlld0JveD0iMCAwIDEwMjQgMTAyNCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB3aWR0aD0iMzIiIGhlaWdodD0iMzIiPjxwYXRoIGQ9Ik05MDguMSAzNTMuMWwtMjUzLjktMzYuOUw1NDAuNyA4Ni4xYy0zLjEtNi4zLTguMi0xMS40LTE0LjUtMTQuNS0xNS44LTcuOC0zNS0xLjMtNDIuOSAxNC41TDM2OS44IDMxNi4ybC0yNTMuOSAzNi45Yy03IDEtMTMuNCA0LjMtMTguMyA5LjMtMTIuMyAxMi43LTEyLjEgMzIuOS42IDQ1LjNsMTgzLjcgMTc5LjEtNDMuNCAyNTIuOWMtMS4yIDYuOS0uMSAxNC4xIDMuMiAyMC4zIDguMiAxNS42IDI3LjYgMjEuNyA0My4yIDEzLjRMNTEyIDc1NGwyMjcuMSAxMTkuNGM2LjIgMy4zIDEzLjQgNC40IDIwLjMgMy4yIDE3LjQtMyAyOS4xLTE5LjUgMjYuMS0zNi45bC00My40LTI1Mi45IDE4My43LTE3OS4xYzUtNC45IDguMy0xMS4zIDkuMy0xOC4zIDIuNy0xNy41LTkuNS0zMy43LTI3LTM2LjN6TTY2NC44IDU2MS42bDM2LjEgMjEwLjNMNTEyIDY3Mi43IDMyMy4xIDc3MmwzNi4xLTIxMC4zLTE1Mi44LTE0OUw0MTcuNiAzODIgNTEyIDE5MC43IDYwNi40IDM4MmwyMTEuMiAzMC43LTE1Mi44IDE0OC45eiIgZmlsbD0iI2Y5OWIwMSIvPjwvc3ZnPg==)
+ }
+
+ .card-stars .card-stars-light {
+ position: absolute;
+ left: 0;
+ color: #f99b01;
+ height: 16px;
+ overflow: hidden;
+ background-size: auto 100%;
+ background-repeat: repeat;
+ background-image: url(data:image/svg+xml;base64,PHN2ZyBjbGFzcz0iaWNvbiIgdmlld0JveD0iMCAwIDEwMjQgMTAyNCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB3aWR0aD0iMzIiIGhlaWdodD0iMzIiPjxwYXRoIGQ9Ik05MDguMSAzNTMuMWwtMjUzLjktMzYuOUw1NDAuNyA4Ni4xYy0zLjEtNi4zLTguMi0xMS40LTE0LjUtMTQuNS0xNS44LTcuOC0zNS0xLjMtNDIuOSAxNC41TDM2OS44IDMxNi4ybC0yNTMuOSAzNi45Yy03IDEtMTMuNCA0LjMtMTguMyA5LjMtMTIuMyAxMi43LTEyLjEgMzIuOS42IDQ1LjNsMTgzLjcgMTc5LjEtNDMuNCAyNTIuOWMtMS4yIDYuOS0uMSAxNC4xIDMuMiAyMC4zIDguMiAxNS42IDI3LjYgMjEuNyA0My4yIDEzLjRMNTEyIDc1NGwyMjcuMSAxMTkuNGM2LjIgMy4zIDEzLjQgNC40IDIwLjMgMy4yIDE3LjQtMyAyOS4xLTE5LjUgMjYuMS0zNi45bC00My40LTI1Mi45IDE4My43LTE3OS4xYzUtNC45IDguMy0xMS4zIDkuMy0xOC4zIDIuNy0xNy41LTkuNS0zMy43LTI3LTM2LjN6IiBmaWxsPSIjZjk5YjAxIi8+PC9zdmc+);
+
+ }
+
+ .card-description {
+ font-size: 12px;
+ line-height: 1.6;
+ color: #666;
+ overflow: hidden;
+ display: -webkit-box;
+ -webkit-line-clamp: 3;
+ -webkit-box-orient: vertical;
+ margin-bottom: 12px;
+ }
+
+ .card-info {
+ font-size: 12px;
+ color: #999;
+ line-height: 1.6;
+ }
+
+ .card-tags {
+ margin-top: 12px;
+ display: flex;
+ flex-wrap: wrap;
+ }
+
+ .card-tag {
+ font-size: 12px;
+ color: var(--main-color);
+ background: #f5f5f5;
+ padding: 2px 8px;
+ border-radius: 3px;
+ margin-right: 6px;
+ margin-bottom: 6px;
+ }
+
+
+
+
+ .link-overlay {
+ position: absolute;
+ top: 0;
+ left: 0;
+ width: 100%;
+ height: 100%;
+ z-index: 1;
+ }
+
+ @media (max-width: 520px) {
+ .douban-card {
+ flex-direction: column;
+ }
+
+ .card-content {
+ flex: none;
+ width: 100%;
+ padding: 12px;
+ }
+
+ .card-cover {
+ flex: none;
+ width: 100%;
+ height: 180px;
+ order: -1;
+ }
+
+ .card-title {
+ font-size: 16px;
+ margin-bottom: 6px;
+ }
+
+ .card-meta {
+ margin-bottom: 8px;
+ font-size: 12px;
+ }
+
+ .card-description {
+ font-size: 13px;
+ -webkit-line-clamp: 2;
+ margin-bottom: 8px;
+ }
+
+ .card-info {
+ font-size: 11px;
+ }
+
+ .card-tags {
+ margin-top: 8px;
+ }
+
+ .card-tag {
+ font-size: 11px;
+ padding: 1px 6px;
+ margin-right: 4px;
+ margin-bottom: 4px;
+ }
+ }
+&lt;/style>
+&lt;p>在此将【剑指 Offer】中的经典问题和重要内容整理出来，便于以后遇到类似的问题再次查阅。博主强烈为大家推荐这本书，因为这本书中的题目都来自真实的公司笔试，对于大家求职、找工作会有很大的帮助。&lt;/p></description></item></channel></rss>

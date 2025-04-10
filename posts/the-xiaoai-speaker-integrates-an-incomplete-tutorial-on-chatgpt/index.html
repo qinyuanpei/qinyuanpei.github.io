@@ -1,0 +1,1224 @@
+<!doctype html><html lang=zh-cn><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><meta http-equiv=X-UA-Compatible content="ie=edge"><meta name=referrer content="no-referrer"><title>小爱音箱集成 ChatGPT 的不完全教程 - 元视角</title>
+<meta name=description content="本文是关于如何将 ChatGPT 集成到小爱音箱中的不完全教程。文章首先介绍了智能家居的基础概念，包括 WIFI、ZigBee 和 BLE 等通信协议，以及智能家居平台的选择。接着，作者分享了如何使用 MiService 和 python-miio 库来控制米家设备，并通过编程获取小爱音箱的控制指令。文章还详细介绍了接入 ChatGPT 的方法，包括安装 openai 包和设置 API 密钥。最后，作者提出了两种集成 ChatGPT 和小爱音箱的思路：一种是通过获取对话记录并用 ChatGPT 回答问题，另一种是通过蓝牙直接连接音箱。文章以对未来 AI 发展的思考作为结尾。"><link rel="shortcut icon" href type=image/x-icon><link rel=icon type=image/x-icon href=/images/favicon.ico><link rel=icon type=image/png href=/images/favicon.png><meta property="og:title" content="小爱音箱集成 ChatGPT 的不完全教程"><meta property="og:description" content="本文是关于如何将 ChatGPT 集成到小爱音箱中的不完全教程。文章首先介绍了智能家居的基础概念，包括 WIFI、ZigBee 和 BLE 等通信协议，以及智能家居平台的选择。接着，作者分享了如何使用 MiService 和 python-miio 库来控制米家设备，并通过编程获取小爱音箱的控制指令。文章还详细介绍了接入 ChatGPT 的方法，包括安装 openai 包和设置 API 密钥。最后，作者提出了两种集成 ChatGPT 和小爱音箱的思路：一种是通过获取对话记录并用 ChatGPT 回答问题，另一种是通过蓝牙直接连接音箱。文章以对未来 AI 发展的思考作为结尾。"><meta property="og:type" content="article"><meta property="og:url" content="http://example.org/posts/the-xiaoai-speaker-integrates-an-incomplete-tutorial-on-chatgpt/"><link rel=stylesheet href=/scss/main.min.2c77edfe155005c41cf8cefed2d412617a105f62cf1d21036e0c9167beddbb2d.css><link rel=stylesheet crossorigin=anonymous href=https://cdn.jsdelivr.net/npm/misans@4.1.0/lib/Normal/MiSans-Medium.min.css><link rel=stylesheet crossorigin=anonymous href=https://cdn.jsdelivr.net/npm/misans@4.1.0/lib/Normal/MiSans-Bold.min.css><link rel=stylesheet href=/css/iconfont.css><link rel=stylesheet href=/css/iconfont-patch.css><script src=https://cdn.jsdelivr.net/npm/fuse.js@7.1.0></script><script src=https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.11.1/build/highlight.min.js></script><link rel=stylesheet href=https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.11.1/build/styles/github-dark.min.css media="(prefers-color-scheme: dark)"><link rel=stylesheet href=https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.11.1/build/styles/github.min.css media="(prefers-color-scheme: light)"><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.css><script src=https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.umd.js></script></head><body><div class="background patterns"><div class=bg-mask></div><div class=bg-image style="background-image:url(https://tuapi.eees.cc/api.php?category=%7bdongman,fengjing%7d&amp;type=302)"></div></div><style>.background{position:fixed;top:0;left:0;width:100vw;height:100vh;display:flex;align-items:center;justify-content:center;z-index:-2;&.patterns { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='192' height='192' viewBox='0 0 192 192'%3E%3Cpath fill='%23494849' fill-opacity='0.08' d='M192 15v2a11 11 0 0 0-11 11c0 1.94 1.16 4.75 2.53 6.11l2.36 2.36a6.93 6.93 0 0 1 1.22 7.56l-.43.84a8.08 8.08 0 0 1-6.66 4.13H145v35.02a6.1 6.1 0 0 0 3.03 4.87l.84.43c1.58.79 4 .4 5.24-.85l2.36-2.36a12.04 12.04 0 0 1 7.51-3.11 13 13 0 1 1 .02 26 12 12 0 0 1-7.53-3.11l-2.36-2.36a4.93 4.93 0 0 0-5.24-.85l-.84.43a6.1 6.1 0 0 0-3.03 4.87V143h35.02a8.08 8.08 0 0 1 6.66 4.13l.43.84a6.91 6.91 0 0 1-1.22 7.56l-2.36 2.36A10.06 10.06 0 0 0 181 164a11 11 0 0 0 11 11v2a13 13 0 0 1-13-13 12 12 0 0 1 3.11-7.53l2.36-2.36a4.93 4.93 0 0 0 .85-5.24l-.43-.84a6.1 6.1 0 0 0-4.87-3.03H145v35.02a8.08 8.08 0 0 1-4.13 6.66l-.84.43a6.91 6.91 0 0 1-7.56-1.22l-2.36-2.36A10.06 10.06 0 0 0 124 181a11 11 0 0 0-11 11h-2a13 13 0 0 1 13-13c2.47 0 5.79 1.37 7.53 3.11l2.36 2.36a4.94 4.94 0 0 0 5.24.85l.84-.43a6.1 6.1 0 0 0 3.03-4.87V145h-35.02a8.08 8.08 0 0 1-6.66-4.13l-.43-.84a6.91 6.91 0 0 1 1.22-7.56l2.36-2.36A10.06 10.06 0 0 0 107 124a11 11 0 0 0-22 0c0 1.94 1.16 4.75 2.53 6.11l2.36 2.36a6.93 6.93 0 0 1 1.22 7.56l-.43.84a8.08 8.08 0 0 1-6.66 4.13H49v35.02a6.1 6.1 0 0 0 3.03 4.87l.84.43c1.58.79 4 .4 5.24-.85l2.36-2.36a12.04 12.04 0 0 1 7.51-3.11A13 13 0 0 1 81 192h-2a11 11 0 0 0-11-11c-1.94 0-4.75 1.16-6.11 2.53l-2.36 2.36a6.93 6.93 0 0 1-7.56 1.22l-.84-.43a8.08 8.08 0 0 1-4.13-6.66V145H11.98a6.1 6.1 0 0 0-4.87 3.03l-.43.84c-.79 1.58-.4 4 .85 5.24l2.36 2.36a12.04 12.04 0 0 1 3.11 7.51A13 13 0 0 1 0 177v-2a11 11 0 0 0 11-11c0-1.94-1.16-4.75-2.53-6.11l-2.36-2.36a6.93 6.93 0 0 1-1.22-7.56l.43-.84a8.08 8.08 0 0 1 6.66-4.13H47v-35.02a6.1 6.1 0 0 0-3.03-4.87l-.84-.43c-1.59-.8-4-.4-5.24.85l-2.36 2.36A12 12 0 0 1 28 109a13 13 0 1 1 0-26c2.47 0 5.79 1.37 7.53 3.11l2.36 2.36a4.94 4.94 0 0 0 5.24.85l.84-.43A6.1 6.1 0 0 0 47 84.02V49H11.98a8.08 8.08 0 0 1-6.66-4.13l-.43-.84a6.91 6.91 0 0 1 1.22-7.56l2.36-2.36A10.06 10.06 0 0 0 11 28 11 11 0 0 0 0 17v-2a13 13 0 0 1 13 13c0 2.47-1.37 5.79-3.11 7.53l-2.36 2.36a4.94 4.94 0 0 0-.85 5.24l.43.84A6.1 6.1 0 0 0 11.98 47H47V11.98a8.08 8.08 0 0 1 4.13-6.66l.84-.43a6.91 6.91 0 0 1 7.56 1.22l2.36 2.36A10.06 10.06 0 0 0 68 11 11 11 0 0 0 79 0h2a13 13 0 0 1-13 13 12 12 0 0 1-7.53-3.11l-2.36-2.36a4.93 4.93 0 0 0-5.24-.85l-.84.43A6.1 6.1 0 0 0 49 11.98V47h35.02a8.08 8.08 0 0 1 6.66 4.13l.43.84a6.91 6.91 0 0 1-1.22 7.56l-2.36 2.36A10.06 10.06 0 0 0 85 68a11 11 0 0 0 22 0c0-1.94-1.16-4.75-2.53-6.11l-2.36-2.36a6.93 6.93 0 0 1-1.22-7.56l.43-.84a8.08 8.08 0 0 1 6.66-4.13H143V11.98a6.1 6.1 0 0 0-3.03-4.87l-.84-.43c-1.59-.8-4-.4-5.24.85l-2.36 2.36A12 12 0 0 1 124 13a13 13 0 0 1-13-13h2a11 11 0 0 0 11 11c1.94 0 4.75-1.16 6.11-2.53l2.36-2.36a6.93 6.93 0 0 1 7.56-1.22l.84.43a8.08 8.08 0 0 1 4.13 6.66V47h35.02a6.1 6.1 0 0 0 4.87-3.03l.43-.84c.8-1.59.4-4-.85-5.24l-2.36-2.36A12 12 0 0 1 179 28a13 13 0 0 1 13-13zM84.02 143a6.1 6.1 0 0 0 4.87-3.03l.43-.84c.8-1.59.4-4-.85-5.24l-2.36-2.36A12 12 0 0 1 83 124a13 13 0 1 1 26 0c0 2.47-1.37 5.79-3.11 7.53l-2.36 2.36a4.94 4.94 0 0 0-.85 5.24l.43.84a6.1 6.1 0 0 0 4.87 3.03H143v-35.02a8.08 8.08 0 0 1 4.13-6.66l.84-.43a6.91 6.91 0 0 1 7.56 1.22l2.36 2.36A10.06 10.06 0 0 0 164 107a11 11 0 0 0 0-22c-1.94 0-4.75 1.16-6.11 2.53l-2.36 2.36a6.93 6.93 0 0 1-7.56 1.22l-.84-.43a8.08 8.08 0 0 1-4.13-6.66V49h-35.02a6.1 6.1 0 0 0-4.87 3.03l-.43.84c-.79 1.58-.4 4 .85 5.24l2.36 2.36a12.04 12.04 0 0 1 3.11 7.51A13 13 0 1 1 83 68a12 12 0 0 1 3.11-7.53l2.36-2.36a4.93 4.93 0 0 0 .85-5.24l-.43-.84A6.1 6.1 0 0 0 84.02 49H49v35.02a8.08 8.08 0 0 1-4.13 6.66l-.84.43a6.91 6.91 0 0 1-7.56-1.22l-2.36-2.36A10.06 10.06 0 0 0 28 85a11 11 0 0 0 0 22c1.94 0 4.75-1.16 6.11-2.53l2.36-2.36a6.93 6.93 0 0 1 7.56-1.22l.84.43a8.08 8.08 0 0 1 4.13 6.66V143h35.02z'%3E%3C/path%3E%3C/svg%3E"); } &.dark { &.patterns { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='192' height='192' viewBox='0 0 192 192'%3E%3Cpath fill='%23fcfcfc' fill-opacity='0.08' d='M192 15v2a11 11 0 0 0-11 11c0 1.94 1.16 4.75 2.53 6.11l2.36 2.36a6.93 6.93 0 0 1 1.22 7.56l-.43.84a8.08 8.08 0 0 1-6.66 4.13H145v35.02a6.1 6.1 0 0 0 3.03 4.87l.84.43c1.58.79 4 .4 5.24-.85l2.36-2.36a12.04 12.04 0 0 1 7.51-3.11 13 13 0 1 1 .02 26 12 12 0 0 1-7.53-3.11l-2.36-2.36a4.93 4.93 0 0 0-5.24-.85l-.84.43a6.1 6.1 0 0 0-3.03 4.87V143h35.02a8.08 8.08 0 0 1 6.66 4.13l.43.84a6.91 6.91 0 0 1-1.22 7.56l-2.36 2.36A10.06 10.06 0 0 0 181 164a11 11 0 0 0 11 11v2a13 13 0 0 1-13-13 12 12 0 0 1 3.11-7.53l2.36-2.36a4.93 4.93 0 0 0 .85-5.24l-.43-.84a6.1 6.1 0 0 0-4.87-3.03H145v35.02a8.08 8.08 0 0 1-4.13 6.66l-.84.43a6.91 6.91 0 0 1-7.56-1.22l-2.36-2.36A10.06 10.06 0 0 0 124 181a11 11 0 0 0-11 11h-2a13 13 0 0 1 13-13c2.47 0 5.79 1.37 7.53 3.11l2.36 2.36a4.94 4.94 0 0 0 5.24.85l.84-.43a6.1 6.1 0 0 0 3.03-4.87V145h-35.02a8.08 8.08 0 0 1-6.66-4.13l-.43-.84a6.91 6.91 0 0 1 1.22-7.56l2.36-2.36A10.06 10.06 0 0 0 107 124a11 11 0 0 0-22 0c0 1.94 1.16 4.75 2.53 6.11l2.36 2.36a6.93 6.93 0 0 1 1.22 7.56l-.43.84a8.08 8.08 0 0 1-6.66 4.13H49v35.02a6.1 6.1 0 0 0 3.03 4.87l.84.43c1.58.79 4 .4 5.24-.85l2.36-2.36a12.04 12.04 0 0 1 7.51-3.11A13 13 0 0 1 81 192h-2a11 11 0 0 0-11-11c-1.94 0-4.75 1.16-6.11 2.53l-2.36 2.36a6.93 6.93 0 0 1-7.56 1.22l-.84-.43a8.08 8.08 0 0 1-4.13-6.66V145H11.98a6.1 6.1 0 0 0-4.87 3.03l-.43.84c-.79 1.58-.4 4 .85 5.24l2.36 2.36a12.04 12.04 0 0 1 3.11 7.51A13 13 0 0 1 0 177v-2a11 11 0 0 0 11-11c0-1.94-1.16-4.75-2.53-6.11l-2.36-2.36a6.93 6.93 0 0 1-1.22-7.56l.43-.84a8.08 8.08 0 0 1 6.66-4.13H47v-35.02a6.1 6.1 0 0 0-3.03-4.87l-.84-.43c-1.59-.8-4-.4-5.24.85l-2.36 2.36A12 12 0 0 1 28 109a13 13 0 1 1 0-26c2.47 0 5.79 1.37 7.53 3.11l2.36 2.36a4.94 4.94 0 0 0 5.24.85l.84-.43A6.1 6.1 0 0 0 47 84.02V49H11.98a8.08 8.08 0 0 1-6.66-4.13l-.43-.84a6.91 6.91 0 0 1 1.22-7.56l2.36-2.36A10.06 10.06 0 0 0 11 28 11 11 0 0 0 0 17v-2a13 13 0 0 1 13 13c0 2.47-1.37 5.79-3.11 7.53l-2.36 2.36a4.94 4.94 0 0 0-.85 5.24l.43.84A6.1 6.1 0 0 0 11.98 47H47V11.98a8.08 8.08 0 0 1 4.13-6.66l.84-.43a6.91 6.91 0 0 1 7.56 1.22l2.36 2.36A10.06 10.06 0 0 0 68 11 11 11 0 0 0 79 0h2a13 13 0 0 1-13 13 12 12 0 0 1-7.53-3.11l-2.36-2.36a4.93 4.93 0 0 0-5.24-.85l-.84.43A6.1 6.1 0 0 0 49 11.98V47h35.02a8.08 8.08 0 0 1 6.66 4.13l.43.84a6.91 6.91 0 0 1-1.22 7.56l-2.36 2.36A10.06 10.06 0 0 0 85 68a11 11 0 0 0 22 0c0-1.94-1.16-4.75-2.53-6.11l-2.36-2.36a6.93 6.93 0 0 1-1.22-7.56l.43-.84a8.08 8.08 0 0 1 6.66-4.13H143V11.98a6.1 6.1 0 0 0-3.03-4.87l-.84-.43c-1.59-.8-4-.4-5.24.85l-2.36 2.36A12 12 0 0 1 124 13a13 13 0 0 1-13-13h2a11 11 0 0 0 11 11c1.94 0 4.75-1.16 6.11-2.53l2.36-2.36a6.93 6.93 0 0 1 7.56-1.22l.84.43a8.08 8.08 0 0 1 4.13 6.66V47h35.02a6.1 6.1 0 0 0 4.87-3.03l.43-.84c.8-1.59.4-4-.85-5.24l-2.36-2.36A12 12 0 0 1 179 28a13 13 0 0 1 13-13zM84.02 143a6.1 6.1 0 0 0 4.87-3.03l.43-.84c.8-1.59.4-4-.85-5.24l-2.36-2.36A12 12 0 0 1 83 124a13 13 0 1 1 26 0c0 2.47-1.37 5.79-3.11 7.53l-2.36 2.36a4.94 4.94 0 0 0-.85 5.24l.43.84a6.1 6.1 0 0 0 4.87 3.03H143v-35.02a8.08 8.08 0 0 1 4.13-6.66l.84-.43a6.91 6.91 0 0 1 7.56 1.22l2.36 2.36A10.06 10.06 0 0 0 164 107a11 11 0 0 0 0-22c-1.94 0-4.75 1.16-6.11 2.53l-2.36 2.36a6.93 6.93 0 0 1-7.56 1.22l-.84-.43a8.08 8.08 0 0 1-4.13-6.66V49h-35.02a6.1 6.1 0 0 0-4.87 3.03l-.43.84c-.79 1.58-.4 4 .85 5.24l2.36 2.36a12.04 12.04 0 0 1 3.11 7.51A13 13 0 1 1 83 68a12 12 0 0 1 3.11-7.53l2.36-2.36a4.93 4.93 0 0 0 .85-5.24l-.43-.84A6.1 6.1 0 0 0 84.02 49H49v35.02a8.08 8.08 0 0 1-4.13 6.66l-.84.43a6.91 6.91 0 0 1-7.56-1.22l-2.36-2.36A10.06 10.06 0 0 0 28 85a11 11 0 0 0 0 22c1.94 0 4.75-1.16 6.11-2.53l2.36-2.36a6.93 6.93 0 0 1 7.56-1.22l.84.43a8.08 8.08 0 0 1 4.13 6.66V143h35.02z'%3E%3C/path%3E%3C/svg%3E"); } .cover { filter: brightness(0.6); } } .cover { width: auto; height: auto; min-height: 100%; opacity: 0; transition: filter 0.3s, opacity 0.3s; &.loaded { opacity: 1; } }}</style><header class=main-header><nav class="main-nav up top"><div class=nav-all><div class=left-nav><div class=site-name onclick='location.href="/"'>元视角</div></div><div class=nav-center><div class=site-menu><div class=site-menu><div class=menu-item><span class=link-btn>文库</span><div class=link-child><span class=link-child-btn onclick='window.location.href="/archives"'><i class="iconfont icon-guidang"></i>
+归档
+</span><span class=link-child-btn onclick='window.location.href="/categories"'><i class="iconfont icon-folder"></i>
+全部分类
+</span><span class=link-child-btn onclick='window.location.href="/tags"'><i class="iconfont icon-hashtag"></i>
+全部标签</span></div></div><div class=menu-item><span class=link-btn>书影音</span><div class=link-child><span class=link-child-btn onclick='window.location.href="/books"'><i class="iconfont icon-book-fill"></i>
+读书
+</span><span class=link-child-btn onclick='window.location.href="/movies"'><i class="iconfont icon-movies"></i>
+观影
+</span><span class=link-child-btn onclick='window.location.href="/musics"'><i class="iconfont icon-music"></i>
+听歌</span></div></div><div class=menu-item><span class=link-btn>页面</span><div class=link-child><span class=link-child-btn onclick='window.location.href="/links"'><i class="iconfont icon-people"></i>
+友情链接
+</span><span class=link-child-btn onclick='window.location.href="/works"'><i class="iconfont icon-people"></i>
+个人作品
+</span><span class=link-child-btn onclick='window.location.href="/statics"'><i class="iconfont icon-tongji"></i>
+站点统计</span></div></div><div class=menu-item><span class=link-btn>更多</span><div class=link-child><span class=link-child-btn onclick='window.location.href="/comments"'><i class="iconfont icon-chat"></i>
+留言板
+</span><span class=link-child-btn onclick='window.location.href="/about"'><i class="iconfont icon-contacts"></i>
+关于本站</span></div></div></div></div><span class=site-title>小爱音箱集成 ChatGPT 的不完全教程</span></div><div class=right-nav><a class="menu-btn nav-btn travellings" title=开往-友链接力 href=https://www.travellings.cn/go.html target=_blank><i class="iconfont icon-subway"></i></a><div class="menu-btn nav-btn" title=随机前往一篇文章><i class="iconfont icon-shuffle"></i></div><div class="menu-btn nav-btn" title=全站搜索><i class="iconfont icon-search"></i></div><div class="menu-btn nav-btn" id=themeToggle title=切换主题模式><i class="iconfont icon-sun" id=themeIcon></i></div><div id=open-control class="menu-btn nav-btn pc" title=打开中控台><i class="iconfont icon-dashboard"></i></div><div class="to-top menu-btn hidden" title=返回顶部><div class=to-top-btn><span class=num>0</span>
+<i class="iconfont icon-up"></i></div></div><div class="menu-btn nav-btn mobile" title=打开菜单><i class="iconfont icon-toc"></i></div></div></div></nav><div class=mobile-menu id=mobileMenu><div class=menu-mask></div><div class="menu-content s-card"><div class=close-control><i class="iconfont icon-close"></i></div><div class=menu-list><div class=menu-item><span class=link-title>文库</span><div class=link-child><div class=link-child-btn onclick='window.location.href="/archives"'><i class="iconfont icon-guidang"></i>
+<span class=name>归档</span></div><div class=link-child-btn onclick='window.location.href="/categories"'><i class="iconfont icon-folder"></i>
+<span class=name>全部分类</span></div><div class=link-child-btn onclick='window.location.href="/tags"'><i class="iconfont icon-hashtag"></i>
+<span class=name>全部标签</span></div></div></div><div class=menu-item><span class=link-title>书影音</span><div class=link-child><div class=link-child-btn onclick='window.location.href="/books"'><i class="iconfont icon-book-fill"></i>
+<span class=name>读书</span></div><div class=link-child-btn onclick='window.location.href="/movies"'><i class="iconfont icon-movies"></i>
+<span class=name>观影</span></div><div class=link-child-btn onclick='window.location.href="/musics"'><i class="iconfont icon-music"></i>
+<span class=name>听歌</span></div></div></div><div class=menu-item><span class=link-title>页面</span><div class=link-child><div class=link-child-btn onclick='window.location.href="/links"'><i class="iconfont icon-people"></i>
+<span class=name>友情链接</span></div><div class=link-child-btn onclick='window.location.href="/works"'><i class="iconfont icon-people"></i>
+<span class=name>个人作品</span></div><div class=link-child-btn onclick='window.location.href="/statics"'><i class="iconfont icon-tongji"></i>
+<span class=name>站点统计</span></div></div></div><div class=menu-item><span class=link-title>更多</span><div class=link-child><div class=link-child-btn onclick='window.location.href="/comments"'><i class="iconfont icon-chat"></i>
+<span class=name>留言板</span></div><div class=link-child-btn onclick='window.location.href="/about"'><i class="iconfont icon-contacts"></i>
+<span class=name>关于本站</span></div></div></div></div></div></div><style>.mobile-menu{position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:3000;display:none}.mobile-menu .menu-mask{position:absolute;top:0;left:0;width:100%;height:100%;z-index:-1;background-color:var(--main-mask-background)}.mobile-menu .menu-content{position:absolute;top:0;right:0;height:100%;width:100%;max-width:300px;border-radius:12px 0 0 12px;padding:20px;overflow:auto}.mobile-menu .close-control{position:absolute;top:10px;right:20px;display:flex;align-items:center;justify-content:center;width:35px;height:35px;padding:0;transition:background-color .3s,opacity .3s;border-radius:50%;cursor:pointer}.mobile-menu .close-control .iconfont{font-size:18px;line-height:1;color:var(--main-font-second-color);transition:color .3s,opacity .3s}.mobile-menu .close-control:hover{background-color:var(--main-color)}.mobile-menu .close-control:hover .iconfont{color:var(--main-card-background)}.mobile-menu .menu-list{margin-top:40px}.mobile-menu .menu-item{margin-bottom:12px}.mobile-menu .menu-item .link-title{font-size:14px;margin-bottom:12px;display:inline-block;color:var(--main-font-second-color)}.mobile-menu .menu-item .link-child{display:grid;gap:12px;grid-template-columns:1fr 1fr}.mobile-menu .menu-item .link-child-btn{display:flex;flex-direction:row;justify-content:flex-start;align-items:center;border-radius:8px;padding:10px 12px;background-color:var(--main-card-background);border:1px solid var(--main-card-border);box-shadow:0 8px 16px -4px var(--main-border-shadow);font-size:15px;cursor:pointer;transition:all .3s}.mobile-menu .menu-item .link-child-btn:hover{background-color:var(--main-color);color:var(--main-card-background)}.mobile-menu .menu-item .link-child-btn .iconfont{margin-right:6px;opacity:.6}.mobile-menu .menu-item .link-child-btn .name{max-width:80px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}</style><script>function toggleMobileMenu(){const e=document.getElementById("mobileMenu");e&&(e.style.display=e.style.display==="none"?"block":"none")}</script><div class=modal id=search-modal><div class=modal-mask></div><div class="modal-main s-card" style=max-width:800px><div class=title><div class=title-left><i class="iconfont icon-search"></i>
+<span class=title-text>全局搜索</span></div><i class="iconfont icon-close close" id=modal-close></i></div><div class=modal-content style=--height:80vh><div class=search-modal><div class=search-input><input type=text id=search-input placeholder=今天你想搜点什么？ autocomplete=off></div><div class=search-results><div class=search-list></div><div class=search-empty><i class="iconfont icon-search"></i><p>输入关键字，开始搜索</p></div></div><div class=search-hint><span class=text id=search-hint-text></span>
+<span class=text><a class=powered_by href=https://www.fusejs.io/ target=_blank>Fuse.js</a></span></div></div></div></div></div></header><main class=main-layout><div class=post><div class=post-meta><div class=meta><div class=categories><a href=/categories/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80 class=cat-item><i class="iconfont icon-folder"></i>
+<span class=name>编程语言</span></a></div><div class=tags><a href=/tags/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD class=tag-item><i class="iconfont icon-hashtag"></i>
+<span class=name>人工智能</span>
+</a><a href=/tags/chatgpt class=tag-item><i class="iconfont icon-hashtag"></i>
+<span class=name>ChatGPT</span>
+</a><a href=/tags/%E6%99%BA%E8%83%BD%E5%AE%B6%E5%B1%85 class=tag-item><i class="iconfont icon-hashtag"></i>
+<span class=name>智能家居</span>
+</a><a href=/tags/%E5%B0%8F%E7%88%B1%E5%90%8C%E5%AD%A6 class=tag-item><i class="iconfont icon-hashtag"></i>
+<span class=name>小爱同学</span></a></div></div><h1 class=title>小爱音箱集成 ChatGPT 的不完全教程</h1><div class=other-meta><span class="meta date"><i class="iconfont icon-date"></i>
+2023-03-20
+</span><span class="update meta"><i class="iconfont icon-time"></i>
+2023-03-20
+</span><span class="hot meta"><i class="iconfont icon-fire"></i>
+<span id=twikoo_visitors class=artalk-pv-count>0</span>
+</span><span class="chat meta hover" data-scroll-to=comments><i class="iconfont icon-chat"></i>
+<span id=twikoo_comments class=artalk-comment-count>0</span></span></div></div><div class=post-content><article class="post-article s-card"><div class="expired s-card">本文发表于 <strong>751</strong> 天前，其中的信息可能已经事过境迁</div><div class="article-gpt s-card"><div class=title><span class=name><i class="iconfont icon-robot"></i>
+文章摘要
+<i class="iconfont icon-up"></i>
+</span><span class=logo>FakeGPT</span></div><div class="content s-card"><span class=text></span></div><div class=meta></div></div><script src=https://npm.elemecdn.com/typeit@8.7.1/dist/index.umd.js></script><script>document.addEventListener("DOMContentLoaded",function(){new TypeIt(".article-gpt .content .text",{strings:"本文是关于如何将 ChatGPT 集成到小爱音箱中的不完全教程。文章首先介绍了智能家居的基础概念，包括 WIFI、ZigBee 和 BLE 等通信协议，以及智能家居平台的选择。接着，作者分享了如何使用 MiService 和 python-miio 库来控制米家设备，并通过编程获取小爱音箱的控制指令。文章还详细介绍了接入 ChatGPT 的方法，包括安装 openai 包和设置 API 密钥。最后，作者提出了两种集成 ChatGPT 和小爱音箱的思路：一种是通过获取对话记录并用 ChatGPT 回答问题，另一种是通过蓝牙直接连接音箱。文章以对未来 AI 发展的思考作为结尾。",speed:10,lifeLike:!0,waitUntilVisible:!0}).go()})</script><div id=page-content class=markdown-main-style><p>2023年三月对于金融和科技领域来说，可谓是“冰火两重天”。硅谷银行倒闭事件像一枚深水炸弹一样在金融领域扩散开来，而 OpenAI 则凭借 ChatGPT 这款产品一路“狂飙”，成为当下最负盛名的爆款话题。就在百度推出同类产品“文心一言”的前夕，OpenAI 正式发布了 GPT-4，直至微软高调宣布在 Office 全家桶中集成了 GPT-4，将这场技术狂欢推向高潮。作为一个关注聊天机器人的人，我从大学时期就开始通过 AIML 标记语言构建语料库，并逐渐接触 NLP 领域的知识。我认为这一波人工智能的热度代表了 OpenAI 主张的大语言模型(LLM)的胜利。ChatGPT 虽然始于聊天机器人，但绝不会止于聊天机器人。它的最终形态或许会是钢铁侠的智能管家“贾维斯”，抑或是《流浪地球》里超级人工智能 MOSS。事实上，我日常会用 ChatGPT 写程序原型、翻译文本、提取主题/关键词，这段时间更是尝鲜了智能家居。因此，我想和大家分享一下小爱音箱集成 ChatGPT 的过程。</p><h1 id=基本原理>基本原理</h1><p>如果你像博主一样是一名智能家居新手玩家，那么在正式接触智能家居之前，你应该至少听说过 WIFI、ZigBee、BLE 这些名词。这些是指智能家居中的通信协议，例如小爱音箱可以作为蓝牙 Mesh 网关去连接那些使用蓝牙通信的设备，而 ZigBee 则是一种短距离、低功耗、支持自组网的无线通信协议。虽然 ZigBee 对外宣称是一个开放标准，但不同的厂商出于利益考虑，并不完全兼容彼此的设备，离真正的万物互联始终还有一段距离。因此，你会发现米家有类似多模网关这样的产品，现阶段的智能家居是一个多种协议混合使用的局面，2C 市场更青睐蓝牙和 WIFI 方案，2B 市场更青睐 ZigBee 方案。为了让更多的设备加入整个智能家居生态，开源的智能家居方案 <a href=https://www.home-assistant.io/>HomeAssistant</a> 就此诞生。其中的 IFTTT 组件可以扩展出更多的智能玩法；为了让设备加入苹果公司的 HomeKit 生态，<a href=https://homebridge.io/>HomeBridge</a> 这样一个“曲线救国”的方案就此诞生。可以说，现阶段智能家居的高阶玩法，基本都是围绕这两个平台展开。作为一名普通的消费者，你并没有机会去选择使用哪种协议，更多的是去选择使用哪一个平台。</p><p><a href=https://smarthomehive.com/smart-home-protocols/><a class=img-fancybox href=https://smarthomehive.com/wp-content/uploads/2022/04/005-smart-home-protocols-1.png data-fancybox=gallery data-src=https://smarthomehive.com/wp-content/uploads/2022/04/005-smart-home-protocols-1.png data-caption="Smart Home Protocols: WiFi vs Bluetooth vs ZigBee vs Z-Wave"><img src=https://smarthomehive.com/wp-content/uploads/2022/04/005-smart-home-protocols-1.png alt="Smart Home Protocols: WiFi vs Bluetooth vs ZigBee vs Z-Wave" class=post-img loading=lazy>
+<span class=post-img-tip>Smart Home Protocols: WiFi vs Bluetooth vs ZigBee vs Z-Wave</span></a></a></p><p>前面提到 ZigBee 的自组网具有离线可用的特性。与 WIFI 不同，WIFI 需要接入互联网，一旦断网就无法对设备进行有效控制，而蓝牙和 ZigBee 就没有这种烦恼。唯一的问题是它们都需要对应的网关。目前，米家的设备控制主要有远程控制和本地控制两种方式。远程控制需要发送指令到米家的服务器，这种方式对小米来说更有利，唯独不利于实现“万物互联”这一伟大远景。本地控制至少需要一个智能家庭屏或中枢网关，其好处是延迟低、离线可用、保障隐私。从某种角度来说，这与人们开始使用 NAS 搭建私有云的初衷一致，都是为了更好地保护隐私和数据安全。由于博主不具备本地控制的条件，所以，我们还是采用远程控制的方案，即通过向米家的服务器发送指令来达到控制设备的目的。在这个过程中，接入 ChatGPT 的 API，再控制小爱音箱将其响应内容朗读出来。这个方案可以实现远程控制的同时，利用 ChatGPT 弥补小爱同学“智能”上的不足。如图所示，下面是一个简单的示意图：</p><p><a class=img-fancybox href=/posts/the-xiaoai-speaker-integrates-an-incomplete-tutorial-on-chatgpt/MIHome_Remote_Control.drawio.png data-fancybox=gallery data-src=/posts/the-xiaoai-speaker-integrates-an-incomplete-tutorial-on-chatgpt/MIHome_Remote_Control.drawio.png data-caption="米家远程控制及 ChatGPT 接入示意图"><img src=/posts/the-xiaoai-speaker-integrates-an-incomplete-tutorial-on-chatgpt/MIHome_Remote_Control.drawio.png alt="米家远程控制及 ChatGPT 接入示意图" class=post-img loading=lazy>
+<span class=post-img-tip>米家远程控制及 ChatGPT 接入示意图</span></a></p><h1 id=如何控制米家>如何控制米家</h1><p>接下来，我们来探讨如何控制米家设备。米家通过 HTTP 协议实现远程控制，为此，我们推荐使用两个非常实用的库：<a href=https://github.com/Yonsm/MiService>MiService</a> 和 <a href=https://github.com/rytilahti/python-miio>python-miio</a>。这两个库各有优缺点。如果你对米家物联网协议更感兴趣，我们建议使用 python-miio；如果你希望更快、更容易地上手米家智能家居，我们则推荐使用 MiService。从使用方式上来看，MiService 使用 <code>DID</code> 来区分不同的设备，而 python-miio 使用 <code>Token</code> 和 <code>IP</code> 来区分不同的设备。下面，我们以 MiService 为例来演示如何通过编程控制米家设备。</p><p><a class=img-fancybox href=/posts/the-xiaoai-speaker-integrates-an-incomplete-tutorial-on-chatgpt/system-diagram-consumer.png data-fancybox=gallery data-src=/posts/the-xiaoai-speaker-integrates-an-incomplete-tutorial-on-chatgpt/system-diagram-consumer.png data-caption=网关在整个智能家居中的地位><img src=/posts/the-xiaoai-speaker-integrates-an-incomplete-tutorial-on-chatgpt/system-diagram-consumer.png alt=网关在整个智能家居中的地位 class=post-img loading=lazy>
+<span class=post-img-tip>网关在整个智能家居中的地位</span></a></p><p>在开始前，请确保你安装了 MiService , 你可以选择下面两种方式之一进行安装：</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-Bash data-lang=Bash><span class=line><span class=cl><span class=c1># 从包管理器安装</span>
+</span></span><span class=line><span class=cl>python -m pip install MiService
+</span></span><span class=line><span class=cl><span class=c1># 从源代码安装</span>
+</span></span><span class=line><span class=cl>git clone git@github.com:Yonsm/MiService.git
+</span></span><span class=line><span class=cl><span class=nb>cd</span> MiService
+</span></span><span class=line><span class=cl>python -m pip install .
+</span></span></code></pre></div><p>安装后，你会在 Python 主目录下的 <code>Scipts</code> 目录看到一个叫做 <code>micli</code> 的命令行工具。如果你的 <code>Scripts</code> 目录在全局环境变量中 <code>Path</code> 中，那么，恭喜你，你可以直接在终端中使用该命令。为了向该工具表明身份，我们需要在终端中导出下面两个环境变量：</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-Bash data-lang=Bash><span class=line><span class=cl><span class=nb>export</span> <span class=nv>MI_USER</span><span class=o>=</span>&lt;小米账号&gt;
+</span></span><span class=line><span class=cl><span class=nb>export</span> <span class=nv>MI_PASS</span><span class=o>=</span>&lt;小米密码&gt;
+</span></span></code></pre></div><p>此时，我们在终端中输入命令 <code>micli list</code>，我们就可以得到当前账号下所有的米家设备信息：</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-json data-lang=json><span class=line><span class=cl><span class=p>[{</span>
+</span></span><span class=line><span class=cl>    <span class=nt>&#34;name&#34;</span><span class=p>:</span> <span class=s2>&#34;客厅主灯&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>    <span class=nt>&#34;model&#34;</span><span class=p>:</span> <span class=s2>&#34;yeelink.light.ceil31&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>    <span class=nt>&#34;did&#34;</span><span class=p>:</span> <span class=s2>&#34;&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>    <span class=nt>&#34;token&#34;</span><span class=p>:</span> <span class=s2>&#34;&#34;</span>
+</span></span><span class=line><span class=cl><span class=p>},</span> 
+</span></span><span class=line><span class=cl><span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=nt>&#34;name&#34;</span><span class=p>:</span> <span class=s2>&#34;小爱同学&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>    <span class=nt>&#34;model&#34;</span><span class=p>:</span> <span class=s2>&#34;xiaomi.wifispeaker.x08e&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>    <span class=nt>&#34;did&#34;</span><span class=p>:</span> <span class=s2>&#34;&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>    <span class=nt>&#34;token&#34;</span><span class=p>:</span> <span class=s2>&#34;&#34;</span>
+</span></span><span class=line><span class=cl><span class=p>},</span> 
+</span></span><span class=line><span class=cl><span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=nt>&#34;name&#34;</span><span class=p>:</span> <span class=s2>&#34;温湿度计&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>    <span class=nt>&#34;model&#34;</span><span class=p>:</span> <span class=s2>&#34;miaomiaoce.sensor_ht.t2&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>    <span class=nt>&#34;did&#34;</span><span class=p>:</span> <span class=s2>&#34;&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>    <span class=nt>&#34;token&#34;</span><span class=p>:</span> <span class=s2>&#34;&#34;</span>
+</span></span><span class=line><span class=cl><span class=p>}]</span>
+</span></span></code></pre></div><p>可以注意到，在这个列表中有我们想要的小爱同学，在获得关键信息 <code>DID</code> 后，我们将其在终端中导出：</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-Bash data-lang=Bash><span class=line><span class=cl><span class=nb>export</span> <span class=nv>MI_DID</span><span class=o>=</span>&lt;请替换为你的DID&gt;
+</span></span></code></pre></div><p>通过上述信息，我们了解到小爱音箱的型号为 <code>X08E</code>，你可以在音箱底部找到这个信息。接下来，我们需要访问 <a href=https://home.miot-spec.com/>https://home.miot-spec.com/</a> 这个网站，以获取更多控制小爱音箱的信息。在该网站中，输入当前型号，你将会看到如下页面：</p><p><a class=img-fancybox href=/posts/the-xiaoai-speaker-integrates-an-incomplete-tutorial-on-chatgpt/miot-spec-01.png data-fancybox=gallery data-src=/posts/the-xiaoai-speaker-integrates-an-incomplete-tutorial-on-chatgpt/miot-spec-01.png data-caption=米家产品规范截图-1><img src=/posts/the-xiaoai-speaker-integrates-an-incomplete-tutorial-on-chatgpt/miot-spec-01.png alt=米家产品规范截图-1 class=post-img loading=lazy>
+<span class=post-img-tip>米家产品规范截图-1</span></a></p><p>点击页面中标有链接的部分，你将看到小爱音箱拥有各种控制指令，如下图所示：</p><p><a class=img-fancybox href=/posts/the-xiaoai-speaker-integrates-an-incomplete-tutorial-on-chatgpt/miot-spec-02.png data-fancybox=gallery data-src=/posts/the-xiaoai-speaker-integrates-an-incomplete-tutorial-on-chatgpt/miot-spec-02.png data-caption=米家产品规范截图-2><img src=/posts/the-xiaoai-speaker-integrates-an-incomplete-tutorial-on-chatgpt/miot-spec-02.png alt=米家产品规范截图-2 class=post-img loading=lazy>
+<span class=post-img-tip>米家产品规范截图-2</span></a></p><p>针对我们最关心的语音部分，你会发现它整体上分为三个级别：分类、属性(Properties) 和动作(Actions)。每个分类都有唯一的 SIID，每个属性都有唯一的 PIID，每个动作都有唯一的 AIID。参考 <a href=https://github.com/Yonsm/MiService>MiService</a> 的文档，我们可以轻松编写以下指令：</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-Bash data-lang=Bash><span class=line><span class=cl><span class=c1># 获取小爱音箱播放状态 1:Playing, 0:Stop, 2:Pause</span>
+</span></span><span class=line><span class=cl>micli 3-1 
+</span></span><span class=line><span class=cl><span class=c1># 播放文本内容</span>
+</span></span><span class=line><span class=cl>micli 7-3 Hello
+</span></span><span class=line><span class=cl><span class=c1># 执行文本指令</span>
+</span></span><span class=line><span class=cl>micli 7-4 为我点亮世界
+</span></span><span class=line><span class=cl><span class=c1># 播放</span>
+</span></span><span class=line><span class=cl>micli action <span class=s1>&#39;{&#34;did&#34;:&#34;&lt;你的DID&gt;&#34;,&#34;siid&#34;:3,&#34;aiid&#34;:2,&#34;in&#34;:[]}&#39;</span>
+</span></span><span class=line><span class=cl><span class=c1># 暂停</span>
+</span></span><span class=line><span class=cl>micli action <span class=s1>&#39;{&#34;did&#34;:&#34;&lt;你的DID&gt;&#34;,&#34;siid&#34;:3,&#34;aiid&#34;:3,&#34;in&#34;:[]}&#39;</span>
+</span></span><span class=line><span class=cl><span class=c1># 停止</span>
+</span></span><span class=line><span class=cl>micli action <span class=s1>&#39;{&#34;did&#34;:&#34;&lt;你的DID&gt;&#34;,&#34;siid&#34;:3,&#34;aiid&#34;:4,&#34;in&#34;:[]}&#39;</span>
+</span></span><span class=line><span class=cl><span class=c1># 设置音量</span>
+</span></span><span class=line><span class=cl>micli 2-1<span class=o>=</span><span class=c1>#60</span>
+</span></span></code></pre></div><p>以上演示以小爱音箱为例，事实上，只要掌握了这种方法，大多数米家设备都可以通过编程实现控制。例如，智能门锁和门窗传感器可以通过程序获取电池耗电量的信息，以便提醒及时更换电池。目前，第三方物联网平台如 <a href=https://bemfa.com/>巴法云</a> 采用发布/订阅模式来控制单片机，这使得像 ESP32 这样的开发板可以快速接入米家生态。我个人认为，这些技术都非常有趣，值得我们做进一步的深入探索。</p><h1 id=如何接入-chatgpt>如何接入 ChatGPT</h1><p>对于 Python，接入 ChatGPT 非常方便，因为 OpenAI 官方提供了 SDK。首先，我们需要使用 <code>pip</code> 安装 <code>openai</code> 包：</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-shell data-lang=shell><span class=line><span class=cl>python -m pip install openai
+</span></span></code></pre></div><p>接下来，我们只需导入 <code>openai</code> 模块，并设置 <code>API</code> 密钥：</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=kn>import</span> <span class=nn>openai</span>
+</span></span><span class=line><span class=cl><span class=n>openai</span><span class=o>.</span><span class=n>api_key</span> <span class=o>=</span> <span class=s2>&#34;&lt;YOUR_API_KEY&gt;&#34;</span>
+</span></span></code></pre></div><p>现在，我们可以调用 OpenAI 的 API，输入对话文本，获取机器生成的回复，如下所示：</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=n>completion</span> <span class=o>=</span> <span class=n>openai</span><span class=o>.</span><span class=n>ChatCompletion</span><span class=o>.</span><span class=n>create</span><span class=p>(</span>
+</span></span><span class=line><span class=cl>    <span class=n>model</span><span class=o>=</span><span class=s2>&#34;gpt-3.5-turbo&#34;</span><span class=p>,</span> 
+</span></span><span class=line><span class=cl>    <span class=n>messages</span><span class=o>=</span><span class=p>[{</span><span class=s2>&#34;role&#34;</span><span class=p>:</span> <span class=s2>&#34;user&#34;</span><span class=p>,</span> <span class=s2>&#34;content&#34;</span><span class=p>:</span><span class=s2>&#34;Hi，ChatGPT!&#34;</span><span class=p>}]</span>
+</span></span><span class=line><span class=cl><span class=p>)</span>
+</span></span></code></pre></div><p>当然，鉴于 OpenAI 在国内的可访问性问题，笔者通过 Vercel 搭建了一个代理服务。此时，你可以使用下面的 API 接口，如下所示。虽然这只是对官方 SDK 进行了二次封装，但是考虑到国情如此，我们只能说聊胜于无：</p><pre tabindex=0><code class=language-curl data-lang=curl>curl -X POST &#39;https://openai-proxy.yuanpei.me/openai/v1/completions&#39; \
+-H &#39;Authorization: Bearer &lt;Your-OpenAI-API-KEY&gt;&#39; \
+-H &#39;Content-Type: application/json&#39; \
+-d &#39;{
+&#34;model&#34;: &#34;gpt-3.5-turbo&#34;,
+&#34;messages&#34;: [{&#34;role&#34;: &#34;user&#34;, &#34;content&#34;:&#34;Hello ChatGPT!&#34;}]
+}&#39;
+</code></pre><p>更多的细节，大家可以参考这里：<a href=https://github.com/qinyuanpei/openai-proxy>https://github.com/qinyuanpei/openai-proxy</a>。</p><h1 id=风云合璧>风云合璧</h1><p>到目前为止，整个思路非常清晰。当我们使用米家 App 时，可以注意到米家存储了我们和小爱同学的对话内容。因此，我们的思路是通过接口获取对话记录，每一组对话中的第一句话，就是我们对小爱同学的提问。此时，我们可以用这个问题去询问 ChatGPT，等待 ChatGPT 给出回应后，再利用上述技巧将文本转化为语音输出。然而，这个方案最大的弊端是，无法完全屏蔽小爱同学自身的交互逻辑。因此，在下面的演示视频中，我们不得不通过程序来强行打断小爱同学的发言，这其实是一种无奈的做法：</p><div class=video-wrapper><iframe src="https://player.bilibili.com/player.html?as_wide=1&amp;high_quality=1&amp;page=1&bvid=BV16M4y1r7g1" scrolling=no frameborder=no framespacing=0 allowfullscreen></iframe></div><p>当然，我们还有另一种思路，即通过蓝牙连接到小爱音箱。在这种情况下，小爱同学就完全成为一个输出设备，甚至无需介入米家。但这样做会失去与小爱同学互动的乐趣，除非你想创建类似于“贾维斯”的人工智能程序，否则请不要轻易尝试这条注定艰辛的道路。下面是一个针对这种方案的简化实现：</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-Python data-lang=Python><span class=line><span class=cl><span class=kn>import</span> <span class=nn>speech_recognition</span> <span class=k>as</span> <span class=nn>sr</span>
+</span></span><span class=line><span class=cl><span class=kn>import</span> <span class=nn>pyttsx3</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1># 初始化语音识别 &amp; 语音合成</span>
+</span></span><span class=line><span class=cl><span class=n>r</span> <span class=o>=</span> <span class=n>sr</span><span class=o>.</span><span class=n>Recognizer</span><span class=p>()</span>
+</span></span><span class=line><span class=cl><span class=n>engine</span> <span class=o>=</span> <span class=n>pyttsx3</span><span class=o>.</span><span class=n>init</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1># 语音识别函数</span>
+</span></span><span class=line><span class=cl><span class=k>def</span> <span class=nf>recognize_speech</span><span class=p>():</span>
+</span></span><span class=line><span class=cl>    <span class=k>with</span> <span class=n>sr</span><span class=o>.</span><span class=n>Microphone</span><span class=p>()</span> <span class=k>as</span> <span class=n>source</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>        <span class=nb>print</span><span class=p>(</span><span class=s1>&#39;Please speak:&#39;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>        <span class=n>audio</span> <span class=o>=</span> <span class=n>r</span><span class=o>.</span><span class=n>listen</span><span class=p>(</span><span class=n>source</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=k>try</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>        <span class=n>text</span> <span class=o>=</span> <span class=n>r</span><span class=o>.</span><span class=n>recognize_google</span><span class=p>(</span><span class=n>audio</span><span class=p>,</span> <span class=n>language</span><span class=o>=</span><span class=s1>&#39;zh-CN&#39;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>        <span class=nb>print</span><span class=p>(</span><span class=s1>&#39;You said:&#39;</span><span class=p>,</span> <span class=n>text</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>        <span class=k>return</span> <span class=n>text</span>
+</span></span><span class=line><span class=cl>    <span class=k>except</span> <span class=ne>Exception</span> <span class=k>as</span> <span class=n>e</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>        <span class=nb>print</span><span class=p>(</span><span class=s1>&#39;Error:&#39;</span><span class=p>,</span> <span class=n>e</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>        <span class=k>return</span> <span class=s1>&#39;&#39;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1># 语音合成函数</span>
+</span></span><span class=line><span class=cl><span class=k>def</span> <span class=nf>speak</span><span class=p>(</span><span class=n>text</span><span class=p>):</span>
+</span></span><span class=line><span class=cl>    <span class=n>engine</span><span class=o>.</span><span class=n>say</span><span class=p>(</span><span class=n>text</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=n>engine</span><span class=o>.</span><span class=n>runAndWait</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1># 主程序</span>
+</span></span><span class=line><span class=cl><span class=n>speak</span><span class=p>(</span><span class=s1>&#39;你好，请问有什么可以帮助您的？&#39;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=k>while</span> <span class=kc>True</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>    <span class=n>text</span> <span class=o>=</span> <span class=n>recognize_speech</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>    <span class=k>if</span> <span class=n>text</span> <span class=o>==</span> <span class=s1>&#39;退出&#39;</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>        <span class=k>break</span>
+</span></span><span class=line><span class=cl>    <span class=k>elif</span> <span class=n>text</span><span class=o>.</span><span class=n>startswith</span><span class=p>(</span><span class=s1>&#39;帮我&#39;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>        <span class=c1># todo：在这里调用 ChatGPT</span>
+</span></span><span class=line><span class=cl>        <span class=k>pass</span>
+</span></span><span class=line><span class=cl>    <span class=k>else</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>        <span class=n>speak</span><span class=p>(</span><span class=s1>&#39;对不起，我不明白您的意思，请您再说一遍。&#39;</span><span class=p>)</span>
+</span></span></code></pre></div><p>视频中的演示程序源自 Github 上的一个开源项目 <a href=https://github.com/yihong0618/xiaogpt>https://github.com/yihong0618/xiaogpt</a>。在此基础上，我做了一些微不足道的工作。首先，将对小爱的控制方式完全替换为上文中的指令，因为我感觉 MiNAService 这个类不是特别稳定；其次，将 OpenAI 的 API 替换为我自己架设的代理接口，这样就解决了科学上网的烦恼；最后，将 <code>MI_USER</code>、<code>MI_PASS</code>、<code>MI_DID</code>、<code>OPENAI_API_KEY</code> 四个参数放入 <code>.env</code> 文件中，简化了程序启动时的参数。我已将这些工作提交到了我的 Github 上，对此感兴趣的朋友可以自行下载：<a href=https://github.com/Regularly-Archive/2023/tree/main/XiaoiGPT>https://github.com/Regularly-Archive/2023/tree/main/XiaoiGPT</a>。</p><h1 id=本文小结>本文小结</h1><p>在这个过程中，我最大的收获是学会了如何用编程控制米家设备。尽管现在智能家居的交互场景还相对有限，但就像 ChatGPT 一样，当你意识到 AI 正式进入一个新阶段的时候，一切都显得为时已晚。百度的文心一言发布后，陆续有人拿到了内测资格，一时间好像没有人再去讨论 ChatGPT 了，因为大家的精力都放在戏谑文心一言生成的图片上面。我经常思考未来是否会出现一种职业叫做“魔法吟唱师”，负责为各种 AI 模型输入提示词。去年 Stable Diffusion 开始流行时，我就意识到提示词对结果产生影响。遗憾的是，此时此刻，人类仍然为比 AI 多懂几个成语、多吃过几道菜而沾沾自喜。作为一名技术人员，我对科技的未来一直抱有乐观的态度，因为我认为技术日新月异，真正拖累人心的始终是那些非技术因素。人们总以为 AI 能帮助解决各种各样的问题，但问题是我们是否能清晰地表达出我们的想法呢？我们总是太过痴迷于华丽的言辞，而忽略了简单直接的表达方式。人们实在太享受口是心非的感觉，就像今天这篇博客，其实是由我和 ChatGPT 一起完成的，但你是否能分清其中的真假吗？</p></div><div class="copyright s-card"><div class=title><span class=post-name>小爱音箱集成 ChatGPT 的不完全教程</span>
+<a :href=http://example.org/posts/the-xiaoai-speaker-integrates-an-incomplete-tutorial-on-chatgpt/ class=post-link target=_blank>http://example.org/posts/the-xiaoai-speaker-integrates-an-incomplete-tutorial-on-chatgpt/</a></div><div class=post-meta><div class=meta-item><span class=tip>作者</span>
+<span class=name>飞鸿踏雪</span></div><div class=meta-item><span class=tip>发布于</span>
+<span class=name>2023-03-20</span></div><div class=meta-item><span class=tip>更新于</span>
+<span class=name>2023-03-20</span></div><div class="meta-item cc"><span class=tip>许可协议</span>
+<a class=name href=https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh-hans target=_blank>CC BY-NC-SA 4.0</a></div></div><span class=meta-tip>署名-非商业性使用-相同方式共享 4.0 国际</span></div><div class=other-meta><div class=all-tags><a href=/tags/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD class=tag-item><i class="iconfont icon-hashtag"></i>
+<span class=name>人工智能</span>
+</a><a href=/tags/chatgpt class=tag-item><i class="iconfont icon-hashtag"></i>
+<span class=name>ChatGPT</span>
+</a><a href=/tags/%E6%99%BA%E8%83%BD%E5%AE%B6%E5%B1%85 class=tag-item><i class="iconfont icon-hashtag"></i>
+<span class=name>智能家居</span>
+</a><a href=/tags/%E5%B0%8F%E7%88%B1%E5%90%8C%E5%AD%A6 class=tag-item><i class="iconfont icon-hashtag"></i>
+<span class=name>小爱同学</span></a></div><a href=https://eqnxweimkr5.feishu.cn/share/base/form/shrcnCXCPmxCKKJYI3RKUfefJre class=report target=_blank><i class="iconfont icon-report"></i>
+反馈与投诉</a></div><div class=reward><div class=reward-btn onclick='window.$Modal.show("reward-modal")'><i class="iconfont icon-reward"></i>
+<span class=text>赞赏博主</span></div></div><div class=modal id=reward-modal><div class=modal-mask></div><div class="modal-main s-card" style=max-width:430px><div class=title><div class=title-left><i class="iconfont icon-reward"></i>
+<span class=title-text>赞赏博主</span></div><i class="iconfont icon-close close" id=modal-close></i></div><div class=modal-content style=--height:80vh><div class=reward-card><div class=thank>🙏 请博主喝一杯咖啡</div><div class=qr><a class=qr-img href=/images/reward/alipay.jpg target=_blank><img src=/images/reward/alipay.jpg alt=支付宝赞赏码><div class=tip><i class="iconfont icon-alipay"></i>
+<span>支付宝</span></div></a><a class=qr-img href=/images/reward/wechat.jpg target=_blank><img src=/images/reward/wechat.jpg alt=微信赞赏码><div class=tip><i class="iconfont icon-wechat"></i>
+<span>微信</span></div></a></div><div class="all-list s-card hover"><div class=title>赞赏记录</div><div class=tip>赞赏金额将全部用于开源项目维护，以及服务器、域名及各类云服务的开销</div></div></div></div></div></div><div class=related-post><div class=title><span class=name><i class="iconfont icon-star"></i>
+相关推荐
+</span><span class=shuffle onclick='window.location.href="/posts/731808750/"'>随便逛逛</span></div><div class=post-lists><article class="post-item s-card simple hover" style=animation-delay:.4s onclick='window.location.href="/posts/everything-you-need-to-know-about-streaming-with-chatgpt/"'><div class=post-content><span class=post-title>关于 ChatGPT 的流式传输，你需要知道的一切</span>
+<span class=post-desc>本文深入探讨了生成式 AI 产品如 ChatGPT 的流式输出效果，阐释了其目的在于减少用户等待时间，而非简单模仿人类行为。文章详细介绍了 Server-Sent Events（SSE）技术在实现流式传输中的应用，并通过代码示例展示了服务端配置和客户端数据接收的方法。同时，讨论了 WebSocket 技术作为 SSE 的替代方案，强调了在 AI 应用开发中实现流式传输的重要性。此外，文中还介绍了 .NET 中的 IAsyncEnumerable 接口，并讨论了在生成式 AI 中实现取消/停止生成功能的挑战，提出了基于 WebSocket 的双向通信机制来解决这一问题。最后，文章总结了流式传输在 AI 与人类交互中的重要性，并提出了对 AI 智能本质的思考。</span></div></article><article class="post-item s-card simple hover" style=animation-delay:.4s onclick='window.location.href="/posts/an-attempt-to-deploy-a-large-ai-model-locally-using-llama.cpp/"'><div class=post-content><span class=post-title>使用 llama.cpp 在本地部署 AI 大模型的一次尝试</span>
+<span class=post-desc>2023 年被誉为 AIGC 元年，随着技术浪潮，人们开始对人工智能的发展产生担忧。文章介绍了使用 llama.cpp 在本地部署AI大模型的过程，包括编译、量化和模型下载。通过对不同模型的体验，展示了其运行效果和评估。最后，将 ChatGPT-Next-Web 与 llama.cpp 结合，展示了本地部署 AI 大模型的潜力。整体讲述了私有化部署AI大模型的重要性和实践过程。</span></div></article></div><style>.post-lists{width:100%}.post-lists .post-item{padding:0!important;display:flex;margin-bottom:1rem;animation:fade-up .6s backwards;cursor:pointer;overflow:hidden;height:200px}.post-lists .post-item .post-cover{flex:0 0 35%;overflow:hidden;transform:translateZ(0)}.post-lists .post-item .post-cover img{width:100%;height:100%;object-fit:cover;transform-origin:center center;transition:transform .5s ease-out,filter .5s ease-out;backface-visibility:hidden}.post-lists .post-item .post-content{flex:1;padding:1.6rem 2rem;display:flex;flex-direction:column;justify-content:space-between}.post-lists .post-item .post-category{display:flex;flex-wrap:wrap;width:100%;color:var(--main-font-second-color);font-size:14px}.post-lists .post-item .post-category .cat-name{display:flex;flex-direction:row;align-items:center}.post-lists .post-item .post-category .cat-name .iconfont{opacity:.8;margin-right:6px;color:var(--main-font-second-color)}.post-lists .post-item .post-category .top{margin-left:12px;color:var(--main-color)}.post-lists .post-item .post-category .top .iconfont{opacity:.8;color:var(--main-color)}.post-lists .post-item .post-title{font-size:20px;line-height:30px;font-weight:700;margin:.6rem 0;transition:color .3s;display:-webkit-box;overflow:hidden;word-break:break-all;-webkit-box-orient:vertical;-webkit-line-clamp:2}.post-lists .post-item .post-desc{margin-top:-.4rem;margin-bottom:.8rem;opacity:.8;line-height:30px;display:-webkit-box;overflow:hidden;word-break:break-all;-webkit-box-orient:vertical;-webkit-line-clamp:2}.post-lists .post-item .post-meta{display:flex;flex-direction:row;align-items:center;justify-content:space-between;color:var(--main-font-second-color)}.post-lists .post-item .post-tags{display:flex;flex-wrap:wrap;opacity:.8;margin-right:20px;overflow:hidden;mask:linear-gradient(90deg,#fff 0,#fff 90%,hsla(0,0%,100%,.6) 95%,hsla(0,0%,100%,0) 100%)}.post-lists .post-item .post-tags .tags-name{display:flex;flex-direction:row;align-items:center;margin-right:12px;white-space:nowrap;transition:color .3s}.post-lists .post-item .post-time{opacity:.6;font-size:13px;white-space:nowrap}.post-lists .post-item:hover .post-cover img{filter:brightness(.8);transform:scale(1.05)}.post-lists .post-item:hover .post-title{color:var(--main-color)}.post-lists .post-item:active{transform:scale(.98)}.post-lists .post-item.cover-left{flex-direction:row}.post-lists .post-item.cover-right{flex-direction:row-reverse}.post-lists .post-item.cover-both:nth-child(odd){flex-direction:row}.post-lists .post-item.cover-both:nth-child(even){flex-direction:row-reverse}.post-lists.layout-grid{display:grid;grid-template-columns:repeat(var(--grid-columns,2),1fr);gap:var(--grid-gap,1rem)}.post-lists.layout-grid .post-item{margin:0;flex-direction:column;height:auto}.post-lists.layout-grid .post-item .post-cover{flex:none;width:100%;height:225px}@media(max-width:768px){.post-lists .post-item{flex-direction:column;height:auto}.post-lists .post-item .post-cover{flex:none;width:100%;height:200px}.post-lists .post-item.cover-left,.post-lists .post-item.cover-right,.post-lists .post-item.cover-both{flex-direction:column!important}.post-lists.layout-grid{grid-template-columns:1fr}.post-lists .post-item .post-tags{flex-wrap:nowrap}}.post-lists .post-item .simple{animation:none;padding:.5rem 1.4rem!important;background-color:var(--main-card-second-background);height:auto;margin-bottom:.5rem}.post-lists .post-item .simple .post-content{padding:.5rem 0}.post-lists .post-item .simple .post-title{margin:0;font-size:16px}.post-lists .post-item .simple .post-desc{margin:.3rem 0 0;font-size:14px;opacity:.6}</style></div><style>.related-post{margin-top:1rem}.related-post .title{display:flex;flex-direction:row;align-items:center;justify-content:space-between;width:100%;margin:3rem 0 1rem;padding:0 6px}.related-post .title .name{display:flex;align-items:center;font-size:24px;font-weight:700}.related-post .title .name .iconfont{font-size:26px;font-weight:400;margin-right:8px}.related-post .title .shuffle{opacity:.6;font-size:14px;transition:color .3s,opacity .3s;cursor:pointer}.related-post .title .shuffle:hover{opacity:1;color:var(--main-color)}</style><div id=comments><div id=main-comment class=comment><div v-if=!fill class=title><span class=name><i class="iconfont icon-chat"></i>
+评论
+</span><span class=tool>隐私政策</span></div><link rel=stylesheet href=https://unpkg.com/@waline/client@v3/dist/waline.css><div id=waline class=waline-container></div><style>.waline-container{background-color:var(--card-background);border-radius:var(--card-border-radius);box-shadow:var(--shadow-l1);padding:var(--card-padding)}.waline-container .vcount{color:var(--card-text-color-main)}</style><script type=module>
+        import { init } from 'https://unpkg.com/@waline/client@v3/dist/waline.js';
+        init({
+            el: '#waline',
+            serverURL: 'https:\/\/waline.yuanpei.me\/',
+            lang: 'zh',
+            dark: 'auto',
+            path: window.location.href,
+            requiredMeta: ['nick','mail'],
+            emoji: [
+                '//unpkg.com/@waline/emojis@1.2.0/weibo'
+            ],
+            reaction: false,
+        });
+      </script></div></div><div class="next-post s-card" id=next-post data-is-next=true><a href=/posts/exploration-of-font-size-adaptation-scheme-under-gdi+/ class=next-post-link><span class=post-tip>下一篇阅读
+</span><span class=post-title>GDI+下字体大小自适应方案初探</span></a></div></article><aside class=main-aside><div class="hello s-card weidgets"><span class=tip>中午好，吃饱了精神好！</span><div class=content><div class=site-logo><div class=avatar><img src=/images/avatar.jpg></div></div><span class=site-desc></span></div><div class=info><div class=name><span class=author>飞鸿踏雪</span>
+<span class=desc>纵有疾风起，人生不言弃</span></div><div class=link><a href=https://github.com/qinyuanpei target=_blank class=social-link><i class="iconfont icon-github"></i>
+</a><a href=mailto:qinyuapei@163.com target=_blank class=social-link><i class="iconfont icon-email"></i></a></div></div></div><div class=sticky><div class="toc s-card weidgets" id=weidget-toc><div class=toc-title><i class="iconfont icon-toc"></i>
+<span class=name>目录</span></div><div id=toc-all class=toc-list></div></div><script>document.addEventListener("DOMContentLoaded",function(){const o=[];let e=null,t=null,n=0;const s=document.getElementById("toc-all"),i=()=>{try{if(e=document.getElementById("page-content"),!e)return!1;const t=Array.from(e.querySelectorAll("h1, h2, h3, h4")).filter(e=>e.parentElement.tagName.toLowerCase()==="div");return t}catch(e){console.error("获取所有目录数据出错：",e)}},r=()=>{const e=i();if(!e)return!1;s.innerHTML="",e.forEach((e,t)=>{const n={id:e.id,type:e.tagName,text:e.textContent?.replace(/\u200B/g,"").trim()},i=document.createElement("span");i.id="toc-"+n.id,i.className=`toc-item ${n.type} ${t===0?"active":""}`,i.textContent=n.text,i.addEventListener("click",()=>d(n.id)),s.appendChild(i),o.push(n)}),e&&e.length>0&&(t=e[0].id)},c=(e,t)=>{let n;return function(){const s=arguments,o=this;n||(e.apply(o,s),n=!0,setTimeout(()=>n=!1,t))}},l=c(()=>{if(!o.length)return!1;const e=i();if(!e)return!1;const s=120;if(window.scrollY===0){n=0,t=e[0]?.id,a();return}for(let n of e){const o=n.getBoundingClientRect();o.top-s<=0&&o.bottom+s>=0&&t!==n.id&&(t=n.id,a())}},100),a=()=>{document.querySelectorAll(".toc-item.active").forEach(e=>{e.classList.remove("active")});const e=document.getElementById("toc-"+t);if(!e)return!1;e.classList.add("active"),n=e.offsetTop-2||0,s.style.setProperty("--height",n+"px"),s.scrollTo({top:n-80,behavior:"smooth"})},d=t=>{try{const n=document.getElementById(t);if(!n||!e)return!1;const s=n.offsetTop,o=s+e.offsetTop-80;window.scroll({top:o,behavior:"smooth"})}catch(e){console.error("目录滚动失败：",e)}};r(),window.addEventListener("scroll",l)})</script><style lang=scss scoped>.toc{position:relative;padding:0!important;overflow:hidden;.toc-title { display: flex; flex-direction: row; align-items: center; padding: 18px; height: 58px; .iconfont { margin-right: 8px; font-weight: bold; opacity: 0.6; } .name { font-weight: bold; } } .toc-list { position: relative; padding: 20px; padding-top: 0; padding-left: 24px; display: flex; flex-direction: column; max-height: calc(70vh - 58px); overflow: auto; .toc-item { margin: 4px 0; padding: 6px 12px; border-radius: 8px; opacity: 0.6; transition: color 0.3s, opacity 0.3s, font-size 0.3s, background-color 0.3s; cursor: pointer; &:first-child { margin-top: 0; } &:last-child { margin-bottom: 0; } &.H1 { font-weight: bold; } &.H2 { font-size: 14px; margin-left: 15px; font-weight: normal; } &.H3 { font-size: 12px; margin-left: 25px; } &.active { opacity: 1; color: var(--main-color); background-color: var(--main-color-bg); &.H2 { font-size: 14px; } &.H3 { font-size: 12px; } } &:hover { opacity: 1; color: var(--main-color); background-color: var(--main-color-bg); } } &::after { content: ""; position: absolute; left: 12px; top: var(--height); width: 4px; height: 20px; margin: 8px 0; background-color: var(--main-color); border-radius: 8px; transition: top 0.3s; } } &::before { content: ""; position: absolute; left: 12px; bottom: 20px; width: 4px; height: calc(100% - 78px); background-color: var(--main-card-border); border-radius: 8px; }}</style><div class="tags-cloud s-card weidgets"><div class=title><i class="iconfont icon-hashtag"></i>
+<span class=title-name>热门标签</span></div><div class=all-tags><a href=/tags/unity3d/ class=tags><span class=name>Unity3D</span>
+<sup class=num>27</sup>
+</a><a href=/tags/%E6%84%9F%E6%82%9F/ class=tags><span class=name>感悟</span>
+<sup class=num>23</sup>
+</a><a href=/tags/python/ class=tags><span class=name>Python</span>
+<sup class=num>22</sup>
+</a><a href=/tags/%E9%9A%8F%E7%AC%94/ class=tags><span class=name>随笔</span>
+<sup class=num>16</sup>
+</a><a href=/tags/.net-core/ class=tags><span class=name>.NET Core</span>
+<sup class=num>15</sup>
+</a><a href=/tags/%E5%BD%B1%E8%AF%84/ class=tags><span class=name>影评</span>
+<sup class=num>14</sup>
+</a><a href=/tags/%E6%B8%B8%E6%88%8F/ class=tags><span class=name>游戏</span>
+<sup class=num>13</sup>
+</a><a href=/tags/%E7%94%B5%E5%BD%B1/ class=tags><span class=name>电影</span>
+<sup class=num>12</sup>
+</a><a href=/tags/grpc/ class=tags><span class=name>GRPC</span>
+<sup class=num>10</sup>
+</a><a href=/tags/%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91/ class=tags><span class=name>游戏开发</span>
+<sup class=num>10</sup>
+</a><a href=/tags/%E7%94%9F%E6%B4%BB/ class=tags><span class=name>生活</span>
+<sup class=num>10</sup>
+</a><a href=/tags/.net/ class=tags><span class=name>.NET</span>
+<sup class=num>9</sup>
+</a><a href=/tags/http/ class=tags><span class=name>HTTP</span>
+<sup class=num>9</sup>
+</a><a href=/tags/redis/ class=tags><span class=name>Redis</span>
+<sup class=num>9</sup>
+</a><a href=/tags/%E5%89%8D%E7%AB%AF/ class=tags><span class=name>前端</span>
+<sup class=num>9</sup>
+</a><a href=/tags/envoy/ class=tags><span class=name>Envoy</span>
+<sup class=num>8</sup>
+</a><a href=/tags/hexo/ class=tags><span class=name>Hexo</span>
+<sup class=num>8</sup>
+</a><a href=/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1/ class=tags><span class=name>微服务</span>
+<sup class=num>8</sup>
+</a><a href=/tags/%E6%8A%80%E5%B7%A7/ class=tags><span class=name>技巧</span>
+<sup class=num>8</sup>
+</a><a href=/tags/%E6%95%99%E7%A8%8B/ class=tags><span class=name>教程</span>
+<sup class=num>8</sup>
+</a><a href=/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/ class=tags><span class=name>数据库</span>
+<sup class=num>8</sup>
+</a><a href=/tags/%E7%AC%94%E8%AE%B0/ class=tags><span class=name>笔记</span>
+<sup class=num>8</sup>
+</a><a href=/tags/aop/ class=tags><span class=name>AOP</span>
+<sup class=num>7</sup>
+</a><a href=/tags/c%23/ class=tags><span class=name>C#</span>
+<sup class=num>7</sup>
+</a><a href=/tags/docker/ class=tags><span class=name>Docker</span>
+<sup class=num>6</sup>
+</a><a href=/tags/linux/ class=tags><span class=name>Linux</span>
+<sup class=num>6</sup>
+</a><a href=/tags/vue/ class=tags><span class=name>Vue</span>
+<sup class=num>6</sup>
+</a><a href=/tags/%E6%9C%8D%E5%8A%A1%E5%99%A8/ class=tags><span class=name>服务器</span>
+<sup class=num>6</sup>
+</a><a href=/tags/%E7%BC%96%E7%A8%8B/ class=tags><span class=name>编程</span>
+<sup class=num>6</sup>
+</a><a href=/tags/%E8%AF%BB%E4%B9%A6/ class=tags><span class=name>读书</span>
+<sup class=num>6</sup>
+</a><a href=/tags/ef/ class=tags><span class=name>EF</span>
+<sup class=num>5</sup>
+</a><a href=/tags/opencv/ class=tags><span class=name>OpenCV</span>
+<sup class=num>5</sup>
+</a><a href=/tags/ugui/ class=tags><span class=name>UGUI</span>
+<sup class=num>5</sup>
+</a><a href=/tags/%E5%AE%B9%E5%99%A8/ class=tags><span class=name>容器</span>
+<sup class=num>5</sup>
+</a><a href=/tags/%E6%80%9D%E8%80%83/ class=tags><span class=name>思考</span>
+<sup class=num>5</sup>
+</a><a href=/tags/%E6%95%B0%E5%AD%A6/ class=tags><span class=name>数学</span>
+<sup class=num>5</sup>
+</a><a href=/tags/%E6%97%A5%E5%BF%97/ class=tags><span class=name>日志</span>
+<sup class=num>5</sup>
+</a><a href=/tags/%E6%BA%90%E7%A0%81/ class=tags><span class=name>源码</span>
+<sup class=num>5</sup>
+</a><a href=/tags/%E7%BC%93%E5%AD%98/ class=tags><span class=name>缓存</span>
+<sup class=num>5</sup>
+</a><a href=/tags/git/ class=tags><span class=name>Git</span>
+<sup class=num>4</sup>
+</a><a href=/tags/mono/ class=tags><span class=name>Mono</span>
+<sup class=num>4</sup>
+</a><a href=/tags/restful/ class=tags><span class=name>RESTful</span>
+<sup class=num>4</sup>
+</a><a href=/tags/web/ class=tags><span class=name>Web</span>
+<sup class=num>4</sup>
+</a><a href=/tags/webapi/ class=tags><span class=name>WebApi</span>
+<sup class=num>4</sup>
+</a><a href=/tags/%E5%8E%86%E5%8F%B2/ class=tags><span class=name>历史</span>
+<sup class=num>4</sup>
+</a><a href=/tags/%E5%A2%9E%E5%BC%BA%E7%8E%B0%E5%AE%9E/ class=tags><span class=name>增强现实</span>
+<sup class=num>4</sup>
+</a><a href=/tags/%E6%89%A9%E5%B1%95/ class=tags><span class=name>扩展</span>
+<sup class=num>4</sup>
+</a><a href=/tags/%E7%A8%8B%E5%BA%8F%E5%91%98/ class=tags><span class=name>程序员</span>
+<sup class=num>4</sup>
+</a><a href=/tags/%E7%BC%96%E8%BE%91%E5%99%A8/ class=tags><span class=name>编辑器</span>
+<sup class=num>4</sup>
+</a><a href=/tags/ar/ class=tags><span class=name>AR</span>
+<sup class=num>3</sup>
+</a><a href=/tags/bash/ class=tags><span class=name>Bash</span>
+<sup class=num>3</sup>
+</a><a href=/tags/chatgpt/ class=tags><span class=name>ChatGPT</span>
+<sup class=num>3</sup>
+</a><a href=/tags/dapper/ class=tags><span class=name>Dapper</span>
+<sup class=num>3</sup>
+</a><a href=/tags/kindle/ class=tags><span class=name>Kindle</span>
+<sup class=num>3</sup>
+</a><a href=/tags/nginx/ class=tags><span class=name>Nginx</span>
+<sup class=num>3</sup>
+</a><a href=/tags/nlp/ class=tags><span class=name>NLP</span>
+<sup class=num>3</sup>
+</a><a href=/tags/rabbitmq/ class=tags><span class=name>RabbitMQ</span>
+<sup class=num>3</sup>
+</a><a href=/tags/travis/ class=tags><span class=name>Travis</span>
+<sup class=num>3</sup>
+</a><a href=/tags/websocket/ class=tags><span class=name>WebSocket</span>
+<sup class=num>3</sup>
+</a><a href=/tags/%E4%B8%AD%E9%97%B4%E4%BB%B6/ class=tags><span class=name>中间件</span>
+<sup class=num>3</sup>
+</a><a href=/tags/%E5%93%B2%E5%AD%A6/ class=tags><span class=name>哲学</span>
+<sup class=num>3</sup>
+</a><a href=/tags/%E5%9B%BE%E5%83%8F%E5%A4%84%E7%90%86/ class=tags><span class=name>图像处理</span>
+<sup class=num>3</sup>
+</a><a href=/tags/%E5%9B%BE%E5%BD%A2/ class=tags><span class=name>图形</span>
+<sup class=num>3</sup>
+</a><a href=/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/ class=tags><span class=name>多线程</span>
+<sup class=num>3</sup>
+</a><a href=/tags/%E5%B7%A5%E4%BD%9C/ class=tags><span class=name>工作</span>
+<sup class=num>3</sup>
+</a><a href=/tags/%E5%BC%82%E5%B8%B8/ class=tags><span class=name>异常</span>
+<sup class=num>3</sup>
+</a><a href=/tags/%E5%BE%AE%E5%8D%9A/ class=tags><span class=name>微博</span>
+<sup class=num>3</sup>
+</a><a href=/tags/%E6%88%90%E9%95%BF/ class=tags><span class=name>成长</span>
+<sup class=num>3</sup>
+</a><a href=/tags/%E6%8F%92%E4%BB%B6/ class=tags><span class=name>插件</span>
+<sup class=num>3</sup>
+</a><a href=/tags/%E6%97%B6%E9%97%B4/ class=tags><span class=name>时间</span>
+<sup class=num>3</sup>
+</a><a href=/tags/%E6%A2%A6%E6%83%B3/ class=tags><span class=name>梦想</span>
+<sup class=num>3</sup>
+</a><a href=/tags/%E6%B1%82%E8%81%8C/ class=tags><span class=name>求职</span>
+<sup class=num>3</sup>
+</a><a href=/tags/%E6%B8%A9%E6%95%85%E7%9F%A5%E6%96%B0/ class=tags><span class=name>温故知新</span>
+<sup class=num>3</sup>
+</a><a href=/tags/%E7%9B%91%E6%8E%A7/ class=tags><span class=name>监控</span>
+<sup class=num>3</sup>
+</a><a href=/tags/%E8%A5%BF%E5%AE%89/ class=tags><span class=name>西安</span>
+<sup class=num>3</sup>
+</a><a href=/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/ class=tags><span class=name>设计模式</span>
+<sup class=num>3</sup>
+</a><a href=/tags/%E8%B7%A8%E5%B9%B3%E5%8F%B0/ class=tags><span class=name>跨平台</span>
+<sup class=num>3</sup>
+</a><a href=/tags/%E9%9D%A2%E8%AF%95/ class=tags><span class=name>面试</span>
+<sup class=num>3</sup>
+</a><a href=/tags/abp/ class=tags><span class=name>ABP</span>
+<sup class=num>2</sup>
+</a><a href=/tags/agent/ class=tags><span class=name>Agent</span>
+<sup class=num>2</sup>
+</a><a href=/tags/aigc/ class=tags><span class=name>AIGC</span>
+<sup class=num>2</sup>
+</a><a href=/tags/api/ class=tags><span class=name>API</span>
+<sup class=num>2</sup>
+</a><a href=/tags/assetbundle/ class=tags><span class=name>AssetBundle</span>
+<sup class=num>2</sup>
+</a><a href=/tags/binlog/ class=tags><span class=name>Binlog</span>
+<sup class=num>2</sup>
+</a><a href=/tags/ci/ class=tags><span class=name>CI</span>
+<sup class=num>2</sup>
+</a><a href=/tags/cors/ class=tags><span class=name>CORS</span>
+<sup class=num>2</sup>
+</a><a href=/tags/csharp/ class=tags><span class=name>CSharp</span>
+<sup class=num>2</sup>
+</a><a href=/tags/di/ class=tags><span class=name>DI</span>
+<sup class=num>2</sup>
+</a><a href=/tags/dlib/ class=tags><span class=name>Dlib</span>
+<sup class=num>2</sup>
+</a><a href=/tags/easyar/ class=tags><span class=name>EasyAR</span>
+<sup class=num>2</sup>
+</a><a href=/tags/elk/ class=tags><span class=name>ELK</span>
+<sup class=num>2</sup>
+</a><a href=/tags/github/ class=tags><span class=name>Github</span>
+<sup class=num>2</sup>
+</a><a href=/tags/html5/ class=tags><span class=name>HTML5</span>
+<sup class=num>2</sup>
+</a><a href=/tags/httpclient/ class=tags><span class=name>HttpClient</span>
+<sup class=num>2</sup>
+</a><a href=/tags/javascript/ class=tags><span class=name>JavaScript</span>
+<sup class=num>2</sup>
+</a><a href=/tags/jeager/ class=tags><span class=name>Jeager</span>
+<sup class=num>2</sup>
+</a><a href=/tags/kafka/ class=tags><span class=name>Kafka</span>
+<sup class=num>2</sup>
+</a><a href=/tags/lambda/ class=tags><span class=name>Lambda</span>
+<sup class=num>2</sup>
+</a><a href=/tags/llama/ class=tags><span class=name>LLaMA</span>
+<sup class=num>2</sup>
+</a><a href=/tags/lua/ class=tags><span class=name>Lua</span>
+<sup class=num>2</sup>
+</a><a href=/tags/mock/ class=tags><span class=name>Mock</span>
+<sup class=num>2</sup>
+</a><a href=/tags/mysql/ class=tags><span class=name>MySQL</span>
+<sup class=num>2</sup>
+</a><a href=/tags/rag/ class=tags><span class=name>RAG</span>
+<sup class=num>2</sup>
+</a><a href=/tags/sdl/ class=tags><span class=name>SDL</span>
+<sup class=num>2</sup>
+</a><a href=/tags/selenium/ class=tags><span class=name>Selenium</span>
+<sup class=num>2</sup>
+</a><a href=/tags/signalr/ class=tags><span class=name>SignalR</span>
+<sup class=num>2</sup>
+</a><a href=/tags/socket/ class=tags><span class=name>Socket</span>
+<sup class=num>2</sup>
+</a><a href=/tags/sse/ class=tags><span class=name>SSE</span>
+<sup class=num>2</sup>
+</a><a href=/tags/streaming/ class=tags><span class=name>Streaming</span>
+<sup class=num>2</sup>
+</a><a href=/tags/swagger/ class=tags><span class=name>Swagger</span>
+<sup class=num>2</sup>
+</a><a href=/tags/tracing/ class=tags><span class=name>Tracing</span>
+<sup class=num>2</sup>
+</a><a href=/tags/vscode/ class=tags><span class=name>VSCode</span>
+<sup class=num>2</sup>
+</a><a href=/tags/wsl/ class=tags><span class=name>WSL</span>
+<sup class=num>2</sup>
+</a><a href=/tags/%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/ class=tags><span class=name>主从复制</span>
+<sup class=num>2</sup>
+</a><a href=/tags/%E4%BA%8B%E4%BB%B6%E8%AE%A2%E9%98%85/ class=tags><span class=name>事件订阅</span>
+<sup class=num>2</sup>
+</a><a href=/tags/%E4%BA%92%E8%81%94%E7%BD%91/ class=tags><span class=name>互联网</span>
+<sup class=num>2</sup>
+</a><a href=/tags/%E4%BA%BA%E6%96%87/ class=tags><span class=name>人文</span>
+<sup class=num>2</sup>
+</a><a href=/tags/%E4%BA%BA%E7%94%9F/ class=tags><span class=name>人生</span>
+<sup class=num>2</sup>
+</a><a href=/tags/%E4%BA%BA%E8%84%B8%E8%AF%86%E5%88%AB/ class=tags><span class=name>人脸识别</span>
+<sup class=num>2</sup>
+</a><a href=/tags/%E4%BE%9D%E8%B5%96%E6%B3%A8%E5%85%A5/ class=tags><span class=name>依赖注入</span>
+<sup class=num>2</sup>
+</a><a href=/tags/%E5%88%86%E5%B8%83%E5%BC%8F/ class=tags><span class=name>分布式</span>
+<sup class=num>2</sup>
+</a><a href=/tags/%E5%8A%A0%E5%AF%86/ class=tags><span class=name>加密</span>
+<sup class=num>2</sup>
+</a><a href=/tags/%E5%8A%A8%E6%80%81%E4%BB%A3%E7%90%86/ class=tags><span class=name>动态代理</span>
+<sup class=num>2</sup>
+</a><a href=/tags/%E5%8A%A8%E6%BC%AB/ class=tags><span class=name>动漫</span>
+<sup class=num>2</sup>
+</a><a href=/tags/%E5%8F%AF%E8%A7%86%E5%8C%96/ class=tags><span class=name>可视化</span>
+<sup class=num>2</sup>
+</a><a href=/tags/%E5%90%8E%E7%AB%AF/ class=tags><span class=name>后端</span>
+<sup class=num>2</sup>
+</a><a href=/tags/%E5%90%91%E9%87%8F/ class=tags><span class=name>向量</span>
+<sup class=num>2</sup>
+</a><a href=/tags/%E5%AE%9E%E4%BD%93/ class=tags><span class=name>实体</span>
+<sup class=num>2</sup>
+</a><a href=/tags/%E5%B7%A5%E5%85%B7/ class=tags><span class=name>工具</span>
+<sup class=num>2</sup>
+</a><a href=/tags/%E5%BC%82%E6%AD%A5/ class=tags><span class=name>异步</span>
+<sup class=num>2</sup>
+</a><a href=/tags/%E6%80%BB%E7%BB%93/ class=tags><span class=name>总结</span>
+<sup class=num>2</sup>
+</a><a href=/tags/%E6%83%85%E6%84%9F/ class=tags><span class=name>情感</span>
+<sup class=num>2</sup>
+</a><a href=/tags/%E6%83%B3%E6%B3%95/ class=tags><span class=name>想法</span>
+<sup class=num>2</sup>
+</a><a href=/tags/%E6%89%93%E5%8D%B0/ class=tags><span class=name>打印</span>
+<sup class=num>2</sup>
+</a><a href=/tags/%E6%8A%80%E6%9C%AF/ class=tags><span class=name>技术</span>
+<sup class=num>2</sup>
+</a><a href=/tags/%E6%9E%B6%E6%9E%84/ class=tags><span class=name>架构</span>
+<sup class=num>2</sup>
+</a><a href=/tags/%E6%A6%82%E7%8E%87/ class=tags><span class=name>概率</span>
+<sup class=num>2</sup>
+</a><a href=/tags/%E6%A8%A1%E6%9D%BF%E5%BC%95%E6%93%8E/ class=tags><span class=name>模板引擎</span>
+<sup class=num>2</sup>
+</a><a href=/tags/%E7%88%AC%E8%99%AB/ class=tags><span class=name>爬虫</span>
+<sup class=num>2</sup>
+</a><a href=/tags/%E7%88%B1%E6%83%85/ class=tags><span class=name>爱情</span>
+<sup class=num>2</sup>
+</a><a href=/tags/%E7%94%BB%E5%AE%B6/ class=tags><span class=name>画家</span>
+<sup class=num>2</sup>
+</a><a href=/tags/%E7%AE%97%E6%B3%95/ class=tags><span class=name>算法</span>
+<sup class=num>2</sup>
+</a><a href=/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9B%BE%E5%BD%A2/ class=tags><span class=name>计算机图形</span>
+<sup class=num>2</sup>
+</a><a href=/tags/%E8%AE%A4%E8%AF%81/ class=tags><span class=name>认证</span>
+<sup class=num>2</sup>
+</a><a href=/tags/%E8%AE%BE%E8%AE%A1/ class=tags><span class=name>设计</span>
+<sup class=num>2</sup>
+</a><a href=/tags/%E8%B4%9D%E5%A1%9E%E5%B0%94%E6%9B%B2%E7%BA%BF/ class=tags><span class=name>贝塞尔曲线</span>
+<sup class=num>2</sup>
+</a><a href=/tags/%E8%B7%A8%E5%9F%9F/ class=tags><span class=name>跨域</span>
+<sup class=num>2</sup>
+</a><a href=/tags/%E9%80%9A%E4%BF%A1/ class=tags><span class=name>通信</span>
+<sup class=num>2</sup>
+</a><a href=/tags/%E9%85%8D%E7%BD%AE/ class=tags><span class=name>配置</span>
+<sup class=num>2</sup>
+</a><a href=/tags/%E9%87%8D%E8%AF%95/ class=tags><span class=name>重试</span>
+<sup class=num>2</sup>
+</a><a href=/tags/%E9%98%85%E8%AF%BB/ class=tags><span class=name>阅读</span>
+<sup class=num>2</sup>
+</a><a href=/tags/%E9%BB%91%E5%AE%A2/ class=tags><span class=name>黑客</span>
+<sup class=num>2</sup>
+</a><a href=/tags/2014/ class=tags><span class=name>2014</span>
+<sup class=num>1</sup>
+</a><a href=/tags/2019/ class=tags><span class=name>2019</span>
+<sup class=num>1</sup>
+</a><a href=/tags/ado.net/ class=tags><span class=name>ADO.NET</span>
+<sup class=num>1</sup>
+</a><a href=/tags/ai/ class=tags><span class=name>AI</span>
+<sup class=num>1</sup>
+</a><a href=/tags/any/ class=tags><span class=name>Any</span>
+<sup class=num>1</sup>
+</a><a href=/tags/apache/ class=tags><span class=name>Apache</span>
+<sup class=num>1</sup>
+</a><a href=/tags/blazor/ class=tags><span class=name>Blazor</span>
+<sup class=num>1</sup>
+</a><a href=/tags/c++/ class=tags><span class=name>C++</span>
+<sup class=num>1</sup>
+</a><a href=/tags/castle/ class=tags><span class=name>Castle</span>
+<sup class=num>1</sup>
+</a><a href=/tags/cdn/ class=tags><span class=name>CDN</span>
+<sup class=num>1</sup>
+</a><a href=/tags/cg/ class=tags><span class=name>CG</span>
+<sup class=num>1</sup>
+</a><a href=/tags/channel/ class=tags><span class=name>Channel</span>
+<sup class=num>1</sup>
+</a><a href=/tags/consul/ class=tags><span class=name>Consul</span>
+<sup class=num>1</sup>
+</a><a href=/tags/cts/ class=tags><span class=name>CTS</span>
+<sup class=num>1</sup>
+</a><a href=/tags/dbeaver/ class=tags><span class=name>DBeaver</span>
+<sup class=num>1</sup>
+</a><a href=/tags/ddd/ class=tags><span class=name>DDD</span>
+<sup class=num>1</sup>
+</a><a href=/tags/delayqueue/ class=tags><span class=name>DelayQueue</span>
+<sup class=num>1</sup>
+</a><a href=/tags/diagnostics/ class=tags><span class=name>Diagnostics</span>
+<sup class=num>1</sup>
+</a><a href=/tags/disunity/ class=tags><span class=name>Disunity</span>
+<sup class=num>1</sup>
+</a><a href=/tags/dottrace/ class=tags><span class=name>DotTrace</span>
+<sup class=num>1</sup>
+</a><a href=/tags/dynamic/ class=tags><span class=name>Dynamic</span>
+<sup class=num>1</sup>
+</a><a href=/tags/dynamic-proxy/ class=tags><span class=name>Dynamic Proxy</span>
+<sup class=num>1</sup>
+</a><a href=/tags/echarts/ class=tags><span class=name>ECharts</span>
+<sup class=num>1</sup>
+</a><a href=/tags/efcore/ class=tags><span class=name>EFCore</span>
+<sup class=num>1</sup>
+</a><a href=/tags/es6/ class=tags><span class=name>ES6</span>
+<sup class=num>1</sup>
+</a><a href=/tags/eventbus/ class=tags><span class=name>EventBus</span>
+<sup class=num>1</sup>
+</a><a href=/tags/excel/ class=tags><span class=name>Excel</span>
+<sup class=num>1</sup>
+</a><a href=/tags/flv/ class=tags><span class=name>FLV</span>
+<sup class=num>1</sup>
+</a><a href=/tags/fody/ class=tags><span class=name>Fody</span>
+<sup class=num>1</sup>
+</a><a href=/tags/form/ class=tags><span class=name>Form</span>
+<sup class=num>1</sup>
+</a><a href=/tags/fp/ class=tags><span class=name>FP</span>
+<sup class=num>1</sup>
+</a><a href=/tags/function-calling/ class=tags><span class=name>Function Calling</span>
+<sup class=num>1</sup>
+</a><a href=/tags/gdi+/ class=tags><span class=name>GDI+</span>
+<sup class=num>1</sup>
+</a><a href=/tags/gephi/ class=tags><span class=name>Gephi</span>
+<sup class=num>1</sup>
+</a><a href=/tags/gpt/ class=tags><span class=name>GPT</span>
+<sup class=num>1</sup>
+</a><a href=/tags/gpts/ class=tags><span class=name>GPTs</span>
+<sup class=num>1</sup>
+</a><a href=/tags/grafana/ class=tags><span class=name>Grafana</span>
+<sup class=num>1</sup>
+</a><a href=/tags/hangfire/ class=tags><span class=name>Hangfire</span>
+<sup class=num>1</sup>
+</a><a href=/tags/hashset/ class=tags><span class=name>HashSet</span>
+<sup class=num>1</sup>
+</a><a href=/tags/hls/ class=tags><span class=name>HLS</span>
+<sup class=num>1</sup>
+</a><a href=/tags/https/ class=tags><span class=name>HTTPS</span>
+<sup class=num>1</sup>
+</a><a href=/tags/hyperlog/ class=tags><span class=name>Hyperlog</span>
+<sup class=num>1</sup>
+</a><a href=/tags/ide/ class=tags><span class=name>IDE</span>
+<sup class=num>1</sup>
+</a><a href=/tags/importlib/ class=tags><span class=name>Importlib</span>
+<sup class=num>1</sup>
+</a><a href=/tags/jaeger/ class=tags><span class=name>Jaeger</span>
+<sup class=num>1</sup>
+</a><a href=/tags/java/ class=tags><span class=name>Java</span>
+<sup class=num>1</sup>
+</a><a href=/tags/jetbrain/ class=tags><span class=name>JetBrain</span>
+<sup class=num>1</sup>
+</a><a href=/tags/jexus/ class=tags><span class=name>Jexus</span>
+<sup class=num>1</sup>
+</a><a href=/tags/js/ class=tags><span class=name>JS</span>
+<sup class=num>1</sup>
+</a><a href=/tags/jsdelivr/ class=tags><span class=name>JsDelivr</span>
+<sup class=num>1</sup>
+</a><a href=/tags/json/ class=tags><span class=name>JSON</span>
+<sup class=num>1</sup>
+</a><a href=/tags/jsonp/ class=tags><span class=name>JSONP</span>
+<sup class=num>1</sup>
+</a><a href=/tags/jupyter/ class=tags><span class=name>Jupyter</span>
+<sup class=num>1</sup>
+</a><a href=/tags/jwt/ class=tags><span class=name>JWT</span>
+<sup class=num>1</sup>
+</a><a href=/tags/k-means/ class=tags><span class=name>K-Means</span>
+<sup class=num>1</sup>
+</a><a href=/tags/keycloak/ class=tags><span class=name>Keycloak</span>
+<sup class=num>1</sup>
+</a><a href=/tags/langchain/ class=tags><span class=name>LangChain</span>
+<sup class=num>1</sup>
+</a><a href=/tags/lazyload/ class=tags><span class=name>LazyLoad</span>
+<sup class=num>1</sup>
+</a><a href=/tags/ldap/ class=tags><span class=name>LDAP</span>
+<sup class=num>1</sup>
+</a><a href=/tags/lfs/ class=tags><span class=name>LFS</span>
+<sup class=num>1</sup>
+</a><a href=/tags/libusbdotnet/ class=tags><span class=name>LibUsbDotNet</span>
+<sup class=num>1</sup>
+</a><a href=/tags/linq/ class=tags><span class=name>Linq</span>
+<sup class=num>1</sup>
+</a><a href=/tags/liquid/ class=tags><span class=name>Liquid</span>
+<sup class=num>1</sup>
+</a><a href=/tags/llama.cpp/ class=tags><span class=name>Llama.cpp</span>
+<sup class=num>1</sup>
+</a><a href=/tags/logger/ class=tags><span class=name>Logger</span>
+<sup class=num>1</sup>
+</a><a href=/tags/love2d/ class=tags><span class=name>Love2D</span>
+<sup class=num>1</sup>
+</a><a href=/tags/mapreduce/ class=tags><span class=name>MapReduce</span>
+<sup class=num>1</sup>
+</a><a href=/tags/markdown/ class=tags><span class=name>Markdown</span>
+<sup class=num>1</sup>
+</a><a href=/tags/matplotlib/ class=tags><span class=name>Matplotlib</span>
+<sup class=num>1</sup>
+</a><a href=/tags/mcp/ class=tags><span class=name>MCP</span>
+<sup class=num>1</sup>
+</a><a href=/tags/mecanim/ class=tags><span class=name>Mecanim</span>
+<sup class=num>1</sup>
+</a><a href=/tags/milvus/ class=tags><span class=name>Milvus</span>
+<sup class=num>1</sup>
+</a><a href=/tags/mmd/ class=tags><span class=name>MMD</span>
+<sup class=num>1</sup>
+</a><a href=/tags/moq/ class=tags><span class=name>Moq</span>
+<sup class=num>1</sup>
+</a><a href=/tags/msbuild/ class=tags><span class=name>MSBuild</span>
+<sup class=num>1</sup>
+</a><a href=/tags/mvc/ class=tags><span class=name>MVC</span>
+<sup class=num>1</sup>
+</a><a href=/tags/mvvm/ class=tags><span class=name>MVVM</span>
+<sup class=num>1</sup>
+</a><a href=/tags/nlog/ class=tags><span class=name>NLog</span>
+<sup class=num>1</sup>
+</a><a href=/tags/obj/ class=tags><span class=name>OBJ</span>
+<sup class=num>1</sup>
+</a><a href=/tags/openai/ class=tags><span class=name>OpenAI</span>
+<sup class=num>1</sup>
+</a><a href=/tags/opentelemetry/ class=tags><span class=name>OpenTelemetry</span>
+<sup class=num>1</sup>
+</a><a href=/tags/oracle/ class=tags><span class=name>Oracle</span>
+<sup class=num>1</sup>
+</a><a href=/tags/orm/ class=tags><span class=name>ORM</span>
+<sup class=num>1</sup>
+</a><a href=/tags/pg_jieba/ class=tags><span class=name>Pg_jieba</span>
+<sup class=num>1</sup>
+</a><a href=/tags/pgvector/ class=tags><span class=name>Pgvector</span>
+<sup class=num>1</sup>
+</a><a href=/tags/pl/sql/ class=tags><span class=name>PL/SQL</span>
+<sup class=num>1</sup>
+</a><a href=/tags/polly/ class=tags><span class=name>Polly</span>
+<sup class=num>1</sup>
+</a><a href=/tags/postgresql/ class=tags><span class=name>PostgreSQL</span>
+<sup class=num>1</sup>
+</a><a href=/tags/postsharp/ class=tags><span class=name>PostSharp</span>
+<sup class=num>1</sup>
+</a><a href=/tags/printdocument/ class=tags><span class=name>PrintDocument</span>
+<sup class=num>1</sup>
+</a><a href=/tags/prometheus/ class=tags><span class=name>Prometheus</span>
+<sup class=num>1</sup>
+</a><a href=/tags/protobuf/ class=tags><span class=name>Protobuf</span>
+<sup class=num>1</sup>
+</a><a href=/tags/pwa/ class=tags><span class=name>PWA</span>
+<sup class=num>1</sup>
+</a><a href=/tags/quartz/ class=tags><span class=name>Quartz</span>
+<sup class=num>1</sup>
+</a><a href=/tags/queue/ class=tags><span class=name>Queue</span>
+<sup class=num>1</sup>
+</a><a href=/tags/qwen-7b-chat/ class=tags><span class=name>Qwen-7B-Chat</span>
+<sup class=num>1</sup>
+</a><a href=/tags/rasa/ class=tags><span class=name>Rasa</span>
+<sup class=num>1</sup>
+</a><a href=/tags/react/ class=tags><span class=name>React</span>
+<sup class=num>1</sup>
+</a><a href=/tags/referrer/ class=tags><span class=name>Referrer</span>
+<sup class=num>1</sup>
+</a><a href=/tags/rerank/ class=tags><span class=name>Rerank</span>
+<sup class=num>1</sup>
+</a><a href=/tags/retrofit/ class=tags><span class=name>Retrofit</span>
+<sup class=num>1</sup>
+</a><a href=/tags/rewrite/ class=tags><span class=name>Rewrite</span>
+<sup class=num>1</sup>
+</a><a href=/tags/rfc/ class=tags><span class=name>RFC</span>
+<sup class=num>1</sup>
+</a><a href=/tags/rpg/ class=tags><span class=name>RPG</span>
+<sup class=num>1</sup>
+</a><a href=/tags/rsetful/ class=tags><span class=name>RSETful</span>
+<sup class=num>1</sup>
+</a><a href=/tags/rtmp/ class=tags><span class=name>RTMP</span>
+<sup class=num>1</sup>
+</a><a href=/tags/scikit-learn/ class=tags><span class=name>Scikit-Learn</span>
+<sup class=num>1</sup>
+</a><a href=/tags/script/ class=tags><span class=name>Script</span>
+<sup class=num>1</sup>
+</a><a href=/tags/semantic-kernel/ class=tags><span class=name>Semantic Kernel</span>
+<sup class=num>1</sup>
+</a><a href=/tags/server-%E9%85%B1/ class=tags><span class=name>Server 酱</span>
+<sup class=num>1</sup>
+</a><a href=/tags/shader/ class=tags><span class=name>Shader</span>
+<sup class=num>1</sup>
+</a><a href=/tags/sklearn/ class=tags><span class=name>Sklearn</span>
+<sup class=num>1</sup>
+</a><a href=/tags/sonar/ class=tags><span class=name>Sonar</span>
+<sup class=num>1</sup>
+</a><a href=/tags/sourcetree/ class=tags><span class=name>SourceTree</span>
+<sup class=num>1</sup>
+</a><a href=/tags/sqlite/ class=tags><span class=name>SQLite</span>
+<sup class=num>1</sup>
+</a><a href=/tags/ssh-key/ class=tags><span class=name>SSH-Key</span>
+<sup class=num>1</sup>
+</a><a href=/tags/sublime/ class=tags><span class=name>Sublime</span>
+<sup class=num>1</sup>
+</a><a href=/tags/svg/ class=tags><span class=name>SVG</span>
+<sup class=num>1</sup>
+</a><a href=/tags/svn/ class=tags><span class=name>SVN</span>
+<sup class=num>1</sup>
+</a><a href=/tags/testserver/ class=tags><span class=name>TestServer</span>
+<sup class=num>1</sup>
+</a><a href=/tags/text2sql/ class=tags><span class=name>Text2SQL</span>
+<sup class=num>1</sup>
+</a><a href=/tags/thoughtworks/ class=tags><span class=name>ThoughtWorks</span>
+<sup class=num>1</sup>
+</a><a href=/tags/trace/ class=tags><span class=name>Trace</span>
+<sup class=num>1</sup>
+</a><a href=/tags/unity/ class=tags><span class=name>Unity</span>
+<sup class=num>1</sup>
+</a><a href=/tags/usb/ class=tags><span class=name>USB</span>
+<sup class=num>1</sup>
+</a><a href=/tags/valine/ class=tags><span class=name>Valine</span>
+<sup class=num>1</sup>
+</a><a href=/tags/visual-studio/ class=tags><span class=name>Visual Studio</span>
+<sup class=num>1</sup>
+</a><a href=/tags/web-api/ class=tags><span class=name>Web API</span>
+<sup class=num>1</sup>
+</a><a href=/tags/webassembly/ class=tags><span class=name>WebAssembly</span>
+<sup class=num>1</sup>
+</a><a href=/tags/webview2/ class=tags><span class=name>WebView2</span>
+<sup class=num>1</sup>
+</a><a href=/tags/wechat/ class=tags><span class=name>Wechat</span>
+<sup class=num>1</sup>
+</a><a href=/tags/windows/ class=tags><span class=name>Windows</span>
+<sup class=num>1</sup>
+</a><a href=/tags/wmi/ class=tags><span class=name>WMI</span>
+<sup class=num>1</sup>
+</a><a href=/tags/ztree/ class=tags><span class=name>ZTree</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E4%B8%80%E5%87%BA%E5%A5%BD%E6%88%8F/ class=tags><span class=name>一出好戏</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E4%B8%83%E7%89%9B/ class=tags><span class=name>七牛</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E4%B8%89%E4%BD%93/ class=tags><span class=name>三体</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E4%B8%8A%E4%BC%A0/ class=tags><span class=name>上传</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E4%B8%8B%E8%BD%BD/ class=tags><span class=name>下载</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E4%BA%8B%E4%BB%B6/ class=tags><span class=name>事件</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E4%BA%8C%E7%BB%B4%E7%A0%81/ class=tags><span class=name>二维码</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E4%BA%91%E5%8E%9F%E7%94%9F/ class=tags><span class=name>云原生</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E4%BA%91%E9%9F%B3%E4%B9%90/ class=tags><span class=name>云音乐</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E4%BA%A4%E4%BA%92/ class=tags><span class=name>交互</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E4%BA%B2%E6%83%85/ class=tags><span class=name>亲情</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/ class=tags><span class=name>人工智能</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E4%BA%BA%E8%84%B8%E5%88%86%E7%B1%BB/ class=tags><span class=name>人脸分类</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E4%BA%BA%E8%84%B8%E6%A3%80%E6%B5%8B/ class=tags><span class=name>人脸检测</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E4%BB%99%E5%89%91%E5%A5%87%E4%BE%A0%E4%BC%A0/ class=tags><span class=name>仙剑奇侠传</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E4%BB%A3%E7%A0%81%E8%A7%A3%E9%87%8A%E5%99%A8/ class=tags><span class=name>代码解释器</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E4%BB%B7%E5%80%BC/ class=tags><span class=name>价值</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E4%BC%98%E5%8C%96/ class=tags><span class=name>优化</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E4%BD%8E%E4%BB%A3%E7%A0%81/ class=tags><span class=name>低代码</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E4%BD%90%E8%97%A4%E5%81%A5/ class=tags><span class=name>佐藤健</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%81%A5%E5%BA%B7%E6%A3%80%E6%9F%A5/ class=tags><span class=name>健康检查</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%81%A5%E5%BA%B7%E7%A0%81/ class=tags><span class=name>健康码</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%85%A8%E6%96%87%E6%A3%80%E7%B4%A2/ class=tags><span class=name>全文检索</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%85%A8%E6%99%BA%E8%B4%A4/ class=tags><span class=name>全智贤</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%85%AB%E5%8D%A6/ class=tags><span class=name>八卦</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%85%AC%E4%BC%97%E5%8F%B7/ class=tags><span class=name>公众号</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%85%B3%E5%8D%A1%E7%B3%BB%E7%BB%9F/ class=tags><span class=name>关卡系统</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%87%BD%E6%95%B0%E5%BC%8F%E7%BC%96%E7%A8%8B/ class=tags><span class=name>函数式编程</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%88%86%E9%A1%B5/ class=tags><span class=name>分页</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%88%AB%E7%A6%BB/ class=tags><span class=name>别离</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%88%BA%E5%AE%A2%E4%BF%A1%E6%9D%A1/ class=tags><span class=name>刺客信条</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%89%8D%E4%BB%BB/ class=tags><span class=name>前任</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%89%91%E6%8C%87offer/ class=tags><span class=name>剑指Offer</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%8A%A8%E6%80%81%E5%8A%A0%E8%BD%BD/ class=tags><span class=name>动态加载</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%8A%A8%E6%80%81%E5%AF%BC%E5%85%A5/ class=tags><span class=name>动态导入</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%8A%A8%E7%94%BB/ class=tags><span class=name>动画</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%8D%83%E5%AF%BB%E5%B0%8F%E5%A7%90/ class=tags><span class=name>千寻小姐</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%8D%8A%E6%B3%BD%E7%9B%B4%E6%A0%91/ class=tags><span class=name>半泽直树</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%8D%95%E4%BD%8D/ class=tags><span class=name>单位</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95/ class=tags><span class=name>单元测试</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%8D%95%E6%9C%BA%E6%B8%B8%E6%88%8F/ class=tags><span class=name>单机游戏</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%8D%B0%E5%BA%A6/ class=tags><span class=name>印度</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%8F%82%E5%B7%AE/ class=tags><span class=name>参差</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%8F%8C%E5%8D%81%E4%B8%80/ class=tags><span class=name>双十一</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%8F%8D%E5%90%91%E4%BB%A3%E7%90%86/ class=tags><span class=name>反向代理</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%8F%8D%E7%BC%96%E8%AF%91/ class=tags><span class=name>反编译</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%8F%96%E6%B6%88/ class=tags><span class=name>取消</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%90%8C%E6%AD%A5/ class=tags><span class=name>同步</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%91%BD%E4%BB%A4/ class=tags><span class=name>命令</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%92%8C%E5%B9%B3/ class=tags><span class=name>和平</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%93%8D%E5%BA%94%E5%BC%8F/ class=tags><span class=name>响应式</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%93%AA%E5%90%92/ class=tags><span class=name>哪吒</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%9B%9B%E6%9C%88/ class=tags><span class=name>四月</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%9B%9E%E5%AE%B6/ class=tags><span class=name>回家</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%9B%9E%E5%BF%86/ class=tags><span class=name>回忆</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%9B%9E%E9%A1%BE/ class=tags><span class=name>回顾</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%9B%9E%E9%A6%96/ class=tags><span class=name>回首</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%9B%BE%E5%BA%8A/ class=tags><span class=name>图床</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%9B%BE%E5%BD%A2%E5%AD%A6/ class=tags><span class=name>图形学</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%9C%B0%E5%9B%BE/ class=tags><span class=name>地图</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%A1%94%E9%98%B2/ class=tags><span class=name>塔防</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%A3%81%E7%BA%B8/ class=tags><span class=name>壁纸</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%A4%87%E5%BF%98/ class=tags><span class=name>备忘</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%A4%8F%E7%9B%AE%E6%BC%B1%E7%9F%B3/ class=tags><span class=name>夏目漱石</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%A4%95%E9%9B%BE%E8%8A%B1%E5%9B%AD/ class=tags><span class=name>夕雾花园</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%A4%9A%E7%A7%9F%E6%88%B7/ class=tags><span class=name>多租户</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%A4%A7%E6%8A%A4%E6%B3%95/ class=tags><span class=name>大护法</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%A4%A7%E6%95%B0%E6%8D%AE/ class=tags><span class=name>大数据</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%A4%A7%E6%A8%A1%E5%9E%8B/ class=tags><span class=name>大模型</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%A5%87%E6%8A%80%E6%B7%AB%E5%B7%A7/ class=tags><span class=name>奇技淫巧</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%A7%94%E6%89%98/ class=tags><span class=name>委托</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%AD%A4%E7%8B%AC/ class=tags><span class=name>孤独</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%AE%A1%E8%AE%A1/ class=tags><span class=name>审计</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%AE%AB%E5%B4%8E%E9%AA%8F/ class=tags><span class=name>宫崎骏</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%AF%B9%E8%B1%A1%E6%B1%A0/ class=tags><span class=name>对象池</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%B0%81%E7%A5%9E/ class=tags><span class=name>封神</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%B0%8F%E7%88%B1%E5%90%8C%E5%AD%A6/ class=tags><span class=name>小爱同学</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%B1%95%E6%9C%9B/ class=tags><span class=name>展望</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%B9%B3%E5%87%A1/ class=tags><span class=name>平凡</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%B9%B4%E5%8D%8E/ class=tags><span class=name>年华</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%B9%B4%E5%BA%A6/ class=tags><span class=name>年度</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%B9%B6%E5%8F%91/ class=tags><span class=name>并发</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%BB%BA%E7%AD%91/ class=tags><span class=name>建筑</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%BC%80%E6%BA%90/ class=tags><span class=name>开源</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%BC%95%E6%93%8E/ class=tags><span class=name>引擎</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%BE%AE%E4%BF%A1/ class=tags><span class=name>微信</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%BF%83%E6%83%85/ class=tags><span class=name>心情</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%80%9D%E7%BB%B4/ class=tags><span class=name>思维</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%80%A7%E8%83%BD/ class=tags><span class=name>性能</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%87%92%E5%8A%A0%E8%BD%BD/ class=tags><span class=name>懒加载</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%88%91%E6%98%AF%E7%8C%AB/ class=tags><span class=name>我是猫</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%89%A9%E5%B1%95%E6%96%B9%E6%B3%95/ class=tags><span class=name>扩展方法</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%8A%80%E6%9C%AF%E6%80%9D%E8%80%83/ class=tags><span class=name>技术思考</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%8B%96%E6%8B%BD/ class=tags><span class=name>拖拽</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%8E%A2%E7%B4%A2/ class=tags><span class=name>探索</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%8E%A8%E8%8D%90/ class=tags><span class=name>推荐</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%8F%90%E7%BA%B2/ class=tags><span class=name>提纲</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%8F%92%E4%BB%B6%E5%8C%96/ class=tags><span class=name>插件化</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%95%B0%E5%AD%97/ class=tags><span class=name>数字</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%95%B0%E6%8D%AE/ class=tags><span class=name>数据</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%95%B0%E6%8D%AE%E4%BA%A4%E6%8D%A2/ class=tags><span class=name>数据交换</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%96%87%E4%BB%B6/ class=tags><span class=name>文件</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%96%87%E6%9C%AC%E5%88%86%E7%B1%BB/ class=tags><span class=name>文本分类</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%96%87%E6%A1%A3/ class=tags><span class=name>文档</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%97%A0%E9%97%AE%E8%A5%BF%E4%B8%9C/ class=tags><span class=name>无问西东</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%97%A5%E5%89%A7/ class=tags><span class=name>日剧</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%97%A5%E5%B8%B8/ class=tags><span class=name>日常</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%97%A5%E6%9C%AC/ class=tags><span class=name>日本</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%97%A5%E6%9C%AC%E6%96%87%E5%AD%A6/ class=tags><span class=name>日本文学</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%97%B6%E5%8C%BA/ class=tags><span class=name>时区</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%99%BA%E8%83%BD%E5%AE%B6%E5%B1%85/ class=tags><span class=name>智能家居</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%9C%89%E6%9D%91%E6%9E%B6%E7%BA%AF/ class=tags><span class=name>有村架纯</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%9C%8D%E5%8A%A1/ class=tags><span class=name>服务</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%9C%8D%E5%8A%A1%E7%BC%96%E6%8E%92/ class=tags><span class=name>服务编排</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%9C%9D%E5%9C%A3/ class=tags><span class=name>朝圣</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%9C%B4%E7%B4%A0%E8%B4%9D%E5%8F%B6%E6%96%AF/ class=tags><span class=name>朴素贝叶斯</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/ class=tags><span class=name>机器学习</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%9F%A5%E8%AF%A2/ class=tags><span class=name>查询</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%A0%87%E6%B3%A8/ class=tags><span class=name>标注</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%A0%A1%E9%AA%8C/ class=tags><span class=name>校验</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%A0%BC%E5%BC%8F/ class=tags><span class=name>格式</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%A0%BC%E5%BC%8F%E5%8C%96/ class=tags><span class=name>格式化</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%A1%8C%E9%9D%A2/ class=tags><span class=name>桌面</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%A8%A1%E5%9E%8B/ class=tags><span class=name>模型</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%A8%A1%E6%9D%BF/ class=tags><span class=name>模板</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%AF%95%E4%B8%9A/ class=tags><span class=name>毕业</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%AF%95%E4%B8%9A%E5%AD%A3/ class=tags><span class=name>毕业季</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%B2%99%E7%AE%B1/ class=tags><span class=name>沙箱</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%B5%81%E5%AA%92%E4%BD%93/ class=tags><span class=name>流媒体</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%B5%81%E5%BC%8F%E4%BC%A0%E8%BE%93/ class=tags><span class=name>流式传输</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%B5%AA%E5%AE%A2%E5%89%91%E5%BF%83/ class=tags><span class=name>浪客剑心</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%B6%88%E6%81%AF/ class=tags><span class=name>消息</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%B8%B8%E6%88%8F%E5%BC%95%E6%93%8E/ class=tags><span class=name>游戏引擎</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%B8%B8%E8%AE%B0/ class=tags><span class=name>游记</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E7%83%AD%E6%90%9C/ class=tags><span class=name>热搜</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E7%86%B5%E5%A2%9E%E5%AE%9A%E5%BE%8B/ class=tags><span class=name>熵增定律</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E7%89%88%E6%9C%AC%E6%8E%A7%E5%88%B6/ class=tags><span class=name>版本控制</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E7%89%88%E6%9D%83/ class=tags><span class=name>版权</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E7%89%B9%E6%80%A7/ class=tags><span class=name>特性</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E7%8A%B6%E6%80%81/ class=tags><span class=name>状态</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E7%8E%B0%E5%AE%9E/ class=tags><span class=name>现实</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E7%94%9F%E6%AD%BB/ class=tags><span class=name>生死</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E7%9C%9F%E5%AE%9E/ class=tags><span class=name>真实</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E7%9F%A5%E8%AF%86%E5%85%B1%E4%BA%AB/ class=tags><span class=name>知识共享</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E7%9F%AB%E6%83%85/ class=tags><span class=name>矫情</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E7%A0%94%E5%8F%91/ class=tags><span class=name>研发</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E7%A1%AC%E4%BB%B6/ class=tags><span class=name>硬件</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E7%A7%91%E5%B9%BB%E5%B0%8F%E8%AF%B4/ class=tags><span class=name>科幻小说</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E7%A9%B9%E4%B9%8B%E6%89%89/ class=tags><span class=name>穹之扉</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E7%A9%BF%E6%90%AD/ class=tags><span class=name>穿搭</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E7%AB%A5%E8%AF%9D/ class=tags><span class=name>童话</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E7%AD%BE%E5%90%8D/ class=tags><span class=name>签名</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E7%AE%A1%E9%81%93/ class=tags><span class=name>管道</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E7%B1%B3%E8%8A%B1%E4%B9%8B%E5%91%B3/ class=tags><span class=name>米花之味</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E7%BC%96%E8%AF%91/ class=tags><span class=name>编译</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E7%BD%91%E5%85%B3/ class=tags><span class=name>网关</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E7%BD%91%E6%98%93/ class=tags><span class=name>网易</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E7%BE%8E%E6%9C%AF/ class=tags><span class=name>美术</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E8%81%9A%E7%B1%BB/ class=tags><span class=name>聚类</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E8%84%9A%E6%9C%AC/ class=tags><span class=name>脚本</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E8%84%9A%E6%9C%AC%E8%AF%AD%E8%A8%80/ class=tags><span class=name>脚本语言</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E8%87%AA%E5%8A%A8%E5%8C%96/ class=tags><span class=name>自动化</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E8%87%AA%E6%88%91%E5%92%8C%E8%A7%A3/ class=tags><span class=name>自我和解</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E8%8B%8F%E8%BD%BC/ class=tags><span class=name>苏轼</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E8%99%9A%E6%8B%9F%E6%91%87%E6%9D%86/ class=tags><span class=name>虚拟摇杆</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E8%9B%8B%E7%82%92%E9%A5%AD/ class=tags><span class=name>蛋炒饭</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E8%A1%8C%E4%B8%9A/ class=tags><span class=name>行业</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E8%A1%A8%E5%8D%95/ class=tags><span class=name>表单</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E8%A1%A8%E8%BE%BE%E5%BC%8F%E6%A0%91/ class=tags><span class=name>表达式树</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E8%A3%85%E9%A5%B0%E5%99%A8/ class=tags><span class=name>装饰器</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E8%A5%BF%E6%BC%82/ class=tags><span class=name>西漂</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E8%AE%AD%E7%BB%83/ class=tags><span class=name>训练</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E8%AE%B0%E5%BD%95/ class=tags><span class=name>记录</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E8%AE%BF%E9%97%AE%E9%87%8F/ class=tags><span class=name>访问量</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E8%AF%81%E4%B9%A6/ class=tags><span class=name>证书</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E8%AF%84%E8%AE%BA/ class=tags><span class=name>评论</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E8%AF%8D%E4%BA%91/ class=tags><span class=name>词云</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E8%AF%97%E4%BA%BA/ class=tags><span class=name>诗人</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E8%AF%AD%E6%B3%95/ class=tags><span class=name>语法</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E8%AF%AD%E8%A8%80/ class=tags><span class=name>语言</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E8%AF%B7%E8%AE%B0%E4%BD%8F%E6%88%91/ class=tags><span class=name>请记住我</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/ class=tags><span class=name>读写分离</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E8%B0%83%E4%BC%98/ class=tags><span class=name>调优</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E8%B0%83%E8%AF%95/ class=tags><span class=name>调试</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1/ class=tags><span class=name>负载均衡</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E8%B4%AA%E5%90%83%E8%9B%87/ class=tags><span class=name>贪吃蛇</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E8%B4%BE%E7%BB%B4%E6%96%AF/ class=tags><span class=name>贾维斯</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E8%B5%84%E6%BA%90%E6%8F%90%E5%8F%96/ class=tags><span class=name>资源提取</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E8%B5%B0%E8%B5%B0%E5%81%9C%E5%81%9C/ class=tags><span class=name>走走停停</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E8%B7%AF%E7%94%B1/ class=tags><span class=name>路由</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E8%BD%AC%E7%9B%98/ class=tags><span class=name>转盘</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E8%BD%AF%E4%BB%B6/ class=tags><span class=name>软件</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E8%BF%81%E7%A7%BB/ class=tags><span class=name>迁移</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E9%82%AA%E4%B8%8D%E5%8E%8B%E6%AD%A3/ class=tags><span class=name>邪不压正</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E9%83%A8%E7%BD%B2/ class=tags><span class=name>部署</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E9%85%8D%E7%BD%AE%E4%B8%AD%E5%BF%83/ class=tags><span class=name>配置中心</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E9%85%8D%E8%BD%BD/ class=tags><span class=name>配载</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E9%95%BF%E5%AE%89/ class=tags><span class=name>长安</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E9%95%BF%E5%AE%89%E5%8D%81%E4%BA%8C%E6%97%B6%E8%BE%B0/ class=tags><span class=name>长安十二时辰</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E9%95%BF%E6%88%AA%E5%9B%BE/ class=tags><span class=name>长截图</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E9%98%B2%E7%96%AB/ class=tags><span class=name>防疫</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E9%98%BF%E9%87%8C/ class=tags><span class=name>阿里</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E9%99%90%E6%B5%81/ class=tags><span class=name>限流</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E9%9B%86%E6%88%90%E6%B5%8B%E8%AF%95/ class=tags><span class=name>集成测试</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E9%9B%86%E7%BE%A4/ class=tags><span class=name>集群</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E9%9C%8D%E9%87%91/ class=tags><span class=name>霍金</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E9%9D%92%E6%98%A5/ class=tags><span class=name>青春</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E9%9D%99%E6%80%81%E7%BC%96%E7%BB%87/ class=tags><span class=name>静态编织</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E9%9F%A9%E5%AF%92/ class=tags><span class=name>韩寒</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E9%A2%86%E5%9F%9F%E4%BA%8B%E4%BB%B6/ class=tags><span class=name>领域事件</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E9%A9%AC%E5%B0%94%E5%85%8B%E6%96%AF/ class=tags><span class=name>马尔克斯</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E9%AA%8C%E8%AF%81/ class=tags><span class=name>验证</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E9%AC%BC%E6%BB%85%E3%81%AE%E5%88%83/ class=tags><span class=name>鬼滅の刃</span>
+<sup class=num>1</sup></a></div><a href=/tags class=more-tags>查看全部</a></div><div class="site-data s-card weidgets"><div class=title><i class="iconfont icon-chart"></i>
+<span class=title-name>站点数据</span></div><div class=all-data><div class=data-item><span class=name><i class="iconfont icon-article"></i>
+文章总数
+</span><span class=num>277 篇</span></div><div class=data-item><span class=name><i class="iconfont icon-date"></i>
+建站天数
+</span><span class=num>3753 天</span></div><div class=data-item><span class=name><i class="iconfont icon-visibility"></i>
+总访问量
+</span><span class=num id=busuanzi_value_site_pv>0</span></div><div class=data-item><span class=name><i class="iconfont icon-account"></i>
+总访客数
+</span><span class=num id=busuanzi_value_site_uv>0</span></div></div></div></div></aside><style>.main-aside{padding-left:1rem;display:flex;flex-direction:column;animation:fade-up .6s .3s backwards;.weidgets { padding: 18px; margin-bottom: 1rem; :deep(.title) { margin-bottom: 12px; font-weight: bold; display: flex; align-items: center; opacity: 0.75; .iconfont { opacity: 0.6; margin-right: 6px; } .title-name { opacity: 0.8; } } } .sticky { position: sticky; top: calc(60px + 1rem); .weidgets { animation: fade-up 0.6s 0.4s backwards; &:last-child { margin-bottom: 0; } } }}</style></div></div></main><div class=footer-link><div class=footer-bar><span class=site-title>元视角</span>
+<span class=site-desc>纵有疾风起，人生不言弃</span>
+<a href=/ class=to-home>了解更多</a></div><div class=footer-social><a href=https://github.com/qinyuanpei target=_blank class=social-link><i class="iconfont icon-github"></i>
+</a><a href=mailto:qinyuanpei@163.com target=_blank class=social-link><i class="iconfont icon-email"></i>
+</a><a href=/index.xml target=_blank class=social-link><i class="iconfont icon-rss"></i></a><div class=logo title=返回顶部 onclick='window.scrollTo({top:0,behavior:"smooth"})'><img src=/images/icons8-stellar-128.png alt=author class=author></div><a href=https://weibo.com/1278609231 target=_blank class=social-link><i class="iconfont icon-weibo"></i>
+</a><a href=https://www.douban.com/people/60029335/ target=_blank class=social-link><i class="iconfont icon-douban"></i>
+</a><a href=https://www.zhihu.com/people/qinyuanpei target=_blank class=social-link><i class="iconfont icon-zhihu"></i></a></div><div class=footer-sitemap><div class=sitemap-item><span class=title>博客</span><div class=links><a href=/ class=link-text>近期文章
+</a><a href=/categories class=link-text>全部分类
+</a><a href=/tags class=link-text>全部标签
+</a><a href=/archives class=link-text>文章归档</a></div></div><div class=sitemap-item><span class=title>项目</span><div class=links><a href=https://example1.com target=_blank class=link-text>项目1
+</a><a href=https://example2.com target=_blank class=link-text>项目2
+</a><a href=https://example2.com target=_blank class=link-text>项目3
+</a><a href=https://example2.com target=_blank class=link-text>项目4</a></div></div><div class=sitemap-item><span class=title>专栏</span><div class=links><a href=https://blog.csdn.net/qinyuanpei/category_10852603.html target=_blank class=link-text>.NET 源代码探案系列
+</a><a href=https://blog.csdn.net/qinyuanpei/category_7444699.html target=_blank class=link-text>Python 数据挖掘系列
+</a><a href=https://blog.csdn.net/qinyuanpei/category_11484903.html target=_blank class=link-text>分布式丛林探险系列
+</a><a href=https://blog.csdn.net/qinyuanpei/category_1708629.html target=_blank class=link-text>Unity3D 游戏开发系列</a></div></div><div class=sitemap-item><span class=title>页面</span><div class=links><a href=/comments class=link-text>畅所欲言
+</a><a href=/books class=link-text>阅读记录
+</a><a href=/movies class=link-text>观影记录
+</a><a href=/musics class=link-text>听歌记录</a></div></div><div class=sitemap-item><span class=title>友情链接</span><div class=links><a href=https://blog.zhheo.com/ class=link-text>张洪
+</a><a href=https://blog.zhheo.com/ class=link-text>张洪
+</a><a href=https://blog.zhheo.com/ class=link-text>张洪
+</a><a href=https://blog.zhheo.com/ class=link-text>更多</a></div></div></div></div><footer id=main-footer class=main-footer><div class=footer-content><div class=footer-copyright><span class=time data-v-6001e979>@ 2014 - 2025 By </span><a href=https://www.imsyy.top class="author link" target=_blank>飞鸿踏雪</a></div><div class=meta><a class="power link" href=https://vitepress.dev/ target=_blank><span class=by>Powered by</span>
+<span class=name>Hugo</span>
+</a><a class="theme link" href=/pages/theme><span class=name>主题</span>
+</a><a class="rss link" href=https://blog.imsyy.top/rss.xml target=_blank><i class="iconfont icon-rss"></i>
+<span class=name data-v-6001e979>订阅</span>
+</a><a class="cc link" href=https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh-hans target=_blank><i class="iconfont icon-line"></i>
+<i class="iconfont icon-by-line"></i>
+<i class="iconfont icon-nc-line"></i><i class="iconfont icon-nd-line"></i></a></div></div></footer><script type=module src=/js/main.js></script></body></html>

@@ -1,0 +1,1244 @@
+<!doctype html><html lang=zh-cn><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><meta http-equiv=X-UA-Compatible content="ie=edge"><meta name=referrer content="no-referrer"><title>聊聊前端跨域的爱恨情仇 - 元视角</title>
+<meta name=description content="本文介绍了前端跨域的两种主流解决方案：JSONP和CORS。JSONP利用可执行的JavaScript返回数据，需要预先定义回调函数，仅支持GET请求。而CORS是官方推荐的跨域解决方案，通过HTTP头部信息来允许或禁止不同域下的资源访问，支持除GET外的请求动词。文章详细解释了两者的工作原理、实际应用和区别，同时展示了.NET Core中如何配置CORS策略。通过示例演示了JSONP和CORS的实际应用过程和区别，总结了前端跨域问题的解决方案。"><link rel="shortcut icon" href type=image/x-icon><link rel=icon type=image/x-icon href=/images/favicon.ico><link rel=icon type=image/png href=/images/favicon.png><meta property="og:title" content="聊聊前端跨域的爱恨情仇"><meta property="og:description" content="本文介绍了前端跨域的两种主流解决方案：JSONP和CORS。JSONP利用可执行的JavaScript返回数据，需要预先定义回调函数，仅支持GET请求。而CORS是官方推荐的跨域解决方案，通过HTTP头部信息来允许或禁止不同域下的资源访问，支持除GET外的请求动词。文章详细解释了两者的工作原理、实际应用和区别，同时展示了.NET Core中如何配置CORS策略。通过示例演示了JSONP和CORS的实际应用过程和区别，总结了前端跨域问题的解决方案。"><meta property="og:type" content="article"><meta property="og:url" content="http://example.org/posts/3846545990/"><link rel=stylesheet href=/scss/main.min.2c77edfe155005c41cf8cefed2d412617a105f62cf1d21036e0c9167beddbb2d.css><link rel=stylesheet crossorigin=anonymous href=https://cdn.jsdelivr.net/npm/misans@4.1.0/lib/Normal/MiSans-Medium.min.css><link rel=stylesheet crossorigin=anonymous href=https://cdn.jsdelivr.net/npm/misans@4.1.0/lib/Normal/MiSans-Bold.min.css><link rel=stylesheet href=/css/iconfont.css><link rel=stylesheet href=/css/iconfont-patch.css><script src=https://cdn.jsdelivr.net/npm/fuse.js@7.1.0></script><script src=https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.11.1/build/highlight.min.js></script><link rel=stylesheet href=https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.11.1/build/styles/github-dark.min.css media="(prefers-color-scheme: dark)"><link rel=stylesheet href=https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.11.1/build/styles/github.min.css media="(prefers-color-scheme: light)"><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.css><script src=https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.umd.js></script></head><body><div class="background patterns"><div class=bg-mask></div><div class=bg-image style="background-image:url(https://tuapi.eees.cc/api.php?category=%7bdongman,fengjing%7d&amp;type=302)"></div></div><style>.background{position:fixed;top:0;left:0;width:100vw;height:100vh;display:flex;align-items:center;justify-content:center;z-index:-2;&.patterns { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='192' height='192' viewBox='0 0 192 192'%3E%3Cpath fill='%23494849' fill-opacity='0.08' d='M192 15v2a11 11 0 0 0-11 11c0 1.94 1.16 4.75 2.53 6.11l2.36 2.36a6.93 6.93 0 0 1 1.22 7.56l-.43.84a8.08 8.08 0 0 1-6.66 4.13H145v35.02a6.1 6.1 0 0 0 3.03 4.87l.84.43c1.58.79 4 .4 5.24-.85l2.36-2.36a12.04 12.04 0 0 1 7.51-3.11 13 13 0 1 1 .02 26 12 12 0 0 1-7.53-3.11l-2.36-2.36a4.93 4.93 0 0 0-5.24-.85l-.84.43a6.1 6.1 0 0 0-3.03 4.87V143h35.02a8.08 8.08 0 0 1 6.66 4.13l.43.84a6.91 6.91 0 0 1-1.22 7.56l-2.36 2.36A10.06 10.06 0 0 0 181 164a11 11 0 0 0 11 11v2a13 13 0 0 1-13-13 12 12 0 0 1 3.11-7.53l2.36-2.36a4.93 4.93 0 0 0 .85-5.24l-.43-.84a6.1 6.1 0 0 0-4.87-3.03H145v35.02a8.08 8.08 0 0 1-4.13 6.66l-.84.43a6.91 6.91 0 0 1-7.56-1.22l-2.36-2.36A10.06 10.06 0 0 0 124 181a11 11 0 0 0-11 11h-2a13 13 0 0 1 13-13c2.47 0 5.79 1.37 7.53 3.11l2.36 2.36a4.94 4.94 0 0 0 5.24.85l.84-.43a6.1 6.1 0 0 0 3.03-4.87V145h-35.02a8.08 8.08 0 0 1-6.66-4.13l-.43-.84a6.91 6.91 0 0 1 1.22-7.56l2.36-2.36A10.06 10.06 0 0 0 107 124a11 11 0 0 0-22 0c0 1.94 1.16 4.75 2.53 6.11l2.36 2.36a6.93 6.93 0 0 1 1.22 7.56l-.43.84a8.08 8.08 0 0 1-6.66 4.13H49v35.02a6.1 6.1 0 0 0 3.03 4.87l.84.43c1.58.79 4 .4 5.24-.85l2.36-2.36a12.04 12.04 0 0 1 7.51-3.11A13 13 0 0 1 81 192h-2a11 11 0 0 0-11-11c-1.94 0-4.75 1.16-6.11 2.53l-2.36 2.36a6.93 6.93 0 0 1-7.56 1.22l-.84-.43a8.08 8.08 0 0 1-4.13-6.66V145H11.98a6.1 6.1 0 0 0-4.87 3.03l-.43.84c-.79 1.58-.4 4 .85 5.24l2.36 2.36a12.04 12.04 0 0 1 3.11 7.51A13 13 0 0 1 0 177v-2a11 11 0 0 0 11-11c0-1.94-1.16-4.75-2.53-6.11l-2.36-2.36a6.93 6.93 0 0 1-1.22-7.56l.43-.84a8.08 8.08 0 0 1 6.66-4.13H47v-35.02a6.1 6.1 0 0 0-3.03-4.87l-.84-.43c-1.59-.8-4-.4-5.24.85l-2.36 2.36A12 12 0 0 1 28 109a13 13 0 1 1 0-26c2.47 0 5.79 1.37 7.53 3.11l2.36 2.36a4.94 4.94 0 0 0 5.24.85l.84-.43A6.1 6.1 0 0 0 47 84.02V49H11.98a8.08 8.08 0 0 1-6.66-4.13l-.43-.84a6.91 6.91 0 0 1 1.22-7.56l2.36-2.36A10.06 10.06 0 0 0 11 28 11 11 0 0 0 0 17v-2a13 13 0 0 1 13 13c0 2.47-1.37 5.79-3.11 7.53l-2.36 2.36a4.94 4.94 0 0 0-.85 5.24l.43.84A6.1 6.1 0 0 0 11.98 47H47V11.98a8.08 8.08 0 0 1 4.13-6.66l.84-.43a6.91 6.91 0 0 1 7.56 1.22l2.36 2.36A10.06 10.06 0 0 0 68 11 11 11 0 0 0 79 0h2a13 13 0 0 1-13 13 12 12 0 0 1-7.53-3.11l-2.36-2.36a4.93 4.93 0 0 0-5.24-.85l-.84.43A6.1 6.1 0 0 0 49 11.98V47h35.02a8.08 8.08 0 0 1 6.66 4.13l.43.84a6.91 6.91 0 0 1-1.22 7.56l-2.36 2.36A10.06 10.06 0 0 0 85 68a11 11 0 0 0 22 0c0-1.94-1.16-4.75-2.53-6.11l-2.36-2.36a6.93 6.93 0 0 1-1.22-7.56l.43-.84a8.08 8.08 0 0 1 6.66-4.13H143V11.98a6.1 6.1 0 0 0-3.03-4.87l-.84-.43c-1.59-.8-4-.4-5.24.85l-2.36 2.36A12 12 0 0 1 124 13a13 13 0 0 1-13-13h2a11 11 0 0 0 11 11c1.94 0 4.75-1.16 6.11-2.53l2.36-2.36a6.93 6.93 0 0 1 7.56-1.22l.84.43a8.08 8.08 0 0 1 4.13 6.66V47h35.02a6.1 6.1 0 0 0 4.87-3.03l.43-.84c.8-1.59.4-4-.85-5.24l-2.36-2.36A12 12 0 0 1 179 28a13 13 0 0 1 13-13zM84.02 143a6.1 6.1 0 0 0 4.87-3.03l.43-.84c.8-1.59.4-4-.85-5.24l-2.36-2.36A12 12 0 0 1 83 124a13 13 0 1 1 26 0c0 2.47-1.37 5.79-3.11 7.53l-2.36 2.36a4.94 4.94 0 0 0-.85 5.24l.43.84a6.1 6.1 0 0 0 4.87 3.03H143v-35.02a8.08 8.08 0 0 1 4.13-6.66l.84-.43a6.91 6.91 0 0 1 7.56 1.22l2.36 2.36A10.06 10.06 0 0 0 164 107a11 11 0 0 0 0-22c-1.94 0-4.75 1.16-6.11 2.53l-2.36 2.36a6.93 6.93 0 0 1-7.56 1.22l-.84-.43a8.08 8.08 0 0 1-4.13-6.66V49h-35.02a6.1 6.1 0 0 0-4.87 3.03l-.43.84c-.79 1.58-.4 4 .85 5.24l2.36 2.36a12.04 12.04 0 0 1 3.11 7.51A13 13 0 1 1 83 68a12 12 0 0 1 3.11-7.53l2.36-2.36a4.93 4.93 0 0 0 .85-5.24l-.43-.84A6.1 6.1 0 0 0 84.02 49H49v35.02a8.08 8.08 0 0 1-4.13 6.66l-.84.43a6.91 6.91 0 0 1-7.56-1.22l-2.36-2.36A10.06 10.06 0 0 0 28 85a11 11 0 0 0 0 22c1.94 0 4.75-1.16 6.11-2.53l2.36-2.36a6.93 6.93 0 0 1 7.56-1.22l.84.43a8.08 8.08 0 0 1 4.13 6.66V143h35.02z'%3E%3C/path%3E%3C/svg%3E"); } &.dark { &.patterns { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='192' height='192' viewBox='0 0 192 192'%3E%3Cpath fill='%23fcfcfc' fill-opacity='0.08' d='M192 15v2a11 11 0 0 0-11 11c0 1.94 1.16 4.75 2.53 6.11l2.36 2.36a6.93 6.93 0 0 1 1.22 7.56l-.43.84a8.08 8.08 0 0 1-6.66 4.13H145v35.02a6.1 6.1 0 0 0 3.03 4.87l.84.43c1.58.79 4 .4 5.24-.85l2.36-2.36a12.04 12.04 0 0 1 7.51-3.11 13 13 0 1 1 .02 26 12 12 0 0 1-7.53-3.11l-2.36-2.36a4.93 4.93 0 0 0-5.24-.85l-.84.43a6.1 6.1 0 0 0-3.03 4.87V143h35.02a8.08 8.08 0 0 1 6.66 4.13l.43.84a6.91 6.91 0 0 1-1.22 7.56l-2.36 2.36A10.06 10.06 0 0 0 181 164a11 11 0 0 0 11 11v2a13 13 0 0 1-13-13 12 12 0 0 1 3.11-7.53l2.36-2.36a4.93 4.93 0 0 0 .85-5.24l-.43-.84a6.1 6.1 0 0 0-4.87-3.03H145v35.02a8.08 8.08 0 0 1-4.13 6.66l-.84.43a6.91 6.91 0 0 1-7.56-1.22l-2.36-2.36A10.06 10.06 0 0 0 124 181a11 11 0 0 0-11 11h-2a13 13 0 0 1 13-13c2.47 0 5.79 1.37 7.53 3.11l2.36 2.36a4.94 4.94 0 0 0 5.24.85l.84-.43a6.1 6.1 0 0 0 3.03-4.87V145h-35.02a8.08 8.08 0 0 1-6.66-4.13l-.43-.84a6.91 6.91 0 0 1 1.22-7.56l2.36-2.36A10.06 10.06 0 0 0 107 124a11 11 0 0 0-22 0c0 1.94 1.16 4.75 2.53 6.11l2.36 2.36a6.93 6.93 0 0 1 1.22 7.56l-.43.84a8.08 8.08 0 0 1-6.66 4.13H49v35.02a6.1 6.1 0 0 0 3.03 4.87l.84.43c1.58.79 4 .4 5.24-.85l2.36-2.36a12.04 12.04 0 0 1 7.51-3.11A13 13 0 0 1 81 192h-2a11 11 0 0 0-11-11c-1.94 0-4.75 1.16-6.11 2.53l-2.36 2.36a6.93 6.93 0 0 1-7.56 1.22l-.84-.43a8.08 8.08 0 0 1-4.13-6.66V145H11.98a6.1 6.1 0 0 0-4.87 3.03l-.43.84c-.79 1.58-.4 4 .85 5.24l2.36 2.36a12.04 12.04 0 0 1 3.11 7.51A13 13 0 0 1 0 177v-2a11 11 0 0 0 11-11c0-1.94-1.16-4.75-2.53-6.11l-2.36-2.36a6.93 6.93 0 0 1-1.22-7.56l.43-.84a8.08 8.08 0 0 1 6.66-4.13H47v-35.02a6.1 6.1 0 0 0-3.03-4.87l-.84-.43c-1.59-.8-4-.4-5.24.85l-2.36 2.36A12 12 0 0 1 28 109a13 13 0 1 1 0-26c2.47 0 5.79 1.37 7.53 3.11l2.36 2.36a4.94 4.94 0 0 0 5.24.85l.84-.43A6.1 6.1 0 0 0 47 84.02V49H11.98a8.08 8.08 0 0 1-6.66-4.13l-.43-.84a6.91 6.91 0 0 1 1.22-7.56l2.36-2.36A10.06 10.06 0 0 0 11 28 11 11 0 0 0 0 17v-2a13 13 0 0 1 13 13c0 2.47-1.37 5.79-3.11 7.53l-2.36 2.36a4.94 4.94 0 0 0-.85 5.24l.43.84A6.1 6.1 0 0 0 11.98 47H47V11.98a8.08 8.08 0 0 1 4.13-6.66l.84-.43a6.91 6.91 0 0 1 7.56 1.22l2.36 2.36A10.06 10.06 0 0 0 68 11 11 11 0 0 0 79 0h2a13 13 0 0 1-13 13 12 12 0 0 1-7.53-3.11l-2.36-2.36a4.93 4.93 0 0 0-5.24-.85l-.84.43A6.1 6.1 0 0 0 49 11.98V47h35.02a8.08 8.08 0 0 1 6.66 4.13l.43.84a6.91 6.91 0 0 1-1.22 7.56l-2.36 2.36A10.06 10.06 0 0 0 85 68a11 11 0 0 0 22 0c0-1.94-1.16-4.75-2.53-6.11l-2.36-2.36a6.93 6.93 0 0 1-1.22-7.56l.43-.84a8.08 8.08 0 0 1 6.66-4.13H143V11.98a6.1 6.1 0 0 0-3.03-4.87l-.84-.43c-1.59-.8-4-.4-5.24.85l-2.36 2.36A12 12 0 0 1 124 13a13 13 0 0 1-13-13h2a11 11 0 0 0 11 11c1.94 0 4.75-1.16 6.11-2.53l2.36-2.36a6.93 6.93 0 0 1 7.56-1.22l.84.43a8.08 8.08 0 0 1 4.13 6.66V47h35.02a6.1 6.1 0 0 0 4.87-3.03l.43-.84c.8-1.59.4-4-.85-5.24l-2.36-2.36A12 12 0 0 1 179 28a13 13 0 0 1 13-13zM84.02 143a6.1 6.1 0 0 0 4.87-3.03l.43-.84c.8-1.59.4-4-.85-5.24l-2.36-2.36A12 12 0 0 1 83 124a13 13 0 1 1 26 0c0 2.47-1.37 5.79-3.11 7.53l-2.36 2.36a4.94 4.94 0 0 0-.85 5.24l.43.84a6.1 6.1 0 0 0 4.87 3.03H143v-35.02a8.08 8.08 0 0 1 4.13-6.66l.84-.43a6.91 6.91 0 0 1 7.56 1.22l2.36 2.36A10.06 10.06 0 0 0 164 107a11 11 0 0 0 0-22c-1.94 0-4.75 1.16-6.11 2.53l-2.36 2.36a6.93 6.93 0 0 1-7.56 1.22l-.84-.43a8.08 8.08 0 0 1-4.13-6.66V49h-35.02a6.1 6.1 0 0 0-4.87 3.03l-.43.84c-.79 1.58-.4 4 .85 5.24l2.36 2.36a12.04 12.04 0 0 1 3.11 7.51A13 13 0 1 1 83 68a12 12 0 0 1 3.11-7.53l2.36-2.36a4.93 4.93 0 0 0 .85-5.24l-.43-.84A6.1 6.1 0 0 0 84.02 49H49v35.02a8.08 8.08 0 0 1-4.13 6.66l-.84.43a6.91 6.91 0 0 1-7.56-1.22l-2.36-2.36A10.06 10.06 0 0 0 28 85a11 11 0 0 0 0 22c1.94 0 4.75-1.16 6.11-2.53l2.36-2.36a6.93 6.93 0 0 1 7.56-1.22l.84.43a8.08 8.08 0 0 1 4.13 6.66V143h35.02z'%3E%3C/path%3E%3C/svg%3E"); } .cover { filter: brightness(0.6); } } .cover { width: auto; height: auto; min-height: 100%; opacity: 0; transition: filter 0.3s, opacity 0.3s; &.loaded { opacity: 1; } }}</style><header class=main-header><nav class="main-nav up top"><div class=nav-all><div class=left-nav><div class=site-name onclick='location.href="/"'>元视角</div></div><div class=nav-center><div class=site-menu><div class=site-menu><div class=menu-item><span class=link-btn>文库</span><div class=link-child><span class=link-child-btn onclick='window.location.href="/archives"'><i class="iconfont icon-guidang"></i>
+归档
+</span><span class=link-child-btn onclick='window.location.href="/categories"'><i class="iconfont icon-folder"></i>
+全部分类
+</span><span class=link-child-btn onclick='window.location.href="/tags"'><i class="iconfont icon-hashtag"></i>
+全部标签</span></div></div><div class=menu-item><span class=link-btn>书影音</span><div class=link-child><span class=link-child-btn onclick='window.location.href="/books"'><i class="iconfont icon-book-fill"></i>
+读书
+</span><span class=link-child-btn onclick='window.location.href="/movies"'><i class="iconfont icon-movies"></i>
+观影
+</span><span class=link-child-btn onclick='window.location.href="/musics"'><i class="iconfont icon-music"></i>
+听歌</span></div></div><div class=menu-item><span class=link-btn>页面</span><div class=link-child><span class=link-child-btn onclick='window.location.href="/links"'><i class="iconfont icon-people"></i>
+友情链接
+</span><span class=link-child-btn onclick='window.location.href="/works"'><i class="iconfont icon-people"></i>
+个人作品
+</span><span class=link-child-btn onclick='window.location.href="/statics"'><i class="iconfont icon-tongji"></i>
+站点统计</span></div></div><div class=menu-item><span class=link-btn>更多</span><div class=link-child><span class=link-child-btn onclick='window.location.href="/comments"'><i class="iconfont icon-chat"></i>
+留言板
+</span><span class=link-child-btn onclick='window.location.href="/about"'><i class="iconfont icon-contacts"></i>
+关于本站</span></div></div></div></div><span class=site-title>聊聊前端跨域的爱恨情仇</span></div><div class=right-nav><a class="menu-btn nav-btn travellings" title=开往-友链接力 href=https://www.travellings.cn/go.html target=_blank><i class="iconfont icon-subway"></i></a><div class="menu-btn nav-btn" title=随机前往一篇文章><i class="iconfont icon-shuffle"></i></div><div class="menu-btn nav-btn" title=全站搜索><i class="iconfont icon-search"></i></div><div class="menu-btn nav-btn" id=themeToggle title=切换主题模式><i class="iconfont icon-sun" id=themeIcon></i></div><div id=open-control class="menu-btn nav-btn pc" title=打开中控台><i class="iconfont icon-dashboard"></i></div><div class="to-top menu-btn hidden" title=返回顶部><div class=to-top-btn><span class=num>0</span>
+<i class="iconfont icon-up"></i></div></div><div class="menu-btn nav-btn mobile" title=打开菜单><i class="iconfont icon-toc"></i></div></div></div></nav><div class=mobile-menu id=mobileMenu><div class=menu-mask></div><div class="menu-content s-card"><div class=close-control><i class="iconfont icon-close"></i></div><div class=menu-list><div class=menu-item><span class=link-title>文库</span><div class=link-child><div class=link-child-btn onclick='window.location.href="/archives"'><i class="iconfont icon-guidang"></i>
+<span class=name>归档</span></div><div class=link-child-btn onclick='window.location.href="/categories"'><i class="iconfont icon-folder"></i>
+<span class=name>全部分类</span></div><div class=link-child-btn onclick='window.location.href="/tags"'><i class="iconfont icon-hashtag"></i>
+<span class=name>全部标签</span></div></div></div><div class=menu-item><span class=link-title>书影音</span><div class=link-child><div class=link-child-btn onclick='window.location.href="/books"'><i class="iconfont icon-book-fill"></i>
+<span class=name>读书</span></div><div class=link-child-btn onclick='window.location.href="/movies"'><i class="iconfont icon-movies"></i>
+<span class=name>观影</span></div><div class=link-child-btn onclick='window.location.href="/musics"'><i class="iconfont icon-music"></i>
+<span class=name>听歌</span></div></div></div><div class=menu-item><span class=link-title>页面</span><div class=link-child><div class=link-child-btn onclick='window.location.href="/links"'><i class="iconfont icon-people"></i>
+<span class=name>友情链接</span></div><div class=link-child-btn onclick='window.location.href="/works"'><i class="iconfont icon-people"></i>
+<span class=name>个人作品</span></div><div class=link-child-btn onclick='window.location.href="/statics"'><i class="iconfont icon-tongji"></i>
+<span class=name>站点统计</span></div></div></div><div class=menu-item><span class=link-title>更多</span><div class=link-child><div class=link-child-btn onclick='window.location.href="/comments"'><i class="iconfont icon-chat"></i>
+<span class=name>留言板</span></div><div class=link-child-btn onclick='window.location.href="/about"'><i class="iconfont icon-contacts"></i>
+<span class=name>关于本站</span></div></div></div></div></div></div><style>.mobile-menu{position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:3000;display:none}.mobile-menu .menu-mask{position:absolute;top:0;left:0;width:100%;height:100%;z-index:-1;background-color:var(--main-mask-background)}.mobile-menu .menu-content{position:absolute;top:0;right:0;height:100%;width:100%;max-width:300px;border-radius:12px 0 0 12px;padding:20px;overflow:auto}.mobile-menu .close-control{position:absolute;top:10px;right:20px;display:flex;align-items:center;justify-content:center;width:35px;height:35px;padding:0;transition:background-color .3s,opacity .3s;border-radius:50%;cursor:pointer}.mobile-menu .close-control .iconfont{font-size:18px;line-height:1;color:var(--main-font-second-color);transition:color .3s,opacity .3s}.mobile-menu .close-control:hover{background-color:var(--main-color)}.mobile-menu .close-control:hover .iconfont{color:var(--main-card-background)}.mobile-menu .menu-list{margin-top:40px}.mobile-menu .menu-item{margin-bottom:12px}.mobile-menu .menu-item .link-title{font-size:14px;margin-bottom:12px;display:inline-block;color:var(--main-font-second-color)}.mobile-menu .menu-item .link-child{display:grid;gap:12px;grid-template-columns:1fr 1fr}.mobile-menu .menu-item .link-child-btn{display:flex;flex-direction:row;justify-content:flex-start;align-items:center;border-radius:8px;padding:10px 12px;background-color:var(--main-card-background);border:1px solid var(--main-card-border);box-shadow:0 8px 16px -4px var(--main-border-shadow);font-size:15px;cursor:pointer;transition:all .3s}.mobile-menu .menu-item .link-child-btn:hover{background-color:var(--main-color);color:var(--main-card-background)}.mobile-menu .menu-item .link-child-btn .iconfont{margin-right:6px;opacity:.6}.mobile-menu .menu-item .link-child-btn .name{max-width:80px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}</style><script>function toggleMobileMenu(){const e=document.getElementById("mobileMenu");e&&(e.style.display=e.style.display==="none"?"block":"none")}</script><div class=modal id=search-modal><div class=modal-mask></div><div class="modal-main s-card" style=max-width:800px><div class=title><div class=title-left><i class="iconfont icon-search"></i>
+<span class=title-text>全局搜索</span></div><i class="iconfont icon-close close" id=modal-close></i></div><div class=modal-content style=--height:80vh><div class=search-modal><div class=search-input><input type=text id=search-input placeholder=今天你想搜点什么？ autocomplete=off></div><div class=search-results><div class=search-list></div><div class=search-empty><i class="iconfont icon-search"></i><p>输入关键字，开始搜索</p></div></div><div class=search-hint><span class=text id=search-hint-text></span>
+<span class=text><a class=powered_by href=https://www.fusejs.io/ target=_blank>Fuse.js</a></span></div></div></div></div></div></header><main class=main-layout><div class=post><div class=post-meta><div class=meta><div class=categories><a href=/categories/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80 class=cat-item><i class="iconfont icon-folder"></i>
+<span class=name>编程语言</span></a></div><div class=tags><a href=/tags/%E8%B7%A8%E5%9F%9F class=tag-item><i class="iconfont icon-hashtag"></i>
+<span class=name>跨域</span>
+</a><a href=/tags/cors class=tag-item><i class="iconfont icon-hashtag"></i>
+<span class=name>CORS</span>
+</a><a href=/tags/jsonp class=tag-item><i class="iconfont icon-hashtag"></i>
+<span class=name>JSONP</span></a></div></div><h1 class=title>聊聊前端跨域的爱恨情仇</h1><div class=other-meta><span class="meta date"><i class="iconfont icon-date"></i>
+2019-02-26
+</span><span class="update meta"><i class="iconfont icon-time"></i>
+2019-02-26
+</span><span class="hot meta"><i class="iconfont icon-fire"></i>
+<span id=twikoo_visitors class=artalk-pv-count>0</span>
+</span><span class="chat meta hover" data-scroll-to=comments><i class="iconfont icon-chat"></i>
+<span id=twikoo_comments class=artalk-comment-count>0</span></span></div></div><div class=post-content><article class="post-article s-card"><div class="expired s-card">本文发表于 <strong>2234</strong> 天前，其中的信息可能已经事过境迁</div><div class="article-gpt s-card"><div class=title><span class=name><i class="iconfont icon-robot"></i>
+文章摘要
+<i class="iconfont icon-up"></i>
+</span><span class=logo>FakeGPT</span></div><div class="content s-card"><span class=text></span></div><div class=meta></div></div><script src=https://npm.elemecdn.com/typeit@8.7.1/dist/index.umd.js></script><script>document.addEventListener("DOMContentLoaded",function(){new TypeIt(".article-gpt .content .text",{strings:"本文介绍了前端跨域的两种主流解决方案：JSONP和CORS。JSONP利用可执行的JavaScript返回数据，需要预先定义回调函数，仅支持GET请求。而CORS是官方推荐的跨域解决方案，通过HTTP头部信息来允许或禁止不同域下的资源访问，支持除GET外的请求动词。文章详细解释了两者的工作原理、实际应用和区别，同时展示了.NET Core中如何配置CORS策略。通过示例演示了JSONP和CORS的实际应用过程和区别，总结了前端跨域问题的解决方案。",speed:10,lifeLike:!0,waitUntilVisible:!0}).go()})</script><div id=page-content class=markdown-main-style><p>今天是过完春节以后的第二周啦，而我好像终于回到正常工作的状态了呢，因为突然间就对工作产生了厌倦的情绪，Bug 就像无底洞一样吞噬着我的脑细胞。人类就像一颗螺丝钉一样被固定在整部社会机器上，除了要让自己看起来像个正常人一样，还要拼命地让所有人都像个正常人一样。过年刚经历过被催婚的我，面对全人类近乎标准的“幸福”定义，大概就是我此刻这种状态。其实，除了想自己定义“幸福”以外，我还想自己定义“问题”，因为，这样就不会再有“Bug”了。言归正传，今天我想说的是<strong>前端跨域</strong>这个话题，相信读完这篇文章，你就会明白，这个世界上太多太多的问题，都和你毫无瓜葛。</p><h1 id=故事缘起>故事缘起</h1><p>年前被安排去做一个 GPS 相关的需求，需要通过百度地图 API 来计算预计到达时间，这并不是一个有难点的需求，对吧？就在博主为此而幸灾乐祸的时候，一个非常醒目的错误出现在 Chrome 的控制台中，相信大家都见过无数次啦，大概是说我们的请求受到浏览器的同源策略的限制。那么，第一个问题，什么是同源策略呢？我们知道，一个 URL 通常有以下几部分组成，即协议、域名、端口和请求资源。由此我们就可以引申出同源的概念，当协议、域名和端口都相同时，就认为它们是在同一个域下，即它们同源。相反地，当协议、域名和端口中任意一个都不相同时，就认为它们在不同域下，此时就发生了跨域。按照排列组合，我们可以有以下常见的跨域场景：</p><table><thead><tr><th>URL</th><th>说明</th><th>是否允许跨域</th></tr></thead><tbody><tr><td><a href=https://www.abc.com/a.js>www.abc.com/a.js</a> vs <a href=https://www.abc.com/b.js>www.abc.com/b.js</a></td><td>相同域名下的不同资源</td><td>允许</td></tr><tr><td><a href=https://www.abc.com/1/a.js>www.abc.com/1/a.js</a> vs <a href=https://www.abc.com/2/b.js>www.abc.com/2/b.js</a></td><td>相同域名下的不同路径</td><td>允许</td></tr><tr><td><a href=https://www.abc.com>www.abc.com</a>:8080/a.js vs <a href=https://www.abc.com>www.abc.com</a>:8081/b.js</td><td>相同域名下的不同端口</td><td>不允许</td></tr><tr><td><a href=http://www.abc.com>http://www.abc.com</a> vs <a href=https://www.abc.com>https://www.abc.com</a></td><td>相同域名采用不同协议</td><td>不允许</td></tr><tr><td><a href=http://www.abc.com>http://www.abc.com</a> vs <a href=http://wtf.abc.com>http://wtf.abc.com</a></td><td>相同域名下的不同子域</td><td>不允许</td></tr><tr><td><a href=http://www.abc.com>http://www.abc.com</a> vs <a href=http://www.xyz.com>http://www.xyz.com</a></td><td>两个完全不同的域名</td><td>不允许</td></tr><tr><td>http://192.168.100.101 va <a href=http://www.wtf.com>http://www.wtf.com</a></td><td>域名及其对应的 IP 地址</td><td>不允许</td></tr></tbody></table><p>那么，我们就不仅要问啦，现在微服务啊、RESTful 啊这些概念非常流行，在我们实际的工作中，调用第三方的 WebAPI 甚至 WebService，这难道不是非常合理的场景吗？前端的 Ajax，即 XMLHttpRequest，和我们平时用到的 RestSharp、HttpClient、OkHttp 等类似，都可以发起一个 Http 请求，怎么在客户端里用的好好的东西，到了前端这里就突然出来一个**“跨域”<strong>的概念呢？这是因为从原理上来说，这些客户端都是受信的“用户”(<strong>好吧，假装是被信任的</strong>)，而浏览器的环境则是一个</strong>“开放”**的环境。</p><p><a class=img-fancybox href=https://ww1.sinaimg.cn/large/4c36074fly1g0nhbqwfadj20to02sdfw.jpg data-fancybox=gallery data-src=https://ww1.sinaimg.cn/large/4c36074fly1g0nhbqwfadj20to02sdfw.jpg data-caption=URI_Syntax_Diagram><img src=https://ww1.sinaimg.cn/large/4c36074fly1g0nhbqwfadj20to02sdfw.jpg alt=URI_Syntax_Diagram class=post-img loading=lazy>
+<span class=post-img-tip>URI_Syntax_Diagram</span></a></p><p>举一个例子，你在家的时候，可以随意地把手插进自己的口袋，因为这是你的私有环境。可是当你在公共环境中时，你是不允许把手插进别人口袋的。所以，浏览器有“跨域”限制，本质上是为了保护用户的数据安全，避免危险地跨域行为。试想，没有跨域的话，我们带上 Cookie 就可以为所欲为了，不是吗？实际上，同源限制和 JavaScript 没有一丁点关系，因为它是 W3C 中的内容，是浏览器厂商要这样做的，我们的请求其实是被发出去了，而它的响应则被浏览器给拦截了，所以我们在控制台中看到“同源策略限制”的错误。</p><p><a class=img-fancybox href=https://ww1.sinaimg.cn/large/4c36074fly1g0nhciom21j211q04lx2k.jpg data-fancybox=gallery data-src=https://ww1.sinaimg.cn/large/4c36074fly1g0nhciom21j211q04lx2k.jpg data-caption=喜闻乐见的跨域拦截><img src=https://ww1.sinaimg.cn/large/4c36074fly1g0nhciom21j211q04lx2k.jpg alt=喜闻乐见的跨域拦截 class=post-img loading=lazy>
+<span class=post-img-tip>喜闻乐见的跨域拦截</span></a></p><h1 id=十八般武艺>十八般武艺</h1><p>好了，既然现在浏览器有这个限制，那为了客户着想，我们还是要去解决这个问题(对吧？)，虽然我至今想不明白，适配浏览器为什么会成为我们的工作之一[doge]。打开 Google 搜索“前端跨域”，于是发现了解决跨域问题的各种方案，这里选取最具代表性的 JSONP 和 CORS。</p><h2 id=jsonp>JSONP</h2><p>首先，我们来说说 JSONP，什么是 JSONP 呢？我们知道，通常 RESTful 接口返回的都是 JSON，而 JSONP 返回的是一段可以执行的 JavaScript 代码，我们所需要的数据就被“包裹”在这段代码中，这就是 JSONP，即<strong>JSON Padding</strong>的得名由来。在实际应用中，服务的提供方会根据调用方传入的回调函数(callback)来组织返回数据，譬如<strong>callback({&ldquo;name&rdquo;:&ldquo;tom&rdquo;,“gender”:&ldquo;male&rdquo;})</strong>。这就说到一个点，<strong>并不是所有的 API 接口在调用的时候出现跨域问题，都可以通过 JSONP 的方式来解决，因为它需要后端来配合组织返回数据</strong>。这里我们以“不蒜子”这个静态博客中使用最多的访问量统计工具为例，通过查看页面源代码，我们了解到它是通过 JSONP 来返回数据的。为什么它要用这种方式来返回数据呢？其实，我们仔细想想就能明白其中的缘由，因为像 Hexo、Jekyll 这种静态博客大多都是没有后端服务支持的，所以，它要访问“不蒜子”的统计服务，就必然会存在跨域的问题啊！那怎么解决这个问题呢？当然是选择 JSONP 啦！这里我们以 Postman 调用不蒜子接口为例，可以发现它的返回值是下面这个样子：</p><p><a class=img-fancybox href=https://ww1.sinaimg.cn/large/4c36074fly1g0nhe1rnprj218u08sx6p.jpg data-fancybox=gallery data-src=https://ww1.sinaimg.cn/large/4c36074fly1g0nhe1rnprj218u08sx6p.jpg data-caption=在Postman中调用不蒜子接口><img src=https://ww1.sinaimg.cn/large/4c36074fly1g0nhe1rnprj218u08sx6p.jpg alt=在Postman中调用不蒜子接口 class=post-img loading=lazy>
+<span class=post-img-tip>在Postman中调用不蒜子接口</span></a></p><p>博主计划在接下来的时间里，迁移不蒜子的统计数据到 LeanCloud 上，届时博主会使用最喜欢的 Python，来抓取这些访问量数据，因为 JSONP 返回的都不是 JSON 数据，因此再处理这些数据的时候，需要用正则来匹配这些结果。为什么在前端领域没有这些问题呢，因为 JSONP 返回的是世界上最**“任性”**的语言——<strong>JavaScript</strong>，当然，这些会是下一篇甚至下下一篇里的内容啦。</p><h2 id=cors>CORS</h2><p>好了，下面我们说说 CORS 这种方案。CORS，即跨域资源共享，是一种利用 HTTP 头部信息访问不同域下的资源的机制。我们在前面提到过，发生跨域访问时，其实请求已经发出去了，但响应则被浏览器给拦截住了。那么，CORS 说白了就是它可以通过 HTTP 头部信息，告诉浏览器来自哪些域的请求可以被允许，来自哪些域的请求应该被禁止。如果说 JSONP 多少带着点“hack”的意味儿，那么 CORS 就可以说是被官方认可的跨域解决方案啦！这种方案需要启用新的 HTTP 头部字段，具体可以参考<a href=https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Access_control_CORS>这里</a>。</p><p>按照定义，浏览器会将 CORS 请求分为<strong>简单请求</strong>和<strong>非简单请求</strong>两类。对于简单请求，浏览器会对请求的头部进行“魔改”，即增加一个 Origin 字段，这样只要后端接口支持 CORS 跨域，就可以接收这些跨域请求，并做出回应，即在响应的头部信息中返回 Access-Control-Allow-Origin 等字段。而对于非简单请求，通常会先发出一个 OPTIONS 的“预检请求”，只有这个验证过程通过以后，主请求才会被发起。那么浏览器是怎么验证请求是否通过的呢？答案就是：检查<strong>Origin</strong>字段是否包含在<strong>Access-Control-Allow-Origin</strong>中。当验证不通过时，浏览器就会输出同源策略限制的错误。这就是 CORS，浏览器和服务端分别通过响应、请求的 HTTP 头部信息来**“商量”**要不要跨域。</p><h1 id=没有银弹>没有银弹</h1><p>说了这么多关于“跨域”的话题，其实博主想说的是，没有银弹。这是一位前辈高人，曾经对博主反复说过的话。现在我们来看 JSONP，会发现它本质上是利用了浏览器的**“漏洞”**。为什么这样说呢？因为在浏览器中，<strong>所有具备 src 属性的 HTML 都是可以跨域的，譬如 script、img、iframe、link 这四个标签，我们赖以生存的 CDN 加速、图床、插件等等都是基于这一“漏洞”的产物</strong>。所以，很多人问为什么$.ajax 可以跨域，但原生的 XMLHttpRequest 则不可以呢？因为 jQuery 实际上把 JSONP 做成了一种语法糖，这就就会给人一种 ajax 可以跨域的错觉。</p><h2 id=jsonp其实就是-js>JSONP？其实就是 JS</h2><p>JSONP 实际上返回的是可以执行的 JavaScript，即 text/javascript，它和我们所使用的大多数 JavaScript 并无区别，所以，你可以想到，当我们把一个远程地址赋值给 script 标签的 src 属性时，它和我们引用 CDN 上的医院文件并无区别，这正是 JSONP 的秘密所在，显然它只支持 Get 方式，当我们想要支持更多方式的时候，我们需要的是 CORS，一起来看下面这段代码，我们首先来写一个简单的 API 接口：</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-CSharp data-lang=CSharp><span class=line><span class=cl><span class=c1>// GET api/user/5?callback=</span>
+</span></span><span class=line><span class=cl><span class=na>[HttpGet(&#34;{id}&#34;)]</span>
+</span></span><span class=line><span class=cl><span class=kd>public</span> <span class=n>IActionResult</span> <span class=n>Get</span><span class=p>(</span><span class=kt>string</span> <span class=n>id</span><span class=p>,</span> <span class=kt>string</span> <span class=n>callback</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=kt>var</span> <span class=n>userInfo</span> <span class=p>=</span> <span class=n>UserInfoService</span><span class=p>.</span><span class=n>Find</span><span class=p>(</span><span class=n>x</span> <span class=p>=&gt;</span> <span class=n>x</span><span class=p>.</span><span class=n>UserId</span> <span class=p>==</span> <span class=n>id</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>    <span class=k>if</span> <span class=p>(</span><span class=n>userInfo</span> <span class=p>==</span> <span class=kc>null</span><span class=p>)</span> <span class=k>return</span> <span class=n>NotFound</span><span class=p>();</span>
+</span></span><span class=line><span class=cl>    <span class=k>if</span> <span class=p>(</span><span class=kt>string</span><span class=p>.</span><span class=n>IsNullOrEmpty</span><span class=p>(</span><span class=n>callback</span><span class=p>))</span>
+</span></span><span class=line><span class=cl>    <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=c1>//返回JSON</span>
+</span></span><span class=line><span class=cl>        <span class=n>Response</span><span class=p>.</span><span class=n>ContentType</span> <span class=p>=</span> <span class=s>&#34;application/json&#34;</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>        <span class=k>return</span> <span class=n>Json</span><span class=p>(</span><span class=n>userInfo</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl>    <span class=k>else</span>
+</span></span><span class=line><span class=cl>    <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=c1>//返回JSPNP</span>
+</span></span><span class=line><span class=cl>        <span class=n>Response</span><span class=p>.</span><span class=n>ContentType</span> <span class=p>=</span> <span class=s>&#34;application/javascript&#34;</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>        <span class=k>return</span> <span class=n>Content</span><span class=p>(</span><span class=s>$&#34;{callback}({JsonConvert.SerializeObject(userInfo)})&#34;</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></div><p>OK，写完这个接口以后，我们首先来尝试在前端页面中调用这个接口，为了尽可能地减少依赖，我们这里用最新 Fetch API 来代替$.ajax()，毕竟现在都是 2019 年了呢，Github 和 Bootstrap 相继宣布从代码中移除 jQuery。大家都知道，原生的 xhr 和 Date 对象一样，简直难用得要命，而这一切在新的 Fetch API 下，会变得非常简单：</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-JavaScript data-lang=JavaScript><span class=line><span class=cl><span class=c1>//基于Fecth API调用JSONP
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=nx>showUserByFetch</span><span class=o>:</span><span class=kd>function</span><span class=p>(){</span>
+</span></span><span class=line><span class=cl>      <span class=nx>fetch</span><span class=p>(</span><span class=s2>&#34;https://localhost:5001/api/user/1&#34;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>        <span class=p>.</span><span class=nx>then</span><span class=p>(</span><span class=kd>function</span><span class=p>(</span><span class=nx>response</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>          <span class=k>return</span> <span class=nx>response</span><span class=p>.</span><span class=nx>json</span><span class=p>();</span>
+</span></span><span class=line><span class=cl>        <span class=p>})</span>
+</span></span><span class=line><span class=cl>        <span class=p>.</span><span class=nx>then</span><span class=p>(</span><span class=kd>function</span><span class=p>(</span><span class=nx>user</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>          <span class=nx>showUser</span><span class=p>(</span><span class=nx>user</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>        <span class=p>});</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></div><p>果然，就算使用最新的 Fetch API，浏览器还是会因为同源限制策略而拦截我们的请求</p><p><a class=img-fancybox href=https://ww1.sinaimg.cn/large/4c36074fly1g0nhhcqa78j211s04nq3k.jpg data-fancybox=gallery data-src=https://ww1.sinaimg.cn/large/4c36074fly1g0nhhcqa78j211s04nq3k.jpg data-caption=浏览器中再次出现同源限制错误><img src=https://ww1.sinaimg.cn/large/4c36074fly1g0nhhcqa78j211s04nq3k.jpg alt=浏览器中再次出现同源限制错误 class=post-img loading=lazy>
+<span class=post-img-tip>浏览器中再次出现同源限制错误</span></a></p><p>那么，试试用 JSONP 的思路来解决这个问题。注意到，为了兼容 JSONP 方式调用，我们在 API 接口中增加了一个 callback 参数，这个参数实际上就是预先在客户端中定义好的方法的名字啦！既然 JSONP 返回的是可执行的 JavaScript，那么我们在页面里增加一个 Script 标签好了：</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-JavaScript data-lang=JavaScript><span class=line><span class=cl><span class=o>&lt;</span><span class=nx>script</span> <span class=nx>src</span><span class=o>=</span><span class=s2>&#34;https://localhost:5001/api/user/1?callback=showUser&#34;</span><span class=o>&gt;&lt;</span><span class=err>/script&gt;</span>
+</span></span></code></pre></div><p>其中，showUser 是一个预先定义好的 JS 函数，其作用是输出用户信息到页面上：</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-JavaScript data-lang=JavaScript><span class=line><span class=cl><span class=c1>//展示用户信息
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=kd>function</span> <span class=nx>showUser</span><span class=p>(</span><span class=nx>user</span><span class=p>){</span>
+</span></span><span class=line><span class=cl>  <span class=kd>var</span> <span class=nx>result</span> <span class=o>=</span> <span class=nb>document</span><span class=p>.</span><span class=nx>getElementById</span><span class=p>(</span><span class=s1>&#39;jsonp-result&#39;</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>  <span class=nx>result</span><span class=p>.</span><span class=nx>innerText</span> <span class=o>=</span> <span class=s1>&#39;用户ID：&#39;</span> <span class=o>+</span> <span class=nx>user</span><span class=p>.</span><span class=nx>uid</span> <span class=o>+</span> <span class=s2>&#34;, 姓名：&#34;</span> <span class=o>+</span> <span class=nx>user</span><span class=p>.</span><span class=nx>name</span> <span class=o>+</span> <span class=s1>&#39;, 性别：&#39;</span> <span class=o>+</span> <span class=nx>user</span><span class=p>.</span><span class=nx>gender</span><span class=p>;</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></div><p>现在，我们可以注意到，在控制台中输出了我们期望的结果，这说明页面中定义的 showUser()方法确实被执行了，所以，到这里我们可以对 JSONP 做一个简单总结：<strong>JSONP 是一种利用 script 标签实现跨域的方案，它需要对后端接口进行适当改造以返回可以执行的 JavaScript，客户端需要事先定义好接收数据的方法，两者通过 callback 参数建立起联系，返回类似 callback({&ldquo;name&rdquo;:&ldquo;tom&rdquo;,“gender”:&ldquo;male&rdquo;})结构的数据，因此 JSONP 请求必然且只能是一个 GET 请求</strong>。</p><p><a class=img-fancybox href=https://ww1.sinaimg.cn/large/4c36074fly1g0nhf0sls2j21h8090gn0.jpg data-fancybox=gallery data-src=https://ww1.sinaimg.cn/large/4c36074fly1g0nhf0sls2j21h8090gn0.jpg data-caption=通过Script标签调用JSONP><img src=https://ww1.sinaimg.cn/large/4c36074fly1g0nhf0sls2j21h8090gn0.jpg alt=通过Script标签调用JSONP class=post-img loading=lazy>
+<span class=post-img-tip>通过Script标签调用JSONP</span></a></p><p>既然通过 Script 标签可以调用一个 JSONP 接口，那么我们不妨试试动态创建 Script 标签，然后你就会发现这两种方式的效果是一样的，都可以调用一个 JSONP 接口，前提是 JS 中已经存在 showUser()方法：</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-JavaScript data-lang=JavaScript><span class=line><span class=cl><span class=c1>//动态创建scipt调用JSONP
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=nx>showUserByDynamic</span><span class=o>:</span><span class=kd>function</span><span class=p>(){</span>
+</span></span><span class=line><span class=cl>      <span class=kd>var</span> <span class=nx>self</span> <span class=o>=</span> <span class=k>this</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>      <span class=kd>var</span> <span class=nx>script</span> <span class=o>=</span> <span class=nb>document</span><span class=p>.</span><span class=nx>createElement</span><span class=p>(</span><span class=s2>&#34;script&#34;</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>      <span class=nx>script</span><span class=p>.</span><span class=nx>src</span> <span class=o>=</span> <span class=s2>&#34;https://localhost:5001/api/user/1?callback=showUser&#34;</span><span class=p>;</span> 
+</span></span><span class=line><span class=cl>      <span class=nb>document</span><span class=p>.</span><span class=nx>body</span><span class=p>.</span><span class=nx>appendChild</span><span class=p>(</span><span class=nx>script</span><span class=p>);</span> 
+</span></span><span class=line><span class=cl><span class=p>},</span>
+</span></span></code></pre></div><p>事实上，jQuery 中针对 JSONP 的支持正是基于这种原理，虽然 jQuery 的时代终将过去，可我相信这些背后的原理永远不会过时。顺着这个思路，我们不妨来看看 jQuery 中是如何实现 JSONP 的，以下代码可以在<a href=https://github.com/jquery/jquery/edit/master/src/ajax/script.js>这里</a>找到：</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-JavaScript data-lang=JavaScript><span class=line><span class=cl><span class=c1>// Bind script tag hack transport
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=nx>jQuery</span><span class=p>.</span><span class=nx>ajaxTransport</span><span class=p>(</span><span class=s2>&#34;script&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl><span class=kd>function</span><span class=p>(</span><span class=nx>s</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=c1>// This transport only deals with cross domain or forced-by-attrs requests
+</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=k>if</span> <span class=p>(</span><span class=nx>s</span><span class=p>.</span><span class=nx>crossDomain</span> <span class=o>||</span> <span class=nx>s</span><span class=p>.</span><span class=nx>scriptAttrs</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=kd>var</span> <span class=nx>script</span><span class=p>,</span> <span class=nx>callback</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>        <span class=k>return</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>            <span class=nx>send</span><span class=o>:</span> <span class=kd>function</span><span class=p>(</span><span class=nx>_</span><span class=p>,</span> <span class=nx>complete</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>                <span class=nx>script</span> <span class=o>=</span> <span class=nx>jQuery</span><span class=p>(</span><span class=s2>&#34;&lt;script&gt;&#34;</span><span class=p>).</span><span class=nx>attr</span><span class=p>(</span><span class=nx>s</span><span class=p>.</span><span class=nx>scriptAttrs</span> <span class=o>||</span> <span class=p>{}).</span><span class=nx>prop</span><span class=p>({</span>
+</span></span><span class=line><span class=cl>                    <span class=nx>charset</span><span class=o>:</span> <span class=nx>s</span><span class=p>.</span><span class=nx>scriptCharset</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>                    <span class=nx>src</span><span class=o>:</span> <span class=nx>s</span><span class=p>.</span><span class=nx>url</span>
+</span></span><span class=line><span class=cl>                <span class=p>}).</span><span class=nx>on</span><span class=p>(</span><span class=s2>&#34;load error&#34;</span><span class=p>,</span> <span class=nx>callback</span> <span class=o>=</span> <span class=kd>function</span><span class=p>(</span><span class=nx>evt</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>                    <span class=nx>script</span><span class=p>.</span><span class=nx>remove</span><span class=p>();</span>
+</span></span><span class=line><span class=cl>                    <span class=nx>callback</span> <span class=o>=</span> <span class=kc>null</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>                    <span class=k>if</span> <span class=p>(</span><span class=nx>evt</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>                        <span class=nx>complete</span><span class=p>(</span><span class=nx>evt</span><span class=p>.</span><span class=nx>type</span> <span class=o>===</span> <span class=s2>&#34;error&#34;</span> <span class=o>?</span> <span class=mi>404</span> <span class=o>:</span> <span class=mi>200</span><span class=p>,</span> <span class=nx>evt</span><span class=p>.</span><span class=nx>type</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>                    <span class=p>}</span>
+</span></span><span class=line><span class=cl>                <span class=p>});</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>                <span class=c1>// Use native DOM manipulation to avoid our domManip AJAX trickery
+</span></span></span><span class=line><span class=cl><span class=c1></span>                <span class=nb>document</span><span class=p>.</span><span class=nx>head</span><span class=p>.</span><span class=nx>appendChild</span><span class=p>(</span><span class=nx>script</span><span class=p>[</span><span class=mi>0</span><span class=p>]);</span>
+</span></span><span class=line><span class=cl>            <span class=p>},</span>
+</span></span><span class=line><span class=cl>            <span class=nx>abort</span><span class=o>:</span> <span class=kd>function</span><span class=p>()</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>                <span class=k>if</span> <span class=p>(</span><span class=nx>callback</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>                    <span class=nx>callback</span><span class=p>();</span>
+</span></span><span class=line><span class=cl>                <span class=p>}</span>
+</span></span><span class=line><span class=cl>            <span class=p>}</span>
+</span></span><span class=line><span class=cl>        <span class=p>};</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=p>});</span>
+</span></span></code></pre></div><p>可以注意到，它和我们这里的思路一致，即动态创建一个 script 标签，然后设置其 src 属性为目标地址，当其加载完成或者加载失败时，就会从页面的 DOM 节点中删除该标签，因为数据已经通过指定的 callback 处理过了。jQuery 甚至可以替我们生成对应的 callback 函数，例如，在这里我们可以这样使用 jQuery 来实现 JSONP 跨域，具体使用细节这里不再深究：</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-JavaScript data-lang=JavaScript><span class=line><span class=cl><span class=c1>//基于$.ajax()调用JSONP
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=nx>showUserByAjax</span><span class=o>:</span><span class=kd>function</span><span class=p>(){</span>
+</span></span><span class=line><span class=cl>      <span class=nx>$</span><span class=p>.</span><span class=nx>ajax</span><span class=p>({</span>
+</span></span><span class=line><span class=cl>            <span class=nx>type</span><span class=o>:</span> <span class=s2>&#34;get&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>            <span class=nx>url</span><span class=o>:</span> <span class=s2>&#34;http://localhost:5000/api/user/1&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>            <span class=nx>dataType</span><span class=o>:</span> <span class=s2>&#34;jsonp&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>            <span class=nx>jsonp</span><span class=o>:</span> <span class=s2>&#34;callback&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>            <span class=nx>data</span><span class=o>:</span> <span class=s2>&#34;&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>            <span class=nx>success</span><span class=o>:</span> <span class=kd>function</span> <span class=p>(</span><span class=nx>user</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>                <span class=nx>showUser</span><span class=p>(</span><span class=nx>user</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>            <span class=p>}</span>
+</span></span><span class=line><span class=cl>        <span class=p>});</span>
+</span></span><span class=line><span class=cl><span class=p>},</span>
+</span></span></code></pre></div><h2 id=cors跨域新标准>CORS，跨域新标准</h2><p>相对 JSONP 来说，CORS 实现起来就非常简单啦，因为主流的 Web 框架中几乎都提供了 CORS 的支持，因为 CORS 可以实现除了 GET 以外的譬如 POST、PUT 等请求，所以，它比 JSONP 这种”Hack“的方式有更为广阔的适用性，而且随着 Web 标准化的不断推荐，目前 CORS 可以说是官方主推的跨域方案。这里我们以.NET Core 为例来讲解 CORS 跨域。</p><p>CORS，即同源资源共享，其实早在 ASP.NET 时代，这一机制就已经得到了支持，现在我们以.NET Core 来讲，无非是希望大家放下历史包袱，在跨平台的新道路上轻装上阵。好了，在.NET Core 中我们有两种 CORS 方案，一种是在 Startup 类中以全局配置的方式注入到整个中间件管道中，一种是以特性的方式在更小的粒度上控制 CORS。这其实和之前配置路由的思路相近，即我们可以配置全局的路由模板，同样可以在 Controller 和 Action 级别上定义路由。在这里，我们先定义两种 CORS 策略，AllowAll 和 AllowOne，并以此来测试 CORS 实际的使用效果。</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-CSharp data-lang=CSharp><span class=line><span class=cl><span class=c1>//CORS策略：简单粗暴一刀流</span>
+</span></span><span class=line><span class=cl> <span class=n>services</span><span class=p>.</span><span class=n>AddCors</span><span class=p>(</span><span class=n>opt</span><span class=p>=&gt;{</span>
+</span></span><span class=line><span class=cl>    <span class=n>opt</span><span class=p>.</span><span class=n>AddPolicy</span><span class=p>(</span><span class=s>&#34;AllowAll&#34;</span><span class=p>,</span> <span class=n>builder</span> <span class=p>=&gt;</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=n>builder</span><span class=p>.</span><span class=n>AllowAnyOrigin</span><span class=p>();</span>
+</span></span><span class=line><span class=cl>        <span class=n>builder</span><span class=p>.</span><span class=n>AllowAnyHeader</span><span class=p>();</span>
+</span></span><span class=line><span class=cl>        <span class=n>builder</span><span class=p>.</span><span class=n>AllowAnyMethod</span><span class=p>();</span>
+</span></span><span class=line><span class=cl>    <span class=p>});</span>
+</span></span><span class=line><span class=cl> <span class=p>});</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1>//CORS策略：允许指定域</span>
+</span></span><span class=line><span class=cl><span class=n>services</span><span class=p>.</span><span class=n>AddCors</span><span class=p>(</span><span class=n>opt</span><span class=p>=&gt;{</span>
+</span></span><span class=line><span class=cl>    <span class=n>opt</span><span class=p>.</span><span class=n>AddPolicy</span><span class=p>(</span><span class=s>&#34;AllowOne&#34;</span><span class=p>,</span> <span class=n>builder</span> <span class=p>=&gt;</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=n>builder</span><span class=p>.</span><span class=n>WithOrigins</span><span class=p>(</span><span class=s>&#34;http://localhost:8888&#34;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>            <span class=p>.</span><span class=n>AllowAnyHeader</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>            <span class=p>.</span><span class=n>AllowAnyMethod</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>            <span class=p>.</span><span class=n>WithExposedHeaders</span><span class=p>(</span><span class=s>&#34;X-ASP-NET-Core&#34;</span><span class=p>,</span><span class=s>&#34;X-UserName&#34;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>            <span class=p>.</span><span class=n>AllowCredentials</span><span class=p>();</span>
+</span></span><span class=line><span class=cl>    <span class=p>});</span>
+</span></span><span class=line><span class=cl><span class=p>});</span>
+</span></span></code></pre></div><p>可以注意到，在全局范围内应用 AllowAll 以后，我们的后端接口将支持来自任意域/端口的跨域访问，这意味着我们之前必须使用 JSONP 来跨域的地方，现在都可以直接发起跨域请求。到底是不是和我们想得一样呢？答案啊，那必须是肯定的啊！</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-CSharp data-lang=CSharp><span class=line><span class=cl><span class=na>[EnableCors(&#34;AllowOne&#34;)]</span>
+</span></span><span class=line><span class=cl><span class=na>[Route(&#34;api/[controller]</span><span class=s>&#34;)]
+</span></span></span><span class=line><span class=cl><span class=s></span><span class=na>[ApiController]</span>
+</span></span><span class=line><span class=cl><span class=kd>public</span> <span class=k>class</span> <span class=nc>UserController</span><span class=p>:</span><span class=n>Controller</span>
+</span></span><span class=line><span class=cl><span class=p>{</span>
+</span></span><span class=line><span class=cl>	<span class=c1>//...</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></div><p>好了，现在我们来测试在 UserController 上应用局部的 CORS 请求，在这个实例中，我们指定只有来自 localhost:8888 的请求可以跨域，为此博主这里用 Python 临时开了一个服务器，本文中的前端页面，实际上就是运行在这个服务器上的。你知道我想说什么，“人生苦短，我用 Python”。因为我们这里返回的是 application/json，所以它是一个非简单请求，这里复习一下简单请求与非简单请求。</p><h3 id=简单请求>简单请求</h3><p>根据<a href=https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Access_control_CORS>MDN</a>中关于 CORS 的定义，若请求满足所有下述条件，则该请求可视为“简单请求”，简单请求意味着不会触发<a href=https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Access_control_CORS#Preflighted_requests>CORS 预检请求</a>：</p><ul><li>使用下列方法之一：GET、HEAD、POST。</li><li>Fetch 规范定义了对 CORS 安全的首部字段集合，不得人为设置该集合之外的其他首部字段。该集合为：Accept、Accept-Language、Content-Language、Content-Type (需要注意额外的限制)、DPR、Downlink、Save-Data、Viewport-Width、Width。</li><li>Content-Type 的值仅限于下列三者之一：text/plain、multipart/form-data、application/x-www-form-urlencoded。</li></ul><p><a class=img-fancybox href=https://mdn.mozillademos.org/files/14293/simple_req.png data-fancybox=gallery data-src=https://mdn.mozillademos.org/files/14293/simple_req.png data-caption=MDN中对简单请求的图解><img src=https://mdn.mozillademos.org/files/14293/simple_req.png alt=MDN中对简单请求的图解 class=post-img loading=lazy>
+<span class=post-img-tip>MDN中对简单请求的图解</span></a></p><h3 id=非简单请求>非简单请求</h3><p>非简单请求和简单请求相反，即不满足简单请求中任一条件的请求都被成为非简单请求。非简单请求，相对简单请求多了一次<a href=https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Access_control_CORS#Preflighted_requests>CORS 预检请求</a>。其过程是，首先由浏览器自动发起一个 OPTION 请求，该请求中携带 HTTP 头部字段 Origin。在本例中，前端页面部署在<code>http://localhost:8888</code>服务器上，所以，它的 Origin 字段即为<code>http://localhost:8888</code>。接下来，服务端会返回 Access-Control-Allow-Origin/Access-Control-Allow-Headers/Access-Control-Allow-Methods 等字段，它对应我们后端定义的 AllowOne，注意到这里我们有两个自定义字段 X-ASP-NET-Core 和 X-UserName。在通过预检以后，我们在发起正式请求(本例中为 GET 请求)的时候，设置后端允许的源，即<code>http://localhost:8888</code>，这样就可以实现基于 CORS 的跨域请求啦！</p><p><a class=img-fancybox href=https://mdn.mozillademos.org/files/14289/prelight.png data-fancybox=gallery data-src=https://mdn.mozillademos.org/files/14289/prelight.png data-caption=MDN中对非简单请求的图解><img src=https://mdn.mozillademos.org/files/14289/prelight.png alt=MDN中对非简单请求的图解 class=post-img loading=lazy>
+<span class=post-img-tip>MDN中对非简单请求的图解</span></a></p><p>所以，我们可以注意到，这里会有一个 OPTION 请求，即“预检请求”。对于 AllowOne 这个 CORS 策略而言，它允许来自 localhost:8888 的跨域请求，允许的请求方法有 GET、PUT、POST 和 OPTION，客户端必须携带一个自定义 HTTP 头：X-ASP-NET-Core。当这三个条件满足时，即表示通过“预检”。此时，服务端会返回 Access-Control-Allow-Origin/Access-Control-Allow-Methods/Access-Control-Allow-Headers 等字段。接下来，浏览器发起的正式请求会带上这些字段，并返回我们所需要的 JSON 数据，这就是 CORS 跨域的实际过程。</p><p><a class=img-fancybox href=https://ww1.sinaimg.cn/large/4c36074fly1g0nhfm5iprj21h60kcb2d.jpg data-fancybox=gallery data-src=https://ww1.sinaimg.cn/large/4c36074fly1g0nhfm5iprj21h60kcb2d.jpg data-caption=OPTION预检请求><img src=https://ww1.sinaimg.cn/large/4c36074fly1g0nhfm5iprj21h60kcb2d.jpg alt=OPTION预检请求 class=post-img loading=lazy>
+<span class=post-img-tip>OPTION预检请求</span></a></p><h1 id=本文小结>本文小结</h1><p>这篇文章主要梳理了目前前端跨域的两种主流方案(事实上，在奇葩的前端领域里，最不缺的就是解决方案)，即 JSONP 和 CORS。其中，JSONP 本质上是返回可以执行的 JS，其基本套路是 callback({&ldquo;foo&rdquo;:&ldquo;bar&rdquo;})，利用了 HTML 中含 src 的属性天生具备跨域能力的“漏洞”，是一种相对"hack"的方案，要求预先定义好 callback，需要改造后端接口，仅支持最简单的 GET 请求。而 CORS，是比较“官方”的跨域解决方案，其原理是利用 HTTP 头部字段对请求的来源进行检验，CORS 支持除 GET 以外的请求动词，在使用中间件的情况下，无需修改后端接口，可以在全局或者局部配置 CORS 跨域策略，对后端开发相对友好。自从接触前端领域，对这个领域里的“黑科技”、“骚操作”吐槽无数次了，不过，前后端分离过程中这些事情还是挺有意思的，对吧？好了，以上就是这篇博客里的全部内容了，欢迎大家吐槽！本文中的示例请从：<a href=https://github.com/qinyuanpei/dotnet-sse/blob/master/server/index.html>https://github.com/qinyuanpei/dotnet-sse/blob/master/server/index.html</a>这里来获取，谢谢大家！</p></div><div class="copyright s-card"><div class=title><span class=post-name>聊聊前端跨域的爱恨情仇</span>
+<a :href=http://example.org/posts/3846545990/ class=post-link target=_blank>http://example.org/posts/3846545990/</a></div><div class=post-meta><div class=meta-item><span class=tip>作者</span>
+<span class=name>飞鸿踏雪</span></div><div class=meta-item><span class=tip>发布于</span>
+<span class=name>2019-02-26</span></div><div class=meta-item><span class=tip>更新于</span>
+<span class=name>2019-02-26</span></div><div class="meta-item cc"><span class=tip>许可协议</span>
+<a class=name href=https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh-hans target=_blank>CC BY-NC-SA 4.0</a></div></div><span class=meta-tip>署名-非商业性使用-相同方式共享 4.0 国际</span></div><div class=other-meta><div class=all-tags><a href=/tags/%E8%B7%A8%E5%9F%9F class=tag-item><i class="iconfont icon-hashtag"></i>
+<span class=name>跨域</span>
+</a><a href=/tags/cors class=tag-item><i class="iconfont icon-hashtag"></i>
+<span class=name>CORS</span>
+</a><a href=/tags/jsonp class=tag-item><i class="iconfont icon-hashtag"></i>
+<span class=name>JSONP</span></a></div><a href=https://eqnxweimkr5.feishu.cn/share/base/form/shrcnCXCPmxCKKJYI3RKUfefJre class=report target=_blank><i class="iconfont icon-report"></i>
+反馈与投诉</a></div><div class=reward><div class=reward-btn onclick='window.$Modal.show("reward-modal")'><i class="iconfont icon-reward"></i>
+<span class=text>赞赏博主</span></div></div><div class=modal id=reward-modal><div class=modal-mask></div><div class="modal-main s-card" style=max-width:430px><div class=title><div class=title-left><i class="iconfont icon-reward"></i>
+<span class=title-text>赞赏博主</span></div><i class="iconfont icon-close close" id=modal-close></i></div><div class=modal-content style=--height:80vh><div class=reward-card><div class=thank>🙏 请博主喝一杯咖啡</div><div class=qr><a class=qr-img href=/images/reward/alipay.jpg target=_blank><img src=/images/reward/alipay.jpg alt=支付宝赞赏码><div class=tip><i class="iconfont icon-alipay"></i>
+<span>支付宝</span></div></a><a class=qr-img href=/images/reward/wechat.jpg target=_blank><img src=/images/reward/wechat.jpg alt=微信赞赏码><div class=tip><i class="iconfont icon-wechat"></i>
+<span>微信</span></div></a></div><div class="all-list s-card hover"><div class=title>赞赏记录</div><div class=tip>赞赏金额将全部用于开源项目维护，以及服务器、域名及各类云服务的开销</div></div></div></div></div></div><div class=related-post><div class=title><span class=name><i class="iconfont icon-star"></i>
+相关推荐
+</span><span class=shuffle onclick='window.location.href="/posts/integration-of-distributed-tracing-system-and-logging-system/"'>随便逛逛</span></div><div class=post-lists><article class="post-item s-card simple hover" style=animation-delay:.4s onclick='window.location.href="/posts/1276287490/"'><div class=post-content><span class=post-title>源代码探案系列之 .NET Core 跨域中间件 CORS</span>
+<span class=post-desc>本文探讨了ASP.NET Core中的CORS中间件，介绍了其核心流程和部件，包括CorsPolicy、CorsService和CorsMiddleware。讨论了跨域请求的处理流程，如预检请求和非预检请求的处理方式，以及如何应用CORS规范中的Access-Control系列头部字段。文章从源代码和规范两个角度深入探讨跨域问题的背景、发展以及CORS的原理和应用，涵盖了简单请求和复杂请求的区别。文章通过对CORS中间件和CORS规范的讨论，帮助读者全面理解跨域问题。</span></div></article><article class="post-item s-card simple hover" style=animation-delay:.4s onclick='window.location.href="/posts/semantic-kernel-mcp-agent-context-enhanced-exploration/"'><div class=post-content><span class=post-title>Semantic Kernel × MCP：智能体的上下文增强探索</span>
+<span class=post-desc>本文深入探讨了 MCP（模型上下文协议），由 Anthropic 设计的开放协议，它如同 AI 领域的 USB 接口，旨在通过统一接口解决大模型连接不同数据源和工具的问题。文章详细介绍了 MCP 的架构、核心角色、工作原理以及如何与 Semantic Kernel 集成，为 .NET 开发者提供高效接入社区 MCP 服务器的方法，减少重复性平台对接工作。此外，还展示了 MCP 在操作浏览器、访问文件系统等场景中的应用效果，并探讨了其局限性及未来发展方向。在 AI 技术快速发展的背景下，MCP 的出现为实现 AI 模型的 “万物互联” 提供了可能，值得开发者关注与探索。</span></div></article></div><style>.post-lists{width:100%}.post-lists .post-item{padding:0!important;display:flex;margin-bottom:1rem;animation:fade-up .6s backwards;cursor:pointer;overflow:hidden;height:200px}.post-lists .post-item .post-cover{flex:0 0 35%;overflow:hidden;transform:translateZ(0)}.post-lists .post-item .post-cover img{width:100%;height:100%;object-fit:cover;transform-origin:center center;transition:transform .5s ease-out,filter .5s ease-out;backface-visibility:hidden}.post-lists .post-item .post-content{flex:1;padding:1.6rem 2rem;display:flex;flex-direction:column;justify-content:space-between}.post-lists .post-item .post-category{display:flex;flex-wrap:wrap;width:100%;color:var(--main-font-second-color);font-size:14px}.post-lists .post-item .post-category .cat-name{display:flex;flex-direction:row;align-items:center}.post-lists .post-item .post-category .cat-name .iconfont{opacity:.8;margin-right:6px;color:var(--main-font-second-color)}.post-lists .post-item .post-category .top{margin-left:12px;color:var(--main-color)}.post-lists .post-item .post-category .top .iconfont{opacity:.8;color:var(--main-color)}.post-lists .post-item .post-title{font-size:20px;line-height:30px;font-weight:700;margin:.6rem 0;transition:color .3s;display:-webkit-box;overflow:hidden;word-break:break-all;-webkit-box-orient:vertical;-webkit-line-clamp:2}.post-lists .post-item .post-desc{margin-top:-.4rem;margin-bottom:.8rem;opacity:.8;line-height:30px;display:-webkit-box;overflow:hidden;word-break:break-all;-webkit-box-orient:vertical;-webkit-line-clamp:2}.post-lists .post-item .post-meta{display:flex;flex-direction:row;align-items:center;justify-content:space-between;color:var(--main-font-second-color)}.post-lists .post-item .post-tags{display:flex;flex-wrap:wrap;opacity:.8;margin-right:20px;overflow:hidden;mask:linear-gradient(90deg,#fff 0,#fff 90%,hsla(0,0%,100%,.6) 95%,hsla(0,0%,100%,0) 100%)}.post-lists .post-item .post-tags .tags-name{display:flex;flex-direction:row;align-items:center;margin-right:12px;white-space:nowrap;transition:color .3s}.post-lists .post-item .post-time{opacity:.6;font-size:13px;white-space:nowrap}.post-lists .post-item:hover .post-cover img{filter:brightness(.8);transform:scale(1.05)}.post-lists .post-item:hover .post-title{color:var(--main-color)}.post-lists .post-item:active{transform:scale(.98)}.post-lists .post-item.cover-left{flex-direction:row}.post-lists .post-item.cover-right{flex-direction:row-reverse}.post-lists .post-item.cover-both:nth-child(odd){flex-direction:row}.post-lists .post-item.cover-both:nth-child(even){flex-direction:row-reverse}.post-lists.layout-grid{display:grid;grid-template-columns:repeat(var(--grid-columns,2),1fr);gap:var(--grid-gap,1rem)}.post-lists.layout-grid .post-item{margin:0;flex-direction:column;height:auto}.post-lists.layout-grid .post-item .post-cover{flex:none;width:100%;height:225px}@media(max-width:768px){.post-lists .post-item{flex-direction:column;height:auto}.post-lists .post-item .post-cover{flex:none;width:100%;height:200px}.post-lists .post-item.cover-left,.post-lists .post-item.cover-right,.post-lists .post-item.cover-both{flex-direction:column!important}.post-lists.layout-grid{grid-template-columns:1fr}.post-lists .post-item .post-tags{flex-wrap:nowrap}}.post-lists .post-item .simple{animation:none;padding:.5rem 1.4rem!important;background-color:var(--main-card-second-background);height:auto;margin-bottom:.5rem}.post-lists .post-item .simple .post-content{padding:.5rem 0}.post-lists .post-item .simple .post-title{margin:0;font-size:16px}.post-lists .post-item .simple .post-desc{margin:.3rem 0 0;font-size:14px;opacity:.6}</style></div><style>.related-post{margin-top:1rem}.related-post .title{display:flex;flex-direction:row;align-items:center;justify-content:space-between;width:100%;margin:3rem 0 1rem;padding:0 6px}.related-post .title .name{display:flex;align-items:center;font-size:24px;font-weight:700}.related-post .title .name .iconfont{font-size:26px;font-weight:400;margin-right:8px}.related-post .title .shuffle{opacity:.6;font-size:14px;transition:color .3s,opacity .3s;cursor:pointer}.related-post .title .shuffle:hover{opacity:1;color:var(--main-color)}</style><div id=comments><div id=main-comment class=comment><div v-if=!fill class=title><span class=name><i class="iconfont icon-chat"></i>
+评论
+</span><span class=tool>隐私政策</span></div><link rel=stylesheet href=https://unpkg.com/@waline/client@v3/dist/waline.css><div id=waline class=waline-container></div><style>.waline-container{background-color:var(--card-background);border-radius:var(--card-border-radius);box-shadow:var(--shadow-l1);padding:var(--card-padding)}.waline-container .vcount{color:var(--card-text-color-main)}</style><script type=module>
+        import { init } from 'https://unpkg.com/@waline/client@v3/dist/waline.js';
+        init({
+            el: '#waline',
+            serverURL: 'https:\/\/waline.yuanpei.me\/',
+            lang: 'zh',
+            dark: 'auto',
+            path: window.location.href,
+            requiredMeta: ['nick','mail'],
+            emoji: [
+                '//unpkg.com/@waline/emojis@1.2.0/weibo'
+            ],
+            reaction: false,
+        });
+      </script></div></div><div class="next-post s-card" id=next-post data-is-next=true><a href=/posts/1122710277/ class=next-post-link><span class=post-tip>下一篇阅读
+</span><span class=post-title>《阿里巴巴 Java 开发手册》读书笔记</span></a></div></article><aside class=main-aside><div class="hello s-card weidgets"><span class=tip>中午好，吃饱了精神好！</span><div class=content><div class=site-logo><div class=avatar><img src=/images/avatar.jpg></div></div><span class=site-desc></span></div><div class=info><div class=name><span class=author>飞鸿踏雪</span>
+<span class=desc>纵有疾风起，人生不言弃</span></div><div class=link><a href=https://github.com/qinyuanpei target=_blank class=social-link><i class="iconfont icon-github"></i>
+</a><a href=mailto:qinyuapei@163.com target=_blank class=social-link><i class="iconfont icon-email"></i></a></div></div></div><div class=sticky><div class="toc s-card weidgets" id=weidget-toc><div class=toc-title><i class="iconfont icon-toc"></i>
+<span class=name>目录</span></div><div id=toc-all class=toc-list></div></div><script>document.addEventListener("DOMContentLoaded",function(){const o=[];let e=null,t=null,n=0;const s=document.getElementById("toc-all"),i=()=>{try{if(e=document.getElementById("page-content"),!e)return!1;const t=Array.from(e.querySelectorAll("h1, h2, h3, h4")).filter(e=>e.parentElement.tagName.toLowerCase()==="div");return t}catch(e){console.error("获取所有目录数据出错：",e)}},r=()=>{const e=i();if(!e)return!1;s.innerHTML="",e.forEach((e,t)=>{const n={id:e.id,type:e.tagName,text:e.textContent?.replace(/\u200B/g,"").trim()},i=document.createElement("span");i.id="toc-"+n.id,i.className=`toc-item ${n.type} ${t===0?"active":""}`,i.textContent=n.text,i.addEventListener("click",()=>d(n.id)),s.appendChild(i),o.push(n)}),e&&e.length>0&&(t=e[0].id)},c=(e,t)=>{let n;return function(){const s=arguments,o=this;n||(e.apply(o,s),n=!0,setTimeout(()=>n=!1,t))}},l=c(()=>{if(!o.length)return!1;const e=i();if(!e)return!1;const s=120;if(window.scrollY===0){n=0,t=e[0]?.id,a();return}for(let n of e){const o=n.getBoundingClientRect();o.top-s<=0&&o.bottom+s>=0&&t!==n.id&&(t=n.id,a())}},100),a=()=>{document.querySelectorAll(".toc-item.active").forEach(e=>{e.classList.remove("active")});const e=document.getElementById("toc-"+t);if(!e)return!1;e.classList.add("active"),n=e.offsetTop-2||0,s.style.setProperty("--height",n+"px"),s.scrollTo({top:n-80,behavior:"smooth"})},d=t=>{try{const n=document.getElementById(t);if(!n||!e)return!1;const s=n.offsetTop,o=s+e.offsetTop-80;window.scroll({top:o,behavior:"smooth"})}catch(e){console.error("目录滚动失败：",e)}};r(),window.addEventListener("scroll",l)})</script><style lang=scss scoped>.toc{position:relative;padding:0!important;overflow:hidden;.toc-title { display: flex; flex-direction: row; align-items: center; padding: 18px; height: 58px; .iconfont { margin-right: 8px; font-weight: bold; opacity: 0.6; } .name { font-weight: bold; } } .toc-list { position: relative; padding: 20px; padding-top: 0; padding-left: 24px; display: flex; flex-direction: column; max-height: calc(70vh - 58px); overflow: auto; .toc-item { margin: 4px 0; padding: 6px 12px; border-radius: 8px; opacity: 0.6; transition: color 0.3s, opacity 0.3s, font-size 0.3s, background-color 0.3s; cursor: pointer; &:first-child { margin-top: 0; } &:last-child { margin-bottom: 0; } &.H1 { font-weight: bold; } &.H2 { font-size: 14px; margin-left: 15px; font-weight: normal; } &.H3 { font-size: 12px; margin-left: 25px; } &.active { opacity: 1; color: var(--main-color); background-color: var(--main-color-bg); &.H2 { font-size: 14px; } &.H3 { font-size: 12px; } } &:hover { opacity: 1; color: var(--main-color); background-color: var(--main-color-bg); } } &::after { content: ""; position: absolute; left: 12px; top: var(--height); width: 4px; height: 20px; margin: 8px 0; background-color: var(--main-color); border-radius: 8px; transition: top 0.3s; } } &::before { content: ""; position: absolute; left: 12px; bottom: 20px; width: 4px; height: calc(100% - 78px); background-color: var(--main-card-border); border-radius: 8px; }}</style><div class="tags-cloud s-card weidgets"><div class=title><i class="iconfont icon-hashtag"></i>
+<span class=title-name>热门标签</span></div><div class=all-tags><a href=/tags/unity3d/ class=tags><span class=name>Unity3D</span>
+<sup class=num>27</sup>
+</a><a href=/tags/%E6%84%9F%E6%82%9F/ class=tags><span class=name>感悟</span>
+<sup class=num>23</sup>
+</a><a href=/tags/python/ class=tags><span class=name>Python</span>
+<sup class=num>22</sup>
+</a><a href=/tags/%E9%9A%8F%E7%AC%94/ class=tags><span class=name>随笔</span>
+<sup class=num>16</sup>
+</a><a href=/tags/.net-core/ class=tags><span class=name>.NET Core</span>
+<sup class=num>15</sup>
+</a><a href=/tags/%E5%BD%B1%E8%AF%84/ class=tags><span class=name>影评</span>
+<sup class=num>14</sup>
+</a><a href=/tags/%E6%B8%B8%E6%88%8F/ class=tags><span class=name>游戏</span>
+<sup class=num>13</sup>
+</a><a href=/tags/%E7%94%B5%E5%BD%B1/ class=tags><span class=name>电影</span>
+<sup class=num>12</sup>
+</a><a href=/tags/grpc/ class=tags><span class=name>GRPC</span>
+<sup class=num>10</sup>
+</a><a href=/tags/%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91/ class=tags><span class=name>游戏开发</span>
+<sup class=num>10</sup>
+</a><a href=/tags/%E7%94%9F%E6%B4%BB/ class=tags><span class=name>生活</span>
+<sup class=num>10</sup>
+</a><a href=/tags/.net/ class=tags><span class=name>.NET</span>
+<sup class=num>9</sup>
+</a><a href=/tags/http/ class=tags><span class=name>HTTP</span>
+<sup class=num>9</sup>
+</a><a href=/tags/redis/ class=tags><span class=name>Redis</span>
+<sup class=num>9</sup>
+</a><a href=/tags/%E5%89%8D%E7%AB%AF/ class=tags><span class=name>前端</span>
+<sup class=num>9</sup>
+</a><a href=/tags/envoy/ class=tags><span class=name>Envoy</span>
+<sup class=num>8</sup>
+</a><a href=/tags/hexo/ class=tags><span class=name>Hexo</span>
+<sup class=num>8</sup>
+</a><a href=/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1/ class=tags><span class=name>微服务</span>
+<sup class=num>8</sup>
+</a><a href=/tags/%E6%8A%80%E5%B7%A7/ class=tags><span class=name>技巧</span>
+<sup class=num>8</sup>
+</a><a href=/tags/%E6%95%99%E7%A8%8B/ class=tags><span class=name>教程</span>
+<sup class=num>8</sup>
+</a><a href=/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/ class=tags><span class=name>数据库</span>
+<sup class=num>8</sup>
+</a><a href=/tags/%E7%AC%94%E8%AE%B0/ class=tags><span class=name>笔记</span>
+<sup class=num>8</sup>
+</a><a href=/tags/aop/ class=tags><span class=name>AOP</span>
+<sup class=num>7</sup>
+</a><a href=/tags/c%23/ class=tags><span class=name>C#</span>
+<sup class=num>7</sup>
+</a><a href=/tags/docker/ class=tags><span class=name>Docker</span>
+<sup class=num>6</sup>
+</a><a href=/tags/linux/ class=tags><span class=name>Linux</span>
+<sup class=num>6</sup>
+</a><a href=/tags/vue/ class=tags><span class=name>Vue</span>
+<sup class=num>6</sup>
+</a><a href=/tags/%E6%9C%8D%E5%8A%A1%E5%99%A8/ class=tags><span class=name>服务器</span>
+<sup class=num>6</sup>
+</a><a href=/tags/%E7%BC%96%E7%A8%8B/ class=tags><span class=name>编程</span>
+<sup class=num>6</sup>
+</a><a href=/tags/%E8%AF%BB%E4%B9%A6/ class=tags><span class=name>读书</span>
+<sup class=num>6</sup>
+</a><a href=/tags/ef/ class=tags><span class=name>EF</span>
+<sup class=num>5</sup>
+</a><a href=/tags/opencv/ class=tags><span class=name>OpenCV</span>
+<sup class=num>5</sup>
+</a><a href=/tags/ugui/ class=tags><span class=name>UGUI</span>
+<sup class=num>5</sup>
+</a><a href=/tags/%E5%AE%B9%E5%99%A8/ class=tags><span class=name>容器</span>
+<sup class=num>5</sup>
+</a><a href=/tags/%E6%80%9D%E8%80%83/ class=tags><span class=name>思考</span>
+<sup class=num>5</sup>
+</a><a href=/tags/%E6%95%B0%E5%AD%A6/ class=tags><span class=name>数学</span>
+<sup class=num>5</sup>
+</a><a href=/tags/%E6%97%A5%E5%BF%97/ class=tags><span class=name>日志</span>
+<sup class=num>5</sup>
+</a><a href=/tags/%E6%BA%90%E7%A0%81/ class=tags><span class=name>源码</span>
+<sup class=num>5</sup>
+</a><a href=/tags/%E7%BC%93%E5%AD%98/ class=tags><span class=name>缓存</span>
+<sup class=num>5</sup>
+</a><a href=/tags/git/ class=tags><span class=name>Git</span>
+<sup class=num>4</sup>
+</a><a href=/tags/mono/ class=tags><span class=name>Mono</span>
+<sup class=num>4</sup>
+</a><a href=/tags/restful/ class=tags><span class=name>RESTful</span>
+<sup class=num>4</sup>
+</a><a href=/tags/web/ class=tags><span class=name>Web</span>
+<sup class=num>4</sup>
+</a><a href=/tags/webapi/ class=tags><span class=name>WebApi</span>
+<sup class=num>4</sup>
+</a><a href=/tags/%E5%8E%86%E5%8F%B2/ class=tags><span class=name>历史</span>
+<sup class=num>4</sup>
+</a><a href=/tags/%E5%A2%9E%E5%BC%BA%E7%8E%B0%E5%AE%9E/ class=tags><span class=name>增强现实</span>
+<sup class=num>4</sup>
+</a><a href=/tags/%E6%89%A9%E5%B1%95/ class=tags><span class=name>扩展</span>
+<sup class=num>4</sup>
+</a><a href=/tags/%E7%A8%8B%E5%BA%8F%E5%91%98/ class=tags><span class=name>程序员</span>
+<sup class=num>4</sup>
+</a><a href=/tags/%E7%BC%96%E8%BE%91%E5%99%A8/ class=tags><span class=name>编辑器</span>
+<sup class=num>4</sup>
+</a><a href=/tags/ar/ class=tags><span class=name>AR</span>
+<sup class=num>3</sup>
+</a><a href=/tags/bash/ class=tags><span class=name>Bash</span>
+<sup class=num>3</sup>
+</a><a href=/tags/chatgpt/ class=tags><span class=name>ChatGPT</span>
+<sup class=num>3</sup>
+</a><a href=/tags/dapper/ class=tags><span class=name>Dapper</span>
+<sup class=num>3</sup>
+</a><a href=/tags/kindle/ class=tags><span class=name>Kindle</span>
+<sup class=num>3</sup>
+</a><a href=/tags/nginx/ class=tags><span class=name>Nginx</span>
+<sup class=num>3</sup>
+</a><a href=/tags/nlp/ class=tags><span class=name>NLP</span>
+<sup class=num>3</sup>
+</a><a href=/tags/rabbitmq/ class=tags><span class=name>RabbitMQ</span>
+<sup class=num>3</sup>
+</a><a href=/tags/travis/ class=tags><span class=name>Travis</span>
+<sup class=num>3</sup>
+</a><a href=/tags/websocket/ class=tags><span class=name>WebSocket</span>
+<sup class=num>3</sup>
+</a><a href=/tags/%E4%B8%AD%E9%97%B4%E4%BB%B6/ class=tags><span class=name>中间件</span>
+<sup class=num>3</sup>
+</a><a href=/tags/%E5%93%B2%E5%AD%A6/ class=tags><span class=name>哲学</span>
+<sup class=num>3</sup>
+</a><a href=/tags/%E5%9B%BE%E5%83%8F%E5%A4%84%E7%90%86/ class=tags><span class=name>图像处理</span>
+<sup class=num>3</sup>
+</a><a href=/tags/%E5%9B%BE%E5%BD%A2/ class=tags><span class=name>图形</span>
+<sup class=num>3</sup>
+</a><a href=/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/ class=tags><span class=name>多线程</span>
+<sup class=num>3</sup>
+</a><a href=/tags/%E5%B7%A5%E4%BD%9C/ class=tags><span class=name>工作</span>
+<sup class=num>3</sup>
+</a><a href=/tags/%E5%BC%82%E5%B8%B8/ class=tags><span class=name>异常</span>
+<sup class=num>3</sup>
+</a><a href=/tags/%E5%BE%AE%E5%8D%9A/ class=tags><span class=name>微博</span>
+<sup class=num>3</sup>
+</a><a href=/tags/%E6%88%90%E9%95%BF/ class=tags><span class=name>成长</span>
+<sup class=num>3</sup>
+</a><a href=/tags/%E6%8F%92%E4%BB%B6/ class=tags><span class=name>插件</span>
+<sup class=num>3</sup>
+</a><a href=/tags/%E6%97%B6%E9%97%B4/ class=tags><span class=name>时间</span>
+<sup class=num>3</sup>
+</a><a href=/tags/%E6%A2%A6%E6%83%B3/ class=tags><span class=name>梦想</span>
+<sup class=num>3</sup>
+</a><a href=/tags/%E6%B1%82%E8%81%8C/ class=tags><span class=name>求职</span>
+<sup class=num>3</sup>
+</a><a href=/tags/%E6%B8%A9%E6%95%85%E7%9F%A5%E6%96%B0/ class=tags><span class=name>温故知新</span>
+<sup class=num>3</sup>
+</a><a href=/tags/%E7%9B%91%E6%8E%A7/ class=tags><span class=name>监控</span>
+<sup class=num>3</sup>
+</a><a href=/tags/%E8%A5%BF%E5%AE%89/ class=tags><span class=name>西安</span>
+<sup class=num>3</sup>
+</a><a href=/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/ class=tags><span class=name>设计模式</span>
+<sup class=num>3</sup>
+</a><a href=/tags/%E8%B7%A8%E5%B9%B3%E5%8F%B0/ class=tags><span class=name>跨平台</span>
+<sup class=num>3</sup>
+</a><a href=/tags/%E9%9D%A2%E8%AF%95/ class=tags><span class=name>面试</span>
+<sup class=num>3</sup>
+</a><a href=/tags/abp/ class=tags><span class=name>ABP</span>
+<sup class=num>2</sup>
+</a><a href=/tags/agent/ class=tags><span class=name>Agent</span>
+<sup class=num>2</sup>
+</a><a href=/tags/aigc/ class=tags><span class=name>AIGC</span>
+<sup class=num>2</sup>
+</a><a href=/tags/api/ class=tags><span class=name>API</span>
+<sup class=num>2</sup>
+</a><a href=/tags/assetbundle/ class=tags><span class=name>AssetBundle</span>
+<sup class=num>2</sup>
+</a><a href=/tags/binlog/ class=tags><span class=name>Binlog</span>
+<sup class=num>2</sup>
+</a><a href=/tags/ci/ class=tags><span class=name>CI</span>
+<sup class=num>2</sup>
+</a><a href=/tags/cors/ class=tags><span class=name>CORS</span>
+<sup class=num>2</sup>
+</a><a href=/tags/csharp/ class=tags><span class=name>CSharp</span>
+<sup class=num>2</sup>
+</a><a href=/tags/di/ class=tags><span class=name>DI</span>
+<sup class=num>2</sup>
+</a><a href=/tags/dlib/ class=tags><span class=name>Dlib</span>
+<sup class=num>2</sup>
+</a><a href=/tags/easyar/ class=tags><span class=name>EasyAR</span>
+<sup class=num>2</sup>
+</a><a href=/tags/elk/ class=tags><span class=name>ELK</span>
+<sup class=num>2</sup>
+</a><a href=/tags/github/ class=tags><span class=name>Github</span>
+<sup class=num>2</sup>
+</a><a href=/tags/html5/ class=tags><span class=name>HTML5</span>
+<sup class=num>2</sup>
+</a><a href=/tags/httpclient/ class=tags><span class=name>HttpClient</span>
+<sup class=num>2</sup>
+</a><a href=/tags/javascript/ class=tags><span class=name>JavaScript</span>
+<sup class=num>2</sup>
+</a><a href=/tags/jeager/ class=tags><span class=name>Jeager</span>
+<sup class=num>2</sup>
+</a><a href=/tags/kafka/ class=tags><span class=name>Kafka</span>
+<sup class=num>2</sup>
+</a><a href=/tags/lambda/ class=tags><span class=name>Lambda</span>
+<sup class=num>2</sup>
+</a><a href=/tags/llama/ class=tags><span class=name>LLaMA</span>
+<sup class=num>2</sup>
+</a><a href=/tags/lua/ class=tags><span class=name>Lua</span>
+<sup class=num>2</sup>
+</a><a href=/tags/mock/ class=tags><span class=name>Mock</span>
+<sup class=num>2</sup>
+</a><a href=/tags/mysql/ class=tags><span class=name>MySQL</span>
+<sup class=num>2</sup>
+</a><a href=/tags/rag/ class=tags><span class=name>RAG</span>
+<sup class=num>2</sup>
+</a><a href=/tags/sdl/ class=tags><span class=name>SDL</span>
+<sup class=num>2</sup>
+</a><a href=/tags/selenium/ class=tags><span class=name>Selenium</span>
+<sup class=num>2</sup>
+</a><a href=/tags/signalr/ class=tags><span class=name>SignalR</span>
+<sup class=num>2</sup>
+</a><a href=/tags/socket/ class=tags><span class=name>Socket</span>
+<sup class=num>2</sup>
+</a><a href=/tags/sse/ class=tags><span class=name>SSE</span>
+<sup class=num>2</sup>
+</a><a href=/tags/streaming/ class=tags><span class=name>Streaming</span>
+<sup class=num>2</sup>
+</a><a href=/tags/swagger/ class=tags><span class=name>Swagger</span>
+<sup class=num>2</sup>
+</a><a href=/tags/tracing/ class=tags><span class=name>Tracing</span>
+<sup class=num>2</sup>
+</a><a href=/tags/vscode/ class=tags><span class=name>VSCode</span>
+<sup class=num>2</sup>
+</a><a href=/tags/wsl/ class=tags><span class=name>WSL</span>
+<sup class=num>2</sup>
+</a><a href=/tags/%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/ class=tags><span class=name>主从复制</span>
+<sup class=num>2</sup>
+</a><a href=/tags/%E4%BA%8B%E4%BB%B6%E8%AE%A2%E9%98%85/ class=tags><span class=name>事件订阅</span>
+<sup class=num>2</sup>
+</a><a href=/tags/%E4%BA%92%E8%81%94%E7%BD%91/ class=tags><span class=name>互联网</span>
+<sup class=num>2</sup>
+</a><a href=/tags/%E4%BA%BA%E6%96%87/ class=tags><span class=name>人文</span>
+<sup class=num>2</sup>
+</a><a href=/tags/%E4%BA%BA%E7%94%9F/ class=tags><span class=name>人生</span>
+<sup class=num>2</sup>
+</a><a href=/tags/%E4%BA%BA%E8%84%B8%E8%AF%86%E5%88%AB/ class=tags><span class=name>人脸识别</span>
+<sup class=num>2</sup>
+</a><a href=/tags/%E4%BE%9D%E8%B5%96%E6%B3%A8%E5%85%A5/ class=tags><span class=name>依赖注入</span>
+<sup class=num>2</sup>
+</a><a href=/tags/%E5%88%86%E5%B8%83%E5%BC%8F/ class=tags><span class=name>分布式</span>
+<sup class=num>2</sup>
+</a><a href=/tags/%E5%8A%A0%E5%AF%86/ class=tags><span class=name>加密</span>
+<sup class=num>2</sup>
+</a><a href=/tags/%E5%8A%A8%E6%80%81%E4%BB%A3%E7%90%86/ class=tags><span class=name>动态代理</span>
+<sup class=num>2</sup>
+</a><a href=/tags/%E5%8A%A8%E6%BC%AB/ class=tags><span class=name>动漫</span>
+<sup class=num>2</sup>
+</a><a href=/tags/%E5%8F%AF%E8%A7%86%E5%8C%96/ class=tags><span class=name>可视化</span>
+<sup class=num>2</sup>
+</a><a href=/tags/%E5%90%8E%E7%AB%AF/ class=tags><span class=name>后端</span>
+<sup class=num>2</sup>
+</a><a href=/tags/%E5%90%91%E9%87%8F/ class=tags><span class=name>向量</span>
+<sup class=num>2</sup>
+</a><a href=/tags/%E5%AE%9E%E4%BD%93/ class=tags><span class=name>实体</span>
+<sup class=num>2</sup>
+</a><a href=/tags/%E5%B7%A5%E5%85%B7/ class=tags><span class=name>工具</span>
+<sup class=num>2</sup>
+</a><a href=/tags/%E5%BC%82%E6%AD%A5/ class=tags><span class=name>异步</span>
+<sup class=num>2</sup>
+</a><a href=/tags/%E6%80%BB%E7%BB%93/ class=tags><span class=name>总结</span>
+<sup class=num>2</sup>
+</a><a href=/tags/%E6%83%85%E6%84%9F/ class=tags><span class=name>情感</span>
+<sup class=num>2</sup>
+</a><a href=/tags/%E6%83%B3%E6%B3%95/ class=tags><span class=name>想法</span>
+<sup class=num>2</sup>
+</a><a href=/tags/%E6%89%93%E5%8D%B0/ class=tags><span class=name>打印</span>
+<sup class=num>2</sup>
+</a><a href=/tags/%E6%8A%80%E6%9C%AF/ class=tags><span class=name>技术</span>
+<sup class=num>2</sup>
+</a><a href=/tags/%E6%9E%B6%E6%9E%84/ class=tags><span class=name>架构</span>
+<sup class=num>2</sup>
+</a><a href=/tags/%E6%A6%82%E7%8E%87/ class=tags><span class=name>概率</span>
+<sup class=num>2</sup>
+</a><a href=/tags/%E6%A8%A1%E6%9D%BF%E5%BC%95%E6%93%8E/ class=tags><span class=name>模板引擎</span>
+<sup class=num>2</sup>
+</a><a href=/tags/%E7%88%AC%E8%99%AB/ class=tags><span class=name>爬虫</span>
+<sup class=num>2</sup>
+</a><a href=/tags/%E7%88%B1%E6%83%85/ class=tags><span class=name>爱情</span>
+<sup class=num>2</sup>
+</a><a href=/tags/%E7%94%BB%E5%AE%B6/ class=tags><span class=name>画家</span>
+<sup class=num>2</sup>
+</a><a href=/tags/%E7%AE%97%E6%B3%95/ class=tags><span class=name>算法</span>
+<sup class=num>2</sup>
+</a><a href=/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9B%BE%E5%BD%A2/ class=tags><span class=name>计算机图形</span>
+<sup class=num>2</sup>
+</a><a href=/tags/%E8%AE%A4%E8%AF%81/ class=tags><span class=name>认证</span>
+<sup class=num>2</sup>
+</a><a href=/tags/%E8%AE%BE%E8%AE%A1/ class=tags><span class=name>设计</span>
+<sup class=num>2</sup>
+</a><a href=/tags/%E8%B4%9D%E5%A1%9E%E5%B0%94%E6%9B%B2%E7%BA%BF/ class=tags><span class=name>贝塞尔曲线</span>
+<sup class=num>2</sup>
+</a><a href=/tags/%E8%B7%A8%E5%9F%9F/ class=tags><span class=name>跨域</span>
+<sup class=num>2</sup>
+</a><a href=/tags/%E9%80%9A%E4%BF%A1/ class=tags><span class=name>通信</span>
+<sup class=num>2</sup>
+</a><a href=/tags/%E9%85%8D%E7%BD%AE/ class=tags><span class=name>配置</span>
+<sup class=num>2</sup>
+</a><a href=/tags/%E9%87%8D%E8%AF%95/ class=tags><span class=name>重试</span>
+<sup class=num>2</sup>
+</a><a href=/tags/%E9%98%85%E8%AF%BB/ class=tags><span class=name>阅读</span>
+<sup class=num>2</sup>
+</a><a href=/tags/%E9%BB%91%E5%AE%A2/ class=tags><span class=name>黑客</span>
+<sup class=num>2</sup>
+</a><a href=/tags/2014/ class=tags><span class=name>2014</span>
+<sup class=num>1</sup>
+</a><a href=/tags/2019/ class=tags><span class=name>2019</span>
+<sup class=num>1</sup>
+</a><a href=/tags/ado.net/ class=tags><span class=name>ADO.NET</span>
+<sup class=num>1</sup>
+</a><a href=/tags/ai/ class=tags><span class=name>AI</span>
+<sup class=num>1</sup>
+</a><a href=/tags/any/ class=tags><span class=name>Any</span>
+<sup class=num>1</sup>
+</a><a href=/tags/apache/ class=tags><span class=name>Apache</span>
+<sup class=num>1</sup>
+</a><a href=/tags/blazor/ class=tags><span class=name>Blazor</span>
+<sup class=num>1</sup>
+</a><a href=/tags/c++/ class=tags><span class=name>C++</span>
+<sup class=num>1</sup>
+</a><a href=/tags/castle/ class=tags><span class=name>Castle</span>
+<sup class=num>1</sup>
+</a><a href=/tags/cdn/ class=tags><span class=name>CDN</span>
+<sup class=num>1</sup>
+</a><a href=/tags/cg/ class=tags><span class=name>CG</span>
+<sup class=num>1</sup>
+</a><a href=/tags/channel/ class=tags><span class=name>Channel</span>
+<sup class=num>1</sup>
+</a><a href=/tags/consul/ class=tags><span class=name>Consul</span>
+<sup class=num>1</sup>
+</a><a href=/tags/cts/ class=tags><span class=name>CTS</span>
+<sup class=num>1</sup>
+</a><a href=/tags/dbeaver/ class=tags><span class=name>DBeaver</span>
+<sup class=num>1</sup>
+</a><a href=/tags/ddd/ class=tags><span class=name>DDD</span>
+<sup class=num>1</sup>
+</a><a href=/tags/delayqueue/ class=tags><span class=name>DelayQueue</span>
+<sup class=num>1</sup>
+</a><a href=/tags/diagnostics/ class=tags><span class=name>Diagnostics</span>
+<sup class=num>1</sup>
+</a><a href=/tags/disunity/ class=tags><span class=name>Disunity</span>
+<sup class=num>1</sup>
+</a><a href=/tags/dottrace/ class=tags><span class=name>DotTrace</span>
+<sup class=num>1</sup>
+</a><a href=/tags/dynamic/ class=tags><span class=name>Dynamic</span>
+<sup class=num>1</sup>
+</a><a href=/tags/dynamic-proxy/ class=tags><span class=name>Dynamic Proxy</span>
+<sup class=num>1</sup>
+</a><a href=/tags/echarts/ class=tags><span class=name>ECharts</span>
+<sup class=num>1</sup>
+</a><a href=/tags/efcore/ class=tags><span class=name>EFCore</span>
+<sup class=num>1</sup>
+</a><a href=/tags/es6/ class=tags><span class=name>ES6</span>
+<sup class=num>1</sup>
+</a><a href=/tags/eventbus/ class=tags><span class=name>EventBus</span>
+<sup class=num>1</sup>
+</a><a href=/tags/excel/ class=tags><span class=name>Excel</span>
+<sup class=num>1</sup>
+</a><a href=/tags/flv/ class=tags><span class=name>FLV</span>
+<sup class=num>1</sup>
+</a><a href=/tags/fody/ class=tags><span class=name>Fody</span>
+<sup class=num>1</sup>
+</a><a href=/tags/form/ class=tags><span class=name>Form</span>
+<sup class=num>1</sup>
+</a><a href=/tags/fp/ class=tags><span class=name>FP</span>
+<sup class=num>1</sup>
+</a><a href=/tags/function-calling/ class=tags><span class=name>Function Calling</span>
+<sup class=num>1</sup>
+</a><a href=/tags/gdi+/ class=tags><span class=name>GDI+</span>
+<sup class=num>1</sup>
+</a><a href=/tags/gephi/ class=tags><span class=name>Gephi</span>
+<sup class=num>1</sup>
+</a><a href=/tags/gpt/ class=tags><span class=name>GPT</span>
+<sup class=num>1</sup>
+</a><a href=/tags/gpts/ class=tags><span class=name>GPTs</span>
+<sup class=num>1</sup>
+</a><a href=/tags/grafana/ class=tags><span class=name>Grafana</span>
+<sup class=num>1</sup>
+</a><a href=/tags/hangfire/ class=tags><span class=name>Hangfire</span>
+<sup class=num>1</sup>
+</a><a href=/tags/hashset/ class=tags><span class=name>HashSet</span>
+<sup class=num>1</sup>
+</a><a href=/tags/hls/ class=tags><span class=name>HLS</span>
+<sup class=num>1</sup>
+</a><a href=/tags/https/ class=tags><span class=name>HTTPS</span>
+<sup class=num>1</sup>
+</a><a href=/tags/hyperlog/ class=tags><span class=name>Hyperlog</span>
+<sup class=num>1</sup>
+</a><a href=/tags/ide/ class=tags><span class=name>IDE</span>
+<sup class=num>1</sup>
+</a><a href=/tags/importlib/ class=tags><span class=name>Importlib</span>
+<sup class=num>1</sup>
+</a><a href=/tags/jaeger/ class=tags><span class=name>Jaeger</span>
+<sup class=num>1</sup>
+</a><a href=/tags/java/ class=tags><span class=name>Java</span>
+<sup class=num>1</sup>
+</a><a href=/tags/jetbrain/ class=tags><span class=name>JetBrain</span>
+<sup class=num>1</sup>
+</a><a href=/tags/jexus/ class=tags><span class=name>Jexus</span>
+<sup class=num>1</sup>
+</a><a href=/tags/js/ class=tags><span class=name>JS</span>
+<sup class=num>1</sup>
+</a><a href=/tags/jsdelivr/ class=tags><span class=name>JsDelivr</span>
+<sup class=num>1</sup>
+</a><a href=/tags/json/ class=tags><span class=name>JSON</span>
+<sup class=num>1</sup>
+</a><a href=/tags/jsonp/ class=tags><span class=name>JSONP</span>
+<sup class=num>1</sup>
+</a><a href=/tags/jupyter/ class=tags><span class=name>Jupyter</span>
+<sup class=num>1</sup>
+</a><a href=/tags/jwt/ class=tags><span class=name>JWT</span>
+<sup class=num>1</sup>
+</a><a href=/tags/k-means/ class=tags><span class=name>K-Means</span>
+<sup class=num>1</sup>
+</a><a href=/tags/keycloak/ class=tags><span class=name>Keycloak</span>
+<sup class=num>1</sup>
+</a><a href=/tags/langchain/ class=tags><span class=name>LangChain</span>
+<sup class=num>1</sup>
+</a><a href=/tags/lazyload/ class=tags><span class=name>LazyLoad</span>
+<sup class=num>1</sup>
+</a><a href=/tags/ldap/ class=tags><span class=name>LDAP</span>
+<sup class=num>1</sup>
+</a><a href=/tags/lfs/ class=tags><span class=name>LFS</span>
+<sup class=num>1</sup>
+</a><a href=/tags/libusbdotnet/ class=tags><span class=name>LibUsbDotNet</span>
+<sup class=num>1</sup>
+</a><a href=/tags/linq/ class=tags><span class=name>Linq</span>
+<sup class=num>1</sup>
+</a><a href=/tags/liquid/ class=tags><span class=name>Liquid</span>
+<sup class=num>1</sup>
+</a><a href=/tags/llama.cpp/ class=tags><span class=name>Llama.cpp</span>
+<sup class=num>1</sup>
+</a><a href=/tags/logger/ class=tags><span class=name>Logger</span>
+<sup class=num>1</sup>
+</a><a href=/tags/love2d/ class=tags><span class=name>Love2D</span>
+<sup class=num>1</sup>
+</a><a href=/tags/mapreduce/ class=tags><span class=name>MapReduce</span>
+<sup class=num>1</sup>
+</a><a href=/tags/markdown/ class=tags><span class=name>Markdown</span>
+<sup class=num>1</sup>
+</a><a href=/tags/matplotlib/ class=tags><span class=name>Matplotlib</span>
+<sup class=num>1</sup>
+</a><a href=/tags/mcp/ class=tags><span class=name>MCP</span>
+<sup class=num>1</sup>
+</a><a href=/tags/mecanim/ class=tags><span class=name>Mecanim</span>
+<sup class=num>1</sup>
+</a><a href=/tags/milvus/ class=tags><span class=name>Milvus</span>
+<sup class=num>1</sup>
+</a><a href=/tags/mmd/ class=tags><span class=name>MMD</span>
+<sup class=num>1</sup>
+</a><a href=/tags/moq/ class=tags><span class=name>Moq</span>
+<sup class=num>1</sup>
+</a><a href=/tags/msbuild/ class=tags><span class=name>MSBuild</span>
+<sup class=num>1</sup>
+</a><a href=/tags/mvc/ class=tags><span class=name>MVC</span>
+<sup class=num>1</sup>
+</a><a href=/tags/mvvm/ class=tags><span class=name>MVVM</span>
+<sup class=num>1</sup>
+</a><a href=/tags/nlog/ class=tags><span class=name>NLog</span>
+<sup class=num>1</sup>
+</a><a href=/tags/obj/ class=tags><span class=name>OBJ</span>
+<sup class=num>1</sup>
+</a><a href=/tags/openai/ class=tags><span class=name>OpenAI</span>
+<sup class=num>1</sup>
+</a><a href=/tags/opentelemetry/ class=tags><span class=name>OpenTelemetry</span>
+<sup class=num>1</sup>
+</a><a href=/tags/oracle/ class=tags><span class=name>Oracle</span>
+<sup class=num>1</sup>
+</a><a href=/tags/orm/ class=tags><span class=name>ORM</span>
+<sup class=num>1</sup>
+</a><a href=/tags/pg_jieba/ class=tags><span class=name>Pg_jieba</span>
+<sup class=num>1</sup>
+</a><a href=/tags/pgvector/ class=tags><span class=name>Pgvector</span>
+<sup class=num>1</sup>
+</a><a href=/tags/pl/sql/ class=tags><span class=name>PL/SQL</span>
+<sup class=num>1</sup>
+</a><a href=/tags/polly/ class=tags><span class=name>Polly</span>
+<sup class=num>1</sup>
+</a><a href=/tags/postgresql/ class=tags><span class=name>PostgreSQL</span>
+<sup class=num>1</sup>
+</a><a href=/tags/postsharp/ class=tags><span class=name>PostSharp</span>
+<sup class=num>1</sup>
+</a><a href=/tags/printdocument/ class=tags><span class=name>PrintDocument</span>
+<sup class=num>1</sup>
+</a><a href=/tags/prometheus/ class=tags><span class=name>Prometheus</span>
+<sup class=num>1</sup>
+</a><a href=/tags/protobuf/ class=tags><span class=name>Protobuf</span>
+<sup class=num>1</sup>
+</a><a href=/tags/pwa/ class=tags><span class=name>PWA</span>
+<sup class=num>1</sup>
+</a><a href=/tags/quartz/ class=tags><span class=name>Quartz</span>
+<sup class=num>1</sup>
+</a><a href=/tags/queue/ class=tags><span class=name>Queue</span>
+<sup class=num>1</sup>
+</a><a href=/tags/qwen-7b-chat/ class=tags><span class=name>Qwen-7B-Chat</span>
+<sup class=num>1</sup>
+</a><a href=/tags/rasa/ class=tags><span class=name>Rasa</span>
+<sup class=num>1</sup>
+</a><a href=/tags/react/ class=tags><span class=name>React</span>
+<sup class=num>1</sup>
+</a><a href=/tags/referrer/ class=tags><span class=name>Referrer</span>
+<sup class=num>1</sup>
+</a><a href=/tags/rerank/ class=tags><span class=name>Rerank</span>
+<sup class=num>1</sup>
+</a><a href=/tags/retrofit/ class=tags><span class=name>Retrofit</span>
+<sup class=num>1</sup>
+</a><a href=/tags/rewrite/ class=tags><span class=name>Rewrite</span>
+<sup class=num>1</sup>
+</a><a href=/tags/rfc/ class=tags><span class=name>RFC</span>
+<sup class=num>1</sup>
+</a><a href=/tags/rpg/ class=tags><span class=name>RPG</span>
+<sup class=num>1</sup>
+</a><a href=/tags/rsetful/ class=tags><span class=name>RSETful</span>
+<sup class=num>1</sup>
+</a><a href=/tags/rtmp/ class=tags><span class=name>RTMP</span>
+<sup class=num>1</sup>
+</a><a href=/tags/scikit-learn/ class=tags><span class=name>Scikit-Learn</span>
+<sup class=num>1</sup>
+</a><a href=/tags/script/ class=tags><span class=name>Script</span>
+<sup class=num>1</sup>
+</a><a href=/tags/semantic-kernel/ class=tags><span class=name>Semantic Kernel</span>
+<sup class=num>1</sup>
+</a><a href=/tags/server-%E9%85%B1/ class=tags><span class=name>Server 酱</span>
+<sup class=num>1</sup>
+</a><a href=/tags/shader/ class=tags><span class=name>Shader</span>
+<sup class=num>1</sup>
+</a><a href=/tags/sklearn/ class=tags><span class=name>Sklearn</span>
+<sup class=num>1</sup>
+</a><a href=/tags/sonar/ class=tags><span class=name>Sonar</span>
+<sup class=num>1</sup>
+</a><a href=/tags/sourcetree/ class=tags><span class=name>SourceTree</span>
+<sup class=num>1</sup>
+</a><a href=/tags/sqlite/ class=tags><span class=name>SQLite</span>
+<sup class=num>1</sup>
+</a><a href=/tags/ssh-key/ class=tags><span class=name>SSH-Key</span>
+<sup class=num>1</sup>
+</a><a href=/tags/sublime/ class=tags><span class=name>Sublime</span>
+<sup class=num>1</sup>
+</a><a href=/tags/svg/ class=tags><span class=name>SVG</span>
+<sup class=num>1</sup>
+</a><a href=/tags/svn/ class=tags><span class=name>SVN</span>
+<sup class=num>1</sup>
+</a><a href=/tags/testserver/ class=tags><span class=name>TestServer</span>
+<sup class=num>1</sup>
+</a><a href=/tags/text2sql/ class=tags><span class=name>Text2SQL</span>
+<sup class=num>1</sup>
+</a><a href=/tags/thoughtworks/ class=tags><span class=name>ThoughtWorks</span>
+<sup class=num>1</sup>
+</a><a href=/tags/trace/ class=tags><span class=name>Trace</span>
+<sup class=num>1</sup>
+</a><a href=/tags/unity/ class=tags><span class=name>Unity</span>
+<sup class=num>1</sup>
+</a><a href=/tags/usb/ class=tags><span class=name>USB</span>
+<sup class=num>1</sup>
+</a><a href=/tags/valine/ class=tags><span class=name>Valine</span>
+<sup class=num>1</sup>
+</a><a href=/tags/visual-studio/ class=tags><span class=name>Visual Studio</span>
+<sup class=num>1</sup>
+</a><a href=/tags/web-api/ class=tags><span class=name>Web API</span>
+<sup class=num>1</sup>
+</a><a href=/tags/webassembly/ class=tags><span class=name>WebAssembly</span>
+<sup class=num>1</sup>
+</a><a href=/tags/webview2/ class=tags><span class=name>WebView2</span>
+<sup class=num>1</sup>
+</a><a href=/tags/wechat/ class=tags><span class=name>Wechat</span>
+<sup class=num>1</sup>
+</a><a href=/tags/windows/ class=tags><span class=name>Windows</span>
+<sup class=num>1</sup>
+</a><a href=/tags/wmi/ class=tags><span class=name>WMI</span>
+<sup class=num>1</sup>
+</a><a href=/tags/ztree/ class=tags><span class=name>ZTree</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E4%B8%80%E5%87%BA%E5%A5%BD%E6%88%8F/ class=tags><span class=name>一出好戏</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E4%B8%83%E7%89%9B/ class=tags><span class=name>七牛</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E4%B8%89%E4%BD%93/ class=tags><span class=name>三体</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E4%B8%8A%E4%BC%A0/ class=tags><span class=name>上传</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E4%B8%8B%E8%BD%BD/ class=tags><span class=name>下载</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E4%BA%8B%E4%BB%B6/ class=tags><span class=name>事件</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E4%BA%8C%E7%BB%B4%E7%A0%81/ class=tags><span class=name>二维码</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E4%BA%91%E5%8E%9F%E7%94%9F/ class=tags><span class=name>云原生</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E4%BA%91%E9%9F%B3%E4%B9%90/ class=tags><span class=name>云音乐</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E4%BA%A4%E4%BA%92/ class=tags><span class=name>交互</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E4%BA%B2%E6%83%85/ class=tags><span class=name>亲情</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/ class=tags><span class=name>人工智能</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E4%BA%BA%E8%84%B8%E5%88%86%E7%B1%BB/ class=tags><span class=name>人脸分类</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E4%BA%BA%E8%84%B8%E6%A3%80%E6%B5%8B/ class=tags><span class=name>人脸检测</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E4%BB%99%E5%89%91%E5%A5%87%E4%BE%A0%E4%BC%A0/ class=tags><span class=name>仙剑奇侠传</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E4%BB%A3%E7%A0%81%E8%A7%A3%E9%87%8A%E5%99%A8/ class=tags><span class=name>代码解释器</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E4%BB%B7%E5%80%BC/ class=tags><span class=name>价值</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E4%BC%98%E5%8C%96/ class=tags><span class=name>优化</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E4%BD%8E%E4%BB%A3%E7%A0%81/ class=tags><span class=name>低代码</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E4%BD%90%E8%97%A4%E5%81%A5/ class=tags><span class=name>佐藤健</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%81%A5%E5%BA%B7%E6%A3%80%E6%9F%A5/ class=tags><span class=name>健康检查</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%81%A5%E5%BA%B7%E7%A0%81/ class=tags><span class=name>健康码</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%85%A8%E6%96%87%E6%A3%80%E7%B4%A2/ class=tags><span class=name>全文检索</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%85%A8%E6%99%BA%E8%B4%A4/ class=tags><span class=name>全智贤</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%85%AB%E5%8D%A6/ class=tags><span class=name>八卦</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%85%AC%E4%BC%97%E5%8F%B7/ class=tags><span class=name>公众号</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%85%B3%E5%8D%A1%E7%B3%BB%E7%BB%9F/ class=tags><span class=name>关卡系统</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%87%BD%E6%95%B0%E5%BC%8F%E7%BC%96%E7%A8%8B/ class=tags><span class=name>函数式编程</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%88%86%E9%A1%B5/ class=tags><span class=name>分页</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%88%AB%E7%A6%BB/ class=tags><span class=name>别离</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%88%BA%E5%AE%A2%E4%BF%A1%E6%9D%A1/ class=tags><span class=name>刺客信条</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%89%8D%E4%BB%BB/ class=tags><span class=name>前任</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%89%91%E6%8C%87offer/ class=tags><span class=name>剑指Offer</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%8A%A8%E6%80%81%E5%8A%A0%E8%BD%BD/ class=tags><span class=name>动态加载</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%8A%A8%E6%80%81%E5%AF%BC%E5%85%A5/ class=tags><span class=name>动态导入</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%8A%A8%E7%94%BB/ class=tags><span class=name>动画</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%8D%83%E5%AF%BB%E5%B0%8F%E5%A7%90/ class=tags><span class=name>千寻小姐</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%8D%8A%E6%B3%BD%E7%9B%B4%E6%A0%91/ class=tags><span class=name>半泽直树</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%8D%95%E4%BD%8D/ class=tags><span class=name>单位</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95/ class=tags><span class=name>单元测试</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%8D%95%E6%9C%BA%E6%B8%B8%E6%88%8F/ class=tags><span class=name>单机游戏</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%8D%B0%E5%BA%A6/ class=tags><span class=name>印度</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%8F%82%E5%B7%AE/ class=tags><span class=name>参差</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%8F%8C%E5%8D%81%E4%B8%80/ class=tags><span class=name>双十一</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%8F%8D%E5%90%91%E4%BB%A3%E7%90%86/ class=tags><span class=name>反向代理</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%8F%8D%E7%BC%96%E8%AF%91/ class=tags><span class=name>反编译</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%8F%96%E6%B6%88/ class=tags><span class=name>取消</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%90%8C%E6%AD%A5/ class=tags><span class=name>同步</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%91%BD%E4%BB%A4/ class=tags><span class=name>命令</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%92%8C%E5%B9%B3/ class=tags><span class=name>和平</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%93%8D%E5%BA%94%E5%BC%8F/ class=tags><span class=name>响应式</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%93%AA%E5%90%92/ class=tags><span class=name>哪吒</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%9B%9B%E6%9C%88/ class=tags><span class=name>四月</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%9B%9E%E5%AE%B6/ class=tags><span class=name>回家</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%9B%9E%E5%BF%86/ class=tags><span class=name>回忆</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%9B%9E%E9%A1%BE/ class=tags><span class=name>回顾</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%9B%9E%E9%A6%96/ class=tags><span class=name>回首</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%9B%BE%E5%BA%8A/ class=tags><span class=name>图床</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%9B%BE%E5%BD%A2%E5%AD%A6/ class=tags><span class=name>图形学</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%9C%B0%E5%9B%BE/ class=tags><span class=name>地图</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%A1%94%E9%98%B2/ class=tags><span class=name>塔防</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%A3%81%E7%BA%B8/ class=tags><span class=name>壁纸</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%A4%87%E5%BF%98/ class=tags><span class=name>备忘</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%A4%8F%E7%9B%AE%E6%BC%B1%E7%9F%B3/ class=tags><span class=name>夏目漱石</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%A4%95%E9%9B%BE%E8%8A%B1%E5%9B%AD/ class=tags><span class=name>夕雾花园</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%A4%9A%E7%A7%9F%E6%88%B7/ class=tags><span class=name>多租户</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%A4%A7%E6%8A%A4%E6%B3%95/ class=tags><span class=name>大护法</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%A4%A7%E6%95%B0%E6%8D%AE/ class=tags><span class=name>大数据</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%A4%A7%E6%A8%A1%E5%9E%8B/ class=tags><span class=name>大模型</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%A5%87%E6%8A%80%E6%B7%AB%E5%B7%A7/ class=tags><span class=name>奇技淫巧</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%A7%94%E6%89%98/ class=tags><span class=name>委托</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%AD%A4%E7%8B%AC/ class=tags><span class=name>孤独</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%AE%A1%E8%AE%A1/ class=tags><span class=name>审计</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%AE%AB%E5%B4%8E%E9%AA%8F/ class=tags><span class=name>宫崎骏</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%AF%B9%E8%B1%A1%E6%B1%A0/ class=tags><span class=name>对象池</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%B0%81%E7%A5%9E/ class=tags><span class=name>封神</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%B0%8F%E7%88%B1%E5%90%8C%E5%AD%A6/ class=tags><span class=name>小爱同学</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%B1%95%E6%9C%9B/ class=tags><span class=name>展望</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%B9%B3%E5%87%A1/ class=tags><span class=name>平凡</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%B9%B4%E5%8D%8E/ class=tags><span class=name>年华</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%B9%B4%E5%BA%A6/ class=tags><span class=name>年度</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%B9%B6%E5%8F%91/ class=tags><span class=name>并发</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%BB%BA%E7%AD%91/ class=tags><span class=name>建筑</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%BC%80%E6%BA%90/ class=tags><span class=name>开源</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%BC%95%E6%93%8E/ class=tags><span class=name>引擎</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%BE%AE%E4%BF%A1/ class=tags><span class=name>微信</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%BF%83%E6%83%85/ class=tags><span class=name>心情</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%80%9D%E7%BB%B4/ class=tags><span class=name>思维</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%80%A7%E8%83%BD/ class=tags><span class=name>性能</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%87%92%E5%8A%A0%E8%BD%BD/ class=tags><span class=name>懒加载</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%88%91%E6%98%AF%E7%8C%AB/ class=tags><span class=name>我是猫</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%89%A9%E5%B1%95%E6%96%B9%E6%B3%95/ class=tags><span class=name>扩展方法</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%8A%80%E6%9C%AF%E6%80%9D%E8%80%83/ class=tags><span class=name>技术思考</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%8B%96%E6%8B%BD/ class=tags><span class=name>拖拽</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%8E%A2%E7%B4%A2/ class=tags><span class=name>探索</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%8E%A8%E8%8D%90/ class=tags><span class=name>推荐</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%8F%90%E7%BA%B2/ class=tags><span class=name>提纲</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%8F%92%E4%BB%B6%E5%8C%96/ class=tags><span class=name>插件化</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%95%B0%E5%AD%97/ class=tags><span class=name>数字</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%95%B0%E6%8D%AE/ class=tags><span class=name>数据</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%95%B0%E6%8D%AE%E4%BA%A4%E6%8D%A2/ class=tags><span class=name>数据交换</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%96%87%E4%BB%B6/ class=tags><span class=name>文件</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%96%87%E6%9C%AC%E5%88%86%E7%B1%BB/ class=tags><span class=name>文本分类</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%96%87%E6%A1%A3/ class=tags><span class=name>文档</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%97%A0%E9%97%AE%E8%A5%BF%E4%B8%9C/ class=tags><span class=name>无问西东</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%97%A5%E5%89%A7/ class=tags><span class=name>日剧</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%97%A5%E5%B8%B8/ class=tags><span class=name>日常</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%97%A5%E6%9C%AC/ class=tags><span class=name>日本</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%97%A5%E6%9C%AC%E6%96%87%E5%AD%A6/ class=tags><span class=name>日本文学</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%97%B6%E5%8C%BA/ class=tags><span class=name>时区</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%99%BA%E8%83%BD%E5%AE%B6%E5%B1%85/ class=tags><span class=name>智能家居</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%9C%89%E6%9D%91%E6%9E%B6%E7%BA%AF/ class=tags><span class=name>有村架纯</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%9C%8D%E5%8A%A1/ class=tags><span class=name>服务</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%9C%8D%E5%8A%A1%E7%BC%96%E6%8E%92/ class=tags><span class=name>服务编排</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%9C%9D%E5%9C%A3/ class=tags><span class=name>朝圣</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%9C%B4%E7%B4%A0%E8%B4%9D%E5%8F%B6%E6%96%AF/ class=tags><span class=name>朴素贝叶斯</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/ class=tags><span class=name>机器学习</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%9F%A5%E8%AF%A2/ class=tags><span class=name>查询</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%A0%87%E6%B3%A8/ class=tags><span class=name>标注</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%A0%A1%E9%AA%8C/ class=tags><span class=name>校验</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%A0%BC%E5%BC%8F/ class=tags><span class=name>格式</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%A0%BC%E5%BC%8F%E5%8C%96/ class=tags><span class=name>格式化</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%A1%8C%E9%9D%A2/ class=tags><span class=name>桌面</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%A8%A1%E5%9E%8B/ class=tags><span class=name>模型</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%A8%A1%E6%9D%BF/ class=tags><span class=name>模板</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%AF%95%E4%B8%9A/ class=tags><span class=name>毕业</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%AF%95%E4%B8%9A%E5%AD%A3/ class=tags><span class=name>毕业季</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%B2%99%E7%AE%B1/ class=tags><span class=name>沙箱</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%B5%81%E5%AA%92%E4%BD%93/ class=tags><span class=name>流媒体</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%B5%81%E5%BC%8F%E4%BC%A0%E8%BE%93/ class=tags><span class=name>流式传输</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%B5%AA%E5%AE%A2%E5%89%91%E5%BF%83/ class=tags><span class=name>浪客剑心</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%B6%88%E6%81%AF/ class=tags><span class=name>消息</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%B8%B8%E6%88%8F%E5%BC%95%E6%93%8E/ class=tags><span class=name>游戏引擎</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%B8%B8%E8%AE%B0/ class=tags><span class=name>游记</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E7%83%AD%E6%90%9C/ class=tags><span class=name>热搜</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E7%86%B5%E5%A2%9E%E5%AE%9A%E5%BE%8B/ class=tags><span class=name>熵增定律</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E7%89%88%E6%9C%AC%E6%8E%A7%E5%88%B6/ class=tags><span class=name>版本控制</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E7%89%88%E6%9D%83/ class=tags><span class=name>版权</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E7%89%B9%E6%80%A7/ class=tags><span class=name>特性</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E7%8A%B6%E6%80%81/ class=tags><span class=name>状态</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E7%8E%B0%E5%AE%9E/ class=tags><span class=name>现实</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E7%94%9F%E6%AD%BB/ class=tags><span class=name>生死</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E7%9C%9F%E5%AE%9E/ class=tags><span class=name>真实</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E7%9F%A5%E8%AF%86%E5%85%B1%E4%BA%AB/ class=tags><span class=name>知识共享</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E7%9F%AB%E6%83%85/ class=tags><span class=name>矫情</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E7%A0%94%E5%8F%91/ class=tags><span class=name>研发</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E7%A1%AC%E4%BB%B6/ class=tags><span class=name>硬件</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E7%A7%91%E5%B9%BB%E5%B0%8F%E8%AF%B4/ class=tags><span class=name>科幻小说</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E7%A9%B9%E4%B9%8B%E6%89%89/ class=tags><span class=name>穹之扉</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E7%A9%BF%E6%90%AD/ class=tags><span class=name>穿搭</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E7%AB%A5%E8%AF%9D/ class=tags><span class=name>童话</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E7%AD%BE%E5%90%8D/ class=tags><span class=name>签名</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E7%AE%A1%E9%81%93/ class=tags><span class=name>管道</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E7%B1%B3%E8%8A%B1%E4%B9%8B%E5%91%B3/ class=tags><span class=name>米花之味</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E7%BC%96%E8%AF%91/ class=tags><span class=name>编译</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E7%BD%91%E5%85%B3/ class=tags><span class=name>网关</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E7%BD%91%E6%98%93/ class=tags><span class=name>网易</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E7%BE%8E%E6%9C%AF/ class=tags><span class=name>美术</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E8%81%9A%E7%B1%BB/ class=tags><span class=name>聚类</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E8%84%9A%E6%9C%AC/ class=tags><span class=name>脚本</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E8%84%9A%E6%9C%AC%E8%AF%AD%E8%A8%80/ class=tags><span class=name>脚本语言</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E8%87%AA%E5%8A%A8%E5%8C%96/ class=tags><span class=name>自动化</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E8%87%AA%E6%88%91%E5%92%8C%E8%A7%A3/ class=tags><span class=name>自我和解</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E8%8B%8F%E8%BD%BC/ class=tags><span class=name>苏轼</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E8%99%9A%E6%8B%9F%E6%91%87%E6%9D%86/ class=tags><span class=name>虚拟摇杆</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E8%9B%8B%E7%82%92%E9%A5%AD/ class=tags><span class=name>蛋炒饭</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E8%A1%8C%E4%B8%9A/ class=tags><span class=name>行业</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E8%A1%A8%E5%8D%95/ class=tags><span class=name>表单</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E8%A1%A8%E8%BE%BE%E5%BC%8F%E6%A0%91/ class=tags><span class=name>表达式树</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E8%A3%85%E9%A5%B0%E5%99%A8/ class=tags><span class=name>装饰器</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E8%A5%BF%E6%BC%82/ class=tags><span class=name>西漂</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E8%AE%AD%E7%BB%83/ class=tags><span class=name>训练</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E8%AE%B0%E5%BD%95/ class=tags><span class=name>记录</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E8%AE%BF%E9%97%AE%E9%87%8F/ class=tags><span class=name>访问量</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E8%AF%81%E4%B9%A6/ class=tags><span class=name>证书</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E8%AF%84%E8%AE%BA/ class=tags><span class=name>评论</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E8%AF%8D%E4%BA%91/ class=tags><span class=name>词云</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E8%AF%97%E4%BA%BA/ class=tags><span class=name>诗人</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E8%AF%AD%E6%B3%95/ class=tags><span class=name>语法</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E8%AF%AD%E8%A8%80/ class=tags><span class=name>语言</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E8%AF%B7%E8%AE%B0%E4%BD%8F%E6%88%91/ class=tags><span class=name>请记住我</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/ class=tags><span class=name>读写分离</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E8%B0%83%E4%BC%98/ class=tags><span class=name>调优</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E8%B0%83%E8%AF%95/ class=tags><span class=name>调试</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1/ class=tags><span class=name>负载均衡</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E8%B4%AA%E5%90%83%E8%9B%87/ class=tags><span class=name>贪吃蛇</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E8%B4%BE%E7%BB%B4%E6%96%AF/ class=tags><span class=name>贾维斯</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E8%B5%84%E6%BA%90%E6%8F%90%E5%8F%96/ class=tags><span class=name>资源提取</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E8%B5%B0%E8%B5%B0%E5%81%9C%E5%81%9C/ class=tags><span class=name>走走停停</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E8%B7%AF%E7%94%B1/ class=tags><span class=name>路由</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E8%BD%AC%E7%9B%98/ class=tags><span class=name>转盘</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E8%BD%AF%E4%BB%B6/ class=tags><span class=name>软件</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E8%BF%81%E7%A7%BB/ class=tags><span class=name>迁移</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E9%82%AA%E4%B8%8D%E5%8E%8B%E6%AD%A3/ class=tags><span class=name>邪不压正</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E9%83%A8%E7%BD%B2/ class=tags><span class=name>部署</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E9%85%8D%E7%BD%AE%E4%B8%AD%E5%BF%83/ class=tags><span class=name>配置中心</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E9%85%8D%E8%BD%BD/ class=tags><span class=name>配载</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E9%95%BF%E5%AE%89/ class=tags><span class=name>长安</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E9%95%BF%E5%AE%89%E5%8D%81%E4%BA%8C%E6%97%B6%E8%BE%B0/ class=tags><span class=name>长安十二时辰</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E9%95%BF%E6%88%AA%E5%9B%BE/ class=tags><span class=name>长截图</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E9%98%B2%E7%96%AB/ class=tags><span class=name>防疫</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E9%98%BF%E9%87%8C/ class=tags><span class=name>阿里</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E9%99%90%E6%B5%81/ class=tags><span class=name>限流</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E9%9B%86%E6%88%90%E6%B5%8B%E8%AF%95/ class=tags><span class=name>集成测试</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E9%9B%86%E7%BE%A4/ class=tags><span class=name>集群</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E9%9C%8D%E9%87%91/ class=tags><span class=name>霍金</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E9%9D%92%E6%98%A5/ class=tags><span class=name>青春</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E9%9D%99%E6%80%81%E7%BC%96%E7%BB%87/ class=tags><span class=name>静态编织</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E9%9F%A9%E5%AF%92/ class=tags><span class=name>韩寒</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E9%A2%86%E5%9F%9F%E4%BA%8B%E4%BB%B6/ class=tags><span class=name>领域事件</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E9%A9%AC%E5%B0%94%E5%85%8B%E6%96%AF/ class=tags><span class=name>马尔克斯</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E9%AA%8C%E8%AF%81/ class=tags><span class=name>验证</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E9%AC%BC%E6%BB%85%E3%81%AE%E5%88%83/ class=tags><span class=name>鬼滅の刃</span>
+<sup class=num>1</sup></a></div><a href=/tags class=more-tags>查看全部</a></div><div class="site-data s-card weidgets"><div class=title><i class="iconfont icon-chart"></i>
+<span class=title-name>站点数据</span></div><div class=all-data><div class=data-item><span class=name><i class="iconfont icon-article"></i>
+文章总数
+</span><span class=num>277 篇</span></div><div class=data-item><span class=name><i class="iconfont icon-date"></i>
+建站天数
+</span><span class=num>3753 天</span></div><div class=data-item><span class=name><i class="iconfont icon-visibility"></i>
+总访问量
+</span><span class=num id=busuanzi_value_site_pv>0</span></div><div class=data-item><span class=name><i class="iconfont icon-account"></i>
+总访客数
+</span><span class=num id=busuanzi_value_site_uv>0</span></div></div></div></div></aside><style>.main-aside{padding-left:1rem;display:flex;flex-direction:column;animation:fade-up .6s .3s backwards;.weidgets { padding: 18px; margin-bottom: 1rem; :deep(.title) { margin-bottom: 12px; font-weight: bold; display: flex; align-items: center; opacity: 0.75; .iconfont { opacity: 0.6; margin-right: 6px; } .title-name { opacity: 0.8; } } } .sticky { position: sticky; top: calc(60px + 1rem); .weidgets { animation: fade-up 0.6s 0.4s backwards; &:last-child { margin-bottom: 0; } } }}</style></div></div></main><div class=footer-link><div class=footer-bar><span class=site-title>元视角</span>
+<span class=site-desc>纵有疾风起，人生不言弃</span>
+<a href=/ class=to-home>了解更多</a></div><div class=footer-social><a href=https://github.com/qinyuanpei target=_blank class=social-link><i class="iconfont icon-github"></i>
+</a><a href=mailto:qinyuanpei@163.com target=_blank class=social-link><i class="iconfont icon-email"></i>
+</a><a href=/index.xml target=_blank class=social-link><i class="iconfont icon-rss"></i></a><div class=logo title=返回顶部 onclick='window.scrollTo({top:0,behavior:"smooth"})'><img src=/images/icons8-stellar-128.png alt=author class=author></div><a href=https://weibo.com/1278609231 target=_blank class=social-link><i class="iconfont icon-weibo"></i>
+</a><a href=https://www.douban.com/people/60029335/ target=_blank class=social-link><i class="iconfont icon-douban"></i>
+</a><a href=https://www.zhihu.com/people/qinyuanpei target=_blank class=social-link><i class="iconfont icon-zhihu"></i></a></div><div class=footer-sitemap><div class=sitemap-item><span class=title>博客</span><div class=links><a href=/ class=link-text>近期文章
+</a><a href=/categories class=link-text>全部分类
+</a><a href=/tags class=link-text>全部标签
+</a><a href=/archives class=link-text>文章归档</a></div></div><div class=sitemap-item><span class=title>项目</span><div class=links><a href=https://example1.com target=_blank class=link-text>项目1
+</a><a href=https://example2.com target=_blank class=link-text>项目2
+</a><a href=https://example2.com target=_blank class=link-text>项目3
+</a><a href=https://example2.com target=_blank class=link-text>项目4</a></div></div><div class=sitemap-item><span class=title>专栏</span><div class=links><a href=https://blog.csdn.net/qinyuanpei/category_10852603.html target=_blank class=link-text>.NET 源代码探案系列
+</a><a href=https://blog.csdn.net/qinyuanpei/category_7444699.html target=_blank class=link-text>Python 数据挖掘系列
+</a><a href=https://blog.csdn.net/qinyuanpei/category_11484903.html target=_blank class=link-text>分布式丛林探险系列
+</a><a href=https://blog.csdn.net/qinyuanpei/category_1708629.html target=_blank class=link-text>Unity3D 游戏开发系列</a></div></div><div class=sitemap-item><span class=title>页面</span><div class=links><a href=/comments class=link-text>畅所欲言
+</a><a href=/books class=link-text>阅读记录
+</a><a href=/movies class=link-text>观影记录
+</a><a href=/musics class=link-text>听歌记录</a></div></div><div class=sitemap-item><span class=title>友情链接</span><div class=links><a href=https://blog.zhheo.com/ class=link-text>张洪
+</a><a href=https://blog.zhheo.com/ class=link-text>张洪
+</a><a href=https://blog.zhheo.com/ class=link-text>张洪
+</a><a href=https://blog.zhheo.com/ class=link-text>更多</a></div></div></div></div><footer id=main-footer class=main-footer><div class=footer-content><div class=footer-copyright><span class=time data-v-6001e979>@ 2014 - 2025 By </span><a href=https://www.imsyy.top class="author link" target=_blank>飞鸿踏雪</a></div><div class=meta><a class="power link" href=https://vitepress.dev/ target=_blank><span class=by>Powered by</span>
+<span class=name>Hugo</span>
+</a><a class="theme link" href=/pages/theme><span class=name>主题</span>
+</a><a class="rss link" href=https://blog.imsyy.top/rss.xml target=_blank><i class="iconfont icon-rss"></i>
+<span class=name data-v-6001e979>订阅</span>
+</a><a class="cc link" href=https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh-hans target=_blank><i class="iconfont icon-line"></i>
+<i class="iconfont icon-by-line"></i>
+<i class="iconfont icon-nc-line"></i><i class="iconfont icon-nd-line"></i></a></div></div></footer><script type=module src=/js/main.js></script></body></html>

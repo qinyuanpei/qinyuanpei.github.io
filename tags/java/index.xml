@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Java on 元视角</title><link>http://example.org/tags/java/</link><description>Recent content in Java on 元视角</description><generator>Hugo</generator><language>zh-cn</language><lastBuildDate>Wed, 20 Mar 2019 12:49:37 +0000</lastBuildDate><atom:link href="http://example.org/tags/java/index.xml" rel="self" type="application/rss+xml"/><item><title>《阿里巴巴 Java 开发手册》读书笔记</title><link>http://example.org/posts/1122710277/</link><pubDate>Wed, 20 Mar 2019 12:49:37 +0000</pubDate><guid>http://example.org/posts/1122710277/</guid><description>最近利用闲暇时间从图书馆借了两三本书来“充电”，因为如果不及时摄取新的营养，感觉会越来越难有新的想法输出出来，尤其是像 ServerLess、组件化、分布式等等这样的场景慢慢开始接触，就势必无法再用从前的眼光去看待。大概去年的时候，阿里巴巴发布了「阿里巴巴开发手册」这本小册子，大概不到 100 页的样子，这次我就挑选了我觉得还不错的关键点，和大家简单分享一下，所以，这是一篇“典型”的读书笔记，下面的编号代表的是指定章节下的第几条规范，例如，1.1.2 表示的是第一章第一节中的第二条规范，欢迎大家一起讨论。
+编程规范 1.1.2 代码中的命名严禁使用拼音与英文混合的方式，不允许直接使用中文的方式，纯拼音命名方式更要避免采用。
+说明：英文不好可以去查，禁止使用纯拼音或者拼音缩写的命名方式，除了不能“望文生义”以外，对导致别人在调用接口的时候，向这种“丧心病狂”的编码风格妥协，这里不点名批评某 SAP 提供的 OA 接口，除了超级难用以外，每次都要花大量时间去对字段。
+1.4.3 相同参数类型，相同业务含义，才可以使用 Java 的可变参数，避免使用 Object，可变参数必须放置在参数列表最后。
+说明：例如一个接口同时支持单条更新或者批量更新，此时，完全就可以使用 param 关键字来声明相同的参数类型，而无须定义 InsertOne 和 InsertMany 两个方法。
+1.4.4 对外部正在使用或者二方库依赖的接口，不允许修改方法签名，以避免对接口调用方产生影响。若接口过时，必须加@Deprecated 注解，并清晰地说明采用的新接口或者新服务是什么。
+说明：对于过期的接口可以通过 Obsolete 特性来声明过期，这样在编译时期间可以告知使用者该接口已过期。对于 WebAPI 接口，除非有版本控制机制，否则一律不允许修改已上线的接口签名、参数和返回值。
+1.4.17 在循环体内，字符串的连接方式使用 StringBuilder 的 append 方法进行扩展。
+说明：这一点，在 C#中同样适用，因为字符串类型是 Immutable 的，对字符串进行拼接会产生大量的临时对象。
+1.5.7 不要在 foreach 循环内进行元素的 remove/add 操作。remove 元素请使用 Iterator 方式，如果并发操作，需要对 Iterator 对象加锁。
+说明：因为 foreach 是基于迭代器(IEnumerator)的，在 foreach 循环内部修改集合，会导致 Current 和 MoveNext()发生混乱，早期的集合使用 SynRoot 来解决线程安全(内部原理是使用了 Interlocked 锁)，现在我们使用 CurrentBag 等线程安全的集合。
+1.6.1 获取单例对象需要保证线程安全，其中的方法同样要保证线程安全。</description></item></channel></rss>

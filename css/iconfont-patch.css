@@ -1,0 +1,97 @@
+@font-face {
+  font-family: "iconfont";
+  src: url('/fonts/patch/iconfont.woff2?t=1743557141597') format('woff2'),
+    url('/fonts/patch/iconfont.woff?t=1743557141597') format('woff'),
+    url('/fonts/patch/iconfont.ttf?t=1743557141597') format('truetype');
+}
+
+.icon-arrow-right-circle:before {
+  content: "\e626";
+}
+
+.icon-Ubuntu:before {
+  content: "\edd3";
+}
+
+.icon-vscode:before {
+  content: "\e6b8";
+}
+
+.icon-postgresql:before {
+  content: "\ec5d";
+}
+
+.icon-dotnet:before {
+  content: "\e692";
+}
+
+.icon-CI-CD:before {
+  content: "\e680";
+}
+
+.icon-python:before {
+  content: "\e767";
+}
+
+.icon-Elastic:before {
+  content: "\e78a";
+}
+
+.icon-rss:before {
+  content: "\e6eb";
+}
+
+.icon-zixunfuwu:before {
+  content: "\e706";
+}
+
+.icon-tongji:before {
+  content: "\e637";
+}
+
+.icon-guidang:before {
+  content: "\e63e";
+}
+
+.icon-movies:before {
+  content: "\e792";
+}
+
+.icon-book-fill:before {
+  content: "\e602";
+}
+
+.icon-douban:before {
+  content: "\e707";
+}
+
+.icon-zhihu:before {
+  content: "\e765";
+}
+
+.icon-rocket:before {
+  content: "\e8b7";
+}
+
+.icon-moon:before {
+  content: "\e65c";
+}
+
+.icon-github:before {
+  content: "\e728";
+}
+
+.icon-douban0:before {
+  content: "\e70a";
+}
+
+.icon-weibo:before {
+  content: "\e882";
+}
+
+.icon-sun:before {
+  content: "\e886";
+}
+
+
+

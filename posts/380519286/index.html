@@ -1,0 +1,1242 @@
+<!doctype html><html lang=zh-cn><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><meta http-equiv=X-UA-Compatible content="ie=edge"><meta name=referrer content="no-referrer"><title>声明式 RESTful 客户端 WebApiClient 在项目中的应用 - 元视角</title>
+<meta name=description content="项目采用敏捷开发后出现“联调”任务，由于前后端分离导致团队分成前后端组，前端负责展示数据，后端提供服务接口，但存在沟通困难。讨论三方面原因：设计不当、进度不一、沟通不畅。介绍前后端分离思想，客户端产品采用Native+Web技术架构，通过JSBridge实现Native和Web通信。详述WebApiClient库在.NET平台下类似Retrofit的作用，通过声明式方式定义接口调用。讨论上传下载接口、过滤器与OAuth2，以及可配置与动态化。强调前后端职责分离重要性，提出通过代理类调用后端API的想法。最后介绍WebApiClient的应用，提倡契约式接口声明，以更快速应对后端变化。"><link rel="shortcut icon" href type=image/x-icon><link rel=icon type=image/x-icon href=/images/favicon.ico><link rel=icon type=image/png href=/images/favicon.png><meta property="og:title" content="声明式 RESTful 客户端 WebApiClient 在项目中的应用"><meta property="og:description" content="项目采用敏捷开发后出现“联调”任务，由于前后端分离导致团队分成前后端组，前端负责展示数据，后端提供服务接口，但存在沟通困难。讨论三方面原因：设计不当、进度不一、沟通不畅。介绍前后端分离思想，客户端产品采用Native+Web技术架构，通过JSBridge实现Native和Web通信。详述WebApiClient库在.NET平台下类似Retrofit的作用，通过声明式方式定义接口调用。讨论上传下载接口、过滤器与OAuth2，以及可配置与动态化。强调前后端职责分离重要性，提出通过代理类调用后端API的想法。最后介绍WebApiClient的应用，提倡契约式接口声明，以更快速应对后端变化。"><meta property="og:type" content="article"><meta property="og:url" content="http://example.org/posts/380519286/"><link rel=stylesheet href=/scss/main.min.2c77edfe155005c41cf8cefed2d412617a105f62cf1d21036e0c9167beddbb2d.css><link rel=stylesheet crossorigin=anonymous href=https://cdn.jsdelivr.net/npm/misans@4.1.0/lib/Normal/MiSans-Medium.min.css><link rel=stylesheet crossorigin=anonymous href=https://cdn.jsdelivr.net/npm/misans@4.1.0/lib/Normal/MiSans-Bold.min.css><link rel=stylesheet href=/css/iconfont.css><link rel=stylesheet href=/css/iconfont-patch.css><script src=https://cdn.jsdelivr.net/npm/fuse.js@7.1.0></script><script src=https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.11.1/build/highlight.min.js></script><link rel=stylesheet href=https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.11.1/build/styles/github-dark.min.css media="(prefers-color-scheme: dark)"><link rel=stylesheet href=https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.11.1/build/styles/github.min.css media="(prefers-color-scheme: light)"><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.css><script src=https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.umd.js></script></head><body><div class="background patterns"><div class=bg-mask></div><div class=bg-image style="background-image:url(https://tuapi.eees.cc/api.php?category=%7bdongman,fengjing%7d&amp;type=302)"></div></div><style>.background{position:fixed;top:0;left:0;width:100vw;height:100vh;display:flex;align-items:center;justify-content:center;z-index:-2;&.patterns { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='192' height='192' viewBox='0 0 192 192'%3E%3Cpath fill='%23494849' fill-opacity='0.08' d='M192 15v2a11 11 0 0 0-11 11c0 1.94 1.16 4.75 2.53 6.11l2.36 2.36a6.93 6.93 0 0 1 1.22 7.56l-.43.84a8.08 8.08 0 0 1-6.66 4.13H145v35.02a6.1 6.1 0 0 0 3.03 4.87l.84.43c1.58.79 4 .4 5.24-.85l2.36-2.36a12.04 12.04 0 0 1 7.51-3.11 13 13 0 1 1 .02 26 12 12 0 0 1-7.53-3.11l-2.36-2.36a4.93 4.93 0 0 0-5.24-.85l-.84.43a6.1 6.1 0 0 0-3.03 4.87V143h35.02a8.08 8.08 0 0 1 6.66 4.13l.43.84a6.91 6.91 0 0 1-1.22 7.56l-2.36 2.36A10.06 10.06 0 0 0 181 164a11 11 0 0 0 11 11v2a13 13 0 0 1-13-13 12 12 0 0 1 3.11-7.53l2.36-2.36a4.93 4.93 0 0 0 .85-5.24l-.43-.84a6.1 6.1 0 0 0-4.87-3.03H145v35.02a8.08 8.08 0 0 1-4.13 6.66l-.84.43a6.91 6.91 0 0 1-7.56-1.22l-2.36-2.36A10.06 10.06 0 0 0 124 181a11 11 0 0 0-11 11h-2a13 13 0 0 1 13-13c2.47 0 5.79 1.37 7.53 3.11l2.36 2.36a4.94 4.94 0 0 0 5.24.85l.84-.43a6.1 6.1 0 0 0 3.03-4.87V145h-35.02a8.08 8.08 0 0 1-6.66-4.13l-.43-.84a6.91 6.91 0 0 1 1.22-7.56l2.36-2.36A10.06 10.06 0 0 0 107 124a11 11 0 0 0-22 0c0 1.94 1.16 4.75 2.53 6.11l2.36 2.36a6.93 6.93 0 0 1 1.22 7.56l-.43.84a8.08 8.08 0 0 1-6.66 4.13H49v35.02a6.1 6.1 0 0 0 3.03 4.87l.84.43c1.58.79 4 .4 5.24-.85l2.36-2.36a12.04 12.04 0 0 1 7.51-3.11A13 13 0 0 1 81 192h-2a11 11 0 0 0-11-11c-1.94 0-4.75 1.16-6.11 2.53l-2.36 2.36a6.93 6.93 0 0 1-7.56 1.22l-.84-.43a8.08 8.08 0 0 1-4.13-6.66V145H11.98a6.1 6.1 0 0 0-4.87 3.03l-.43.84c-.79 1.58-.4 4 .85 5.24l2.36 2.36a12.04 12.04 0 0 1 3.11 7.51A13 13 0 0 1 0 177v-2a11 11 0 0 0 11-11c0-1.94-1.16-4.75-2.53-6.11l-2.36-2.36a6.93 6.93 0 0 1-1.22-7.56l.43-.84a8.08 8.08 0 0 1 6.66-4.13H47v-35.02a6.1 6.1 0 0 0-3.03-4.87l-.84-.43c-1.59-.8-4-.4-5.24.85l-2.36 2.36A12 12 0 0 1 28 109a13 13 0 1 1 0-26c2.47 0 5.79 1.37 7.53 3.11l2.36 2.36a4.94 4.94 0 0 0 5.24.85l.84-.43A6.1 6.1 0 0 0 47 84.02V49H11.98a8.08 8.08 0 0 1-6.66-4.13l-.43-.84a6.91 6.91 0 0 1 1.22-7.56l2.36-2.36A10.06 10.06 0 0 0 11 28 11 11 0 0 0 0 17v-2a13 13 0 0 1 13 13c0 2.47-1.37 5.79-3.11 7.53l-2.36 2.36a4.94 4.94 0 0 0-.85 5.24l.43.84A6.1 6.1 0 0 0 11.98 47H47V11.98a8.08 8.08 0 0 1 4.13-6.66l.84-.43a6.91 6.91 0 0 1 7.56 1.22l2.36 2.36A10.06 10.06 0 0 0 68 11 11 11 0 0 0 79 0h2a13 13 0 0 1-13 13 12 12 0 0 1-7.53-3.11l-2.36-2.36a4.93 4.93 0 0 0-5.24-.85l-.84.43A6.1 6.1 0 0 0 49 11.98V47h35.02a8.08 8.08 0 0 1 6.66 4.13l.43.84a6.91 6.91 0 0 1-1.22 7.56l-2.36 2.36A10.06 10.06 0 0 0 85 68a11 11 0 0 0 22 0c0-1.94-1.16-4.75-2.53-6.11l-2.36-2.36a6.93 6.93 0 0 1-1.22-7.56l.43-.84a8.08 8.08 0 0 1 6.66-4.13H143V11.98a6.1 6.1 0 0 0-3.03-4.87l-.84-.43c-1.59-.8-4-.4-5.24.85l-2.36 2.36A12 12 0 0 1 124 13a13 13 0 0 1-13-13h2a11 11 0 0 0 11 11c1.94 0 4.75-1.16 6.11-2.53l2.36-2.36a6.93 6.93 0 0 1 7.56-1.22l.84.43a8.08 8.08 0 0 1 4.13 6.66V47h35.02a6.1 6.1 0 0 0 4.87-3.03l.43-.84c.8-1.59.4-4-.85-5.24l-2.36-2.36A12 12 0 0 1 179 28a13 13 0 0 1 13-13zM84.02 143a6.1 6.1 0 0 0 4.87-3.03l.43-.84c.8-1.59.4-4-.85-5.24l-2.36-2.36A12 12 0 0 1 83 124a13 13 0 1 1 26 0c0 2.47-1.37 5.79-3.11 7.53l-2.36 2.36a4.94 4.94 0 0 0-.85 5.24l.43.84a6.1 6.1 0 0 0 4.87 3.03H143v-35.02a8.08 8.08 0 0 1 4.13-6.66l.84-.43a6.91 6.91 0 0 1 7.56 1.22l2.36 2.36A10.06 10.06 0 0 0 164 107a11 11 0 0 0 0-22c-1.94 0-4.75 1.16-6.11 2.53l-2.36 2.36a6.93 6.93 0 0 1-7.56 1.22l-.84-.43a8.08 8.08 0 0 1-4.13-6.66V49h-35.02a6.1 6.1 0 0 0-4.87 3.03l-.43.84c-.79 1.58-.4 4 .85 5.24l2.36 2.36a12.04 12.04 0 0 1 3.11 7.51A13 13 0 1 1 83 68a12 12 0 0 1 3.11-7.53l2.36-2.36a4.93 4.93 0 0 0 .85-5.24l-.43-.84A6.1 6.1 0 0 0 84.02 49H49v35.02a8.08 8.08 0 0 1-4.13 6.66l-.84.43a6.91 6.91 0 0 1-7.56-1.22l-2.36-2.36A10.06 10.06 0 0 0 28 85a11 11 0 0 0 0 22c1.94 0 4.75-1.16 6.11-2.53l2.36-2.36a6.93 6.93 0 0 1 7.56-1.22l.84.43a8.08 8.08 0 0 1 4.13 6.66V143h35.02z'%3E%3C/path%3E%3C/svg%3E"); } &.dark { &.patterns { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='192' height='192' viewBox='0 0 192 192'%3E%3Cpath fill='%23fcfcfc' fill-opacity='0.08' d='M192 15v2a11 11 0 0 0-11 11c0 1.94 1.16 4.75 2.53 6.11l2.36 2.36a6.93 6.93 0 0 1 1.22 7.56l-.43.84a8.08 8.08 0 0 1-6.66 4.13H145v35.02a6.1 6.1 0 0 0 3.03 4.87l.84.43c1.58.79 4 .4 5.24-.85l2.36-2.36a12.04 12.04 0 0 1 7.51-3.11 13 13 0 1 1 .02 26 12 12 0 0 1-7.53-3.11l-2.36-2.36a4.93 4.93 0 0 0-5.24-.85l-.84.43a6.1 6.1 0 0 0-3.03 4.87V143h35.02a8.08 8.08 0 0 1 6.66 4.13l.43.84a6.91 6.91 0 0 1-1.22 7.56l-2.36 2.36A10.06 10.06 0 0 0 181 164a11 11 0 0 0 11 11v2a13 13 0 0 1-13-13 12 12 0 0 1 3.11-7.53l2.36-2.36a4.93 4.93 0 0 0 .85-5.24l-.43-.84a6.1 6.1 0 0 0-4.87-3.03H145v35.02a8.08 8.08 0 0 1-4.13 6.66l-.84.43a6.91 6.91 0 0 1-7.56-1.22l-2.36-2.36A10.06 10.06 0 0 0 124 181a11 11 0 0 0-11 11h-2a13 13 0 0 1 13-13c2.47 0 5.79 1.37 7.53 3.11l2.36 2.36a4.94 4.94 0 0 0 5.24.85l.84-.43a6.1 6.1 0 0 0 3.03-4.87V145h-35.02a8.08 8.08 0 0 1-6.66-4.13l-.43-.84a6.91 6.91 0 0 1 1.22-7.56l2.36-2.36A10.06 10.06 0 0 0 107 124a11 11 0 0 0-22 0c0 1.94 1.16 4.75 2.53 6.11l2.36 2.36a6.93 6.93 0 0 1 1.22 7.56l-.43.84a8.08 8.08 0 0 1-6.66 4.13H49v35.02a6.1 6.1 0 0 0 3.03 4.87l.84.43c1.58.79 4 .4 5.24-.85l2.36-2.36a12.04 12.04 0 0 1 7.51-3.11A13 13 0 0 1 81 192h-2a11 11 0 0 0-11-11c-1.94 0-4.75 1.16-6.11 2.53l-2.36 2.36a6.93 6.93 0 0 1-7.56 1.22l-.84-.43a8.08 8.08 0 0 1-4.13-6.66V145H11.98a6.1 6.1 0 0 0-4.87 3.03l-.43.84c-.79 1.58-.4 4 .85 5.24l2.36 2.36a12.04 12.04 0 0 1 3.11 7.51A13 13 0 0 1 0 177v-2a11 11 0 0 0 11-11c0-1.94-1.16-4.75-2.53-6.11l-2.36-2.36a6.93 6.93 0 0 1-1.22-7.56l.43-.84a8.08 8.08 0 0 1 6.66-4.13H47v-35.02a6.1 6.1 0 0 0-3.03-4.87l-.84-.43c-1.59-.8-4-.4-5.24.85l-2.36 2.36A12 12 0 0 1 28 109a13 13 0 1 1 0-26c2.47 0 5.79 1.37 7.53 3.11l2.36 2.36a4.94 4.94 0 0 0 5.24.85l.84-.43A6.1 6.1 0 0 0 47 84.02V49H11.98a8.08 8.08 0 0 1-6.66-4.13l-.43-.84a6.91 6.91 0 0 1 1.22-7.56l2.36-2.36A10.06 10.06 0 0 0 11 28 11 11 0 0 0 0 17v-2a13 13 0 0 1 13 13c0 2.47-1.37 5.79-3.11 7.53l-2.36 2.36a4.94 4.94 0 0 0-.85 5.24l.43.84A6.1 6.1 0 0 0 11.98 47H47V11.98a8.08 8.08 0 0 1 4.13-6.66l.84-.43a6.91 6.91 0 0 1 7.56 1.22l2.36 2.36A10.06 10.06 0 0 0 68 11 11 11 0 0 0 79 0h2a13 13 0 0 1-13 13 12 12 0 0 1-7.53-3.11l-2.36-2.36a4.93 4.93 0 0 0-5.24-.85l-.84.43A6.1 6.1 0 0 0 49 11.98V47h35.02a8.08 8.08 0 0 1 6.66 4.13l.43.84a6.91 6.91 0 0 1-1.22 7.56l-2.36 2.36A10.06 10.06 0 0 0 85 68a11 11 0 0 0 22 0c0-1.94-1.16-4.75-2.53-6.11l-2.36-2.36a6.93 6.93 0 0 1-1.22-7.56l.43-.84a8.08 8.08 0 0 1 6.66-4.13H143V11.98a6.1 6.1 0 0 0-3.03-4.87l-.84-.43c-1.59-.8-4-.4-5.24.85l-2.36 2.36A12 12 0 0 1 124 13a13 13 0 0 1-13-13h2a11 11 0 0 0 11 11c1.94 0 4.75-1.16 6.11-2.53l2.36-2.36a6.93 6.93 0 0 1 7.56-1.22l.84.43a8.08 8.08 0 0 1 4.13 6.66V47h35.02a6.1 6.1 0 0 0 4.87-3.03l.43-.84c.8-1.59.4-4-.85-5.24l-2.36-2.36A12 12 0 0 1 179 28a13 13 0 0 1 13-13zM84.02 143a6.1 6.1 0 0 0 4.87-3.03l.43-.84c.8-1.59.4-4-.85-5.24l-2.36-2.36A12 12 0 0 1 83 124a13 13 0 1 1 26 0c0 2.47-1.37 5.79-3.11 7.53l-2.36 2.36a4.94 4.94 0 0 0-.85 5.24l.43.84a6.1 6.1 0 0 0 4.87 3.03H143v-35.02a8.08 8.08 0 0 1 4.13-6.66l.84-.43a6.91 6.91 0 0 1 7.56 1.22l2.36 2.36A10.06 10.06 0 0 0 164 107a11 11 0 0 0 0-22c-1.94 0-4.75 1.16-6.11 2.53l-2.36 2.36a6.93 6.93 0 0 1-7.56 1.22l-.84-.43a8.08 8.08 0 0 1-4.13-6.66V49h-35.02a6.1 6.1 0 0 0-4.87 3.03l-.43.84c-.79 1.58-.4 4 .85 5.24l2.36 2.36a12.04 12.04 0 0 1 3.11 7.51A13 13 0 1 1 83 68a12 12 0 0 1 3.11-7.53l2.36-2.36a4.93 4.93 0 0 0 .85-5.24l-.43-.84A6.1 6.1 0 0 0 84.02 49H49v35.02a8.08 8.08 0 0 1-4.13 6.66l-.84.43a6.91 6.91 0 0 1-7.56-1.22l-2.36-2.36A10.06 10.06 0 0 0 28 85a11 11 0 0 0 0 22c1.94 0 4.75-1.16 6.11-2.53l2.36-2.36a6.93 6.93 0 0 1 7.56-1.22l.84.43a8.08 8.08 0 0 1 4.13 6.66V143h35.02z'%3E%3C/path%3E%3C/svg%3E"); } .cover { filter: brightness(0.6); } } .cover { width: auto; height: auto; min-height: 100%; opacity: 0; transition: filter 0.3s, opacity 0.3s; &.loaded { opacity: 1; } }}</style><header class=main-header><nav class="main-nav up top"><div class=nav-all><div class=left-nav><div class=site-name onclick='location.href="/"'>元视角</div></div><div class=nav-center><div class=site-menu><div class=site-menu><div class=menu-item><span class=link-btn>文库</span><div class=link-child><span class=link-child-btn onclick='window.location.href="/archives"'><i class="iconfont icon-guidang"></i>
+归档
+</span><span class=link-child-btn onclick='window.location.href="/categories"'><i class="iconfont icon-folder"></i>
+全部分类
+</span><span class=link-child-btn onclick='window.location.href="/tags"'><i class="iconfont icon-hashtag"></i>
+全部标签</span></div></div><div class=menu-item><span class=link-btn>书影音</span><div class=link-child><span class=link-child-btn onclick='window.location.href="/books"'><i class="iconfont icon-book-fill"></i>
+读书
+</span><span class=link-child-btn onclick='window.location.href="/movies"'><i class="iconfont icon-movies"></i>
+观影
+</span><span class=link-child-btn onclick='window.location.href="/musics"'><i class="iconfont icon-music"></i>
+听歌</span></div></div><div class=menu-item><span class=link-btn>页面</span><div class=link-child><span class=link-child-btn onclick='window.location.href="/links"'><i class="iconfont icon-people"></i>
+友情链接
+</span><span class=link-child-btn onclick='window.location.href="/works"'><i class="iconfont icon-people"></i>
+个人作品
+</span><span class=link-child-btn onclick='window.location.href="/statics"'><i class="iconfont icon-tongji"></i>
+站点统计</span></div></div><div class=menu-item><span class=link-btn>更多</span><div class=link-child><span class=link-child-btn onclick='window.location.href="/comments"'><i class="iconfont icon-chat"></i>
+留言板
+</span><span class=link-child-btn onclick='window.location.href="/about"'><i class="iconfont icon-contacts"></i>
+关于本站</span></div></div></div></div><span class=site-title>声明式 RESTful 客户端 WebApiClient 在项目中的应用</span></div><div class=right-nav><a class="menu-btn nav-btn travellings" title=开往-友链接力 href=https://www.travellings.cn/go.html target=_blank><i class="iconfont icon-subway"></i></a><div class="menu-btn nav-btn" title=随机前往一篇文章><i class="iconfont icon-shuffle"></i></div><div class="menu-btn nav-btn" title=全站搜索><i class="iconfont icon-search"></i></div><div class="menu-btn nav-btn" id=themeToggle title=切换主题模式><i class="iconfont icon-sun" id=themeIcon></i></div><div id=open-control class="menu-btn nav-btn pc" title=打开中控台><i class="iconfont icon-dashboard"></i></div><div class="to-top menu-btn hidden" title=返回顶部><div class=to-top-btn><span class=num>0</span>
+<i class="iconfont icon-up"></i></div></div><div class="menu-btn nav-btn mobile" title=打开菜单><i class="iconfont icon-toc"></i></div></div></div></nav><div class=mobile-menu id=mobileMenu><div class=menu-mask></div><div class="menu-content s-card"><div class=close-control><i class="iconfont icon-close"></i></div><div class=menu-list><div class=menu-item><span class=link-title>文库</span><div class=link-child><div class=link-child-btn onclick='window.location.href="/archives"'><i class="iconfont icon-guidang"></i>
+<span class=name>归档</span></div><div class=link-child-btn onclick='window.location.href="/categories"'><i class="iconfont icon-folder"></i>
+<span class=name>全部分类</span></div><div class=link-child-btn onclick='window.location.href="/tags"'><i class="iconfont icon-hashtag"></i>
+<span class=name>全部标签</span></div></div></div><div class=menu-item><span class=link-title>书影音</span><div class=link-child><div class=link-child-btn onclick='window.location.href="/books"'><i class="iconfont icon-book-fill"></i>
+<span class=name>读书</span></div><div class=link-child-btn onclick='window.location.href="/movies"'><i class="iconfont icon-movies"></i>
+<span class=name>观影</span></div><div class=link-child-btn onclick='window.location.href="/musics"'><i class="iconfont icon-music"></i>
+<span class=name>听歌</span></div></div></div><div class=menu-item><span class=link-title>页面</span><div class=link-child><div class=link-child-btn onclick='window.location.href="/links"'><i class="iconfont icon-people"></i>
+<span class=name>友情链接</span></div><div class=link-child-btn onclick='window.location.href="/works"'><i class="iconfont icon-people"></i>
+<span class=name>个人作品</span></div><div class=link-child-btn onclick='window.location.href="/statics"'><i class="iconfont icon-tongji"></i>
+<span class=name>站点统计</span></div></div></div><div class=menu-item><span class=link-title>更多</span><div class=link-child><div class=link-child-btn onclick='window.location.href="/comments"'><i class="iconfont icon-chat"></i>
+<span class=name>留言板</span></div><div class=link-child-btn onclick='window.location.href="/about"'><i class="iconfont icon-contacts"></i>
+<span class=name>关于本站</span></div></div></div></div></div></div><style>.mobile-menu{position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:3000;display:none}.mobile-menu .menu-mask{position:absolute;top:0;left:0;width:100%;height:100%;z-index:-1;background-color:var(--main-mask-background)}.mobile-menu .menu-content{position:absolute;top:0;right:0;height:100%;width:100%;max-width:300px;border-radius:12px 0 0 12px;padding:20px;overflow:auto}.mobile-menu .close-control{position:absolute;top:10px;right:20px;display:flex;align-items:center;justify-content:center;width:35px;height:35px;padding:0;transition:background-color .3s,opacity .3s;border-radius:50%;cursor:pointer}.mobile-menu .close-control .iconfont{font-size:18px;line-height:1;color:var(--main-font-second-color);transition:color .3s,opacity .3s}.mobile-menu .close-control:hover{background-color:var(--main-color)}.mobile-menu .close-control:hover .iconfont{color:var(--main-card-background)}.mobile-menu .menu-list{margin-top:40px}.mobile-menu .menu-item{margin-bottom:12px}.mobile-menu .menu-item .link-title{font-size:14px;margin-bottom:12px;display:inline-block;color:var(--main-font-second-color)}.mobile-menu .menu-item .link-child{display:grid;gap:12px;grid-template-columns:1fr 1fr}.mobile-menu .menu-item .link-child-btn{display:flex;flex-direction:row;justify-content:flex-start;align-items:center;border-radius:8px;padding:10px 12px;background-color:var(--main-card-background);border:1px solid var(--main-card-border);box-shadow:0 8px 16px -4px var(--main-border-shadow);font-size:15px;cursor:pointer;transition:all .3s}.mobile-menu .menu-item .link-child-btn:hover{background-color:var(--main-color);color:var(--main-card-background)}.mobile-menu .menu-item .link-child-btn .iconfont{margin-right:6px;opacity:.6}.mobile-menu .menu-item .link-child-btn .name{max-width:80px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}</style><script>function toggleMobileMenu(){const e=document.getElementById("mobileMenu");e&&(e.style.display=e.style.display==="none"?"block":"none")}</script><div class=modal id=search-modal><div class=modal-mask></div><div class="modal-main s-card" style=max-width:800px><div class=title><div class=title-left><i class="iconfont icon-search"></i>
+<span class=title-text>全局搜索</span></div><i class="iconfont icon-close close" id=modal-close></i></div><div class=modal-content style=--height:80vh><div class=search-modal><div class=search-input><input type=text id=search-input placeholder=今天你想搜点什么？ autocomplete=off></div><div class=search-results><div class=search-list></div><div class=search-empty><i class="iconfont icon-search"></i><p>输入关键字，开始搜索</p></div></div><div class=search-hint><span class=text id=search-hint-text></span>
+<span class=text><a class=powered_by href=https://www.fusejs.io/ target=_blank>Fuse.js</a></span></div></div></div></div></div></header><main class=main-layout><div class=post><div class=post-meta><div class=meta><div class=categories><a href=/categories/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80 class=cat-item><i class="iconfont icon-folder"></i>
+<span class=name>编程语言</span></a></div><div class=tags><a href=/tags/restful class=tag-item><i class="iconfont icon-hashtag"></i>
+<span class=name>RESTful</span>
+</a><a href=/tags/webapi class=tag-item><i class="iconfont icon-hashtag"></i>
+<span class=name>WebApi</span>
+</a><a href=/tags/httpclient class=tag-item><i class="iconfont icon-hashtag"></i>
+<span class=name>HttpClient</span></a></div></div><h1 class=title>声明式 RESTful 客户端 WebApiClient 在项目中的应用</h1><div class=other-meta><span class="meta date"><i class="iconfont icon-date"></i>
+2018-07-16
+</span><span class="update meta"><i class="iconfont icon-time"></i>
+2018-07-16
+</span><span class="hot meta"><i class="iconfont icon-fire"></i>
+<span id=twikoo_visitors class=artalk-pv-count>0</span>
+</span><span class="chat meta hover" data-scroll-to=comments><i class="iconfont icon-chat"></i>
+<span id=twikoo_comments class=artalk-comment-count>0</span></span></div></div><div class=post-content><article class="post-article s-card"><div class="expired s-card">本文发表于 <strong>2459</strong> 天前，其中的信息可能已经事过境迁</div><div class="article-gpt s-card"><div class=title><span class=name><i class="iconfont icon-robot"></i>
+文章摘要
+<i class="iconfont icon-up"></i>
+</span><span class=logo>FakeGPT</span></div><div class="content s-card"><span class=text></span></div><div class=meta></div></div><script src=https://npm.elemecdn.com/typeit@8.7.1/dist/index.umd.js></script><script>document.addEventListener("DOMContentLoaded",function(){new TypeIt(".article-gpt .content .text",{strings:"项目采用敏捷开发后出现“联调”任务，由于前后端分离导致团队分成前后端组，前端负责展示数据，后端提供服务接口，但存在沟通困难。讨论三方面原因：设计不当、进度不一、沟通不畅。介绍前后端分离思想，客户端产品采用Native+Web技术架构，通过JSBridge实现Native和Web通信。详述WebApiClient库在.NET平台下类似Retrofit的作用，通过声明式方式定义接口调用。讨论上传下载接口、过滤器与OAuth2，以及可配置与动态化。强调前后端职责分离重要性，提出通过代理类调用后端API的想法。最后介绍WebApiClient的应用，提倡契约式接口声明，以更快速应对后端变化。",speed:10,lifeLike:!0,waitUntilVisible:!0}).go()})</script><div id=page-content class=markdown-main-style><p>自从项目上采用敏捷开发的流程以后，我们的开发任务中出现了不少“联调”的任务，而所谓的“联调”任务，完全是拜前后端分离所赐。通常来讲，按照前后端分离的思想，我们的团队会被分成前端和后端两个组，前端负责页面内数据的展示，后端负责提供相关服务的接口。这样听起来非常合理，对吧？可问题在于，后端常常在等前端联调这些接口，因为后端不知道具体有哪些异常需要处理；同样，前端常常在等后端接口稳定，因为一旦出现问题，就会导致接口发生变更。虽然在此之前，我们早已花了一周左右的时间去讨论接口，接口文档早已伴随着 API 部署到线上，可我们依然需要大量的时间去沟通每个接口的细节。用一种什么样的语言来描述这种状态呢？大概就是人们并不是真的需要接口文档，因为真的不会有人去看这东西。</p><h1 id=从敏捷开发到产品架构>从敏捷开发到产品架构</h1><p>为什么会出现这种情况呢？我想，可以从三个方面来考虑，即设计不当、进度不一、沟通不畅。有时候集思广益去讨论一个接口，可能并不是一件好事，因为考虑的因素越多，问题就会变得越复杂，相应地妥协的地方就会越多。我并非不懂得做人需要适当妥协，事实是从妥协的那一刻起，我们的麻烦越来越多。有人问怎么能消灭 Bug，我说消灭需求就可以了。现代人被各种各样的社交网络包围着，以至于隐私都被赤裸裸地暴露在空气中，可你很难想象人与人之间的沟通会越来越困难，难道是因为社交网络加剧了人类本身的孤独？没有人是一座孤岛，可前后端分离好像加剧了这种界限。现在动辄讲究全栈，可当你把精力都耗费在这些联系上去，你如何去追求全栈？相反，我们像电话接线员一样，在不停地切换上下文，因为我们要“敏捷”起来，可作为工程师就会知道，切换上下文需要付出相应的代价。</p><p>我之所以提到这样一个场景，是出于对当前项目的一种整体回顾。我们的项目是一个客户端产品，但是它依然体现了前后端分离的思想。受业务背景限制，这个客户端采用了 Native + Web 的技术架构。如果你了解整个互联网产品形态的演变历程，就会对这种技术架构非常的了解，从曾经的 Native 和 Web 之争，到所谓的 Hybrid App，再到如今的 React Native 及小程序，这种技术架构其实一直都存在，譬如 Electron、Atom、Node-Webkit、Cordova、Ionic、VSCode 等等，其实都是非常相近的技术。对应到我们的项目，我们提供了一个 JSBridge 来完成 Native 层和 Web 层之间的通信，而客户端的渲染实际上是由前端来完成的，所以你可以想到，我们通过一个 WebView 来加载页面，而平台相关的交互由 C++/C#来完成，所以，理论上客户端是是一个和 Electron 类似的壳子(Shell)，它可以展示来自任何页面的内容。</p><p><a class=img-fancybox href=https://i.loli.net/2021/10/22/YN3WimldXH7r9Qu.jpg data-fancybox=gallery data-src=https://i.loli.net/2021/10/22/YN3WimldXH7r9Qu.jpg data-caption=以JSBridge为核心的系统架构图><img src=https://i.loli.net/2021/10/22/YN3WimldXH7r9Qu.jpg alt=以JSBridge为核心的系统架构图 class=post-img loading=lazy>
+<span class=post-img-tip>以JSBridge为核心的系统架构图</span></a></p><p>从客户端的角度来讲，它是 Native 层接口的提供者，连接着平台相关的 API，并集成了第三方的硬件设备，所以，理论上它是和具体业务无关的。可实际上，因为 Web 层不能直接和文件系统交互，所以，像上传、下载这样本该由前端调用的接口，部分地转移到了客户端这边，所以，客户端无可避免地受到后端 API 变化的影响，因为业务上需求存在差异，上传接口前后共发生了三次变化，所以，客户端中存在三个版本的上传，当然，我相信这是一个设计上的问题，通过改进设计可以得到完美的解决。关于上传为什么会这么复杂，感兴趣的朋友可以通过留言来一起交流。这里我想说的是什么呢？因为客户端希望与具体业务无关，所以，客户端注定是以功能来划分服务，然后通过 JSBridge 暴露给 Web 层。可是对后端的微服务架构而言，它的服务是以业务为主导的，它的一个业务就是一个接口。由此导致一个问题，后端接口的数量不断增加，客户端面临频繁地改动。</p><h1 id=不做平庸的-apicaller>不做平庸的 ApiCaller</h1><p>有很多人说，今天的编程工作变得越来越简单，对于这一点我非常认同。因为，无论是无论是语言、工具、生态、平台，都获得空前的繁荣，所以，我们大多数人的工作，可能就是调用现成的 API，而少数人的工作，可能就是提供友好的 API，甚至连代码你都可以在 Google 上找到，你唯一要做的就是 Ctrl + C & Ctrl + V。当初想要改变世界的你我，突然有一天就变成了 ApiCaller，甚至大多数的框架，你连底层细节都无从得知。可你真的打算做一个平庸的 ApiCaller 吗？至少我是不愿意的，因为在我看来，调用后端提供的 API，大多数情况下都是换个 URL，或者换个参数，这样的代码你写一次以后，剩下的基本就是复制和粘贴了，你可能会非常鄙视我的这种行为，可事实就是这样的，不单单我在复制，连我身边的同事都在复制。可这能怎么办啊，只要后端提供了新接口，或者是对接口进行了调整，而这些接口必须由客户端封装，我们的工作就永远不会停止，可这不过调用后端的 API 而已啊！</p><p>有时候，我们会说工作经验和工作时间未必是正相关的，因为如果我们十年都在做一件事情，那么其实和一年是没有区别的。为了避免成为一个平庸的 ApiCaller，你必须思考那些真正重要的事情。怎么能降低后端 API 变化对客户端的影响呢？降低耦合度。怎么降低耦合度呢？依赖抽象而非依赖具体。想想 WebService，它通过 WSDL 来对服务进行描述，而通过 WSDL 就可以在客户端创建代理类，一旦 WebService 发生变更，重新生成代理类就好。再回想一下，调用后端 API 会遇到那些问题？设置 Header、设置 Cookie 、拼接 URL、拼接参数、URLEncode、SSL、JSON 序列化、FormData、上传文件、编码/解码等等，是不是每一次都在处理这些问题？看到项目里用 HttpWebRequest 去构造 Mulitpartfile 结构，我忽然间觉得绝望。既然每次都是翻来覆去这些东西，为什么要用手来写？API 文档构建工具可以帮助用户生成 curl 以及常见语言对应的代码，所以，我有理由相信，我们需要一个东西来帮助我们完成这个工作，就像 WebService 生成代理类一样。那么，有没有这样一个东西呢？这就是本文的主角——基于声明式的 RESTful 风格的客户端：<strong>WebApiClient</strong>。</p><h1 id=net-下的-retrofitwebapiclient>.NET 下的 Retrofit：WebApiClient</h1><p>WebApiClient 是.NET 平台下的 Retrofit。要理解这句话，首先要理解 Retrofit。什么是 Retrofit 呢？Retrofit 是一个 Android/Java 下的网络通信库，其本身基于 okHttp，熟悉 Android 开发的朋友，对这个库应该不会感到陌生。Retrofit 帮助我们解决了上文中提到的，在请求一个 Web API 时会遇到的问题，并通过注解这种技术，以一种声明式的方式来定义接口。简单来说，所有你想要调用 Web API 都是接口中的一个方法，你通过注解来告诉 Retrofit，该方法会请求哪一个 Web API，参数会以什么样的形式传递过去，结果会以什么样的形式返回回来，你完全不必去写那些底层 HTTP 通信相关的东西，因为 Retrofit 会帮你在运行时实现这个接口。所以，我们说 Retrofit 是一种声明式的 HTTP 客户端。声明式我们见过相当多啦，Java 里的注解，C#里的 Attribute、Python 里的装饰器、JavaScript 里的修饰器，以及如今各种各样的双向绑定框架。下面，我们来一起看看 WebApiClient 这个库。</p><p>现在，我假设你手里已经有可供调用的 Web API，并且你真实地了解这些 Web API 是如何工作的。至此，我们需要完成的工作主要都集中在客户端，这里我们编写一个控制台应用来完成这一工作。首先，需要在项目中引入 WebApiClient 这个库，我们直接通过 Nuget 来完成安装即可(<strong>注：这里共有 Laojiu.WebApiClient、WebApiClient.JIT 和 WebApiClient.AOT 三个版本，博主使用的是 Laojiu.WebApiClient</strong>)。使用 WebApiClient 的基本流程是：首先，定义一个继承自 IHttpApiClient 的接口并在接口中声明相关方法；其次，通过 Attribute 对接口中的方法和参数进行修饰以完成和 Web API 的绑定；最后，通过 WebApiClient 生成该接口的一个实例，而通过调用相应的实例方法就可以得到结果。这是不是和代理类的感觉非常像呢？像博主这样懒惰的人，或许连接口都不愿意亲自去写，因为我相信越是严谨的规则，就越是适合应用到自动化上面去。这样说可能无法让大家形成对 WebApiClient 的直观印象，那么让我们从一个简单的例子开始吧！</p><h2 id=get-请求接口>Get 请求接口</h2><div class=highlight><pre tabindex=0 class=chroma><code class=language-CSharp data-lang=CSharp><span class=line><span class=cl><span class=na>[HttpHost(&#34;http://localhost:8000&#34;)]</span>
+</span></span><span class=line><span class=cl><span class=kd>public</span> <span class=k>interface</span> <span class=nc>IValuesApiCaller</span> <span class=p>:</span> <span class=n>IHttpApiClient</span>
+</span></span><span class=line><span class=cl><span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=c1>//GET http://localhost:8000/values1</span>
+</span></span><span class=line><span class=cl><span class=na>    [HttpGet(&#34;/values1&#34;)]</span>
+</span></span><span class=line><span class=cl><span class=na>    [OAuth2Filter]</span>
+</span></span><span class=line><span class=cl>    <span class=n>ITask</span><span class=p>&lt;</span><span class=kt>string</span><span class=p>&gt;</span> <span class=n>GetValues</span><span class=p>();</span>
+</span></span><span class=line><span class=cl>        
+</span></span><span class=line><span class=cl>    <span class=c1>//GET http://localhost:8000/values1/{id}</span>
+</span></span><span class=line><span class=cl><span class=na>    [HttpGet(&#34;/values1/{id}&#34;)]</span>
+</span></span><span class=line><span class=cl><span class=na>    [OAuth2Filter]</span>
+</span></span><span class=line><span class=cl>    <span class=n>ITask</span><span class=p>&lt;</span><span class=kt>string</span><span class=p>&gt;</span> <span class=n>GetValue</span><span class=p>(</span><span class=kt>int</span> <span class=n>id</span><span class=p>);</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></div><p>在这个示例中，我们展示了 WebApiClient 是如何处理带参数以及不带参数的 Get 请求的。通过 HttpGet 特性，我们分别为 GetValues()和 GetValue()两个方法指定了请求的 URL。虽然在这里我们指定一个完整的 URL，可是考虑到我们 Web API 通常都是分布在不同的域名下，所以我们可以通过 HttpHost 特性来配置一个 BaseURL。接口的返回值为 ITask，我们可以通过我们的需要指定相应的类型，在这里我们以 ITask为例，特别说明的是，如果服务器返回的是标准的 JSON 格式，那么我们可以将其映射为相应的实体结构，这就需要使用 JsonReturn 标特性对方法进行修饰。我们知道 Get 请求可以通过 QueryString 形式来进行传参，那么这一点在 WebApiClient 中如何实现呢？这就用到所谓的**&ldquo;平铺参数&rdquo;**，即我们在方法中声明的参数会被 WebApiClient 自动地追加到 URL 上面去，再不需要去手动地拼接这些参数；同理，这些参数可以用一个包装类封装起来，具体大家参考<a href=https://github.com/dotnetcore/WebApiClient/wiki/WebApiClient%E5%9F%BA%E7%A1%80>官方文档</a>。</p><p>OK，现在来看看如何调用 IValuesApiCaller 这个接口。我们在前面说过，WebApiClient 会帮助我们生成一个 IValuesApiCaller 的实例，所以我们调用一个 Web API 的时候，关注点已然从之前的过程实现转变为接口实现，这正是我们渴望看到的局面。一个非常简洁的调用示例：</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-CSharp data-lang=CSharp><span class=line><span class=cl><span class=c1>//调用Values Service</span>
+</span></span><span class=line><span class=cl><span class=k>using</span> <span class=p>(</span><span class=kt>var</span> <span class=n>client</span> <span class=p>=</span> <span class=n>HttpApiClient</span><span class=p>.</span><span class=n>Create</span><span class=p>&lt;</span><span class=n>IValuesApiCaller</span><span class=p>&gt;())</span>
+</span></span><span class=line><span class=cl><span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=n>Console</span><span class=p>.</span><span class=n>WriteLine</span><span class=p>(</span><span class=s>&#34;-----Invoke Values Service-----&#34;</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>    <span class=kt>var</span> <span class=n>results</span> <span class=p>=</span> <span class=k>await</span> <span class=n>client</span><span class=p>.</span><span class=n>GetValues</span><span class=p>().</span><span class=n>InvokeAsync</span><span class=p>();</span>
+</span></span><span class=line><span class=cl>    <span class=n>Console</span><span class=p>.</span><span class=n>WriteLine</span><span class=p>(</span><span class=s>$&#34;results is {results}&#34;</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>    <span class=kt>var</span> <span class=n>result</span> <span class=p>=</span> <span class=k>await</span> <span class=n>client</span><span class=p>.</span><span class=n>GetValue</span><span class=p>(</span><span class=m>10</span><span class=p>).</span><span class=n>InvokeAsync</span><span class=p>();</span>
+</span></span><span class=line><span class=cl>    <span class=n>Console</span><span class=p>.</span><span class=n>WriteLine</span><span class=p>(</span><span class=s>$&#34;result is {result}&#34;</span><span class=p>);</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></div><h2 id=post-请求接口>Post 请求接口</h2><p>接下来，我们再来说说 Post 请求接口。同样的，这里我们使用博主编写好的一个 Service，我们称之为 Student Service。它使用了 EF Core 来完成数据库的读写，它提供了一组和 Student 实体相关的 API，这里我们使用它来作为 Post 请求接口的示例实现。因此，我们首先定义一个接口 IStudentApiCaller：</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-CSharp data-lang=CSharp><span class=line><span class=cl><span class=na>[HttpHost(&#34;http://localhost:8000&#34;)]</span>
+</span></span><span class=line><span class=cl><span class=kd>public</span> <span class=k>interface</span> <span class=nc>IStudentApiCaller</span> <span class=p>:</span> <span class=n>IHttpApiClient</span>
+</span></span><span class=line><span class=cl><span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=c1>//GET http://localhost:8000/student</span>
+</span></span><span class=line><span class=cl><span class=na>    [HttpGet(&#34;/student&#34;)]</span>
+</span></span><span class=line><span class=cl><span class=na>    [OAuth2Filter]</span>
+</span></span><span class=line><span class=cl><span class=na>    [JsonReturn]</span>
+</span></span><span class=line><span class=cl>    <span class=n>ITask</span><span class=p>&lt;</span><span class=n>List</span><span class=p>&lt;</span><span class=n>Student</span><span class=p>&gt;&gt;</span> <span class=n>GetAllStudents</span><span class=p>();</span>
+</span></span><span class=line><span class=cl>        
+</span></span><span class=line><span class=cl>        
+</span></span><span class=line><span class=cl>    <span class=c1>//POST http://localhost:8000/student</span>
+</span></span><span class=line><span class=cl><span class=na>    [HttpPost(&#34;/student&#34;)]</span>
+</span></span><span class=line><span class=cl><span class=na>    [OAuth2Filter]</span>
+</span></span><span class=line><span class=cl>    <span class=n>ITask</span><span class=p>&lt;</span><span class=kt>string</span><span class=p>&gt;</span> <span class=n>NewStudent</span><span class=p>([</span><span class=n>JsonContent</span><span class=p>]</span> <span class=n>Student</span> <span class=n>student</span><span class=p>);</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></div><p>这里重点关注接口中的第二个方法。首先，它是一个 Post 请求；其次，它接受一个 JSON 格式的文本作为它的请求体，所以我们这里使用了 JsonContent 特性。前面我们提到过，接口返回类型 ITask，可以映射为对应的实体结构。注意到 GetAllStudtents()这个方法中绑定的 API，它负责从数据库中查询所有的 Student 信息并以 JSON 形式返回，所以这里我们将其映射为 List。与此同时，你会注意到 JsonReturn 特性，这是在告诉 WebApiClient，你希望将返回的结果映射为强类型的模型；同理，你可以使用 XmlReturn 特性来处理返回值为 Xml 的情形。除此之外，你还可以使用 FormContent 特性来修饰方法参数，其作用是将模型参数以 key1=value1&amp;key2=value2……的形式写入请求体中，对应于 x-www-form-urlencode；更一般地，你可以使用 FormField 特性修饰方法参数，以 form-data 的形式写入请求体中。Mulitpart 是博主最为讨厌的一种数据格式，请大家自己去看<a href=https://github.com/dotnetcore/WebApiClient/wiki/WebApiClient%E5%9F%BA%E7%A1%80>官方文档</a>。</p><h2 id=过滤器与-oauth2>过滤器与 OAuth2</h2><p>无论如何，请允许我说，这是我最喜欢的一个特性。大家会注意到，在我的示例代码中，有一个东西一直没有去说，这就是 OAuth2Filter，这其实是博主自己扩展的一个特性，这意味着在请求该 API 前，需要通过 OAuth2 授权以获得身份令牌。对于这一点，我想大家都是清楚的，因为在微服务架构中，Web API 是作为一种受保护的资源而存在的，所以鉴权和授权是非常重要的点。以博主的项目组为例，我们做到第三个项目的时候，整个后端的 OAuth2 认证服务终于实现了统一，可即使如此，每一次这种基础设施都需要联调，都要考虑到底使用哪一种授权模式。譬如，客户端是考虑把 token 存放在全局静态类里，而前端是考虑把 token 存放在 Cookie 里，甚至在此之前，我们连 refresh_token 都没有，客户端在调用 Web API 时天天担心 token 过期，于是在调用 Web API 时主动去刷新一次 token。你问我为什么不判断一下 token 有没有过期，因为后端没有提供这个接口呀。其实，我想说的只有一句话，基础设施请交给框架去处理。</p><p>WebApiClient 提供了用于请求管道中的过滤器，可以让我们在请求前、请求后搞点事情。譬如，我们这里希望在请求前获取 token，并将其追加到当前请求的 Header 里，或者是在请求前判断下 token 是否过期(假如后端愿意开发这个接口的话)，如果过期了就自动刷新下 token，该怎么做呢？首先，我们定义一个 IAuthApiCaller 的接口，它负责从认证服务器上获取 token，这里选择客户端模式：</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-CSharp data-lang=CSharp><span class=line><span class=cl><span class=na>[HttpHost(&#34;http://localhost:28203&#34;)]</span>
+</span></span><span class=line><span class=cl><span class=kd>public</span> <span class=k>interface</span> <span class=nc>IAuthApiCaller</span> <span class=p>:</span> <span class=n>IHttpApiClient</span>
+</span></span><span class=line><span class=cl><span class=p>{</span>
+</span></span><span class=line><span class=cl><span class=na>    [HttpPost(&#34;/oauth2/token&#34;)]</span>
+</span></span><span class=line><span class=cl>    <span class=n>ITask</span><span class=p>&lt;</span><span class=kt>string</span><span class=p>&gt;</span> <span class=n>GetToken</span><span class=p>([</span><span class=n>FormField</span><span class=p>]</span> <span class=kt>string</span> <span class=n>client_id</span><span class=p>,[</span><span class=n>FormField</span><span class=p>]</span> <span class=kt>string</span> <span class=n>client_secret</span><span class=p>,[</span><span class=n>FormField</span><span class=p>]</span> <span class=kt>string</span> <span class=n>grant_type</span> <span class=p>=</span> <span class=s>&#34;client_credentials&#34;</span><span class=p>);</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></div><p>接下来，我们继承 ApiActionFilterAttribute 来编写 OAuth2FilterAttribute，显然，它会在请求前调用 IAuthApiCaller 接口实例，这里我们将 client_id 和 client_secret 硬编码到代码里，单单是为了演示如何去印证这个想法，实际项目中大家可以考虑通过配置或者是传参来实现：</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-CSharp data-lang=CSharp><span class=line><span class=cl><span class=na>[AttributeUsage(AttributeTargets.Method)]</span>
+</span></span><span class=line><span class=cl><span class=kd>public</span> <span class=k>class</span> <span class=nc>OAuth2FilterAttribute</span> <span class=p>:</span> <span class=n>ApiActionFilterAttribute</span>
+</span></span><span class=line><span class=cl><span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=kd>public</span> <span class=kd>override</span> <span class=n>Task</span> <span class=n>OnBeginRequestAsync</span><span class=p>(</span><span class=n>ApiActionContext</span> <span class=n>context</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=k>using</span> <span class=p>(</span><span class=kt>var</span> <span class=n>client</span> <span class=p>=</span> <span class=n>HttpApiClient</span><span class=p>.</span><span class=n>Create</span><span class=p>&lt;</span><span class=n>IAuthApiCaller</span><span class=p>&gt;())</span>
+</span></span><span class=line><span class=cl>        <span class=p>{</span>
+</span></span><span class=line><span class=cl>            <span class=kt>var</span> <span class=n>client_id</span> <span class=p>=</span> <span class=s>&#34;578c06935d7f4c9897316ed50b00c19d&#34;</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>            <span class=kt>var</span> <span class=n>client_secret</span> <span class=p>=</span> <span class=s>&#34;d851c10e1897482eb6f476e359984b27&#34;</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>            <span class=kt>var</span> <span class=n>result</span> <span class=p>=</span> <span class=n>client</span><span class=p>.</span><span class=n>GetToken</span><span class=p>(</span><span class=n>client_id</span><span class=p>,</span> <span class=n>client_secret</span><span class=p>).</span><span class=n>InvokeAsync</span><span class=p>().</span><span class=n>Result</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>            <span class=kt>var</span> <span class=n>json</span> <span class=p>=</span> <span class=n>JObject</span><span class=p>.</span><span class=n>Parse</span><span class=p>(</span><span class=n>result</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>            <span class=kt>var</span> <span class=n>token</span> <span class=p>=</span> <span class=n>json</span><span class=p>[</span><span class=s>&#34;access_token&#34;</span><span class=p>].</span><span class=n>Value</span><span class=p>&lt;</span><span class=kt>string</span><span class=p>&gt;();</span>
+</span></span><span class=line><span class=cl>            <span class=n>context</span><span class=p>.</span><span class=n>RequestMessage</span><span class=p>.</span><span class=n>Headers</span><span class=p>.</span><span class=n>Authorization</span> <span class=p>=</span> <span class=k>new</span> <span class=n>AuthenticationHeaderValue</span><span class=p>(</span><span class=s>&#34;Bearer&#34;</span><span class=p>,</span><span class=n>token</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>            <span class=k>return</span> <span class=k>base</span><span class=p>.</span><span class=n>OnBeginRequestAsync</span><span class=p>(</span><span class=n>context</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>        <span class=p>}</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></div><p>至此，我们只需要给需要需要授权的 API 添加 OAuth2Filter 特性即可，全然不需要考虑这个 token 如何储存的问题。我对静态类和静态方法没有误解，仅仅是因为它是反模式的，任何全局内可以修改的成员，不管有没有人会去修改，它始终都是不安全的。在此我要表扬一下前端的同事，他们通过扩展 ajax 方法原型，实现了和这里类似的东西。所以说，你要多尝试去看看不同领域里的东西，抓住那些相同或者相似的本质，而不是被那些“旧酒换新瓶”的概念所迷惑，技术圈子的热闹有两种，一种是发明新的技术，一种是发明新的概念，我本人更喜欢第一种，你呢？</p><h2 id=上传与下载>上传与下载</h2><p>其实，上传应该是 Post 请求的一种类型，可是考虑到下载的时候，接口的返回类型应该是数据流，所以我决定将这两个内容一起来讲。这里我们就考虑单纯的上传，不考虑由文件和键值对混合组成的 MulitpartFormDataContent，因为这种结构让我觉得厌恶。这里，我们直接通过 ASP.NET Core 编写了一个文件上传/下载的 Service，同样地，我们首先定义 IFilesApiCaller 接口：</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-CSharp data-lang=CSharp><span class=line><span class=cl><span class=na>[HttpHost(&#34;http://localhost:8000&#34;)]</span>
+</span></span><span class=line><span class=cl><span class=kd>public</span> <span class=k>interface</span> <span class=nc>IFilesApiCaller</span> <span class=p>:</span> <span class=n>IHttpApiClient</span>
+</span></span><span class=line><span class=cl><span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=c1>//Post http://localhost:8000/files/upload</span>
+</span></span><span class=line><span class=cl><span class=na>    [HttpPost(&#34;/files/upload&#34;)]</span>
+</span></span><span class=line><span class=cl><span class=na>    [OAuth2Filter]</span>
+</span></span><span class=line><span class=cl><span class=na>    [JsonReturn]</span>
+</span></span><span class=line><span class=cl>    <span class=n>ITask</span><span class=p>&lt;</span><span class=kt>string</span><span class=p>&gt;</span> <span class=n>Upload</span><span class=p>([</span><span class=n>HttpContent</span><span class=p>]</span><span class=n>List</span><span class=p>&lt;</span><span class=n>MulitpartFile</span><span class=p>&gt;</span> <span class=n>files</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>        
+</span></span><span class=line><span class=cl>        
+</span></span><span class=line><span class=cl>    <span class=c1>//Get http://localhost:8000/files/download/{fileId}</span>
+</span></span><span class=line><span class=cl><span class=na>    [HttpGet(&#34;/files/download/{fileId}&#34;)]</span>
+</span></span><span class=line><span class=cl><span class=na>    [OAuth2Filter]</span>
+</span></span><span class=line><span class=cl>    <span class=n>ITask</span><span class=p>&lt;</span><span class=n>HttpResponseMessage</span><span class=p>&gt;</span> <span class=n>Download</span><span class=p>(</span><span class=kt>string</span> <span class=n>fileId</span><span class=p>);</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></div><p>在这里，上传我使用了 ASP.NET Core 中的 IFormFile 接口，并且在 Postman 测试通过，可是在网页上用 type 为 file 的 input 标签进行测试时，发现页面一直无法正常响应，不知道具体是什么原因(<strong>后来发现它完全和 Postman 中的请求体一样，好吧😬</strong>)，我一直不太理解 ajax 上传和表单上传的区别，曾经项目上用 HttpWebRequest 去做文件的上传，里面需要大量的字符串拼接动作去构造 MulitpartFormData，只要后端上传的 API 发生变更，这段代码几乎就会变成不可维护的代码，幸运的是，在经过几次迭代以后，他们终于意识到了这个问题，在我的建议下，他们使用 HttpClient 重构了代码。在这里你会看到 Download()方法的返回值类型为 ITask，这是 HttpClient 中使用的数据结构。为什么我推荐大家使用这套 API，因为它和 ASP.NET 中的数据结构是一致的，而事实是上，WebApiClient 正是在 HttpClient 的基础上完成的，所以这里你能够想到，我将通过 HttpResponseMessage 来获取返回的数据流，进而完成文件的下载。一起来看下面的示例：</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-CSharp data-lang=CSharp><span class=line><span class=cl><span class=c1>//调用Files Service</span>
+</span></span><span class=line><span class=cl><span class=k>using</span> <span class=p>(</span><span class=kt>var</span> <span class=n>client</span> <span class=p>=</span> <span class=n>HttpApiClient</span><span class=p>.</span><span class=n>Create</span><span class=p>&lt;</span><span class=n>IFilesApiCaller</span><span class=p>&gt;())</span>
+</span></span><span class=line><span class=cl><span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=n>Console</span><span class=p>.</span><span class=n>WriteLine</span><span class=p>(</span><span class=s>&#34;-----Invoke File Service-----&#34;</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>    <span class=kt>var</span> <span class=n>files</span> <span class=p>=</span> <span class=k>new</span> <span class=kt>string</span><span class=p>[]</span>
+</span></span><span class=line><span class=cl>    <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=s>@&#34;C:\Users\PayneQin\Videos\Rec 0001.mp4&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>        <span class=s>@&#34;C:\Users\PayneQin\Videos\Rec 0002.mp4&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl>    <span class=p>.</span><span class=n>Select</span><span class=p>(</span><span class=n>f</span><span class=p>=&gt;</span><span class=k>new</span> <span class=n>MulitpartFile</span><span class=p>(</span><span class=n>f</span><span class=p>))</span>
+</span></span><span class=line><span class=cl>    <span class=p>.</span><span class=n>ToList</span><span class=p>();</span>
+</span></span><span class=line><span class=cl>    <span class=kt>var</span> <span class=n>result</span> <span class=p>=</span> <span class=k>await</span> <span class=n>client</span><span class=p>.</span><span class=n>Upload</span><span class=p>(</span><span class=n>files</span><span class=p>).</span><span class=n>InvokeAsync</span><span class=p>();</span>
+</span></span><span class=line><span class=cl>    <span class=n>Console</span><span class=p>.</span><span class=n>WriteLine</span><span class=p>(</span><span class=n>result</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=kt>var</span> <span class=n>json</span> <span class=p>=</span> <span class=n>JArray</span><span class=p>.</span><span class=n>Parse</span><span class=p>(</span><span class=n>result</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>    <span class=kt>var</span> <span class=n>fileId</span> <span class=p>=</span> <span class=p>((</span><span class=n>JObject</span><span class=p>)</span><span class=n>json</span><span class=p>.</span><span class=n>First</span><span class=p>)[</span><span class=s>&#34;fileId&#34;</span><span class=p>].</span><span class=n>Value</span><span class=p>&lt;</span><span class=kt>string</span><span class=p>&gt;();</span>
+</span></span><span class=line><span class=cl>    <span class=kt>var</span> <span class=n>fileName</span> <span class=p>=</span> <span class=n>Path</span><span class=p>.</span><span class=n>Combine</span><span class=p>(</span><span class=n>Environment</span><span class=p>.</span><span class=n>CurrentDirectory</span><span class=p>,</span> <span class=s>&#34;Output/Video001.mp4&#34;</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>    <span class=kt>var</span> <span class=n>filePath</span> <span class=p>=</span> <span class=n>Path</span><span class=p>.</span><span class=n>GetDirectoryName</span><span class=p>(</span><span class=n>fileName</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>    <span class=k>if</span> <span class=p>(!</span><span class=n>Directory</span><span class=p>.</span><span class=n>Exists</span><span class=p>(</span><span class=n>filePath</span><span class=p>))</span> <span class=n>Directory</span><span class=p>.</span><span class=n>CreateDirectory</span><span class=p>(</span><span class=n>filePath</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>    <span class=k>using</span> <span class=p>(</span><span class=kt>var</span> <span class=n>fileStram</span> <span class=p>=</span> <span class=k>new</span> <span class=n>FileStream</span><span class=p>(</span><span class=n>fileName</span><span class=p>,</span> <span class=n>FileMode</span><span class=p>.</span><span class=n>Create</span><span class=p>))</span>
+</span></span><span class=line><span class=cl>    <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=kt>var</span> <span class=n>stream</span> <span class=p>=</span> <span class=k>await</span> <span class=n>client</span><span class=p>.</span><span class=n>Download</span><span class=p>(</span><span class=n>fileId</span><span class=p>).</span><span class=n>InvokeAsync</span><span class=p>();</span>
+</span></span><span class=line><span class=cl>        <span class=n>stream</span><span class=p>.</span><span class=n>Content</span><span class=p>.</span><span class=n>ReadAsStreamAsync</span><span class=p>().</span><span class=n>Result</span><span class=p>.</span><span class=n>CopyToAsync</span><span class=p>(</span><span class=n>fileStram</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></div><p>这里说明的是，非常遗憾，这里的上传接口并没有被成功调用，可能我还是被 MulitpartFormDataContent 这种东西所困惑着，尽管我使用了 WebApiClient 中提供的 MulitpartFile 类，并且使用 HttpContent 特性对参数进行了修饰。(<strong>后来发现是因为我使用 JsonReturn 特性，可我的 Action 的确是返回了 JSON 啊，所以，我不暂时理解不了这一点</strong>😬)。我了解到的一点信息是，Spring Cloud 中的 Feign，一个和 Retrofit 极其相似的 HTTP 客户端，其本身并没有实现文件上传的功能，需要借助插件来实现相关功能，所以，这是否说明 HTTP 协议中的上传实现本身就是一个错误，因为它和 form-data 搅和在一起，试图用键值对的形式去描述一个文件，我们的业务中需要给文件增加备注关联相关信息，坦白讲，这种数据结构令人非常痛苦，所以，上传这块会有三个不同的版本，我一直希望上传可以和具体的业务解耦，即使需要给文件增加备注或者是关联相关信息，应该交给新的 Service 去做这件事情啊，这简直教人头疼啊。</p><h2 id=可配置与动态化>可配置与动态化</h2><p>我知道许多人对特性这种**”配置“<strong>方式并不感冒，因为他们觉得通过配置文件就可以做到不修改代码。我曾经帮助组里写了一个非常简洁的配置方案，后来这个方案在 Code Review 的时候被拒绝，因为我和别人写得不一样。直到前几天我看到 ASP.NET Core 里全新的配置方式，我瞬间意识到这种配置方式和我之前的想法不谋而合，这个世界上聪明的人的想法总是如此一致。我相信人们看到这篇文章里出现的各种特性，都会认为像 Host、URL 等等这些东西都被硬编码了，说得好像你们的代码不需要随着配置文件变化而变化似的，说得好像你们的代码每次都不需要重新编译似的。我曾经考虑到这一点，在开发一个库的时候，充分考虑到了可配置化，事实是大家都不喜欢写配置文件，从那以后，我就变成了坚定的</strong>“约定大于配置“**主义。</p><p>回到 WebApiClient 这个话题，如果你不喜欢这种基于特性的配置方式，那么你可以通过 HttpApiConfig 这个类，动态地对诸如 Host、URL 等参数进行配置，并在 WebApiClient 创建接口实例的时候传入这些配置。下面是一个简单的示例：</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-CSharp data-lang=CSharp><span class=line><span class=cl><span class=c1>//手动创建配置</span>
+</span></span><span class=line><span class=cl><span class=kt>var</span> <span class=n>config</span> <span class=p>=</span> <span class=k>new</span> <span class=n>HttpApiConfig</span><span class=p>()</span>
+</span></span><span class=line><span class=cl><span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=n>HttpHost</span> <span class=p>=</span> <span class=k>new</span> <span class=n>Uri</span><span class=p>(</span><span class=s>&#34;http://www.yourdomain.com&#34;</span><span class=p>),</span>
+</span></span><span class=line><span class=cl><span class=p>};</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1>//调用Values Service</span>
+</span></span><span class=line><span class=cl><span class=k>using</span> <span class=p>(</span><span class=kt>var</span> <span class=n>client</span> <span class=p>=</span> <span class=n>HttpApiClient</span><span class=p>.</span><span class=n>Create</span><span class=p>&lt;</span><span class=n>IValuesApiCaller</span><span class=p>&gt;(</span><span class=n>config</span><span class=p>))</span>
+</span></span><span class=line><span class=cl><span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=n>Console</span><span class=p>.</span><span class=n>WriteLine</span><span class=p>(</span><span class=s>&#34;-----Invoke Values Service-----&#34;</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>    <span class=kt>var</span> <span class=n>results</span> <span class=p>=</span> <span class=k>await</span> <span class=n>client</span><span class=p>.</span><span class=n>GetValues</span><span class=p>().</span><span class=n>InvokeAsync</span><span class=p>();</span>
+</span></span><span class=line><span class=cl>    <span class=n>Console</span><span class=p>.</span><span class=n>WriteLine</span><span class=p>(</span><span class=s>$&#34;results is {results}&#34;</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>    <span class=kt>var</span> <span class=n>result</span> <span class=p>=</span> <span class=k>await</span> <span class=n>client</span><span class=p>.</span><span class=n>GetValue</span><span class=p>(</span><span class=m>10</span><span class=p>).</span><span class=n>InvokeAsync</span><span class=p>();</span>
+</span></span><span class=line><span class=cl>    <span class=n>Console</span><span class=p>.</span><span class=n>WriteLine</span><span class=p>(</span><span class=s>$&#34;result is {result}&#34;</span><span class=p>);</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></div><p>我知道杠精们绝对还有话要说，如果我连请求的 URL 都是动态地该怎么办呢？此时，你总不能让我再让我去配置 URL 了吧！对于这个问题，WebApiClient 提供了 Url 特性，该特性可以修饰参数，表明这是一个 URL，需要注意的是，该参数必须放在第一位，具体可以参考<a href=https://github.com/dotnetcore/WebApiClient/wiki/WebApiClient%E5%9F%BA%E7%A1%80>官方文档</a>。</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-CSharp data-lang=CSharp><span class=line><span class=cl><span class=na>[HttpGet]</span>
+</span></span><span class=line><span class=cl><span class=n>ITask</span><span class=p>&lt;</span><span class=kt>string</span><span class=p>&gt;</span> <span class=n>Login</span><span class=p>([</span><span class=n>Url</span><span class=p>]</span> <span class=kt>string</span> <span class=n>url</span><span class=p>,</span> <span class=kt>string</span> <span class=n>username</span><span class=p>,</span> <span class=kt>string</span> <span class=n>password</span><span class=p>);</span>
+</span></span></code></pre></div><h1 id=本文小结>本文小结</h1><p>有时候，我会一直在想，前后端分离到底分离的是什么？在我看来，找出这种界限是最重要的，即前端与后端各自的职责是什么。我们想分离的其实是职责，可惜这种想法极其容易演变为前后端人员的分离。而这种人员上的分离，则让接口的设计和沟通充满了坎坷。前后端分离不在于项目是否由两个或者更多的人完成，而在于你是否可以意识到前后端代码里的界限。在这种前提下，博主通过项目上前后端分离的实践经验，配合产品本身的技术架构体系，引申出一个话题，即<strong>前端/客户端如何应对后端 API 快速扩增带来的影响</strong>，并由此提出，<strong>通过代理类来调用后端 API 的想法</strong>，这一想法借鉴了 WebService。接下来，我们介绍了.NET 平台下的 Retrofit：WebApiClient，它可以让我们以一种“契约式”思想来声明接口，而不必关心这个接口该如何去实现，因为 WebApiClient 会帮助你实现具体功能。更改接口的代价永远比实现接口要小，所以，我相信这种声明式的 HTTP 客户端，可以让你更快速地应对来自后端的影响。在 Java 的世界里有 Retrofit、有 Feign，为了不被超越 太多，我们只能迎头赶上。谢谢大家，本篇到此结束，周末愉快！😬</p></div><div class="copyright s-card"><div class=title><span class=post-name>声明式 RESTful 客户端 WebApiClient 在项目中的应用</span>
+<a :href=http://example.org/posts/380519286/ class=post-link target=_blank>http://example.org/posts/380519286/</a></div><div class=post-meta><div class=meta-item><span class=tip>作者</span>
+<span class=name>飞鸿踏雪</span></div><div class=meta-item><span class=tip>发布于</span>
+<span class=name>2018-07-16</span></div><div class=meta-item><span class=tip>更新于</span>
+<span class=name>2018-07-16</span></div><div class="meta-item cc"><span class=tip>许可协议</span>
+<a class=name href=https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh-hans target=_blank>CC BY-NC-SA 4.0</a></div></div><span class=meta-tip>署名-非商业性使用-相同方式共享 4.0 国际</span></div><div class=other-meta><div class=all-tags><a href=/tags/restful class=tag-item><i class="iconfont icon-hashtag"></i>
+<span class=name>RESTful</span>
+</a><a href=/tags/webapi class=tag-item><i class="iconfont icon-hashtag"></i>
+<span class=name>WebApi</span>
+</a><a href=/tags/httpclient class=tag-item><i class="iconfont icon-hashtag"></i>
+<span class=name>HttpClient</span></a></div><a href=https://eqnxweimkr5.feishu.cn/share/base/form/shrcnCXCPmxCKKJYI3RKUfefJre class=report target=_blank><i class="iconfont icon-report"></i>
+反馈与投诉</a></div><div class=reward><div class=reward-btn onclick='window.$Modal.show("reward-modal")'><i class="iconfont icon-reward"></i>
+<span class=text>赞赏博主</span></div></div><div class=modal id=reward-modal><div class=modal-mask></div><div class="modal-main s-card" style=max-width:430px><div class=title><div class=title-left><i class="iconfont icon-reward"></i>
+<span class=title-text>赞赏博主</span></div><i class="iconfont icon-close close" id=modal-close></i></div><div class=modal-content style=--height:80vh><div class=reward-card><div class=thank>🙏 请博主喝一杯咖啡</div><div class=qr><a class=qr-img href=/images/reward/alipay.jpg target=_blank><img src=/images/reward/alipay.jpg alt=支付宝赞赏码><div class=tip><i class="iconfont icon-alipay"></i>
+<span>支付宝</span></div></a><a class=qr-img href=/images/reward/wechat.jpg target=_blank><img src=/images/reward/wechat.jpg alt=微信赞赏码><div class=tip><i class="iconfont icon-wechat"></i>
+<span>微信</span></div></a></div><div class="all-list s-card hover"><div class=title>赞赏记录</div><div class=tip>赞赏金额将全部用于开源项目维护，以及服务器、域名及各类云服务的开销</div></div></div></div></div></div><div class=related-post><div class=title><span class=name><i class="iconfont icon-star"></i>
+相关推荐
+</span><span class=shuffle onclick='window.location.href="/posts/1734098504/"'>随便逛逛</span></div><div class=post-lists><article class="post-item s-card simple hover" style=animation-delay:.4s onclick='window.location.href="/posts/2488769283/"'><div class=post-content><span class=post-title>WebApiClient 中动态路由的实现与使用</span>
+<span class=post-desc>在这篇博客中，讨论了.NET平台下声明式RESTful客户端WebApiClient的动态路由实现与使用。介绍了WebApiClient的简单调用流程以及遇到的问题，提出了三种解决思路：使用[Uri]参数、使用{foobar}片段参数以及使用服务发现。作者展示了通过服务发现获取可用地址来动态调用服务的示例，并提到了WebApiClient的作者提供的服务发现扩展。</span></div></article><article class="post-item s-card simple hover" style=animation-delay:.4s onclick='window.location.href="/posts/4236649/"'><div class=post-content><span class=post-title>通过动态 Controller 实现从 WCF 到 Web API 的迁移</span>
+<span class=post-desc>这篇文章介绍了如何通过 Castle 的动态代理来实现将 WCF 接口迁移到 Web API 上的过程。通过组合类和接口，借助 Castle 的 Dynamic Proxy 实现动态生成 Controller，替换默认组件以实现 WCF 接口通过 Web API 访问。文章还涵盖了 ASP.NET MVC 的原理、自定义组件的实现、容器注册替换、HTTP 动词支持和接口返回值优化等内容。最后提到了在 ASP.NET Core 中的 POCOController 特性，使得将任意类作为 Controller 更加简单。文章内容详实，为实现 WCF 到 Web API 的迁移提供了指导和思路。</span></div></article></div><style>.post-lists{width:100%}.post-lists .post-item{padding:0!important;display:flex;margin-bottom:1rem;animation:fade-up .6s backwards;cursor:pointer;overflow:hidden;height:200px}.post-lists .post-item .post-cover{flex:0 0 35%;overflow:hidden;transform:translateZ(0)}.post-lists .post-item .post-cover img{width:100%;height:100%;object-fit:cover;transform-origin:center center;transition:transform .5s ease-out,filter .5s ease-out;backface-visibility:hidden}.post-lists .post-item .post-content{flex:1;padding:1.6rem 2rem;display:flex;flex-direction:column;justify-content:space-between}.post-lists .post-item .post-category{display:flex;flex-wrap:wrap;width:100%;color:var(--main-font-second-color);font-size:14px}.post-lists .post-item .post-category .cat-name{display:flex;flex-direction:row;align-items:center}.post-lists .post-item .post-category .cat-name .iconfont{opacity:.8;margin-right:6px;color:var(--main-font-second-color)}.post-lists .post-item .post-category .top{margin-left:12px;color:var(--main-color)}.post-lists .post-item .post-category .top .iconfont{opacity:.8;color:var(--main-color)}.post-lists .post-item .post-title{font-size:20px;line-height:30px;font-weight:700;margin:.6rem 0;transition:color .3s;display:-webkit-box;overflow:hidden;word-break:break-all;-webkit-box-orient:vertical;-webkit-line-clamp:2}.post-lists .post-item .post-desc{margin-top:-.4rem;margin-bottom:.8rem;opacity:.8;line-height:30px;display:-webkit-box;overflow:hidden;word-break:break-all;-webkit-box-orient:vertical;-webkit-line-clamp:2}.post-lists .post-item .post-meta{display:flex;flex-direction:row;align-items:center;justify-content:space-between;color:var(--main-font-second-color)}.post-lists .post-item .post-tags{display:flex;flex-wrap:wrap;opacity:.8;margin-right:20px;overflow:hidden;mask:linear-gradient(90deg,#fff 0,#fff 90%,hsla(0,0%,100%,.6) 95%,hsla(0,0%,100%,0) 100%)}.post-lists .post-item .post-tags .tags-name{display:flex;flex-direction:row;align-items:center;margin-right:12px;white-space:nowrap;transition:color .3s}.post-lists .post-item .post-time{opacity:.6;font-size:13px;white-space:nowrap}.post-lists .post-item:hover .post-cover img{filter:brightness(.8);transform:scale(1.05)}.post-lists .post-item:hover .post-title{color:var(--main-color)}.post-lists .post-item:active{transform:scale(.98)}.post-lists .post-item.cover-left{flex-direction:row}.post-lists .post-item.cover-right{flex-direction:row-reverse}.post-lists .post-item.cover-both:nth-child(odd){flex-direction:row}.post-lists .post-item.cover-both:nth-child(even){flex-direction:row-reverse}.post-lists.layout-grid{display:grid;grid-template-columns:repeat(var(--grid-columns,2),1fr);gap:var(--grid-gap,1rem)}.post-lists.layout-grid .post-item{margin:0;flex-direction:column;height:auto}.post-lists.layout-grid .post-item .post-cover{flex:none;width:100%;height:225px}@media(max-width:768px){.post-lists .post-item{flex-direction:column;height:auto}.post-lists .post-item .post-cover{flex:none;width:100%;height:200px}.post-lists .post-item.cover-left,.post-lists .post-item.cover-right,.post-lists .post-item.cover-both{flex-direction:column!important}.post-lists.layout-grid{grid-template-columns:1fr}.post-lists .post-item .post-tags{flex-wrap:nowrap}}.post-lists .post-item .simple{animation:none;padding:.5rem 1.4rem!important;background-color:var(--main-card-second-background);height:auto;margin-bottom:.5rem}.post-lists .post-item .simple .post-content{padding:.5rem 0}.post-lists .post-item .simple .post-title{margin:0;font-size:16px}.post-lists .post-item .simple .post-desc{margin:.3rem 0 0;font-size:14px;opacity:.6}</style></div><style>.related-post{margin-top:1rem}.related-post .title{display:flex;flex-direction:row;align-items:center;justify-content:space-between;width:100%;margin:3rem 0 1rem;padding:0 6px}.related-post .title .name{display:flex;align-items:center;font-size:24px;font-weight:700}.related-post .title .name .iconfont{font-size:26px;font-weight:400;margin-right:8px}.related-post .title .shuffle{opacity:.6;font-size:14px;transition:color .3s,opacity .3s;cursor:pointer}.related-post .title .shuffle:hover{opacity:1;color:var(--main-color)}</style><div id=comments><div id=main-comment class=comment><div v-if=!fill class=title><span class=name><i class="iconfont icon-chat"></i>
+评论
+</span><span class=tool>隐私政策</span></div><link rel=stylesheet href=https://unpkg.com/@waline/client@v3/dist/waline.css><div id=waline class=waline-container></div><style>.waline-container{background-color:var(--card-background);border-radius:var(--card-border-radius);box-shadow:var(--shadow-l1);padding:var(--card-padding)}.waline-container .vcount{color:var(--card-text-color-main)}</style><script type=module>
+        import { init } from 'https://unpkg.com/@waline/client@v3/dist/waline.js';
+        init({
+            el: '#waline',
+            serverURL: 'https:\/\/waline.yuanpei.me\/',
+            lang: 'zh',
+            dark: 'auto',
+            path: window.location.href,
+            requiredMeta: ['nick','mail'],
+            emoji: [
+                '//unpkg.com/@waline/emojis@1.2.0/weibo'
+            ],
+            reaction: false,
+        });
+      </script></div></div><div class="next-post s-card" id=next-post data-is-next=true><a href=/posts/1099762326/ class=next-post-link><span class=post-tip>下一篇阅读
+</span><span class=post-title>邪不压正：本我的发现之旅</span></a></div></article><aside class=main-aside><div class="hello s-card weidgets"><span class=tip>中午好，吃饱了精神好！</span><div class=content><div class=site-logo><div class=avatar><img src=/images/avatar.jpg></div></div><span class=site-desc></span></div><div class=info><div class=name><span class=author>飞鸿踏雪</span>
+<span class=desc>纵有疾风起，人生不言弃</span></div><div class=link><a href=https://github.com/qinyuanpei target=_blank class=social-link><i class="iconfont icon-github"></i>
+</a><a href=mailto:qinyuapei@163.com target=_blank class=social-link><i class="iconfont icon-email"></i></a></div></div></div><div class=sticky><div class="toc s-card weidgets" id=weidget-toc><div class=toc-title><i class="iconfont icon-toc"></i>
+<span class=name>目录</span></div><div id=toc-all class=toc-list></div></div><script>document.addEventListener("DOMContentLoaded",function(){const o=[];let e=null,t=null,n=0;const s=document.getElementById("toc-all"),i=()=>{try{if(e=document.getElementById("page-content"),!e)return!1;const t=Array.from(e.querySelectorAll("h1, h2, h3, h4")).filter(e=>e.parentElement.tagName.toLowerCase()==="div");return t}catch(e){console.error("获取所有目录数据出错：",e)}},r=()=>{const e=i();if(!e)return!1;s.innerHTML="",e.forEach((e,t)=>{const n={id:e.id,type:e.tagName,text:e.textContent?.replace(/\u200B/g,"").trim()},i=document.createElement("span");i.id="toc-"+n.id,i.className=`toc-item ${n.type} ${t===0?"active":""}`,i.textContent=n.text,i.addEventListener("click",()=>d(n.id)),s.appendChild(i),o.push(n)}),e&&e.length>0&&(t=e[0].id)},c=(e,t)=>{let n;return function(){const s=arguments,o=this;n||(e.apply(o,s),n=!0,setTimeout(()=>n=!1,t))}},l=c(()=>{if(!o.length)return!1;const e=i();if(!e)return!1;const s=120;if(window.scrollY===0){n=0,t=e[0]?.id,a();return}for(let n of e){const o=n.getBoundingClientRect();o.top-s<=0&&o.bottom+s>=0&&t!==n.id&&(t=n.id,a())}},100),a=()=>{document.querySelectorAll(".toc-item.active").forEach(e=>{e.classList.remove("active")});const e=document.getElementById("toc-"+t);if(!e)return!1;e.classList.add("active"),n=e.offsetTop-2||0,s.style.setProperty("--height",n+"px"),s.scrollTo({top:n-80,behavior:"smooth"})},d=t=>{try{const n=document.getElementById(t);if(!n||!e)return!1;const s=n.offsetTop,o=s+e.offsetTop-80;window.scroll({top:o,behavior:"smooth"})}catch(e){console.error("目录滚动失败：",e)}};r(),window.addEventListener("scroll",l)})</script><style lang=scss scoped>.toc{position:relative;padding:0!important;overflow:hidden;.toc-title { display: flex; flex-direction: row; align-items: center; padding: 18px; height: 58px; .iconfont { margin-right: 8px; font-weight: bold; opacity: 0.6; } .name { font-weight: bold; } } .toc-list { position: relative; padding: 20px; padding-top: 0; padding-left: 24px; display: flex; flex-direction: column; max-height: calc(70vh - 58px); overflow: auto; .toc-item { margin: 4px 0; padding: 6px 12px; border-radius: 8px; opacity: 0.6; transition: color 0.3s, opacity 0.3s, font-size 0.3s, background-color 0.3s; cursor: pointer; &:first-child { margin-top: 0; } &:last-child { margin-bottom: 0; } &.H1 { font-weight: bold; } &.H2 { font-size: 14px; margin-left: 15px; font-weight: normal; } &.H3 { font-size: 12px; margin-left: 25px; } &.active { opacity: 1; color: var(--main-color); background-color: var(--main-color-bg); &.H2 { font-size: 14px; } &.H3 { font-size: 12px; } } &:hover { opacity: 1; color: var(--main-color); background-color: var(--main-color-bg); } } &::after { content: ""; position: absolute; left: 12px; top: var(--height); width: 4px; height: 20px; margin: 8px 0; background-color: var(--main-color); border-radius: 8px; transition: top 0.3s; } } &::before { content: ""; position: absolute; left: 12px; bottom: 20px; width: 4px; height: calc(100% - 78px); background-color: var(--main-card-border); border-radius: 8px; }}</style><div class="tags-cloud s-card weidgets"><div class=title><i class="iconfont icon-hashtag"></i>
+<span class=title-name>热门标签</span></div><div class=all-tags><a href=/tags/unity3d/ class=tags><span class=name>Unity3D</span>
+<sup class=num>27</sup>
+</a><a href=/tags/%E6%84%9F%E6%82%9F/ class=tags><span class=name>感悟</span>
+<sup class=num>23</sup>
+</a><a href=/tags/python/ class=tags><span class=name>Python</span>
+<sup class=num>22</sup>
+</a><a href=/tags/%E9%9A%8F%E7%AC%94/ class=tags><span class=name>随笔</span>
+<sup class=num>16</sup>
+</a><a href=/tags/.net-core/ class=tags><span class=name>.NET Core</span>
+<sup class=num>15</sup>
+</a><a href=/tags/%E5%BD%B1%E8%AF%84/ class=tags><span class=name>影评</span>
+<sup class=num>14</sup>
+</a><a href=/tags/%E6%B8%B8%E6%88%8F/ class=tags><span class=name>游戏</span>
+<sup class=num>13</sup>
+</a><a href=/tags/%E7%94%B5%E5%BD%B1/ class=tags><span class=name>电影</span>
+<sup class=num>12</sup>
+</a><a href=/tags/grpc/ class=tags><span class=name>GRPC</span>
+<sup class=num>10</sup>
+</a><a href=/tags/%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91/ class=tags><span class=name>游戏开发</span>
+<sup class=num>10</sup>
+</a><a href=/tags/%E7%94%9F%E6%B4%BB/ class=tags><span class=name>生活</span>
+<sup class=num>10</sup>
+</a><a href=/tags/.net/ class=tags><span class=name>.NET</span>
+<sup class=num>9</sup>
+</a><a href=/tags/http/ class=tags><span class=name>HTTP</span>
+<sup class=num>9</sup>
+</a><a href=/tags/redis/ class=tags><span class=name>Redis</span>
+<sup class=num>9</sup>
+</a><a href=/tags/%E5%89%8D%E7%AB%AF/ class=tags><span class=name>前端</span>
+<sup class=num>9</sup>
+</a><a href=/tags/envoy/ class=tags><span class=name>Envoy</span>
+<sup class=num>8</sup>
+</a><a href=/tags/hexo/ class=tags><span class=name>Hexo</span>
+<sup class=num>8</sup>
+</a><a href=/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1/ class=tags><span class=name>微服务</span>
+<sup class=num>8</sup>
+</a><a href=/tags/%E6%8A%80%E5%B7%A7/ class=tags><span class=name>技巧</span>
+<sup class=num>8</sup>
+</a><a href=/tags/%E6%95%99%E7%A8%8B/ class=tags><span class=name>教程</span>
+<sup class=num>8</sup>
+</a><a href=/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/ class=tags><span class=name>数据库</span>
+<sup class=num>8</sup>
+</a><a href=/tags/%E7%AC%94%E8%AE%B0/ class=tags><span class=name>笔记</span>
+<sup class=num>8</sup>
+</a><a href=/tags/aop/ class=tags><span class=name>AOP</span>
+<sup class=num>7</sup>
+</a><a href=/tags/c%23/ class=tags><span class=name>C#</span>
+<sup class=num>7</sup>
+</a><a href=/tags/docker/ class=tags><span class=name>Docker</span>
+<sup class=num>6</sup>
+</a><a href=/tags/linux/ class=tags><span class=name>Linux</span>
+<sup class=num>6</sup>
+</a><a href=/tags/vue/ class=tags><span class=name>Vue</span>
+<sup class=num>6</sup>
+</a><a href=/tags/%E6%9C%8D%E5%8A%A1%E5%99%A8/ class=tags><span class=name>服务器</span>
+<sup class=num>6</sup>
+</a><a href=/tags/%E7%BC%96%E7%A8%8B/ class=tags><span class=name>编程</span>
+<sup class=num>6</sup>
+</a><a href=/tags/%E8%AF%BB%E4%B9%A6/ class=tags><span class=name>读书</span>
+<sup class=num>6</sup>
+</a><a href=/tags/ef/ class=tags><span class=name>EF</span>
+<sup class=num>5</sup>
+</a><a href=/tags/opencv/ class=tags><span class=name>OpenCV</span>
+<sup class=num>5</sup>
+</a><a href=/tags/ugui/ class=tags><span class=name>UGUI</span>
+<sup class=num>5</sup>
+</a><a href=/tags/%E5%AE%B9%E5%99%A8/ class=tags><span class=name>容器</span>
+<sup class=num>5</sup>
+</a><a href=/tags/%E6%80%9D%E8%80%83/ class=tags><span class=name>思考</span>
+<sup class=num>5</sup>
+</a><a href=/tags/%E6%95%B0%E5%AD%A6/ class=tags><span class=name>数学</span>
+<sup class=num>5</sup>
+</a><a href=/tags/%E6%97%A5%E5%BF%97/ class=tags><span class=name>日志</span>
+<sup class=num>5</sup>
+</a><a href=/tags/%E6%BA%90%E7%A0%81/ class=tags><span class=name>源码</span>
+<sup class=num>5</sup>
+</a><a href=/tags/%E7%BC%93%E5%AD%98/ class=tags><span class=name>缓存</span>
+<sup class=num>5</sup>
+</a><a href=/tags/git/ class=tags><span class=name>Git</span>
+<sup class=num>4</sup>
+</a><a href=/tags/mono/ class=tags><span class=name>Mono</span>
+<sup class=num>4</sup>
+</a><a href=/tags/restful/ class=tags><span class=name>RESTful</span>
+<sup class=num>4</sup>
+</a><a href=/tags/web/ class=tags><span class=name>Web</span>
+<sup class=num>4</sup>
+</a><a href=/tags/webapi/ class=tags><span class=name>WebApi</span>
+<sup class=num>4</sup>
+</a><a href=/tags/%E5%8E%86%E5%8F%B2/ class=tags><span class=name>历史</span>
+<sup class=num>4</sup>
+</a><a href=/tags/%E5%A2%9E%E5%BC%BA%E7%8E%B0%E5%AE%9E/ class=tags><span class=name>增强现实</span>
+<sup class=num>4</sup>
+</a><a href=/tags/%E6%89%A9%E5%B1%95/ class=tags><span class=name>扩展</span>
+<sup class=num>4</sup>
+</a><a href=/tags/%E7%A8%8B%E5%BA%8F%E5%91%98/ class=tags><span class=name>程序员</span>
+<sup class=num>4</sup>
+</a><a href=/tags/%E7%BC%96%E8%BE%91%E5%99%A8/ class=tags><span class=name>编辑器</span>
+<sup class=num>4</sup>
+</a><a href=/tags/ar/ class=tags><span class=name>AR</span>
+<sup class=num>3</sup>
+</a><a href=/tags/bash/ class=tags><span class=name>Bash</span>
+<sup class=num>3</sup>
+</a><a href=/tags/chatgpt/ class=tags><span class=name>ChatGPT</span>
+<sup class=num>3</sup>
+</a><a href=/tags/dapper/ class=tags><span class=name>Dapper</span>
+<sup class=num>3</sup>
+</a><a href=/tags/kindle/ class=tags><span class=name>Kindle</span>
+<sup class=num>3</sup>
+</a><a href=/tags/nginx/ class=tags><span class=name>Nginx</span>
+<sup class=num>3</sup>
+</a><a href=/tags/nlp/ class=tags><span class=name>NLP</span>
+<sup class=num>3</sup>
+</a><a href=/tags/rabbitmq/ class=tags><span class=name>RabbitMQ</span>
+<sup class=num>3</sup>
+</a><a href=/tags/travis/ class=tags><span class=name>Travis</span>
+<sup class=num>3</sup>
+</a><a href=/tags/websocket/ class=tags><span class=name>WebSocket</span>
+<sup class=num>3</sup>
+</a><a href=/tags/%E4%B8%AD%E9%97%B4%E4%BB%B6/ class=tags><span class=name>中间件</span>
+<sup class=num>3</sup>
+</a><a href=/tags/%E5%93%B2%E5%AD%A6/ class=tags><span class=name>哲学</span>
+<sup class=num>3</sup>
+</a><a href=/tags/%E5%9B%BE%E5%83%8F%E5%A4%84%E7%90%86/ class=tags><span class=name>图像处理</span>
+<sup class=num>3</sup>
+</a><a href=/tags/%E5%9B%BE%E5%BD%A2/ class=tags><span class=name>图形</span>
+<sup class=num>3</sup>
+</a><a href=/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/ class=tags><span class=name>多线程</span>
+<sup class=num>3</sup>
+</a><a href=/tags/%E5%B7%A5%E4%BD%9C/ class=tags><span class=name>工作</span>
+<sup class=num>3</sup>
+</a><a href=/tags/%E5%BC%82%E5%B8%B8/ class=tags><span class=name>异常</span>
+<sup class=num>3</sup>
+</a><a href=/tags/%E5%BE%AE%E5%8D%9A/ class=tags><span class=name>微博</span>
+<sup class=num>3</sup>
+</a><a href=/tags/%E6%88%90%E9%95%BF/ class=tags><span class=name>成长</span>
+<sup class=num>3</sup>
+</a><a href=/tags/%E6%8F%92%E4%BB%B6/ class=tags><span class=name>插件</span>
+<sup class=num>3</sup>
+</a><a href=/tags/%E6%97%B6%E9%97%B4/ class=tags><span class=name>时间</span>
+<sup class=num>3</sup>
+</a><a href=/tags/%E6%A2%A6%E6%83%B3/ class=tags><span class=name>梦想</span>
+<sup class=num>3</sup>
+</a><a href=/tags/%E6%B1%82%E8%81%8C/ class=tags><span class=name>求职</span>
+<sup class=num>3</sup>
+</a><a href=/tags/%E6%B8%A9%E6%95%85%E7%9F%A5%E6%96%B0/ class=tags><span class=name>温故知新</span>
+<sup class=num>3</sup>
+</a><a href=/tags/%E7%9B%91%E6%8E%A7/ class=tags><span class=name>监控</span>
+<sup class=num>3</sup>
+</a><a href=/tags/%E8%A5%BF%E5%AE%89/ class=tags><span class=name>西安</span>
+<sup class=num>3</sup>
+</a><a href=/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/ class=tags><span class=name>设计模式</span>
+<sup class=num>3</sup>
+</a><a href=/tags/%E8%B7%A8%E5%B9%B3%E5%8F%B0/ class=tags><span class=name>跨平台</span>
+<sup class=num>3</sup>
+</a><a href=/tags/%E9%9D%A2%E8%AF%95/ class=tags><span class=name>面试</span>
+<sup class=num>3</sup>
+</a><a href=/tags/abp/ class=tags><span class=name>ABP</span>
+<sup class=num>2</sup>
+</a><a href=/tags/agent/ class=tags><span class=name>Agent</span>
+<sup class=num>2</sup>
+</a><a href=/tags/aigc/ class=tags><span class=name>AIGC</span>
+<sup class=num>2</sup>
+</a><a href=/tags/api/ class=tags><span class=name>API</span>
+<sup class=num>2</sup>
+</a><a href=/tags/assetbundle/ class=tags><span class=name>AssetBundle</span>
+<sup class=num>2</sup>
+</a><a href=/tags/binlog/ class=tags><span class=name>Binlog</span>
+<sup class=num>2</sup>
+</a><a href=/tags/ci/ class=tags><span class=name>CI</span>
+<sup class=num>2</sup>
+</a><a href=/tags/cors/ class=tags><span class=name>CORS</span>
+<sup class=num>2</sup>
+</a><a href=/tags/csharp/ class=tags><span class=name>CSharp</span>
+<sup class=num>2</sup>
+</a><a href=/tags/di/ class=tags><span class=name>DI</span>
+<sup class=num>2</sup>
+</a><a href=/tags/dlib/ class=tags><span class=name>Dlib</span>
+<sup class=num>2</sup>
+</a><a href=/tags/easyar/ class=tags><span class=name>EasyAR</span>
+<sup class=num>2</sup>
+</a><a href=/tags/elk/ class=tags><span class=name>ELK</span>
+<sup class=num>2</sup>
+</a><a href=/tags/github/ class=tags><span class=name>Github</span>
+<sup class=num>2</sup>
+</a><a href=/tags/html5/ class=tags><span class=name>HTML5</span>
+<sup class=num>2</sup>
+</a><a href=/tags/httpclient/ class=tags><span class=name>HttpClient</span>
+<sup class=num>2</sup>
+</a><a href=/tags/javascript/ class=tags><span class=name>JavaScript</span>
+<sup class=num>2</sup>
+</a><a href=/tags/jeager/ class=tags><span class=name>Jeager</span>
+<sup class=num>2</sup>
+</a><a href=/tags/kafka/ class=tags><span class=name>Kafka</span>
+<sup class=num>2</sup>
+</a><a href=/tags/lambda/ class=tags><span class=name>Lambda</span>
+<sup class=num>2</sup>
+</a><a href=/tags/llama/ class=tags><span class=name>LLaMA</span>
+<sup class=num>2</sup>
+</a><a href=/tags/lua/ class=tags><span class=name>Lua</span>
+<sup class=num>2</sup>
+</a><a href=/tags/mock/ class=tags><span class=name>Mock</span>
+<sup class=num>2</sup>
+</a><a href=/tags/mysql/ class=tags><span class=name>MySQL</span>
+<sup class=num>2</sup>
+</a><a href=/tags/rag/ class=tags><span class=name>RAG</span>
+<sup class=num>2</sup>
+</a><a href=/tags/sdl/ class=tags><span class=name>SDL</span>
+<sup class=num>2</sup>
+</a><a href=/tags/selenium/ class=tags><span class=name>Selenium</span>
+<sup class=num>2</sup>
+</a><a href=/tags/signalr/ class=tags><span class=name>SignalR</span>
+<sup class=num>2</sup>
+</a><a href=/tags/socket/ class=tags><span class=name>Socket</span>
+<sup class=num>2</sup>
+</a><a href=/tags/sse/ class=tags><span class=name>SSE</span>
+<sup class=num>2</sup>
+</a><a href=/tags/streaming/ class=tags><span class=name>Streaming</span>
+<sup class=num>2</sup>
+</a><a href=/tags/swagger/ class=tags><span class=name>Swagger</span>
+<sup class=num>2</sup>
+</a><a href=/tags/tracing/ class=tags><span class=name>Tracing</span>
+<sup class=num>2</sup>
+</a><a href=/tags/vscode/ class=tags><span class=name>VSCode</span>
+<sup class=num>2</sup>
+</a><a href=/tags/wsl/ class=tags><span class=name>WSL</span>
+<sup class=num>2</sup>
+</a><a href=/tags/%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/ class=tags><span class=name>主从复制</span>
+<sup class=num>2</sup>
+</a><a href=/tags/%E4%BA%8B%E4%BB%B6%E8%AE%A2%E9%98%85/ class=tags><span class=name>事件订阅</span>
+<sup class=num>2</sup>
+</a><a href=/tags/%E4%BA%92%E8%81%94%E7%BD%91/ class=tags><span class=name>互联网</span>
+<sup class=num>2</sup>
+</a><a href=/tags/%E4%BA%BA%E6%96%87/ class=tags><span class=name>人文</span>
+<sup class=num>2</sup>
+</a><a href=/tags/%E4%BA%BA%E7%94%9F/ class=tags><span class=name>人生</span>
+<sup class=num>2</sup>
+</a><a href=/tags/%E4%BA%BA%E8%84%B8%E8%AF%86%E5%88%AB/ class=tags><span class=name>人脸识别</span>
+<sup class=num>2</sup>
+</a><a href=/tags/%E4%BE%9D%E8%B5%96%E6%B3%A8%E5%85%A5/ class=tags><span class=name>依赖注入</span>
+<sup class=num>2</sup>
+</a><a href=/tags/%E5%88%86%E5%B8%83%E5%BC%8F/ class=tags><span class=name>分布式</span>
+<sup class=num>2</sup>
+</a><a href=/tags/%E5%8A%A0%E5%AF%86/ class=tags><span class=name>加密</span>
+<sup class=num>2</sup>
+</a><a href=/tags/%E5%8A%A8%E6%80%81%E4%BB%A3%E7%90%86/ class=tags><span class=name>动态代理</span>
+<sup class=num>2</sup>
+</a><a href=/tags/%E5%8A%A8%E6%BC%AB/ class=tags><span class=name>动漫</span>
+<sup class=num>2</sup>
+</a><a href=/tags/%E5%8F%AF%E8%A7%86%E5%8C%96/ class=tags><span class=name>可视化</span>
+<sup class=num>2</sup>
+</a><a href=/tags/%E5%90%8E%E7%AB%AF/ class=tags><span class=name>后端</span>
+<sup class=num>2</sup>
+</a><a href=/tags/%E5%90%91%E9%87%8F/ class=tags><span class=name>向量</span>
+<sup class=num>2</sup>
+</a><a href=/tags/%E5%AE%9E%E4%BD%93/ class=tags><span class=name>实体</span>
+<sup class=num>2</sup>
+</a><a href=/tags/%E5%B7%A5%E5%85%B7/ class=tags><span class=name>工具</span>
+<sup class=num>2</sup>
+</a><a href=/tags/%E5%BC%82%E6%AD%A5/ class=tags><span class=name>异步</span>
+<sup class=num>2</sup>
+</a><a href=/tags/%E6%80%BB%E7%BB%93/ class=tags><span class=name>总结</span>
+<sup class=num>2</sup>
+</a><a href=/tags/%E6%83%85%E6%84%9F/ class=tags><span class=name>情感</span>
+<sup class=num>2</sup>
+</a><a href=/tags/%E6%83%B3%E6%B3%95/ class=tags><span class=name>想法</span>
+<sup class=num>2</sup>
+</a><a href=/tags/%E6%89%93%E5%8D%B0/ class=tags><span class=name>打印</span>
+<sup class=num>2</sup>
+</a><a href=/tags/%E6%8A%80%E6%9C%AF/ class=tags><span class=name>技术</span>
+<sup class=num>2</sup>
+</a><a href=/tags/%E6%9E%B6%E6%9E%84/ class=tags><span class=name>架构</span>
+<sup class=num>2</sup>
+</a><a href=/tags/%E6%A6%82%E7%8E%87/ class=tags><span class=name>概率</span>
+<sup class=num>2</sup>
+</a><a href=/tags/%E6%A8%A1%E6%9D%BF%E5%BC%95%E6%93%8E/ class=tags><span class=name>模板引擎</span>
+<sup class=num>2</sup>
+</a><a href=/tags/%E7%88%AC%E8%99%AB/ class=tags><span class=name>爬虫</span>
+<sup class=num>2</sup>
+</a><a href=/tags/%E7%88%B1%E6%83%85/ class=tags><span class=name>爱情</span>
+<sup class=num>2</sup>
+</a><a href=/tags/%E7%94%BB%E5%AE%B6/ class=tags><span class=name>画家</span>
+<sup class=num>2</sup>
+</a><a href=/tags/%E7%AE%97%E6%B3%95/ class=tags><span class=name>算法</span>
+<sup class=num>2</sup>
+</a><a href=/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9B%BE%E5%BD%A2/ class=tags><span class=name>计算机图形</span>
+<sup class=num>2</sup>
+</a><a href=/tags/%E8%AE%A4%E8%AF%81/ class=tags><span class=name>认证</span>
+<sup class=num>2</sup>
+</a><a href=/tags/%E8%AE%BE%E8%AE%A1/ class=tags><span class=name>设计</span>
+<sup class=num>2</sup>
+</a><a href=/tags/%E8%B4%9D%E5%A1%9E%E5%B0%94%E6%9B%B2%E7%BA%BF/ class=tags><span class=name>贝塞尔曲线</span>
+<sup class=num>2</sup>
+</a><a href=/tags/%E8%B7%A8%E5%9F%9F/ class=tags><span class=name>跨域</span>
+<sup class=num>2</sup>
+</a><a href=/tags/%E9%80%9A%E4%BF%A1/ class=tags><span class=name>通信</span>
+<sup class=num>2</sup>
+</a><a href=/tags/%E9%85%8D%E7%BD%AE/ class=tags><span class=name>配置</span>
+<sup class=num>2</sup>
+</a><a href=/tags/%E9%87%8D%E8%AF%95/ class=tags><span class=name>重试</span>
+<sup class=num>2</sup>
+</a><a href=/tags/%E9%98%85%E8%AF%BB/ class=tags><span class=name>阅读</span>
+<sup class=num>2</sup>
+</a><a href=/tags/%E9%BB%91%E5%AE%A2/ class=tags><span class=name>黑客</span>
+<sup class=num>2</sup>
+</a><a href=/tags/2014/ class=tags><span class=name>2014</span>
+<sup class=num>1</sup>
+</a><a href=/tags/2019/ class=tags><span class=name>2019</span>
+<sup class=num>1</sup>
+</a><a href=/tags/ado.net/ class=tags><span class=name>ADO.NET</span>
+<sup class=num>1</sup>
+</a><a href=/tags/ai/ class=tags><span class=name>AI</span>
+<sup class=num>1</sup>
+</a><a href=/tags/any/ class=tags><span class=name>Any</span>
+<sup class=num>1</sup>
+</a><a href=/tags/apache/ class=tags><span class=name>Apache</span>
+<sup class=num>1</sup>
+</a><a href=/tags/blazor/ class=tags><span class=name>Blazor</span>
+<sup class=num>1</sup>
+</a><a href=/tags/c++/ class=tags><span class=name>C++</span>
+<sup class=num>1</sup>
+</a><a href=/tags/castle/ class=tags><span class=name>Castle</span>
+<sup class=num>1</sup>
+</a><a href=/tags/cdn/ class=tags><span class=name>CDN</span>
+<sup class=num>1</sup>
+</a><a href=/tags/cg/ class=tags><span class=name>CG</span>
+<sup class=num>1</sup>
+</a><a href=/tags/channel/ class=tags><span class=name>Channel</span>
+<sup class=num>1</sup>
+</a><a href=/tags/consul/ class=tags><span class=name>Consul</span>
+<sup class=num>1</sup>
+</a><a href=/tags/cts/ class=tags><span class=name>CTS</span>
+<sup class=num>1</sup>
+</a><a href=/tags/dbeaver/ class=tags><span class=name>DBeaver</span>
+<sup class=num>1</sup>
+</a><a href=/tags/ddd/ class=tags><span class=name>DDD</span>
+<sup class=num>1</sup>
+</a><a href=/tags/delayqueue/ class=tags><span class=name>DelayQueue</span>
+<sup class=num>1</sup>
+</a><a href=/tags/diagnostics/ class=tags><span class=name>Diagnostics</span>
+<sup class=num>1</sup>
+</a><a href=/tags/disunity/ class=tags><span class=name>Disunity</span>
+<sup class=num>1</sup>
+</a><a href=/tags/dottrace/ class=tags><span class=name>DotTrace</span>
+<sup class=num>1</sup>
+</a><a href=/tags/dynamic/ class=tags><span class=name>Dynamic</span>
+<sup class=num>1</sup>
+</a><a href=/tags/dynamic-proxy/ class=tags><span class=name>Dynamic Proxy</span>
+<sup class=num>1</sup>
+</a><a href=/tags/echarts/ class=tags><span class=name>ECharts</span>
+<sup class=num>1</sup>
+</a><a href=/tags/efcore/ class=tags><span class=name>EFCore</span>
+<sup class=num>1</sup>
+</a><a href=/tags/es6/ class=tags><span class=name>ES6</span>
+<sup class=num>1</sup>
+</a><a href=/tags/eventbus/ class=tags><span class=name>EventBus</span>
+<sup class=num>1</sup>
+</a><a href=/tags/excel/ class=tags><span class=name>Excel</span>
+<sup class=num>1</sup>
+</a><a href=/tags/flv/ class=tags><span class=name>FLV</span>
+<sup class=num>1</sup>
+</a><a href=/tags/fody/ class=tags><span class=name>Fody</span>
+<sup class=num>1</sup>
+</a><a href=/tags/form/ class=tags><span class=name>Form</span>
+<sup class=num>1</sup>
+</a><a href=/tags/fp/ class=tags><span class=name>FP</span>
+<sup class=num>1</sup>
+</a><a href=/tags/function-calling/ class=tags><span class=name>Function Calling</span>
+<sup class=num>1</sup>
+</a><a href=/tags/gdi+/ class=tags><span class=name>GDI+</span>
+<sup class=num>1</sup>
+</a><a href=/tags/gephi/ class=tags><span class=name>Gephi</span>
+<sup class=num>1</sup>
+</a><a href=/tags/gpt/ class=tags><span class=name>GPT</span>
+<sup class=num>1</sup>
+</a><a href=/tags/gpts/ class=tags><span class=name>GPTs</span>
+<sup class=num>1</sup>
+</a><a href=/tags/grafana/ class=tags><span class=name>Grafana</span>
+<sup class=num>1</sup>
+</a><a href=/tags/hangfire/ class=tags><span class=name>Hangfire</span>
+<sup class=num>1</sup>
+</a><a href=/tags/hashset/ class=tags><span class=name>HashSet</span>
+<sup class=num>1</sup>
+</a><a href=/tags/hls/ class=tags><span class=name>HLS</span>
+<sup class=num>1</sup>
+</a><a href=/tags/https/ class=tags><span class=name>HTTPS</span>
+<sup class=num>1</sup>
+</a><a href=/tags/hyperlog/ class=tags><span class=name>Hyperlog</span>
+<sup class=num>1</sup>
+</a><a href=/tags/ide/ class=tags><span class=name>IDE</span>
+<sup class=num>1</sup>
+</a><a href=/tags/importlib/ class=tags><span class=name>Importlib</span>
+<sup class=num>1</sup>
+</a><a href=/tags/jaeger/ class=tags><span class=name>Jaeger</span>
+<sup class=num>1</sup>
+</a><a href=/tags/java/ class=tags><span class=name>Java</span>
+<sup class=num>1</sup>
+</a><a href=/tags/jetbrain/ class=tags><span class=name>JetBrain</span>
+<sup class=num>1</sup>
+</a><a href=/tags/jexus/ class=tags><span class=name>Jexus</span>
+<sup class=num>1</sup>
+</a><a href=/tags/js/ class=tags><span class=name>JS</span>
+<sup class=num>1</sup>
+</a><a href=/tags/jsdelivr/ class=tags><span class=name>JsDelivr</span>
+<sup class=num>1</sup>
+</a><a href=/tags/json/ class=tags><span class=name>JSON</span>
+<sup class=num>1</sup>
+</a><a href=/tags/jsonp/ class=tags><span class=name>JSONP</span>
+<sup class=num>1</sup>
+</a><a href=/tags/jupyter/ class=tags><span class=name>Jupyter</span>
+<sup class=num>1</sup>
+</a><a href=/tags/jwt/ class=tags><span class=name>JWT</span>
+<sup class=num>1</sup>
+</a><a href=/tags/k-means/ class=tags><span class=name>K-Means</span>
+<sup class=num>1</sup>
+</a><a href=/tags/keycloak/ class=tags><span class=name>Keycloak</span>
+<sup class=num>1</sup>
+</a><a href=/tags/langchain/ class=tags><span class=name>LangChain</span>
+<sup class=num>1</sup>
+</a><a href=/tags/lazyload/ class=tags><span class=name>LazyLoad</span>
+<sup class=num>1</sup>
+</a><a href=/tags/ldap/ class=tags><span class=name>LDAP</span>
+<sup class=num>1</sup>
+</a><a href=/tags/lfs/ class=tags><span class=name>LFS</span>
+<sup class=num>1</sup>
+</a><a href=/tags/libusbdotnet/ class=tags><span class=name>LibUsbDotNet</span>
+<sup class=num>1</sup>
+</a><a href=/tags/linq/ class=tags><span class=name>Linq</span>
+<sup class=num>1</sup>
+</a><a href=/tags/liquid/ class=tags><span class=name>Liquid</span>
+<sup class=num>1</sup>
+</a><a href=/tags/llama.cpp/ class=tags><span class=name>Llama.cpp</span>
+<sup class=num>1</sup>
+</a><a href=/tags/logger/ class=tags><span class=name>Logger</span>
+<sup class=num>1</sup>
+</a><a href=/tags/love2d/ class=tags><span class=name>Love2D</span>
+<sup class=num>1</sup>
+</a><a href=/tags/mapreduce/ class=tags><span class=name>MapReduce</span>
+<sup class=num>1</sup>
+</a><a href=/tags/markdown/ class=tags><span class=name>Markdown</span>
+<sup class=num>1</sup>
+</a><a href=/tags/matplotlib/ class=tags><span class=name>Matplotlib</span>
+<sup class=num>1</sup>
+</a><a href=/tags/mcp/ class=tags><span class=name>MCP</span>
+<sup class=num>1</sup>
+</a><a href=/tags/mecanim/ class=tags><span class=name>Mecanim</span>
+<sup class=num>1</sup>
+</a><a href=/tags/milvus/ class=tags><span class=name>Milvus</span>
+<sup class=num>1</sup>
+</a><a href=/tags/mmd/ class=tags><span class=name>MMD</span>
+<sup class=num>1</sup>
+</a><a href=/tags/moq/ class=tags><span class=name>Moq</span>
+<sup class=num>1</sup>
+</a><a href=/tags/msbuild/ class=tags><span class=name>MSBuild</span>
+<sup class=num>1</sup>
+</a><a href=/tags/mvc/ class=tags><span class=name>MVC</span>
+<sup class=num>1</sup>
+</a><a href=/tags/mvvm/ class=tags><span class=name>MVVM</span>
+<sup class=num>1</sup>
+</a><a href=/tags/nlog/ class=tags><span class=name>NLog</span>
+<sup class=num>1</sup>
+</a><a href=/tags/obj/ class=tags><span class=name>OBJ</span>
+<sup class=num>1</sup>
+</a><a href=/tags/openai/ class=tags><span class=name>OpenAI</span>
+<sup class=num>1</sup>
+</a><a href=/tags/opentelemetry/ class=tags><span class=name>OpenTelemetry</span>
+<sup class=num>1</sup>
+</a><a href=/tags/oracle/ class=tags><span class=name>Oracle</span>
+<sup class=num>1</sup>
+</a><a href=/tags/orm/ class=tags><span class=name>ORM</span>
+<sup class=num>1</sup>
+</a><a href=/tags/pg_jieba/ class=tags><span class=name>Pg_jieba</span>
+<sup class=num>1</sup>
+</a><a href=/tags/pgvector/ class=tags><span class=name>Pgvector</span>
+<sup class=num>1</sup>
+</a><a href=/tags/pl/sql/ class=tags><span class=name>PL/SQL</span>
+<sup class=num>1</sup>
+</a><a href=/tags/polly/ class=tags><span class=name>Polly</span>
+<sup class=num>1</sup>
+</a><a href=/tags/postgresql/ class=tags><span class=name>PostgreSQL</span>
+<sup class=num>1</sup>
+</a><a href=/tags/postsharp/ class=tags><span class=name>PostSharp</span>
+<sup class=num>1</sup>
+</a><a href=/tags/printdocument/ class=tags><span class=name>PrintDocument</span>
+<sup class=num>1</sup>
+</a><a href=/tags/prometheus/ class=tags><span class=name>Prometheus</span>
+<sup class=num>1</sup>
+</a><a href=/tags/protobuf/ class=tags><span class=name>Protobuf</span>
+<sup class=num>1</sup>
+</a><a href=/tags/pwa/ class=tags><span class=name>PWA</span>
+<sup class=num>1</sup>
+</a><a href=/tags/quartz/ class=tags><span class=name>Quartz</span>
+<sup class=num>1</sup>
+</a><a href=/tags/queue/ class=tags><span class=name>Queue</span>
+<sup class=num>1</sup>
+</a><a href=/tags/qwen-7b-chat/ class=tags><span class=name>Qwen-7B-Chat</span>
+<sup class=num>1</sup>
+</a><a href=/tags/rasa/ class=tags><span class=name>Rasa</span>
+<sup class=num>1</sup>
+</a><a href=/tags/react/ class=tags><span class=name>React</span>
+<sup class=num>1</sup>
+</a><a href=/tags/referrer/ class=tags><span class=name>Referrer</span>
+<sup class=num>1</sup>
+</a><a href=/tags/rerank/ class=tags><span class=name>Rerank</span>
+<sup class=num>1</sup>
+</a><a href=/tags/retrofit/ class=tags><span class=name>Retrofit</span>
+<sup class=num>1</sup>
+</a><a href=/tags/rewrite/ class=tags><span class=name>Rewrite</span>
+<sup class=num>1</sup>
+</a><a href=/tags/rfc/ class=tags><span class=name>RFC</span>
+<sup class=num>1</sup>
+</a><a href=/tags/rpg/ class=tags><span class=name>RPG</span>
+<sup class=num>1</sup>
+</a><a href=/tags/rsetful/ class=tags><span class=name>RSETful</span>
+<sup class=num>1</sup>
+</a><a href=/tags/rtmp/ class=tags><span class=name>RTMP</span>
+<sup class=num>1</sup>
+</a><a href=/tags/scikit-learn/ class=tags><span class=name>Scikit-Learn</span>
+<sup class=num>1</sup>
+</a><a href=/tags/script/ class=tags><span class=name>Script</span>
+<sup class=num>1</sup>
+</a><a href=/tags/semantic-kernel/ class=tags><span class=name>Semantic Kernel</span>
+<sup class=num>1</sup>
+</a><a href=/tags/server-%E9%85%B1/ class=tags><span class=name>Server 酱</span>
+<sup class=num>1</sup>
+</a><a href=/tags/shader/ class=tags><span class=name>Shader</span>
+<sup class=num>1</sup>
+</a><a href=/tags/sklearn/ class=tags><span class=name>Sklearn</span>
+<sup class=num>1</sup>
+</a><a href=/tags/sonar/ class=tags><span class=name>Sonar</span>
+<sup class=num>1</sup>
+</a><a href=/tags/sourcetree/ class=tags><span class=name>SourceTree</span>
+<sup class=num>1</sup>
+</a><a href=/tags/sqlite/ class=tags><span class=name>SQLite</span>
+<sup class=num>1</sup>
+</a><a href=/tags/ssh-key/ class=tags><span class=name>SSH-Key</span>
+<sup class=num>1</sup>
+</a><a href=/tags/sublime/ class=tags><span class=name>Sublime</span>
+<sup class=num>1</sup>
+</a><a href=/tags/svg/ class=tags><span class=name>SVG</span>
+<sup class=num>1</sup>
+</a><a href=/tags/svn/ class=tags><span class=name>SVN</span>
+<sup class=num>1</sup>
+</a><a href=/tags/testserver/ class=tags><span class=name>TestServer</span>
+<sup class=num>1</sup>
+</a><a href=/tags/text2sql/ class=tags><span class=name>Text2SQL</span>
+<sup class=num>1</sup>
+</a><a href=/tags/thoughtworks/ class=tags><span class=name>ThoughtWorks</span>
+<sup class=num>1</sup>
+</a><a href=/tags/trace/ class=tags><span class=name>Trace</span>
+<sup class=num>1</sup>
+</a><a href=/tags/unity/ class=tags><span class=name>Unity</span>
+<sup class=num>1</sup>
+</a><a href=/tags/usb/ class=tags><span class=name>USB</span>
+<sup class=num>1</sup>
+</a><a href=/tags/valine/ class=tags><span class=name>Valine</span>
+<sup class=num>1</sup>
+</a><a href=/tags/visual-studio/ class=tags><span class=name>Visual Studio</span>
+<sup class=num>1</sup>
+</a><a href=/tags/web-api/ class=tags><span class=name>Web API</span>
+<sup class=num>1</sup>
+</a><a href=/tags/webassembly/ class=tags><span class=name>WebAssembly</span>
+<sup class=num>1</sup>
+</a><a href=/tags/webview2/ class=tags><span class=name>WebView2</span>
+<sup class=num>1</sup>
+</a><a href=/tags/wechat/ class=tags><span class=name>Wechat</span>
+<sup class=num>1</sup>
+</a><a href=/tags/windows/ class=tags><span class=name>Windows</span>
+<sup class=num>1</sup>
+</a><a href=/tags/wmi/ class=tags><span class=name>WMI</span>
+<sup class=num>1</sup>
+</a><a href=/tags/ztree/ class=tags><span class=name>ZTree</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E4%B8%80%E5%87%BA%E5%A5%BD%E6%88%8F/ class=tags><span class=name>一出好戏</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E4%B8%83%E7%89%9B/ class=tags><span class=name>七牛</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E4%B8%89%E4%BD%93/ class=tags><span class=name>三体</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E4%B8%8A%E4%BC%A0/ class=tags><span class=name>上传</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E4%B8%8B%E8%BD%BD/ class=tags><span class=name>下载</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E4%BA%8B%E4%BB%B6/ class=tags><span class=name>事件</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E4%BA%8C%E7%BB%B4%E7%A0%81/ class=tags><span class=name>二维码</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E4%BA%91%E5%8E%9F%E7%94%9F/ class=tags><span class=name>云原生</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E4%BA%91%E9%9F%B3%E4%B9%90/ class=tags><span class=name>云音乐</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E4%BA%A4%E4%BA%92/ class=tags><span class=name>交互</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E4%BA%B2%E6%83%85/ class=tags><span class=name>亲情</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/ class=tags><span class=name>人工智能</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E4%BA%BA%E8%84%B8%E5%88%86%E7%B1%BB/ class=tags><span class=name>人脸分类</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E4%BA%BA%E8%84%B8%E6%A3%80%E6%B5%8B/ class=tags><span class=name>人脸检测</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E4%BB%99%E5%89%91%E5%A5%87%E4%BE%A0%E4%BC%A0/ class=tags><span class=name>仙剑奇侠传</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E4%BB%A3%E7%A0%81%E8%A7%A3%E9%87%8A%E5%99%A8/ class=tags><span class=name>代码解释器</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E4%BB%B7%E5%80%BC/ class=tags><span class=name>价值</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E4%BC%98%E5%8C%96/ class=tags><span class=name>优化</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E4%BD%8E%E4%BB%A3%E7%A0%81/ class=tags><span class=name>低代码</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E4%BD%90%E8%97%A4%E5%81%A5/ class=tags><span class=name>佐藤健</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%81%A5%E5%BA%B7%E6%A3%80%E6%9F%A5/ class=tags><span class=name>健康检查</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%81%A5%E5%BA%B7%E7%A0%81/ class=tags><span class=name>健康码</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%85%A8%E6%96%87%E6%A3%80%E7%B4%A2/ class=tags><span class=name>全文检索</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%85%A8%E6%99%BA%E8%B4%A4/ class=tags><span class=name>全智贤</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%85%AB%E5%8D%A6/ class=tags><span class=name>八卦</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%85%AC%E4%BC%97%E5%8F%B7/ class=tags><span class=name>公众号</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%85%B3%E5%8D%A1%E7%B3%BB%E7%BB%9F/ class=tags><span class=name>关卡系统</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%87%BD%E6%95%B0%E5%BC%8F%E7%BC%96%E7%A8%8B/ class=tags><span class=name>函数式编程</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%88%86%E9%A1%B5/ class=tags><span class=name>分页</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%88%AB%E7%A6%BB/ class=tags><span class=name>别离</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%88%BA%E5%AE%A2%E4%BF%A1%E6%9D%A1/ class=tags><span class=name>刺客信条</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%89%8D%E4%BB%BB/ class=tags><span class=name>前任</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%89%91%E6%8C%87offer/ class=tags><span class=name>剑指Offer</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%8A%A8%E6%80%81%E5%8A%A0%E8%BD%BD/ class=tags><span class=name>动态加载</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%8A%A8%E6%80%81%E5%AF%BC%E5%85%A5/ class=tags><span class=name>动态导入</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%8A%A8%E7%94%BB/ class=tags><span class=name>动画</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%8D%83%E5%AF%BB%E5%B0%8F%E5%A7%90/ class=tags><span class=name>千寻小姐</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%8D%8A%E6%B3%BD%E7%9B%B4%E6%A0%91/ class=tags><span class=name>半泽直树</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%8D%95%E4%BD%8D/ class=tags><span class=name>单位</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95/ class=tags><span class=name>单元测试</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%8D%95%E6%9C%BA%E6%B8%B8%E6%88%8F/ class=tags><span class=name>单机游戏</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%8D%B0%E5%BA%A6/ class=tags><span class=name>印度</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%8F%82%E5%B7%AE/ class=tags><span class=name>参差</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%8F%8C%E5%8D%81%E4%B8%80/ class=tags><span class=name>双十一</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%8F%8D%E5%90%91%E4%BB%A3%E7%90%86/ class=tags><span class=name>反向代理</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%8F%8D%E7%BC%96%E8%AF%91/ class=tags><span class=name>反编译</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%8F%96%E6%B6%88/ class=tags><span class=name>取消</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%90%8C%E6%AD%A5/ class=tags><span class=name>同步</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%91%BD%E4%BB%A4/ class=tags><span class=name>命令</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%92%8C%E5%B9%B3/ class=tags><span class=name>和平</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%93%8D%E5%BA%94%E5%BC%8F/ class=tags><span class=name>响应式</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%93%AA%E5%90%92/ class=tags><span class=name>哪吒</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%9B%9B%E6%9C%88/ class=tags><span class=name>四月</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%9B%9E%E5%AE%B6/ class=tags><span class=name>回家</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%9B%9E%E5%BF%86/ class=tags><span class=name>回忆</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%9B%9E%E9%A1%BE/ class=tags><span class=name>回顾</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%9B%9E%E9%A6%96/ class=tags><span class=name>回首</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%9B%BE%E5%BA%8A/ class=tags><span class=name>图床</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%9B%BE%E5%BD%A2%E5%AD%A6/ class=tags><span class=name>图形学</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%9C%B0%E5%9B%BE/ class=tags><span class=name>地图</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%A1%94%E9%98%B2/ class=tags><span class=name>塔防</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%A3%81%E7%BA%B8/ class=tags><span class=name>壁纸</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%A4%87%E5%BF%98/ class=tags><span class=name>备忘</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%A4%8F%E7%9B%AE%E6%BC%B1%E7%9F%B3/ class=tags><span class=name>夏目漱石</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%A4%95%E9%9B%BE%E8%8A%B1%E5%9B%AD/ class=tags><span class=name>夕雾花园</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%A4%9A%E7%A7%9F%E6%88%B7/ class=tags><span class=name>多租户</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%A4%A7%E6%8A%A4%E6%B3%95/ class=tags><span class=name>大护法</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%A4%A7%E6%95%B0%E6%8D%AE/ class=tags><span class=name>大数据</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%A4%A7%E6%A8%A1%E5%9E%8B/ class=tags><span class=name>大模型</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%A5%87%E6%8A%80%E6%B7%AB%E5%B7%A7/ class=tags><span class=name>奇技淫巧</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%A7%94%E6%89%98/ class=tags><span class=name>委托</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%AD%A4%E7%8B%AC/ class=tags><span class=name>孤独</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%AE%A1%E8%AE%A1/ class=tags><span class=name>审计</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%AE%AB%E5%B4%8E%E9%AA%8F/ class=tags><span class=name>宫崎骏</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%AF%B9%E8%B1%A1%E6%B1%A0/ class=tags><span class=name>对象池</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%B0%81%E7%A5%9E/ class=tags><span class=name>封神</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%B0%8F%E7%88%B1%E5%90%8C%E5%AD%A6/ class=tags><span class=name>小爱同学</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%B1%95%E6%9C%9B/ class=tags><span class=name>展望</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%B9%B3%E5%87%A1/ class=tags><span class=name>平凡</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%B9%B4%E5%8D%8E/ class=tags><span class=name>年华</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%B9%B4%E5%BA%A6/ class=tags><span class=name>年度</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%B9%B6%E5%8F%91/ class=tags><span class=name>并发</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%BB%BA%E7%AD%91/ class=tags><span class=name>建筑</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%BC%80%E6%BA%90/ class=tags><span class=name>开源</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%BC%95%E6%93%8E/ class=tags><span class=name>引擎</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%BE%AE%E4%BF%A1/ class=tags><span class=name>微信</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%BF%83%E6%83%85/ class=tags><span class=name>心情</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%80%9D%E7%BB%B4/ class=tags><span class=name>思维</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%80%A7%E8%83%BD/ class=tags><span class=name>性能</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%87%92%E5%8A%A0%E8%BD%BD/ class=tags><span class=name>懒加载</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%88%91%E6%98%AF%E7%8C%AB/ class=tags><span class=name>我是猫</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%89%A9%E5%B1%95%E6%96%B9%E6%B3%95/ class=tags><span class=name>扩展方法</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%8A%80%E6%9C%AF%E6%80%9D%E8%80%83/ class=tags><span class=name>技术思考</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%8B%96%E6%8B%BD/ class=tags><span class=name>拖拽</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%8E%A2%E7%B4%A2/ class=tags><span class=name>探索</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%8E%A8%E8%8D%90/ class=tags><span class=name>推荐</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%8F%90%E7%BA%B2/ class=tags><span class=name>提纲</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%8F%92%E4%BB%B6%E5%8C%96/ class=tags><span class=name>插件化</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%95%B0%E5%AD%97/ class=tags><span class=name>数字</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%95%B0%E6%8D%AE/ class=tags><span class=name>数据</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%95%B0%E6%8D%AE%E4%BA%A4%E6%8D%A2/ class=tags><span class=name>数据交换</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%96%87%E4%BB%B6/ class=tags><span class=name>文件</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%96%87%E6%9C%AC%E5%88%86%E7%B1%BB/ class=tags><span class=name>文本分类</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%96%87%E6%A1%A3/ class=tags><span class=name>文档</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%97%A0%E9%97%AE%E8%A5%BF%E4%B8%9C/ class=tags><span class=name>无问西东</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%97%A5%E5%89%A7/ class=tags><span class=name>日剧</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%97%A5%E5%B8%B8/ class=tags><span class=name>日常</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%97%A5%E6%9C%AC/ class=tags><span class=name>日本</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%97%A5%E6%9C%AC%E6%96%87%E5%AD%A6/ class=tags><span class=name>日本文学</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%97%B6%E5%8C%BA/ class=tags><span class=name>时区</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%99%BA%E8%83%BD%E5%AE%B6%E5%B1%85/ class=tags><span class=name>智能家居</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%9C%89%E6%9D%91%E6%9E%B6%E7%BA%AF/ class=tags><span class=name>有村架纯</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%9C%8D%E5%8A%A1/ class=tags><span class=name>服务</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%9C%8D%E5%8A%A1%E7%BC%96%E6%8E%92/ class=tags><span class=name>服务编排</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%9C%9D%E5%9C%A3/ class=tags><span class=name>朝圣</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%9C%B4%E7%B4%A0%E8%B4%9D%E5%8F%B6%E6%96%AF/ class=tags><span class=name>朴素贝叶斯</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/ class=tags><span class=name>机器学习</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%9F%A5%E8%AF%A2/ class=tags><span class=name>查询</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%A0%87%E6%B3%A8/ class=tags><span class=name>标注</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%A0%A1%E9%AA%8C/ class=tags><span class=name>校验</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%A0%BC%E5%BC%8F/ class=tags><span class=name>格式</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%A0%BC%E5%BC%8F%E5%8C%96/ class=tags><span class=name>格式化</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%A1%8C%E9%9D%A2/ class=tags><span class=name>桌面</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%A8%A1%E5%9E%8B/ class=tags><span class=name>模型</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%A8%A1%E6%9D%BF/ class=tags><span class=name>模板</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%AF%95%E4%B8%9A/ class=tags><span class=name>毕业</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%AF%95%E4%B8%9A%E5%AD%A3/ class=tags><span class=name>毕业季</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%B2%99%E7%AE%B1/ class=tags><span class=name>沙箱</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%B5%81%E5%AA%92%E4%BD%93/ class=tags><span class=name>流媒体</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%B5%81%E5%BC%8F%E4%BC%A0%E8%BE%93/ class=tags><span class=name>流式传输</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%B5%AA%E5%AE%A2%E5%89%91%E5%BF%83/ class=tags><span class=name>浪客剑心</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%B6%88%E6%81%AF/ class=tags><span class=name>消息</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%B8%B8%E6%88%8F%E5%BC%95%E6%93%8E/ class=tags><span class=name>游戏引擎</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%B8%B8%E8%AE%B0/ class=tags><span class=name>游记</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E7%83%AD%E6%90%9C/ class=tags><span class=name>热搜</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E7%86%B5%E5%A2%9E%E5%AE%9A%E5%BE%8B/ class=tags><span class=name>熵增定律</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E7%89%88%E6%9C%AC%E6%8E%A7%E5%88%B6/ class=tags><span class=name>版本控制</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E7%89%88%E6%9D%83/ class=tags><span class=name>版权</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E7%89%B9%E6%80%A7/ class=tags><span class=name>特性</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E7%8A%B6%E6%80%81/ class=tags><span class=name>状态</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E7%8E%B0%E5%AE%9E/ class=tags><span class=name>现实</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E7%94%9F%E6%AD%BB/ class=tags><span class=name>生死</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E7%9C%9F%E5%AE%9E/ class=tags><span class=name>真实</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E7%9F%A5%E8%AF%86%E5%85%B1%E4%BA%AB/ class=tags><span class=name>知识共享</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E7%9F%AB%E6%83%85/ class=tags><span class=name>矫情</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E7%A0%94%E5%8F%91/ class=tags><span class=name>研发</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E7%A1%AC%E4%BB%B6/ class=tags><span class=name>硬件</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E7%A7%91%E5%B9%BB%E5%B0%8F%E8%AF%B4/ class=tags><span class=name>科幻小说</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E7%A9%B9%E4%B9%8B%E6%89%89/ class=tags><span class=name>穹之扉</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E7%A9%BF%E6%90%AD/ class=tags><span class=name>穿搭</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E7%AB%A5%E8%AF%9D/ class=tags><span class=name>童话</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E7%AD%BE%E5%90%8D/ class=tags><span class=name>签名</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E7%AE%A1%E9%81%93/ class=tags><span class=name>管道</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E7%B1%B3%E8%8A%B1%E4%B9%8B%E5%91%B3/ class=tags><span class=name>米花之味</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E7%BC%96%E8%AF%91/ class=tags><span class=name>编译</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E7%BD%91%E5%85%B3/ class=tags><span class=name>网关</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E7%BD%91%E6%98%93/ class=tags><span class=name>网易</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E7%BE%8E%E6%9C%AF/ class=tags><span class=name>美术</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E8%81%9A%E7%B1%BB/ class=tags><span class=name>聚类</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E8%84%9A%E6%9C%AC/ class=tags><span class=name>脚本</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E8%84%9A%E6%9C%AC%E8%AF%AD%E8%A8%80/ class=tags><span class=name>脚本语言</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E8%87%AA%E5%8A%A8%E5%8C%96/ class=tags><span class=name>自动化</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E8%87%AA%E6%88%91%E5%92%8C%E8%A7%A3/ class=tags><span class=name>自我和解</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E8%8B%8F%E8%BD%BC/ class=tags><span class=name>苏轼</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E8%99%9A%E6%8B%9F%E6%91%87%E6%9D%86/ class=tags><span class=name>虚拟摇杆</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E8%9B%8B%E7%82%92%E9%A5%AD/ class=tags><span class=name>蛋炒饭</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E8%A1%8C%E4%B8%9A/ class=tags><span class=name>行业</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E8%A1%A8%E5%8D%95/ class=tags><span class=name>表单</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E8%A1%A8%E8%BE%BE%E5%BC%8F%E6%A0%91/ class=tags><span class=name>表达式树</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E8%A3%85%E9%A5%B0%E5%99%A8/ class=tags><span class=name>装饰器</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E8%A5%BF%E6%BC%82/ class=tags><span class=name>西漂</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E8%AE%AD%E7%BB%83/ class=tags><span class=name>训练</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E8%AE%B0%E5%BD%95/ class=tags><span class=name>记录</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E8%AE%BF%E9%97%AE%E9%87%8F/ class=tags><span class=name>访问量</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E8%AF%81%E4%B9%A6/ class=tags><span class=name>证书</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E8%AF%84%E8%AE%BA/ class=tags><span class=name>评论</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E8%AF%8D%E4%BA%91/ class=tags><span class=name>词云</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E8%AF%97%E4%BA%BA/ class=tags><span class=name>诗人</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E8%AF%AD%E6%B3%95/ class=tags><span class=name>语法</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E8%AF%AD%E8%A8%80/ class=tags><span class=name>语言</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E8%AF%B7%E8%AE%B0%E4%BD%8F%E6%88%91/ class=tags><span class=name>请记住我</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/ class=tags><span class=name>读写分离</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E8%B0%83%E4%BC%98/ class=tags><span class=name>调优</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E8%B0%83%E8%AF%95/ class=tags><span class=name>调试</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1/ class=tags><span class=name>负载均衡</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E8%B4%AA%E5%90%83%E8%9B%87/ class=tags><span class=name>贪吃蛇</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E8%B4%BE%E7%BB%B4%E6%96%AF/ class=tags><span class=name>贾维斯</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E8%B5%84%E6%BA%90%E6%8F%90%E5%8F%96/ class=tags><span class=name>资源提取</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E8%B5%B0%E8%B5%B0%E5%81%9C%E5%81%9C/ class=tags><span class=name>走走停停</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E8%B7%AF%E7%94%B1/ class=tags><span class=name>路由</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E8%BD%AC%E7%9B%98/ class=tags><span class=name>转盘</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E8%BD%AF%E4%BB%B6/ class=tags><span class=name>软件</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E8%BF%81%E7%A7%BB/ class=tags><span class=name>迁移</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E9%82%AA%E4%B8%8D%E5%8E%8B%E6%AD%A3/ class=tags><span class=name>邪不压正</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E9%83%A8%E7%BD%B2/ class=tags><span class=name>部署</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E9%85%8D%E7%BD%AE%E4%B8%AD%E5%BF%83/ class=tags><span class=name>配置中心</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E9%85%8D%E8%BD%BD/ class=tags><span class=name>配载</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E9%95%BF%E5%AE%89/ class=tags><span class=name>长安</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E9%95%BF%E5%AE%89%E5%8D%81%E4%BA%8C%E6%97%B6%E8%BE%B0/ class=tags><span class=name>长安十二时辰</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E9%95%BF%E6%88%AA%E5%9B%BE/ class=tags><span class=name>长截图</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E9%98%B2%E7%96%AB/ class=tags><span class=name>防疫</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E9%98%BF%E9%87%8C/ class=tags><span class=name>阿里</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E9%99%90%E6%B5%81/ class=tags><span class=name>限流</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E9%9B%86%E6%88%90%E6%B5%8B%E8%AF%95/ class=tags><span class=name>集成测试</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E9%9B%86%E7%BE%A4/ class=tags><span class=name>集群</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E9%9C%8D%E9%87%91/ class=tags><span class=name>霍金</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E9%9D%92%E6%98%A5/ class=tags><span class=name>青春</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E9%9D%99%E6%80%81%E7%BC%96%E7%BB%87/ class=tags><span class=name>静态编织</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E9%9F%A9%E5%AF%92/ class=tags><span class=name>韩寒</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E9%A2%86%E5%9F%9F%E4%BA%8B%E4%BB%B6/ class=tags><span class=name>领域事件</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E9%A9%AC%E5%B0%94%E5%85%8B%E6%96%AF/ class=tags><span class=name>马尔克斯</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E9%AA%8C%E8%AF%81/ class=tags><span class=name>验证</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E9%AC%BC%E6%BB%85%E3%81%AE%E5%88%83/ class=tags><span class=name>鬼滅の刃</span>
+<sup class=num>1</sup></a></div><a href=/tags class=more-tags>查看全部</a></div><div class="site-data s-card weidgets"><div class=title><i class="iconfont icon-chart"></i>
+<span class=title-name>站点数据</span></div><div class=all-data><div class=data-item><span class=name><i class="iconfont icon-article"></i>
+文章总数
+</span><span class=num>277 篇</span></div><div class=data-item><span class=name><i class="iconfont icon-date"></i>
+建站天数
+</span><span class=num>3753 天</span></div><div class=data-item><span class=name><i class="iconfont icon-visibility"></i>
+总访问量
+</span><span class=num id=busuanzi_value_site_pv>0</span></div><div class=data-item><span class=name><i class="iconfont icon-account"></i>
+总访客数
+</span><span class=num id=busuanzi_value_site_uv>0</span></div></div></div></div></aside><style>.main-aside{padding-left:1rem;display:flex;flex-direction:column;animation:fade-up .6s .3s backwards;.weidgets { padding: 18px; margin-bottom: 1rem; :deep(.title) { margin-bottom: 12px; font-weight: bold; display: flex; align-items: center; opacity: 0.75; .iconfont { opacity: 0.6; margin-right: 6px; } .title-name { opacity: 0.8; } } } .sticky { position: sticky; top: calc(60px + 1rem); .weidgets { animation: fade-up 0.6s 0.4s backwards; &:last-child { margin-bottom: 0; } } }}</style></div></div></main><div class=footer-link><div class=footer-bar><span class=site-title>元视角</span>
+<span class=site-desc>纵有疾风起，人生不言弃</span>
+<a href=/ class=to-home>了解更多</a></div><div class=footer-social><a href=https://github.com/qinyuanpei target=_blank class=social-link><i class="iconfont icon-github"></i>
+</a><a href=mailto:qinyuanpei@163.com target=_blank class=social-link><i class="iconfont icon-email"></i>
+</a><a href=/index.xml target=_blank class=social-link><i class="iconfont icon-rss"></i></a><div class=logo title=返回顶部 onclick='window.scrollTo({top:0,behavior:"smooth"})'><img src=/images/icons8-stellar-128.png alt=author class=author></div><a href=https://weibo.com/1278609231 target=_blank class=social-link><i class="iconfont icon-weibo"></i>
+</a><a href=https://www.douban.com/people/60029335/ target=_blank class=social-link><i class="iconfont icon-douban"></i>
+</a><a href=https://www.zhihu.com/people/qinyuanpei target=_blank class=social-link><i class="iconfont icon-zhihu"></i></a></div><div class=footer-sitemap><div class=sitemap-item><span class=title>博客</span><div class=links><a href=/ class=link-text>近期文章
+</a><a href=/categories class=link-text>全部分类
+</a><a href=/tags class=link-text>全部标签
+</a><a href=/archives class=link-text>文章归档</a></div></div><div class=sitemap-item><span class=title>项目</span><div class=links><a href=https://example1.com target=_blank class=link-text>项目1
+</a><a href=https://example2.com target=_blank class=link-text>项目2
+</a><a href=https://example2.com target=_blank class=link-text>项目3
+</a><a href=https://example2.com target=_blank class=link-text>项目4</a></div></div><div class=sitemap-item><span class=title>专栏</span><div class=links><a href=https://blog.csdn.net/qinyuanpei/category_10852603.html target=_blank class=link-text>.NET 源代码探案系列
+</a><a href=https://blog.csdn.net/qinyuanpei/category_7444699.html target=_blank class=link-text>Python 数据挖掘系列
+</a><a href=https://blog.csdn.net/qinyuanpei/category_11484903.html target=_blank class=link-text>分布式丛林探险系列
+</a><a href=https://blog.csdn.net/qinyuanpei/category_1708629.html target=_blank class=link-text>Unity3D 游戏开发系列</a></div></div><div class=sitemap-item><span class=title>页面</span><div class=links><a href=/comments class=link-text>畅所欲言
+</a><a href=/books class=link-text>阅读记录
+</a><a href=/movies class=link-text>观影记录
+</a><a href=/musics class=link-text>听歌记录</a></div></div><div class=sitemap-item><span class=title>友情链接</span><div class=links><a href=https://blog.zhheo.com/ class=link-text>张洪
+</a><a href=https://blog.zhheo.com/ class=link-text>张洪
+</a><a href=https://blog.zhheo.com/ class=link-text>张洪
+</a><a href=https://blog.zhheo.com/ class=link-text>更多</a></div></div></div></div><footer id=main-footer class=main-footer><div class=footer-content><div class=footer-copyright><span class=time data-v-6001e979>@ 2014 - 2025 By </span><a href=https://www.imsyy.top class="author link" target=_blank>飞鸿踏雪</a></div><div class=meta><a class="power link" href=https://vitepress.dev/ target=_blank><span class=by>Powered by</span>
+<span class=name>Hugo</span>
+</a><a class="theme link" href=/pages/theme><span class=name>主题</span>
+</a><a class="rss link" href=https://blog.imsyy.top/rss.xml target=_blank><i class="iconfont icon-rss"></i>
+<span class=name data-v-6001e979>订阅</span>
+</a><a class="cc link" href=https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh-hans target=_blank><i class="iconfont icon-line"></i>
+<i class="iconfont icon-by-line"></i>
+<i class="iconfont icon-nc-line"></i><i class="iconfont icon-nd-line"></i></a></div></div></footer><script type=module src=/js/main.js></script></body></html>

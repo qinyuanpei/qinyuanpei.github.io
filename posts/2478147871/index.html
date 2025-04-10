@@ -1,0 +1,1388 @@
+<!doctype html><html lang=zh-cn><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><meta http-equiv=X-UA-Compatible content="ie=edge"><meta name=referrer content="no-referrer"><title>浅议非典型 Web 应用场景下的身份认证 - 元视角</title>
+<meta name=description content="在软件行业，存在针对语言、框架、范式、架构等问题的鄙视链。作者提到了编程领域充满着宗教原旨的意味，回顾了自己被轻视的经历。文中探讨了非典型 Web 应用场景下的身份认证，涵盖了 gRPC、SignalR 和 Kafka。针对 gRPC，介绍了身份认证的解决方案；对于 SignalR，讨论了身份认证的需求和解决方案；对于 Kafka，探讨了令牌传递、用户信息获取和处理消息的方式。最后，作者呼吁准备好面对非典型场景，并思考在后疫情时代的应对方式。"><link rel="shortcut icon" href type=image/x-icon><link rel=icon type=image/x-icon href=/images/favicon.ico><link rel=icon type=image/png href=/images/favicon.png><meta property="og:title" content="浅议非典型 Web 应用场景下的身份认证"><meta property="og:description" content="在软件行业，存在针对语言、框架、范式、架构等问题的鄙视链。作者提到了编程领域充满着宗教原旨的意味，回顾了自己被轻视的经历。文中探讨了非典型 Web 应用场景下的身份认证，涵盖了 gRPC、SignalR 和 Kafka。针对 gRPC，介绍了身份认证的解决方案；对于 SignalR，讨论了身份认证的需求和解决方案；对于 Kafka，探讨了令牌传递、用户信息获取和处理消息的方式。最后，作者呼吁准备好面对非典型场景，并思考在后疫情时代的应对方式。"><meta property="og:type" content="article"><meta property="og:url" content="http://example.org/posts/2478147871/"><link rel=stylesheet href=/scss/main.min.2c77edfe155005c41cf8cefed2d412617a105f62cf1d21036e0c9167beddbb2d.css><link rel=stylesheet crossorigin=anonymous href=https://cdn.jsdelivr.net/npm/misans@4.1.0/lib/Normal/MiSans-Medium.min.css><link rel=stylesheet crossorigin=anonymous href=https://cdn.jsdelivr.net/npm/misans@4.1.0/lib/Normal/MiSans-Bold.min.css><link rel=stylesheet href=/css/iconfont.css><link rel=stylesheet href=/css/iconfont-patch.css><script src=https://cdn.jsdelivr.net/npm/fuse.js@7.1.0></script><script src=https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.11.1/build/highlight.min.js></script><link rel=stylesheet href=https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.11.1/build/styles/github-dark.min.css media="(prefers-color-scheme: dark)"><link rel=stylesheet href=https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.11.1/build/styles/github.min.css media="(prefers-color-scheme: light)"><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.css><script src=https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.umd.js></script></head><body><div class="background patterns"><div class=bg-mask></div><div class=bg-image style="background-image:url(https://tuapi.eees.cc/api.php?category=%7bdongman,fengjing%7d&amp;type=302)"></div></div><style>.background{position:fixed;top:0;left:0;width:100vw;height:100vh;display:flex;align-items:center;justify-content:center;z-index:-2;&.patterns { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='192' height='192' viewBox='0 0 192 192'%3E%3Cpath fill='%23494849' fill-opacity='0.08' d='M192 15v2a11 11 0 0 0-11 11c0 1.94 1.16 4.75 2.53 6.11l2.36 2.36a6.93 6.93 0 0 1 1.22 7.56l-.43.84a8.08 8.08 0 0 1-6.66 4.13H145v35.02a6.1 6.1 0 0 0 3.03 4.87l.84.43c1.58.79 4 .4 5.24-.85l2.36-2.36a12.04 12.04 0 0 1 7.51-3.11 13 13 0 1 1 .02 26 12 12 0 0 1-7.53-3.11l-2.36-2.36a4.93 4.93 0 0 0-5.24-.85l-.84.43a6.1 6.1 0 0 0-3.03 4.87V143h35.02a8.08 8.08 0 0 1 6.66 4.13l.43.84a6.91 6.91 0 0 1-1.22 7.56l-2.36 2.36A10.06 10.06 0 0 0 181 164a11 11 0 0 0 11 11v2a13 13 0 0 1-13-13 12 12 0 0 1 3.11-7.53l2.36-2.36a4.93 4.93 0 0 0 .85-5.24l-.43-.84a6.1 6.1 0 0 0-4.87-3.03H145v35.02a8.08 8.08 0 0 1-4.13 6.66l-.84.43a6.91 6.91 0 0 1-7.56-1.22l-2.36-2.36A10.06 10.06 0 0 0 124 181a11 11 0 0 0-11 11h-2a13 13 0 0 1 13-13c2.47 0 5.79 1.37 7.53 3.11l2.36 2.36a4.94 4.94 0 0 0 5.24.85l.84-.43a6.1 6.1 0 0 0 3.03-4.87V145h-35.02a8.08 8.08 0 0 1-6.66-4.13l-.43-.84a6.91 6.91 0 0 1 1.22-7.56l2.36-2.36A10.06 10.06 0 0 0 107 124a11 11 0 0 0-22 0c0 1.94 1.16 4.75 2.53 6.11l2.36 2.36a6.93 6.93 0 0 1 1.22 7.56l-.43.84a8.08 8.08 0 0 1-6.66 4.13H49v35.02a6.1 6.1 0 0 0 3.03 4.87l.84.43c1.58.79 4 .4 5.24-.85l2.36-2.36a12.04 12.04 0 0 1 7.51-3.11A13 13 0 0 1 81 192h-2a11 11 0 0 0-11-11c-1.94 0-4.75 1.16-6.11 2.53l-2.36 2.36a6.93 6.93 0 0 1-7.56 1.22l-.84-.43a8.08 8.08 0 0 1-4.13-6.66V145H11.98a6.1 6.1 0 0 0-4.87 3.03l-.43.84c-.79 1.58-.4 4 .85 5.24l2.36 2.36a12.04 12.04 0 0 1 3.11 7.51A13 13 0 0 1 0 177v-2a11 11 0 0 0 11-11c0-1.94-1.16-4.75-2.53-6.11l-2.36-2.36a6.93 6.93 0 0 1-1.22-7.56l.43-.84a8.08 8.08 0 0 1 6.66-4.13H47v-35.02a6.1 6.1 0 0 0-3.03-4.87l-.84-.43c-1.59-.8-4-.4-5.24.85l-2.36 2.36A12 12 0 0 1 28 109a13 13 0 1 1 0-26c2.47 0 5.79 1.37 7.53 3.11l2.36 2.36a4.94 4.94 0 0 0 5.24.85l.84-.43A6.1 6.1 0 0 0 47 84.02V49H11.98a8.08 8.08 0 0 1-6.66-4.13l-.43-.84a6.91 6.91 0 0 1 1.22-7.56l2.36-2.36A10.06 10.06 0 0 0 11 28 11 11 0 0 0 0 17v-2a13 13 0 0 1 13 13c0 2.47-1.37 5.79-3.11 7.53l-2.36 2.36a4.94 4.94 0 0 0-.85 5.24l.43.84A6.1 6.1 0 0 0 11.98 47H47V11.98a8.08 8.08 0 0 1 4.13-6.66l.84-.43a6.91 6.91 0 0 1 7.56 1.22l2.36 2.36A10.06 10.06 0 0 0 68 11 11 11 0 0 0 79 0h2a13 13 0 0 1-13 13 12 12 0 0 1-7.53-3.11l-2.36-2.36a4.93 4.93 0 0 0-5.24-.85l-.84.43A6.1 6.1 0 0 0 49 11.98V47h35.02a8.08 8.08 0 0 1 6.66 4.13l.43.84a6.91 6.91 0 0 1-1.22 7.56l-2.36 2.36A10.06 10.06 0 0 0 85 68a11 11 0 0 0 22 0c0-1.94-1.16-4.75-2.53-6.11l-2.36-2.36a6.93 6.93 0 0 1-1.22-7.56l.43-.84a8.08 8.08 0 0 1 6.66-4.13H143V11.98a6.1 6.1 0 0 0-3.03-4.87l-.84-.43c-1.59-.8-4-.4-5.24.85l-2.36 2.36A12 12 0 0 1 124 13a13 13 0 0 1-13-13h2a11 11 0 0 0 11 11c1.94 0 4.75-1.16 6.11-2.53l2.36-2.36a6.93 6.93 0 0 1 7.56-1.22l.84.43a8.08 8.08 0 0 1 4.13 6.66V47h35.02a6.1 6.1 0 0 0 4.87-3.03l.43-.84c.8-1.59.4-4-.85-5.24l-2.36-2.36A12 12 0 0 1 179 28a13 13 0 0 1 13-13zM84.02 143a6.1 6.1 0 0 0 4.87-3.03l.43-.84c.8-1.59.4-4-.85-5.24l-2.36-2.36A12 12 0 0 1 83 124a13 13 0 1 1 26 0c0 2.47-1.37 5.79-3.11 7.53l-2.36 2.36a4.94 4.94 0 0 0-.85 5.24l.43.84a6.1 6.1 0 0 0 4.87 3.03H143v-35.02a8.08 8.08 0 0 1 4.13-6.66l.84-.43a6.91 6.91 0 0 1 7.56 1.22l2.36 2.36A10.06 10.06 0 0 0 164 107a11 11 0 0 0 0-22c-1.94 0-4.75 1.16-6.11 2.53l-2.36 2.36a6.93 6.93 0 0 1-7.56 1.22l-.84-.43a8.08 8.08 0 0 1-4.13-6.66V49h-35.02a6.1 6.1 0 0 0-4.87 3.03l-.43.84c-.79 1.58-.4 4 .85 5.24l2.36 2.36a12.04 12.04 0 0 1 3.11 7.51A13 13 0 1 1 83 68a12 12 0 0 1 3.11-7.53l2.36-2.36a4.93 4.93 0 0 0 .85-5.24l-.43-.84A6.1 6.1 0 0 0 84.02 49H49v35.02a8.08 8.08 0 0 1-4.13 6.66l-.84.43a6.91 6.91 0 0 1-7.56-1.22l-2.36-2.36A10.06 10.06 0 0 0 28 85a11 11 0 0 0 0 22c1.94 0 4.75-1.16 6.11-2.53l2.36-2.36a6.93 6.93 0 0 1 7.56-1.22l.84.43a8.08 8.08 0 0 1 4.13 6.66V143h35.02z'%3E%3C/path%3E%3C/svg%3E"); } &.dark { &.patterns { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='192' height='192' viewBox='0 0 192 192'%3E%3Cpath fill='%23fcfcfc' fill-opacity='0.08' d='M192 15v2a11 11 0 0 0-11 11c0 1.94 1.16 4.75 2.53 6.11l2.36 2.36a6.93 6.93 0 0 1 1.22 7.56l-.43.84a8.08 8.08 0 0 1-6.66 4.13H145v35.02a6.1 6.1 0 0 0 3.03 4.87l.84.43c1.58.79 4 .4 5.24-.85l2.36-2.36a12.04 12.04 0 0 1 7.51-3.11 13 13 0 1 1 .02 26 12 12 0 0 1-7.53-3.11l-2.36-2.36a4.93 4.93 0 0 0-5.24-.85l-.84.43a6.1 6.1 0 0 0-3.03 4.87V143h35.02a8.08 8.08 0 0 1 6.66 4.13l.43.84a6.91 6.91 0 0 1-1.22 7.56l-2.36 2.36A10.06 10.06 0 0 0 181 164a11 11 0 0 0 11 11v2a13 13 0 0 1-13-13 12 12 0 0 1 3.11-7.53l2.36-2.36a4.93 4.93 0 0 0 .85-5.24l-.43-.84a6.1 6.1 0 0 0-4.87-3.03H145v35.02a8.08 8.08 0 0 1-4.13 6.66l-.84.43a6.91 6.91 0 0 1-7.56-1.22l-2.36-2.36A10.06 10.06 0 0 0 124 181a11 11 0 0 0-11 11h-2a13 13 0 0 1 13-13c2.47 0 5.79 1.37 7.53 3.11l2.36 2.36a4.94 4.94 0 0 0 5.24.85l.84-.43a6.1 6.1 0 0 0 3.03-4.87V145h-35.02a8.08 8.08 0 0 1-6.66-4.13l-.43-.84a6.91 6.91 0 0 1 1.22-7.56l2.36-2.36A10.06 10.06 0 0 0 107 124a11 11 0 0 0-22 0c0 1.94 1.16 4.75 2.53 6.11l2.36 2.36a6.93 6.93 0 0 1 1.22 7.56l-.43.84a8.08 8.08 0 0 1-6.66 4.13H49v35.02a6.1 6.1 0 0 0 3.03 4.87l.84.43c1.58.79 4 .4 5.24-.85l2.36-2.36a12.04 12.04 0 0 1 7.51-3.11A13 13 0 0 1 81 192h-2a11 11 0 0 0-11-11c-1.94 0-4.75 1.16-6.11 2.53l-2.36 2.36a6.93 6.93 0 0 1-7.56 1.22l-.84-.43a8.08 8.08 0 0 1-4.13-6.66V145H11.98a6.1 6.1 0 0 0-4.87 3.03l-.43.84c-.79 1.58-.4 4 .85 5.24l2.36 2.36a12.04 12.04 0 0 1 3.11 7.51A13 13 0 0 1 0 177v-2a11 11 0 0 0 11-11c0-1.94-1.16-4.75-2.53-6.11l-2.36-2.36a6.93 6.93 0 0 1-1.22-7.56l.43-.84a8.08 8.08 0 0 1 6.66-4.13H47v-35.02a6.1 6.1 0 0 0-3.03-4.87l-.84-.43c-1.59-.8-4-.4-5.24.85l-2.36 2.36A12 12 0 0 1 28 109a13 13 0 1 1 0-26c2.47 0 5.79 1.37 7.53 3.11l2.36 2.36a4.94 4.94 0 0 0 5.24.85l.84-.43A6.1 6.1 0 0 0 47 84.02V49H11.98a8.08 8.08 0 0 1-6.66-4.13l-.43-.84a6.91 6.91 0 0 1 1.22-7.56l2.36-2.36A10.06 10.06 0 0 0 11 28 11 11 0 0 0 0 17v-2a13 13 0 0 1 13 13c0 2.47-1.37 5.79-3.11 7.53l-2.36 2.36a4.94 4.94 0 0 0-.85 5.24l.43.84A6.1 6.1 0 0 0 11.98 47H47V11.98a8.08 8.08 0 0 1 4.13-6.66l.84-.43a6.91 6.91 0 0 1 7.56 1.22l2.36 2.36A10.06 10.06 0 0 0 68 11 11 11 0 0 0 79 0h2a13 13 0 0 1-13 13 12 12 0 0 1-7.53-3.11l-2.36-2.36a4.93 4.93 0 0 0-5.24-.85l-.84.43A6.1 6.1 0 0 0 49 11.98V47h35.02a8.08 8.08 0 0 1 6.66 4.13l.43.84a6.91 6.91 0 0 1-1.22 7.56l-2.36 2.36A10.06 10.06 0 0 0 85 68a11 11 0 0 0 22 0c0-1.94-1.16-4.75-2.53-6.11l-2.36-2.36a6.93 6.93 0 0 1-1.22-7.56l.43-.84a8.08 8.08 0 0 1 6.66-4.13H143V11.98a6.1 6.1 0 0 0-3.03-4.87l-.84-.43c-1.59-.8-4-.4-5.24.85l-2.36 2.36A12 12 0 0 1 124 13a13 13 0 0 1-13-13h2a11 11 0 0 0 11 11c1.94 0 4.75-1.16 6.11-2.53l2.36-2.36a6.93 6.93 0 0 1 7.56-1.22l.84.43a8.08 8.08 0 0 1 4.13 6.66V47h35.02a6.1 6.1 0 0 0 4.87-3.03l.43-.84c.8-1.59.4-4-.85-5.24l-2.36-2.36A12 12 0 0 1 179 28a13 13 0 0 1 13-13zM84.02 143a6.1 6.1 0 0 0 4.87-3.03l.43-.84c.8-1.59.4-4-.85-5.24l-2.36-2.36A12 12 0 0 1 83 124a13 13 0 1 1 26 0c0 2.47-1.37 5.79-3.11 7.53l-2.36 2.36a4.94 4.94 0 0 0-.85 5.24l.43.84a6.1 6.1 0 0 0 4.87 3.03H143v-35.02a8.08 8.08 0 0 1 4.13-6.66l.84-.43a6.91 6.91 0 0 1 7.56 1.22l2.36 2.36A10.06 10.06 0 0 0 164 107a11 11 0 0 0 0-22c-1.94 0-4.75 1.16-6.11 2.53l-2.36 2.36a6.93 6.93 0 0 1-7.56 1.22l-.84-.43a8.08 8.08 0 0 1-4.13-6.66V49h-35.02a6.1 6.1 0 0 0-4.87 3.03l-.43.84c-.79 1.58-.4 4 .85 5.24l2.36 2.36a12.04 12.04 0 0 1 3.11 7.51A13 13 0 1 1 83 68a12 12 0 0 1 3.11-7.53l2.36-2.36a4.93 4.93 0 0 0 .85-5.24l-.43-.84A6.1 6.1 0 0 0 84.02 49H49v35.02a8.08 8.08 0 0 1-4.13 6.66l-.84.43a6.91 6.91 0 0 1-7.56-1.22l-2.36-2.36A10.06 10.06 0 0 0 28 85a11 11 0 0 0 0 22c1.94 0 4.75-1.16 6.11-2.53l2.36-2.36a6.93 6.93 0 0 1 7.56-1.22l.84.43a8.08 8.08 0 0 1 4.13 6.66V143h35.02z'%3E%3C/path%3E%3C/svg%3E"); } .cover { filter: brightness(0.6); } } .cover { width: auto; height: auto; min-height: 100%; opacity: 0; transition: filter 0.3s, opacity 0.3s; &.loaded { opacity: 1; } }}</style><header class=main-header><nav class="main-nav up top"><div class=nav-all><div class=left-nav><div class=site-name onclick='location.href="/"'>元视角</div></div><div class=nav-center><div class=site-menu><div class=site-menu><div class=menu-item><span class=link-btn>文库</span><div class=link-child><span class=link-child-btn onclick='window.location.href="/archives"'><i class="iconfont icon-guidang"></i>
+归档
+</span><span class=link-child-btn onclick='window.location.href="/categories"'><i class="iconfont icon-folder"></i>
+全部分类
+</span><span class=link-child-btn onclick='window.location.href="/tags"'><i class="iconfont icon-hashtag"></i>
+全部标签</span></div></div><div class=menu-item><span class=link-btn>书影音</span><div class=link-child><span class=link-child-btn onclick='window.location.href="/books"'><i class="iconfont icon-book-fill"></i>
+读书
+</span><span class=link-child-btn onclick='window.location.href="/movies"'><i class="iconfont icon-movies"></i>
+观影
+</span><span class=link-child-btn onclick='window.location.href="/musics"'><i class="iconfont icon-music"></i>
+听歌</span></div></div><div class=menu-item><span class=link-btn>页面</span><div class=link-child><span class=link-child-btn onclick='window.location.href="/links"'><i class="iconfont icon-people"></i>
+友情链接
+</span><span class=link-child-btn onclick='window.location.href="/works"'><i class="iconfont icon-people"></i>
+个人作品
+</span><span class=link-child-btn onclick='window.location.href="/statics"'><i class="iconfont icon-tongji"></i>
+站点统计</span></div></div><div class=menu-item><span class=link-btn>更多</span><div class=link-child><span class=link-child-btn onclick='window.location.href="/comments"'><i class="iconfont icon-chat"></i>
+留言板
+</span><span class=link-child-btn onclick='window.location.href="/about"'><i class="iconfont icon-contacts"></i>
+关于本站</span></div></div></div></div><span class=site-title>浅议非典型 Web 应用场景下的身份认证</span></div><div class=right-nav><a class="menu-btn nav-btn travellings" title=开往-友链接力 href=https://www.travellings.cn/go.html target=_blank><i class="iconfont icon-subway"></i></a><div class="menu-btn nav-btn" title=随机前往一篇文章><i class="iconfont icon-shuffle"></i></div><div class="menu-btn nav-btn" title=全站搜索><i class="iconfont icon-search"></i></div><div class="menu-btn nav-btn" id=themeToggle title=切换主题模式><i class="iconfont icon-sun" id=themeIcon></i></div><div id=open-control class="menu-btn nav-btn pc" title=打开中控台><i class="iconfont icon-dashboard"></i></div><div class="to-top menu-btn hidden" title=返回顶部><div class=to-top-btn><span class=num>0</span>
+<i class="iconfont icon-up"></i></div></div><div class="menu-btn nav-btn mobile" title=打开菜单><i class="iconfont icon-toc"></i></div></div></div></nav><div class=mobile-menu id=mobileMenu><div class=menu-mask></div><div class="menu-content s-card"><div class=close-control><i class="iconfont icon-close"></i></div><div class=menu-list><div class=menu-item><span class=link-title>文库</span><div class=link-child><div class=link-child-btn onclick='window.location.href="/archives"'><i class="iconfont icon-guidang"></i>
+<span class=name>归档</span></div><div class=link-child-btn onclick='window.location.href="/categories"'><i class="iconfont icon-folder"></i>
+<span class=name>全部分类</span></div><div class=link-child-btn onclick='window.location.href="/tags"'><i class="iconfont icon-hashtag"></i>
+<span class=name>全部标签</span></div></div></div><div class=menu-item><span class=link-title>书影音</span><div class=link-child><div class=link-child-btn onclick='window.location.href="/books"'><i class="iconfont icon-book-fill"></i>
+<span class=name>读书</span></div><div class=link-child-btn onclick='window.location.href="/movies"'><i class="iconfont icon-movies"></i>
+<span class=name>观影</span></div><div class=link-child-btn onclick='window.location.href="/musics"'><i class="iconfont icon-music"></i>
+<span class=name>听歌</span></div></div></div><div class=menu-item><span class=link-title>页面</span><div class=link-child><div class=link-child-btn onclick='window.location.href="/links"'><i class="iconfont icon-people"></i>
+<span class=name>友情链接</span></div><div class=link-child-btn onclick='window.location.href="/works"'><i class="iconfont icon-people"></i>
+<span class=name>个人作品</span></div><div class=link-child-btn onclick='window.location.href="/statics"'><i class="iconfont icon-tongji"></i>
+<span class=name>站点统计</span></div></div></div><div class=menu-item><span class=link-title>更多</span><div class=link-child><div class=link-child-btn onclick='window.location.href="/comments"'><i class="iconfont icon-chat"></i>
+<span class=name>留言板</span></div><div class=link-child-btn onclick='window.location.href="/about"'><i class="iconfont icon-contacts"></i>
+<span class=name>关于本站</span></div></div></div></div></div></div><style>.mobile-menu{position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:3000;display:none}.mobile-menu .menu-mask{position:absolute;top:0;left:0;width:100%;height:100%;z-index:-1;background-color:var(--main-mask-background)}.mobile-menu .menu-content{position:absolute;top:0;right:0;height:100%;width:100%;max-width:300px;border-radius:12px 0 0 12px;padding:20px;overflow:auto}.mobile-menu .close-control{position:absolute;top:10px;right:20px;display:flex;align-items:center;justify-content:center;width:35px;height:35px;padding:0;transition:background-color .3s,opacity .3s;border-radius:50%;cursor:pointer}.mobile-menu .close-control .iconfont{font-size:18px;line-height:1;color:var(--main-font-second-color);transition:color .3s,opacity .3s}.mobile-menu .close-control:hover{background-color:var(--main-color)}.mobile-menu .close-control:hover .iconfont{color:var(--main-card-background)}.mobile-menu .menu-list{margin-top:40px}.mobile-menu .menu-item{margin-bottom:12px}.mobile-menu .menu-item .link-title{font-size:14px;margin-bottom:12px;display:inline-block;color:var(--main-font-second-color)}.mobile-menu .menu-item .link-child{display:grid;gap:12px;grid-template-columns:1fr 1fr}.mobile-menu .menu-item .link-child-btn{display:flex;flex-direction:row;justify-content:flex-start;align-items:center;border-radius:8px;padding:10px 12px;background-color:var(--main-card-background);border:1px solid var(--main-card-border);box-shadow:0 8px 16px -4px var(--main-border-shadow);font-size:15px;cursor:pointer;transition:all .3s}.mobile-menu .menu-item .link-child-btn:hover{background-color:var(--main-color);color:var(--main-card-background)}.mobile-menu .menu-item .link-child-btn .iconfont{margin-right:6px;opacity:.6}.mobile-menu .menu-item .link-child-btn .name{max-width:80px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}</style><script>function toggleMobileMenu(){const e=document.getElementById("mobileMenu");e&&(e.style.display=e.style.display==="none"?"block":"none")}</script><div class=modal id=search-modal><div class=modal-mask></div><div class="modal-main s-card" style=max-width:800px><div class=title><div class=title-left><i class="iconfont icon-search"></i>
+<span class=title-text>全局搜索</span></div><i class="iconfont icon-close close" id=modal-close></i></div><div class=modal-content style=--height:80vh><div class=search-modal><div class=search-input><input type=text id=search-input placeholder=今天你想搜点什么？ autocomplete=off></div><div class=search-results><div class=search-list></div><div class=search-empty><i class="iconfont icon-search"></i><p>输入关键字，开始搜索</p></div></div><div class=search-hint><span class=text id=search-hint-text></span>
+<span class=text><a class=powered_by href=https://www.fusejs.io/ target=_blank>Fuse.js</a></span></div></div></div></div></div></header><main class=main-layout><div class=post><div class=post-meta><div class=meta><div class=categories><a href=/categories/%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80 class=cat-item><i class="iconfont icon-folder"></i>
+<span class=name>编程语言</span></a></div><div class=tags><a href=/tags/grpc class=tag-item><i class="iconfont icon-hashtag"></i>
+<span class=name>gRPC</span>
+</a><a href=/tags/signalr class=tag-item><i class="iconfont icon-hashtag"></i>
+<span class=name>SignalR</span>
+</a><a href=/tags/kafka class=tag-item><i class="iconfont icon-hashtag"></i>
+<span class=name>Kafka</span></a></div></div><h1 class=title>浅议非典型 Web 应用场景下的身份认证</h1><div class=other-meta><span class="meta date"><i class="iconfont icon-date"></i>
+2021-12-28
+</span><span class="update meta"><i class="iconfont icon-time"></i>
+2021-12-28
+</span><span class="hot meta"><i class="iconfont icon-fire"></i>
+<span id=twikoo_visitors class=artalk-pv-count>0</span>
+</span><span class="chat meta hover" data-scroll-to=comments><i class="iconfont icon-chat"></i>
+<span id=twikoo_comments class=artalk-comment-count>0</span></span></div></div><div class=post-content><article class="post-article s-card"><div class="expired s-card">本文发表于 <strong>1198</strong> 天前，其中的信息可能已经事过境迁</div><div class="article-gpt s-card"><div class=title><span class=name><i class="iconfont icon-robot"></i>
+文章摘要
+<i class="iconfont icon-up"></i>
+</span><span class=logo>FakeGPT</span></div><div class="content s-card"><span class=text></span></div><div class=meta></div></div><script src=https://npm.elemecdn.com/typeit@8.7.1/dist/index.umd.js></script><script>document.addEventListener("DOMContentLoaded",function(){new TypeIt(".article-gpt .content .text",{strings:"在软件行业，存在针对语言、框架、范式、架构等问题的鄙视链。作者提到了编程领域充满着宗教原旨的意味，回顾了自己被轻视的经历。文中探讨了非典型 Web 应用场景下的身份认证，涵盖了 gRPC、SignalR 和 Kafka。针对 gRPC，介绍了身份认证的解决方案；对于 SignalR，讨论了身份认证的需求和解决方案；对于 Kafka，探讨了令牌传递、用户信息获取和处理消息的方式。最后，作者呼吁准备好面对非典型场景，并思考在后疫情时代的应对方式。",speed:10,lifeLike:!0,waitUntilVisible:!0}).go()})</script><div id=page-content class=markdown-main-style><p>据我所知，软件行业，向来是充满着鄙视链的，人们时常会因为语言、框架、范式、架构等等问题而争执不休。不必说 PHP 到底是不是世界上最好的语言，不必说原生与 Web 到底哪一个真正代表着未来，更不必说前端与后端到底哪一个更有技术含量，单单一个 C++ 的版本，1998 与 2011 之间仿佛隔了一个世纪。我真傻，我单知道人们会因为 GCC 和 VC++ 而分庭抗礼多年，却不知道人们还会因为大括号换行、Tab 还是空格、CRLF 还是 CR……诸如此类的问题而永不休战。也许，正如 <a href=http://www.yinwang.org/>王垠</a> 前辈所说，编程这个领域总是充满着某种 <a href=http://www.yinwang.org/blog-cn/2015/04/03/paradigms>宗教原旨</a> 的意味。回想起刚毕业那会儿，因为没有 Web 开发的经验而被人轻视，当年流行的 SSH 全家桶，对我鼓捣 Windows 桌面开发这件事情，投来无限鄙夷的目光，仿佛 Windows 是一种原罪。可时间久了以后，我渐渐意识到，对工程派而言，一切都是工具；而对于学术派而言，一切都是包容。这个世界并不是只有 Web，对吧？所以，这篇博客我想聊聊非典型 Web 应用场景下的身份认证。</p><h1 id=楔子>楔子</h1><p>在讨论非典型 Web 应用场景前，我们不妨来回想一下，一个典型的 Web 应用是什么样子？打开浏览器、输入一个 URL、按下回车、输入用户名和密码、点击登录……，在这个过程中，Cookie/Session用来维持整个会话的状态。直到后来，前后端分离的大潮流下，无状态的服务开始流行，人们开始使用一个令牌(Token)来标识身份信息，无论是催生了 Web 2.0 的 <code>OAuth 2.0</code> 协议，还是在微服务里更为流行的 <code>JWT(JSON Web Token)</code>，其实，都在隐隐约约说明一件事情，那就是在后 Web 时代，特别是微信兴起以后，人们在线与离线的边界越来越模糊，疫情期间居家办公的这段时间，我最怕听到 Teams 会议邀请的声音，因为无论你是否在线，它都会不停地催促你，彻底模糊生活与工作的边界。那么，屏幕前聪明的你，你告诉我，什么是典型的 Web 应用？也许，我同样无法回答这个问题，可或许，下面这几种方式，即 gRPC、SignalR 和 Kafka，可以称之为：非典型的 Web 应用。</p><h1 id=grpc>gRPC</h1><p>相信经常阅读我博客的朋友，都知道这样一件事情，那就是，过去这半年多的时间，我一直在探索，如何去构建一个以 gRPC 为核心的微服务架构。想了解这方面内容的朋友，不妨抽空看看我前面写过的博客。从整体上来说，我们对于 gRPC 的使用上，基本可以分为对内和对外两个方面。对内，不同的服务间通过 gRPC 客户端互相通信，我们称之为：直连；对外，不同的服务通过 Envoy 代理为 JSON API 供前端/客户端消费，我们称之为：代理。一个简单的微服务示意图，如下图所示：</p><p><a class=img-fancybox href=/posts/2478147871/gRPC-MicroService.drawio.png data-fancybox=gallery data-src=/posts/2478147871/gRPC-MicroService.drawio.png data-caption="gRPC 微服务中的内与外"><img src=/posts/2478147871/gRPC-MicroService.drawio.png alt="gRPC 微服务中的内与外" class=post-img loading=lazy>
+<span class=post-img-tip>gRPC 微服务中的内与外</span></a></p><p>目前，这个方案最大的问题，不同的服务间通过 gRPC 客户端直连的时候，无法提供身份认证信息，因为如果是单纯的读，即从某一个服务查询数据，其实是可以接受这种“裸奔”的状态，可一旦涉及到了写，这种方案就显得不大严谨。譬如现在的做法，如果从 <code>HttpContext</code> 里提取不到用户信息，就默认当前用户是 Sys，表示这是一个系统级别的操作。那么，如何解决这个问题呢？我们一起来看一下：</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-csharp data-lang=csharp><span class=line><span class=cl><span class=kt>var</span> <span class=n>channel</span> <span class=p>=</span> <span class=n>GrpcChannel</span><span class=p>.</span><span class=n>ForAddress</span><span class=p>(</span><span class=s>&#34;https://localhost:5001&#34;</span><span class=p>);</span>
+</span></span><span class=line><span class=cl><span class=kt>var</span> <span class=n>client</span> <span class=p>=</span> <span class=k>new</span> <span class=n>Greeter</span><span class=p>.</span><span class=n>GreeterClient</span><span class=p>(</span><span class=n>channel</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kt>var</span> <span class=n>metadata</span> <span class=p>=</span> <span class=k>new</span> <span class=n>Metadata</span><span class=p>();</span>
+</span></span><span class=line><span class=cl><span class=n>metadata</span><span class=p>.</span><span class=n>Add</span><span class=p>(</span><span class=s>&#34;Authorization&#34;</span><span class=p>,</span> <span class=s>$&#34;Bearer {token}&#34;</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kt>var</span> <span class=n>reply</span> <span class=p>=</span> <span class=n>client</span><span class=p>.</span><span class=n>SayHello</span><span class=p>(</span><span class=k>new</span> <span class=n>HelloRequest</span><span class=p>(),</span> <span class=n>metadata</span><span class=p>);</span>
+</span></span></code></pre></div><p>可以注意到，这里的关键是构造一个<code>Metadata</code>，并在其中传入<code>Authorization</code>头部。当然，这一切的前提是你遵循并且沿用了 <a href="https://docs.microsoft.com/zh-cn/aspnet/core/security/authentication/identity?view=aspnetcore-3.0&amp;tabs=visual-studio">ASP.NET Core 身份验证</a>，这里以最常见的 JWT 认证为例：</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-csharp data-lang=csharp><span class=line><span class=cl><span class=n>services</span><span class=p>.</span><span class=n>AddAuthentication</span><span class=p>(</span><span class=n>x</span> <span class=p>=&gt;</span>
+</span></span><span class=line><span class=cl><span class=p>{</span>
+</span></span><span class=line><span class=cl>   <span class=n>x</span><span class=p>.</span><span class=n>DefaultAuthenticateScheme</span> <span class=p>=</span> <span class=n>JwtBearerDefaults</span><span class=p>.</span><span class=n>AuthenticationScheme</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>   <span class=n>x</span><span class=p>.</span><span class=n>DefaultChallengeScheme</span> <span class=p>=</span> <span class=n>JwtBearerDefaults</span><span class=p>.</span><span class=n>AuthenticationScheme</span><span class=p>;</span>
+</span></span><span class=line><span class=cl><span class=p>}</span> <span class=p>).</span><span class=n>AddJwtBearer</span><span class=p>(</span><span class=n>x</span> <span class=p>=&gt;</span>
+</span></span><span class=line><span class=cl><span class=p>{</span>
+</span></span><span class=line><span class=cl>   <span class=n>x</span><span class=p>.</span><span class=n>RequireHttpsMetadata</span> <span class=p>=</span> <span class=kc>false</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>   <span class=n>x</span><span class=p>.</span><span class=n>SaveToken</span> <span class=p>=</span> <span class=kc>true</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>   <span class=n>x</span><span class=p>.</span><span class=n>TokenValidationParameters</span> <span class=p>=</span> <span class=k>new</span> <span class=n>TokenValidationParameters</span>
+</span></span><span class=line><span class=cl>  <span class=p>{</span>
+</span></span><span class=line><span class=cl>     <span class=n>ValidateIssuerSigningKey</span> <span class=p>=</span> <span class=kc>true</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>     <span class=n>IssuerSigningKey</span> <span class=p>=</span> <span class=k>new</span> <span class=n>SymmetricSecurityKey</span><span class=p>(</span><span class=n>Encoding</span><span class=p>.</span><span class=n>UTF8</span><span class=p>.</span><span class=n>GetBytes</span><span class=p>(</span><span class=n>jwtOptions</span><span class=p>.</span><span class=n>Secret</span><span class=p>)),</span>
+</span></span><span class=line><span class=cl>     <span class=n>ValidIssuer</span> <span class=p>=</span> <span class=n>jwtOptions</span><span class=p>.</span><span class=n>Issuer</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>     <span class=n>ValidAudience</span> <span class=p>=</span> <span class=n>jwtOptions</span><span class=p>.</span><span class=n>Audience</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>     <span class=n>ValidateIssuer</span> <span class=p>=</span> <span class=kc>true</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>     <span class=n>ValidateAudience</span> <span class=p>=</span> <span class=kc>true</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>   <span class=p>};</span>
+</span></span><span class=line><span class=cl><span class=p>});</span>
+</span></span></code></pre></div><p>通常情况下，这里的<code>IssuerSigningKey</code>由一个证书文件来提供，例如最常用的是<code>X509SecurityKey</code>类。为了方便演示，这里采用一组字符串进行签名。不管采用哪一种方式，我们都应该保证它与生成令牌时的参数一致。例如，下面是一个典型的生成 <code>JWT</code> 令牌的代码片段：</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-csharp data-lang=csharp><span class=line><span class=cl><span class=kt>var</span> <span class=n>claims</span> <span class=p>=</span> <span class=k>new</span><span class=p>[]</span>
+</span></span><span class=line><span class=cl><span class=p>{</span>
+</span></span><span class=line><span class=cl>   <span class=k>new</span> <span class=n>Claim</span><span class=p>(</span><span class=n>ClaimTypes</span><span class=p>.</span><span class=n>Name</span><span class=p>,</span> <span class=n>userInfo</span><span class=p>.</span><span class=n>UserName</span><span class=p>),</span>
+</span></span><span class=line><span class=cl>   <span class=k>new</span> <span class=n>Claim</span><span class=p>(</span><span class=n>ClaimTypes</span><span class=p>.</span><span class=n>Role</span><span class=p>,</span> <span class=n>userInfo</span><span class=p>.</span><span class=n>UserRole</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=p>};</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kt>var</span> <span class=n>signKey</span> <span class=p>=</span> <span class=k>new</span> <span class=n>SymmetricSecurityKey</span><span class=p>(</span><span class=n>Encoding</span><span class=p>.</span><span class=n>UTF8</span><span class=p>.</span><span class=n>GetBytes</span><span class=p>(</span><span class=n>_jwtOptions</span><span class=p>.</span><span class=n>Value</span><span class=p>.</span><span class=n>Secret</span><span class=p>));</span>
+</span></span><span class=line><span class=cl><span class=kt>var</span> <span class=n>credentials</span> <span class=p>=</span> <span class=k>new</span> <span class=n>SigningCredentials</span><span class=p>(</span><span class=n>signKey</span><span class=p>,</span> <span class=n>SecurityAlgorithms</span><span class=p>.</span><span class=n>HmacSha256</span><span class=p>);</span>
+</span></span><span class=line><span class=cl><span class=kt>var</span> <span class=n>jwtToken</span> <span class=p>=</span> <span class=k>new</span> <span class=n>JwtSecurityToken</span><span class=p>(</span>
+</span></span><span class=line><span class=cl>   <span class=n>_jwtOptions</span><span class=p>.</span><span class=n>Value</span><span class=p>.</span><span class=n>Issuer</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>   <span class=n>_jwtOptions</span><span class=p>.</span><span class=n>Value</span><span class=p>.</span><span class=n>Audience</span><span class=p>,</span> 
+</span></span><span class=line><span class=cl>   <span class=n>claims</span><span class=p>,</span> 
+</span></span><span class=line><span class=cl>   <span class=n>expires</span><span class=p>:</span> <span class=n>DateTime</span><span class=p>.</span><span class=n>Now</span><span class=p>.</span><span class=n>AddMinutes</span><span class=p>(</span><span class=n>_jwtOptions</span><span class=p>.</span><span class=n>Value</span><span class=p>.</span><span class=n>AccessExpiration</span><span class=p>),</span> 
+</span></span><span class=line><span class=cl>   <span class=n>signingCredentials</span><span class=p>:</span> <span class=n>credentials</span>
+</span></span><span class=line><span class=cl><span class=p>);</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=n>token</span> <span class=p>=</span> <span class=k>new</span> <span class=n>JwtSecurityTokenHandler</span><span class=p>().</span><span class=n>WriteToken</span><span class=p>(</span><span class=n>jwtToken</span><span class=p>);</span>
+</span></span></code></pre></div><p>除了以上两点，请确保你的正确地配置了认证和授权两个中间件，注意它们的顺序和位置：</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-csharp data-lang=csharp><span class=line><span class=cl><span class=kd>public</span> <span class=k>void</span> <span class=n>Configure</span><span class=p>(</span><span class=n>IApplicationBuilder</span> <span class=n>app</span><span class=p>,</span> <span class=n>IWebHostEnvironment</span> <span class=n>env</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=c1>// ...</span>
+</span></span><span class=line><span class=cl>    <span class=n>app</span><span class=p>.</span><span class=n>UseRouting</span><span class=p>();</span>
+</span></span><span class=line><span class=cl>    <span class=c1>// 注意顺序</span>
+</span></span><span class=line><span class=cl>    <span class=n>app</span><span class=p>.</span><span class=n>UseAuthentication</span><span class=p>();</span>
+</span></span><span class=line><span class=cl>    <span class=n>app</span><span class=p>.</span><span class=n>UseAuthorization</span><span class=p>();</span>
+</span></span><span class=line><span class=cl>    <span class=n>app</span><span class=p>.</span><span class=n>UseEndpoints</span><span class=p>(</span><span class=n>endpoints</span> <span class=p>=&gt;</span>
+</span></span><span class=line><span class=cl>   <span class=p>{</span>
+</span></span><span class=line><span class=cl>       <span class=n>endpoints</span><span class=p>.</span><span class=n>MapGrpcService</span><span class=p>&lt;</span><span class=n>GreeterService</span><span class=p>&gt;();</span>
+</span></span><span class=line><span class=cl>   <span class=p>});</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></div><p>此时，我们就可以在 gRPC 中通过<code>IHttpContextAccessor</code>获取当前用户信息：</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-csharp data-lang=csharp><span class=line><span class=cl><span class=kd>public</span> <span class=kd>override</span> <span class=n>Task</span><span class=p>&lt;</span><span class=n>HelloReply</span><span class=p>&gt;</span> <span class=n>SayHello</span><span class=p>(</span><span class=n>HelloRequest</span> <span class=n>request</span><span class=p>,</span> <span class=n>ServerCallContext</span> <span class=n>context</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=kt>var</span> <span class=n>userName</span> <span class=p>=</span> <span class=n>_httpContextAccessor</span><span class=p>.</span><span class=n>HttpContext</span><span class=p>.</span><span class=n>User</span><span class=p>?.</span><span class=n>Identity</span><span class=p>.</span><span class=n>Name</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>    <span class=k>return</span> <span class=n>Task</span><span class=p>.</span><span class=n>FromResult</span><span class=p>(</span><span class=k>new</span> <span class=n>HelloReply</span> <span class=p>{</span> <span class=n>Message</span> <span class=p>=</span> <span class=s>$&#34;Hello {userName}&#34;</span><span class=p>});</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></div><p>当然，考虑到我们使用 gRPC 客户端工厂的场景更多一点，我们更希望这个令牌可以在一开始就准备好，而不是每调用一个方法都需要传一次令牌。此时，我们可以使用下面的做法：</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-csharp data-lang=csharp><span class=line><span class=cl><span class=n>services</span><span class=p>.</span><span class=n>AddGrpcClient</span><span class=p>&lt;</span><span class=n>Greeter</span><span class=p>.</span><span class=n>GreeterClient</span><span class=p>&gt;(</span><span class=n>o</span> <span class=p>=&gt;</span>
+</span></span><span class=line><span class=cl><span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=n>o</span><span class=p>.</span><span class=n>Address</span> <span class=p>=</span> <span class=k>new</span> <span class=n>Uri</span><span class=p>(</span><span class=s>&#34;https://localhost:5001&#34;</span><span class=p>);</span>
+</span></span><span class=line><span class=cl><span class=p>}).</span><span class=n>ConfigureChannel</span><span class=p>(</span><span class=n>o</span> <span class=p>=&gt;</span>
+</span></span><span class=line><span class=cl><span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=kt>var</span> <span class=n>credentials</span> <span class=p>=</span> <span class=n>CallCredentials</span><span class=p>.</span><span class=n>FromInterceptor</span><span class=p>((</span><span class=n>context</span><span class=p>,</span> <span class=n>metadata</span><span class=p>)</span> <span class=p>=&gt;</span>
+</span></span><span class=line><span class=cl>    <span class=p>{</span>
+</span></span><span class=line><span class=cl>      <span class=k>if</span> <span class=p>(!</span><span class=kt>string</span><span class=p>.</span><span class=n>IsNullOrEmpty</span><span class=p>(</span><span class=n>_token</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>        <span class=n>metadata</span><span class=p>.</span><span class=n>Add</span><span class=p>(</span><span class=s>&#34;Authorization&#34;</span><span class=p>,</span> <span class=s>$&#34;Bearer {_token}&#34;</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>      <span class=k>return</span> <span class=n>Task</span><span class=p>.</span><span class=n>CompletedTask</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>    <span class=p>});</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=n>o</span><span class=p>.</span><span class=n>Credentials</span> <span class=p>=</span> <span class=n>ChannelCredentials</span><span class=p>.</span><span class=n>Create</span><span class=p>(</span><span class=k>new</span> <span class=n>SslCredentials</span><span class=p>(),</span> <span class=n>credentials</span><span class=p>);</span>
+</span></span><span class=line><span class=cl><span class=p>});</span>
+</span></span></code></pre></div><p>至此，关于 gRPC 的身份认证问题终于得到了解决，无论是对内的直连还是对外的代理，我们都可以获得用户的身份信息。需要说明的是，默认情况下，gRPC 允许调用方在不携带令牌的情况下调用接口，所以，我们这里的认证方案更像是一种君子协定。如果希望做更严格的限制，可以考虑在具体的服务上添加 <code>[Authorize]</code>特性，就像我们在控制器上使用该特性一样。</p><h1 id=signalr>SignalR</h1><p><a href="https://docs.microsoft.com/zh-cn/aspnet/core/signalr/introduction?view=aspnetcore-6.0">SignalR</a> 是由微软提供的一面向实时 Web 应用的、开源的库，你可以认为，它是集 <a href="https://docs.microsoft.com/zh-cn/aspnet/core/fundamentals/websockets?view=aspnetcore-6.0">WebSockets</a>、Server-Sent 事件 和 长轮询于一身的综合性的库。当你需要从服务端实时地推送消息到特定的客户端(组)的时候，SignalR 将会是一个不错的选择。譬如可视化的仪表盘或者监视系统，需要接收数据的变更通知以实时地刷新视图；即时通讯(IM)、社交网络、邮件、游戏、协作等方面地应用都需要及时地发出通知。ASP.NET Core 版本的 SIgnalR 在自动处理连接管理方面做出来不小的改善，可很多时候，SIgnalR 里面的 ConnectionId 对我们而言是没有意义的，我们更想知道连接到 Hub 的用户是谁，这样就催生出来 SignalR 身份认证的需求场景，下面，我们就来看看对应的 <a href="https://docs.microsoft.com/zh-cn/aspnet/core/signalr/authn-and-authz?view=aspnetcore-6.0">解决方案</a>。</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-csharp data-lang=csharp><span class=line><span class=cl><span class=c1>// 方式一、AccessTokenProvider </span>
+</span></span><span class=line><span class=cl><span class=kt>var</span> <span class=n>hubConnection</span> <span class=p>=</span> <span class=k>new</span> <span class=n>HubConnectionBuilder</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>  <span class=p>.</span><span class=n>WithUrl</span><span class=p>(</span><span class=s>&#34;http://localhost:5000/echohub&#34;</span><span class=p>,</span><span class=n>options</span> <span class=p>=&gt;</span>
+</span></span><span class=line><span class=cl>  <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=n>options</span><span class=p>.</span><span class=n>AccessTokenProvider</span> <span class=p>=</span> <span class=p>()</span> <span class=p>=&gt;</span> <span class=n>Task</span><span class=p>.</span><span class=n>FromResult</span><span class=p>(</span><span class=s>&#34;&lt;Your Token&gt;&#34;</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>  <span class=p>})</span>
+</span></span><span class=line><span class=cl>  <span class=p>.</span><span class=n>WithAutomaticReconnect</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>  <span class=p>.</span><span class=n>Build</span><span class=p>();</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1>// 方式二、直接追加查询参数</span>
+</span></span><span class=line><span class=cl><span class=kt>var</span> <span class=n>hubConnection</span> <span class=p>=</span> <span class=k>new</span> <span class=n>HubConnectionBuilder</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>  <span class=p>.</span><span class=n>WithUrl</span><span class=p>(</span><span class=s>&#34;http://localhost:5000/echohub?access_token=&lt;Your Token&gt;&#34;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>  <span class=p>.</span><span class=n>WithAutomaticReconnect</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>  <span class=p>.</span><span class=n>Build</span><span class=p>();</span>
+</span></span></code></pre></div><p>首先，SignalR 的身份认证，整体上依然遵循 ASP.NET Core 里的这套认证/授权流程，所以，我们可以继续沿用 gRPC 这部分的代码。考虑到 SignalR 首次发起的是一个 GET 请求，通常的做法是在查询参数中追加令牌参数。当然，现在官方提供了<code>AccessTokenProvider</code>这个属性，允许你构造一个委托来提供令牌。接下来，为了让这个令牌更符合一般的场景，譬如，按照约定它应该出现在 HTTP 请求头的 <code>Authorization</code> 字段上，我们有下面两种方式来对它进行处理：</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-csharp data-lang=csharp><span class=line><span class=cl><span class=c1>// 方式一、设置 JwtBearer 的 Events 属性</span>
+</span></span><span class=line><span class=cl><span class=n>services</span><span class=p>.</span><span class=n>AddAuthentication</span><span class=p>(</span><span class=n>x</span> <span class=p>=&gt;</span>
+</span></span><span class=line><span class=cl><span class=p>{</span>
+</span></span><span class=line><span class=cl>  <span class=c1>//...</span>
+</span></span><span class=line><span class=cl><span class=p>})</span>
+</span></span><span class=line><span class=cl><span class=p>.</span><span class=n>AddJwtBearer</span><span class=p>(</span><span class=n>x</span> <span class=p>=&gt;</span>
+</span></span><span class=line><span class=cl><span class=p>{</span>
+</span></span><span class=line><span class=cl>  <span class=c1>//...</span>
+</span></span><span class=line><span class=cl>  <span class=n>x</span><span class=p>.</span><span class=n>Events</span> <span class=p>=</span> <span class=k>new</span> <span class=n>JwtBearerEvents</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>  <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=n>OnMessageReceived</span> <span class=p>=</span> <span class=n>context</span> <span class=p>=&gt;</span>
+</span></span><span class=line><span class=cl>    <span class=p>{</span>
+</span></span><span class=line><span class=cl>      <span class=kt>var</span> <span class=n>accessToken</span> <span class=p>=</span> <span class=n>context</span><span class=p>.</span><span class=n>Request</span><span class=p>.</span><span class=n>Query</span><span class=p>[</span><span class=s>&#34;access_token&#34;</span><span class=p>];</span>
+</span></span><span class=line><span class=cl>      <span class=kt>var</span> <span class=n>path</span> <span class=p>=</span> <span class=n>context</span><span class=p>.</span><span class=n>HttpContext</span><span class=p>.</span><span class=n>Request</span><span class=p>.</span><span class=n>Path</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>      <span class=k>if</span> <span class=p>(!</span><span class=kt>string</span><span class=p>.</span><span class=n>IsNullOrEmpty</span><span class=p>(</span><span class=n>accessToken</span><span class=p>)</span> <span class=p>&amp;&amp;</span> <span class=p>(</span><span class=n>path</span><span class=p>.</span><span class=n>StartsWithSegments</span><span class=p>(</span><span class=s>&#34;/echohub&#34;</span><span class=p>)))</span>
+</span></span><span class=line><span class=cl>        <span class=n>context</span><span class=p>.</span><span class=n>Token</span> <span class=p>=</span> <span class=n>accessToken</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>      <span class=k>return</span> <span class=n>Task</span><span class=p>.</span><span class=n>CompletedTask</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl>  <span class=p>};</span>
+</span></span><span class=line><span class=cl><span class=p>});</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1>// 方式二，编写中间件，注意顺序</span>
+</span></span><span class=line><span class=cl><span class=n>app</span><span class=p>.</span><span class=n>Use</span><span class=p>((</span><span class=n>context</span><span class=p>,</span> <span class=n>next</span><span class=p>)</span> <span class=p>=&gt;</span>
+</span></span><span class=line><span class=cl><span class=p>{</span>
+</span></span><span class=line><span class=cl>  <span class=kt>var</span> <span class=n>accessToken</span> <span class=p>=</span> <span class=n>context</span><span class=p>.</span><span class=n>Request</span><span class=p>.</span><span class=n>Query</span><span class=p>[</span><span class=s>&#34;access_token&#34;</span><span class=p>].</span><span class=n>ToString</span><span class=p>();</span>
+</span></span><span class=line><span class=cl>  <span class=kt>var</span> <span class=n>path</span> <span class=p>=</span> <span class=n>context</span><span class=p>.</span><span class=n>Request</span><span class=p>.</span><span class=n>Path</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>  <span class=k>if</span> <span class=p>(!</span><span class=kt>string</span><span class=p>.</span><span class=n>IsNullOrEmpty</span><span class=p>(</span><span class=n>accessToken</span><span class=p>)</span> <span class=p>&amp;&amp;</span> <span class=p>(</span><span class=n>path</span><span class=p>.</span><span class=n>StartsWithSegments</span><span class=p>(</span><span class=s>&#34;/echohub&#34;</span><span class=p>)))</span>
+</span></span><span class=line><span class=cl>    <span class=n>context</span><span class=p>.</span><span class=n>Request</span><span class=p>.</span><span class=n>Headers</span><span class=p>.</span><span class=n>Add</span><span class=p>(</span><span class=s>&#34;Authorization&#34;</span><span class=p>,</span> <span class=k>new</span> <span class=n>StringValues</span><span class=p>(</span><span class=s>$&#34;Bearer {accessToken}&#34;</span><span class=p>));</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=k>return</span> <span class=n>next</span><span class=p>.</span><span class=n>Invoke</span><span class=p>();</span>
+</span></span><span class=line><span class=cl><span class=p>});</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=n>app</span><span class=p>.</span><span class=n>UseAuthentication</span><span class=p>();</span>
+</span></span><span class=line><span class=cl><span class=n>app</span><span class=p>.</span><span class=n>UseAuthorization</span><span class=p>();</span>
+</span></span></code></pre></div><p>可以注意到，不管是哪一种方式，核心目的都是为了让令牌能在 ASP.NET Core 的请求管道中出现在它期望出现的地方，这是什么地方呢？我想，应该是为执行认证/授权中间件以前，所以，为什么我说这两个中间件的顺序非常重要，原因正在于此，一旦我们做了这一点，剩下的事情就交给微软，我们只需要通过 <code>HttpContext</code> 的 <code>User</code> 属性获取用户信息即可。</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-csharp data-lang=csharp><span class=line><span class=cl><span class=kd>public</span> <span class=n>Task</span> <span class=n>Echo</span><span class=p>(</span><span class=kt>string</span> <span class=n>message</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=p>{</span>
+</span></span><span class=line><span class=cl>  <span class=kt>var</span> <span class=n>userName</span> <span class=p>=</span> <span class=n>Context</span><span class=p>.</span><span class=n>User</span><span class=p>?.</span><span class=n>Identity</span><span class=p>?.</span><span class=n>Name</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>  <span class=n>Clients</span><span class=p>.</span><span class=n>Client</span><span class=p>(</span><span class=n>Context</span><span class=p>.</span><span class=n>ConnectionId</span><span class=p>).</span><span class=n>SendAsync</span><span class=p>(</span><span class=s>&#34;OnEcho&#34;</span><span class=p>,</span> <span class=s>$&#34;{userName}:{message}&#34;</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>  <span class=k>return</span> <span class=n>Task</span><span class=p>.</span><span class=n>CompletedTask</span><span class=p>;</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></div><p>对于 SignalR 而言，同一个用户会对应多个 ConnectionId，当然，我并不需要过度地去关注这个东西，除非我们真的要分清每一个 ConnectionId 具体代表什么。类似地，SignalR 一样可以用 <code>[Authorized]</code> 特性来限制 Hub 是否可以在未认证的情况下使用，甚至它可以配合不同的 Policy 来做更细致的划分：</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-csharp data-lang=csharp><span class=line><span class=cl><span class=kd>public</span> <span class=k>class</span> <span class=nc>UserRoleRequirement</span> <span class=p>:</span> 
+</span></span><span class=line><span class=cl>  <span class=n>AuthorizationHandler</span><span class=p>&lt;</span><span class=n>UserRoleRequirement</span><span class=p>,</span> <span class=n>HubInvocationContext</span><span class=p>&gt;,</span> <span class=n>IAuthorizationRequirement</span>
+</span></span><span class=line><span class=cl><span class=p>{</span>
+</span></span><span class=line><span class=cl>  <span class=kd>protected</span> <span class=kd>override</span> <span class=n>Task</span> <span class=n>HandleRequirementAsync</span><span class=p>(</span>
+</span></span><span class=line><span class=cl>    <span class=n>AuthorizationHandlerContext</span> <span class=n>context</span><span class=p>,</span> <span class=n>UserRoleRequirement</span> <span class=n>requirement</span><span class=p>,</span> <span class=n>HubInvocationContext</span> <span class=n>resource</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>  <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=kt>var</span> <span class=n>userRole</span> <span class=p>=</span> <span class=n>context</span><span class=p>.</span><span class=n>User</span><span class=p>.</span><span class=n>Claims</span><span class=p>.</span><span class=n>FirstOrDefault</span><span class=p>(</span><span class=n>x</span> <span class=p>=&gt;</span> <span class=n>x</span><span class=p>.</span><span class=n>Type</span> <span class=p>==</span> <span class=n>ClaimTypes</span><span class=p>.</span><span class=n>Role</span><span class=p>)?.</span><span class=n>Value</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>    <span class=k>if</span> <span class=p>(</span><span class=n>userRole</span> <span class=p>==</span> <span class=s>&#34;Admin&#34;</span> <span class=p>&amp;&amp;</span> <span class=n>resource</span><span class=p>.</span><span class=n>HubMethodName</span> <span class=p>==</span> <span class=s>&#34;Echo&#34;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>      <span class=n>context</span><span class=p>.</span><span class=n>Succeed</span><span class=p>(</span><span class=n>requirement</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=k>return</span> <span class=n>Task</span><span class=p>.</span><span class=n>CompletedTask</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>  <span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></div><p>这里，我们定义了一个<code>UserRoleRequirement</code>类，其作用是仅仅允许<code>Admin</code>角色访问<code>Echo()</code>方法。此时，为了让这个策略生效，我们还需要将其注册到容器中，如下面的代码片段所示：</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-csharp data-lang=csharp><span class=line><span class=cl><span class=n>services</span>
+</span></span><span class=line><span class=cl>  <span class=p>.</span><span class=n>AddAuthorization</span><span class=p>(</span><span class=n>options</span> <span class=p>=&gt;</span>
+</span></span><span class=line><span class=cl>  <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=n>options</span><span class=p>.</span><span class=n>AddPolicy</span><span class=p>(</span><span class=s>&#34;UserRoleRestricted&#34;</span><span class=p>,</span> <span class=n>policy</span> <span class=p>=&gt;</span>
+</span></span><span class=line><span class=cl>    <span class=p>{</span>
+</span></span><span class=line><span class=cl>      <span class=n>policy</span><span class=p>.</span><span class=n>Requirements</span><span class=p>.</span><span class=n>Add</span><span class=p>(</span><span class=k>new</span> <span class=n>UserRoleRequirement</span><span class=p>());</span>
+</span></span><span class=line><span class=cl>    <span class=p>});</span>
+</span></span><span class=line><span class=cl>  <span class=p>});</span>
+</span></span></code></pre></div><p>现在，我们可以在集线器(Hub)上控制 <code>Echo()</code> 方法访问权限，考虑到 <code>gRPC</code> 和 <code>SignalR</code> 都可以使用这套身份认证方案，所以，这个做法同样适用于 <code>gRPC</code>，如果你希望实现方法级的权限控制：</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-csharp data-lang=csharp><span class=line><span class=cl><span class=na>[Authorize]</span>
+</span></span><span class=line><span class=cl><span class=kd>public</span> <span class=k>class</span> <span class=nc>EchoHub</span> <span class=p>:</span> <span class=n>Hub</span>
+</span></span><span class=line><span class=cl><span class=p>{</span>
+</span></span><span class=line><span class=cl><span class=na>  [Authorize(&#34;UserRoleRestricted&#34;)]</span>
+</span></span><span class=line><span class=cl>  <span class=kd>public</span> <span class=n>Task</span> <span class=n>Echo</span><span class=p>(</span><span class=kt>string</span> <span class=n>message</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>  <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=kt>var</span> <span class=n>userName</span> <span class=p>=</span> <span class=n>Context</span><span class=p>.</span><span class=n>User</span><span class=p>?.</span><span class=n>Identity</span><span class=p>?.</span><span class=n>Name</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>    <span class=n>Clients</span><span class=p>.</span><span class=n>Client</span><span class=p>(</span><span class=n>Context</span><span class=p>.</span><span class=n>ConnectionId</span><span class=p>).</span><span class=n>SendAsync</span><span class=p>(</span><span class=s>&#34;OnEcho&#34;</span><span class=p>,</span> <span class=s>$&#34;{userName}:{message}&#34;</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>    <span class=k>return</span> <span class=n>Task</span><span class=p>.</span><span class=n>CompletedTask</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>  <span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></div><h1 id=kafka>Kafka</h1><p>无独有偶，除了 SignalR ，我们还用到了消息中间件 Kafka，事实上，SignalR 会从 Kafka 拉取消息，并将其发布到订阅了该 Topic 的客户端上，所以，Kafka 在整个系统中，其实扮演着非常重要的角色。如果你只是需要让 Kafka 充当一个消息中介者，那么，你完全不需要考虑 Kafka 的身份认证问题。可一旦你考虑用 Kafka 来做具体的业务，这个问题就会立刻凸显出来。譬如，当我们用 Kafka 来实现一个分布式事务的时候，我们采用了 SAGA 模式，即让主事务负责事务的协调，每个子事务在收到主事务的消息后，执行相应的操作并回复主事务一条消息，再由主事务来决定整个事务应该提交还是回滚。如图所示，下面是一个针对 SAGA 模式的简单示意图：</p><p><a class=img-fancybox href=/posts/2478147871/Kafka-Distributed-Transaction.drawio.png data-fancybox=gallery data-src=/posts/2478147871/Kafka-Distributed-Transaction.drawio.png data-caption="分布式事务 SAGA 模式示意图"><img src=/posts/2478147871/Kafka-Distributed-Transaction.drawio.png alt="分布式事务 SAGA 模式示意图" class=post-img loading=lazy>
+<span class=post-img-tip>分布式事务 SAGA 模式示意图</span></a></p><p>关于这个模式的细节，感兴趣的朋友可以从 <a href=https://docs.microsoft.com/zh-cn/azure/architecture/reference-architectures/saga/saga>这里</a> 获取。这里我想说的是，当我们尝试用 Kafka 来做具体的业务的时候，我们其实是无法获得对应的用户信息的，因为此时此刻，基于 ASP.NET Core 的管道式的洋葱模型，对我们而言是暂时失效的，所以，我一直在说的非典型 Web 应用，其实可以指脱离了洋葱模型、脱离了授权/认证流程的这类场景。和 gRPC 类似，当我们需要用户信息，而又无法获得用户信息的时候，该怎么办呢？答案是在 Kafka 的消息中传递一个令牌(Token)，下面是一个简单的实现思路：</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-csharp data-lang=csharp><span class=line><span class=cl><span class=kt>var</span> <span class=n>producerConfig</span> <span class=p>=</span> <span class=k>new</span> <span class=n>ProducerConfig</span> <span class=p>{</span> <span class=n>BootstrapServers</span> <span class=p>=</span> <span class=s>&#34;192.168.50.162:9092&#34;</span> <span class=p>};</span>
+</span></span><span class=line><span class=cl><span class=k>using</span> <span class=p>(</span><span class=kt>var</span> <span class=n>p</span> <span class=p>=</span> <span class=k>new</span> <span class=n>ProducerBuilder</span><span class=p>&lt;</span><span class=n>Null</span><span class=p>,</span> <span class=kt>string</span><span class=p>&gt;(</span><span class=n>producerConfig</span><span class=p>).</span><span class=n>Build</span><span class=p>())</span>
+</span></span><span class=line><span class=cl><span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=kt>var</span> <span class=n>token</span> <span class=p>=</span> <span class=s>&#34;&lt;Your Token&gt;&#34;</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>    <span class=kt>var</span> <span class=n>topic</span> <span class=p>=</span> <span class=err>“</span><span class=p>&lt;</span><span class=n>Your</span> <span class=n>Topic</span><span class=p>&gt;</span><span class=s>&#34;;
+</span></span></span><span class=line><span class=cl><span class=s></span>    <span class=kt>var</span> <span class=n>document</span> <span class=p>=</span> <span class=k>new</span> <span class=p>{</span> <span class=n>Id</span> <span class=p>=</span> <span class=s>&#34;001&#34;</span><span class=p>,</span> <span class=n>Name</span> <span class=p>=</span> <span class=s>&#34;张三&#34;</span><span class=p>,</span> <span class=n>Address</span> <span class=p>=</span> <span class=s>&#34;北京市朝阳区&#34;</span><span class=p>,</span> <span class=n>Event</span> <span class=p>=</span> <span class=s>&#34;喝水未遂&#34;</span> <span class=p>};</span>
+</span></span><span class=line><span class=cl>    <span class=kt>var</span> <span class=n>message</span> <span class=p>=</span> <span class=k>new</span> <span class=n>Message</span><span class=p>&lt;</span><span class=n>Null</span><span class=p>,</span> <span class=kt>string</span><span class=p>&gt;</span> <span class=p>{</span> <span class=n>Value</span> <span class=p>=</span> <span class=n>JsonConvert</span><span class=p>.</span><span class=n>SerializeObject</span><span class=p>(</span><span class=n>document</span><span class=p>)</span> <span class=p>};</span>
+</span></span><span class=line><span class=cl>    <span class=c1>// 在 Kafka 消息头里增加 Authorization 字段</span>
+</span></span><span class=line><span class=cl>    <span class=n>message</span><span class=p>.</span><span class=n>Headers</span> <span class=p>=</span> <span class=k>new</span> <span class=n>Headers</span><span class=p>();</span>
+</span></span><span class=line><span class=cl>    <span class=n>message</span><span class=p>.</span><span class=n>Headers</span><span class=p>.</span><span class=n>Add</span><span class=p>(</span><span class=s>&#34;Authorization&#34;</span><span class=p>,</span> <span class=n>Encoding</span><span class=p>.</span><span class=n>UTF8</span><span class=p>.</span><span class=n>GetBytes</span><span class=p>(</span><span class=s>$&#34;Bearer {token}&#34;</span><span class=p>));</span>
+</span></span><span class=line><span class=cl>    <span class=kt>var</span> <span class=n>result</span> <span class=p>=</span> <span class=k>await</span> <span class=n>p</span><span class=p>.</span><span class=n>ProduceAsync</span><span class=p>(</span><span class=n>topic</span><span class=p>,</span> <span class=n>message</span><span class=p>);</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></div><p>显然，这是非常朴素的一个想法，发送 Kafka 消息的时候，在 Kafka 的消息头里增加 <code>Authorization</code>字段，完美借鉴<code>HTTP</code>协议里的做法。那么，相对应地，消费 Kafka 消息的时候需要做一点调整，因为 Kafka 完全独立于 ASP.NET Core 的请求管道，所以，校验令牌的工作此时需要我们来独立完成。不过，请放心，这一切不会特别难，因为<code>JwtSecurityTokenHandler</code>这个类我们已经在前面用过一次：</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-csharp data-lang=csharp><span class=line><span class=cl><span class=kt>var</span> <span class=n>consumerConfig</span> <span class=p>=</span> <span class=k>new</span> <span class=n>ConsumerConfig</span> <span class=p>{</span> <span class=n>BootstrapServers</span> <span class=p>=</span> <span class=s>&#34;127.0.0.1:9092&#34;</span> <span class=p>};</span>
+</span></span><span class=line><span class=cl><span class=k>using</span> <span class=p>(</span><span class=kt>var</span> <span class=n>c</span> <span class=p>=</span> <span class=k>new</span> <span class=n>ConsumerBuilder</span><span class=p>&lt;</span><span class=n>Null</span><span class=p>,</span> <span class=kt>string</span><span class=p>&gt;(</span><span class=n>consumerConfig</span><span class=p>).</span><span class=n>Build</span><span class=p>())</span>
+</span></span><span class=line><span class=cl><span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=n>c</span><span class=p>.</span><span class=n>Subscribe</span><span class=p>(</span><span class=s>&#34;&lt;Your Topic&#34;</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=kt>var</span> <span class=n>cts</span> <span class=p>=</span> <span class=k>new</span> <span class=n>CancellationTokenSource</span><span class=p>();</span>
+</span></span><span class=line><span class=cl>    <span class=kt>var</span> <span class=n>jwtHandler</span> <span class=p>=</span> <span class=k>new</span> <span class=n>JwtSecurityTokenHandler</span><span class=p>();</span>
+</span></span><span class=line><span class=cl>    <span class=kt>var</span> <span class=n>tokenParameters</span> <span class=p>=</span> <span class=k>new</span> <span class=n>TokenValidationParameters</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>    <span class=p>{</span>
+</span></span><span class=line><span class=cl>      <span class=n>ValidateIssuerSigningKey</span> <span class=p>=</span> <span class=kc>true</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>      <span class=n>IssuerSigningKey</span> <span class=p>=</span> <span class=k>new</span> <span class=n>SymmetricSecurityKey</span><span class=p>(</span><span class=n>Encoding</span><span class=p>.</span><span class=n>UTF8</span><span class=p>.</span><span class=n>GetBytes</span><span class=p>(</span><span class=s>&#34;&lt;Your Secret&gt;&#34;</span><span class=p>)),</span>
+</span></span><span class=line><span class=cl>      <span class=n>ValidIssuer</span> <span class=p>=</span> <span class=s>&#34;&lt;Your Issuer&gt;&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>      <span class=n>ValidAudience</span> <span class=p>=</span> <span class=s>&#34;&lt;Your Audience&gt;&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>      <span class=n>ValidateIssuer</span> <span class=p>=</span> <span class=kc>true</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>      <span class=n>ValidateAudience</span> <span class=p>=</span> <span class=kc>true</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>    <span class=p>};</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=k>while</span> <span class=p>(</span><span class=kc>true</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=kt>var</span> <span class=n>userName</span> <span class=p>=</span> <span class=kt>string</span><span class=p>.</span><span class=n>Empty</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>        <span class=kt>var</span> <span class=n>consumeResult</span> <span class=p>=</span> <span class=n>c</span><span class=p>.</span><span class=n>Consume</span><span class=p>(</span><span class=n>cts</span><span class=p>.</span><span class=n>Token</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>        <span class=kt>var</span> <span class=n>headers</span> <span class=p>=</span> <span class=n>consumeResult</span><span class=p>.</span><span class=n>Message</span><span class=p>.</span><span class=n>Headers</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>        <span class=k>if</span> <span class=p>(</span><span class=n>headers</span> <span class=p>!=</span> <span class=kc>null</span> <span class=p>&amp;&amp;</span> <span class=n>headers</span><span class=p>.</span><span class=n>TryGetLastBytes</span><span class=p>(</span><span class=s>&#34;Authorization&#34;</span><span class=p>,</span> <span class=k>out</span> <span class=kt>byte</span><span class=p>[]</span> <span class=n>values</span><span class=p>))</span>
+</span></span><span class=line><span class=cl>        <span class=p>{</span>
+</span></span><span class=line><span class=cl>            <span class=c1>// 校验令牌</span>
+</span></span><span class=line><span class=cl>            <span class=kt>var</span> <span class=n>jwtToken</span> <span class=p>=</span> <span class=n>Encoding</span><span class=p>.</span><span class=n>UTF8</span><span class=p>.</span><span class=n>GetString</span><span class=p>(</span><span class=n>values</span><span class=p>).</span><span class=n>Replace</span><span class=p>(</span><span class=s>&#34;Bearer&#34;</span><span class=p>,</span> <span class=s>&#34;&#34;</span><span class=p>).</span><span class=n>Trim</span><span class=p>();</span>
+</span></span><span class=line><span class=cl>            <span class=kt>var</span> <span class=n>claimsPrincipal</span> <span class=p>=</span> <span class=n>jwtHandler</span><span class=p>.</span><span class=n>ValidateToken</span><span class=p>(</span><span class=n>jwtToken</span><span class=p>,</span> <span class=n>tokenParameters</span><span class=p>,</span> <span class=k>out</span> <span class=n>SecurityToken</span> <span class=n>securityToken</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>            <span class=n>userName</span> <span class=p>=</span> <span class=n>claimsPrincipal</span><span class=p>.</span><span class=n>Identity</span><span class=p>.</span><span class=n>Name</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>            
+</span></span><span class=line><span class=cl>            <span class=c1>// 处理消息</span>
+</span></span><span class=line><span class=cl>            <span class=c1>// ......</span>
+</span></span><span class=line><span class=cl>        <span class=p>}</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></div><p>不过，我个人感觉，这样会增加消息消费方的工作，更好的做法是采用 <code>CallContext</code> 或者 <code>AsyncLocal</code> 来做统一的处理，这样，消息订阅方只需要关心消息怎么处理即可，考虑到 Kafka 属于 Pull 模式的消息队列，这种思路不见得在性能上有多少提升，更多的是一种简化啦，算是少写一点重复代码：</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-csharp data-lang=csharp><span class=line><span class=cl><span class=kd>public</span> <span class=kd>static</span> <span class=k>void</span> <span class=n>Subscribe</span><span class=p>&lt;</span><span class=n>TKey</span><span class=p>,</span> <span class=n>TValue</span><span class=p>&gt;(</span>
+</span></span><span class=line><span class=cl>  <span class=k>this</span> <span class=n>IConsumer</span><span class=p>&lt;</span><span class=n>TKey</span><span class=p>,</span> <span class=n>TValue</span><span class=p>&gt;</span> <span class=n>consumer</span><span class=p>,</span> <span class=kt>string</span> <span class=n>topic</span><span class=p>,</span> 
+</span></span><span class=line><span class=cl>  <span class=n>CancellationToken</span> <span class=n>cancellationToken</span><span class=p>,</span> <span class=n>Action</span><span class=p>&lt;</span><span class=n>TValue</span><span class=p>&gt;</span> <span class=n>callback</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=p>{</span>
+</span></span><span class=line><span class=cl>  <span class=n>consumer</span><span class=p>.</span><span class=n>Subscribe</span><span class=p>(</span><span class=n>topic</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>  <span class=k>while</span> <span class=p>(</span><span class=kc>true</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>  <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=k>try</span>
+</span></span><span class=line><span class=cl>    <span class=p>{</span>
+</span></span><span class=line><span class=cl>      <span class=kt>var</span> <span class=n>consumeResult</span> <span class=p>=</span> <span class=n>consumer</span><span class=p>.</span><span class=n>Consume</span><span class=p>(</span><span class=n>cancellationToken</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>      <span class=k>if</span> <span class=p>(</span><span class=n>consumeResult</span> <span class=p>!=</span> <span class=kc>null</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>      <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=kt>var</span> <span class=n>headers</span> <span class=p>=</span> <span class=n>consumeResult</span><span class=p>.</span><span class=n>Message</span><span class=p>.</span><span class=n>Headers</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>        <span class=k>if</span> <span class=p>(</span><span class=n>headers</span> <span class=p>!=</span> <span class=kc>null</span> <span class=p>&amp;&amp;</span> <span class=n>headers</span><span class=p>.</span><span class=n>TryGetLastBytes</span><span class=p>(</span><span class=s>&#34;Authorization&#34;</span><span class=p>,</span> <span class=k>out</span> <span class=kt>byte</span><span class=p>[]</span> <span class=n>values</span><span class=p>))</span>
+</span></span><span class=line><span class=cl>        <span class=p>{</span>
+</span></span><span class=line><span class=cl>          <span class=kt>var</span> <span class=n>jwtToken</span> <span class=p>=</span> <span class=n>Encoding</span><span class=p>.</span><span class=n>UTF8</span><span class=p>.</span><span class=n>GetString</span><span class=p>(</span><span class=n>values</span><span class=p>).</span><span class=n>Replace</span><span class=p>(</span><span class=s>&#34;Bearer&#34;</span><span class=p>,</span> <span class=s>&#34;&#34;</span><span class=p>).</span><span class=n>Trim</span><span class=p>();</span>
+</span></span><span class=line><span class=cl>          <span class=kt>var</span> <span class=n>userInfo</span> <span class=p>=</span> <span class=k>new</span> <span class=n>JwtTokenResloverService</span><span class=p>().</span><span class=n>ValidateToken</span><span class=p>(</span><span class=n>jwtToken</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>          <span class=n>UserContext</span><span class=p>.</span><span class=n>SetUserInfo</span><span class=p>(</span><span class=n>userInfo</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>        <span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>        <span class=k>if</span> <span class=p>(</span><span class=n>callback</span> <span class=p>!=</span> <span class=kc>null</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>            <span class=n>callback</span><span class=p>(</span><span class=n>consumeResult</span><span class=p>.</span><span class=n>Message</span><span class=p>.</span><span class=n>Value</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>      <span class=p>}</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl>    <span class=k>catch</span> <span class=p>(</span><span class=n>ConsumeException</span> <span class=n>e</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=p>{</span>
+</span></span><span class=line><span class=cl>      <span class=c1>// ...</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl>  <span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></div><p>其中，<code>UserContext</code>内部利用<code>AsyncLocal</code>在不同线程间共享用户信息，这可以让我们在任意位置访问用户信息，因为该扩展方法中会调用一次<code>SetUserInfo()</code>方法，所以，只要在 Kafka 的消息头上维护了<code>Authorization</code>字段，就可以从中解析出常用的用户信息，譬如用户名、用户角色等等。当然，按照 <a href=https://jwt.io/>JWT</a> 的 <a href=https://datatracker.ietf.org/doc/html/rfc7519>规范</a>，我们最好还是不要在载荷(Payload)中存放敏感信息，如果需要更详细的信息，比如部门、权限等等，建议通过调接口或者查数据的库方式来实现。下面是<code>UserContext</code>的实现细节：</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-csharp data-lang=csharp><span class=line><span class=cl><span class=kd>static</span> <span class=k>class</span> <span class=nc>UserContext</span>
+</span></span><span class=line><span class=cl><span class=p>{</span>
+</span></span><span class=line><span class=cl>  <span class=kd>private</span> <span class=kd>static</span> <span class=n>AsyncLocal</span><span class=p>&lt;</span><span class=n>UserInfo</span><span class=p>&gt;</span> <span class=n>_localUserInfo</span> <span class=p>=</span> <span class=k>new</span> <span class=n>AsyncLocal</span><span class=p>&lt;</span><span class=n>UserInfo</span><span class=p>&gt;();</span>
+</span></span><span class=line><span class=cl>  <span class=kd>public</span> <span class=kd>static</span> <span class=k>void</span> <span class=n>SetUserInfo</span><span class=p>(</span><span class=n>UserInfo</span> <span class=n>userInfo</span><span class=p>)</span> <span class=p>=&gt;</span> <span class=n>_localUserInfo</span><span class=p>.</span><span class=n>Value</span> <span class=p>=</span> <span class=n>userInfo</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>  <span class=kd>public</span> <span class=kd>static</span> <span class=n>UserInfo</span> <span class=n>GetUserInfo</span><span class=p>()</span> <span class=p>=&gt;</span> <span class=n>_localUserInfo</span><span class=p>.</span><span class=n>Value</span><span class=p>;</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></div><p>非常的简单，对不对? 作为 <code>CallContext</code> 的继任者，<code>AsyncLocal</code>就是这样的优秀！也许，大家会好奇<code>JwtTokenResloverService</code>是什么？其实，它还是<code>JwtSecurityTokenHandler</code>那一堆东西，下面的代码片段展示了如何从<code>ClaimsPrincipal</code>中提取用户名和角色名称，再次说明，不要在这里放敏感信息：</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-csharp data-lang=csharp><span class=line><span class=cl><span class=kt>var</span> <span class=n>claimsPrincipal</span> <span class=p>=</span> <span class=n>_jwtHandler</span><span class=p>.</span><span class=n>ValidateToken</span><span class=p>(</span><span class=n>token</span><span class=p>,</span> <span class=n>tokenParameters</span><span class=p>,</span> <span class=k>out</span> <span class=n>SecurityToken</span> <span class=n>securityToken</span><span class=p>);</span>
+</span></span><span class=line><span class=cl><span class=k>if</span> <span class=p>(</span><span class=n>claimsPrincipal</span> <span class=p>!=</span> <span class=kc>null</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=p>{</span>
+</span></span><span class=line><span class=cl>  <span class=kt>var</span> <span class=n>userInfo</span> <span class=p>=</span> <span class=k>new</span> <span class=n>UserInfo</span><span class=p>();</span>
+</span></span><span class=line><span class=cl>  <span class=n>userInfo</span><span class=p>.</span><span class=n>UserName</span> <span class=p>=</span> <span class=n>claimsPrincipal</span><span class=p>.</span><span class=n>Identity</span><span class=p>.</span><span class=n>Name</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>  <span class=n>userInfo</span><span class=p>.</span><span class=n>UserRole</span> <span class=p>=</span> <span class=n>claimsPrincipal</span><span class=p>.</span><span class=n>Claims</span><span class=p>.</span><span class=n>FirstOrDefault</span><span class=p>(</span><span class=n>x</span> <span class=p>=&gt;</span> <span class=n>x</span><span class=p>.</span><span class=n>Type</span> <span class=p>==</span> <span class=n>ClaimTypes</span><span class=p>.</span><span class=n>Role</span><span class=p>)?.</span><span class=n>Value</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>  <span class=k>return</span> <span class=n>userInfo</span><span class=p>;</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></div><p>现在，我们一开始的例子，可以简化成下面这样：</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-csharp data-lang=csharp><span class=line><span class=cl><span class=kt>var</span> <span class=n>consumerConfig</span> <span class=p>=</span> <span class=k>new</span> <span class=n>ConsumerConfig</span> <span class=p>{</span> <span class=n>BootstrapServers</span> <span class=p>=</span> <span class=s>&#34;127.0.0.1:9092&#34;</span> <span class=p>};</span>
+</span></span><span class=line><span class=cl><span class=k>using</span> <span class=p>(</span><span class=kt>var</span> <span class=n>c</span> <span class=p>=</span> <span class=k>new</span> <span class=n>ConsumerBuilder</span><span class=p>&lt;</span><span class=n>Null</span><span class=p>,</span> <span class=kt>string</span><span class=p>&gt;(</span><span class=n>consumerConfig</span><span class=p>).</span><span class=n>Build</span><span class=p>())</span>
+</span></span><span class=line><span class=cl><span class=p>{</span>
+</span></span><span class=line><span class=cl>  <span class=kt>var</span> <span class=n>cts</span> <span class=p>=</span> <span class=k>new</span> <span class=n>CancellationTokenSource</span><span class=p>();</span>
+</span></span><span class=line><span class=cl>  <span class=n>c</span><span class=p>.</span><span class=n>Subscribe</span><span class=p>(</span><span class=s>&#34;&lt;Your Topic&gt;&#34;</span><span class=p>,</span> <span class=n>cts</span><span class=p>.</span><span class=n>Token</span><span class=p>,</span> <span class=n>message</span> <span class=p>=&gt;</span>
+</span></span><span class=line><span class=cl> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=c1>// 获取当前用户信息</span>
+</span></span><span class=line><span class=cl>    <span class=kt>var</span> <span class=n>userInfo</span> <span class=p>=</span> <span class=n>UserContext</span><span class=p>.</span><span class=n>GetUserInfo</span><span class=p>();</span>
+</span></span><span class=line><span class=cl>    <span class=c1>// 处理消息</span>
+</span></span><span class=line><span class=cl>  <span class=p>});</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></div><p>Kafka 的故事，讲述到这里本该结尾，可世界上哪里会有完美的方案呢？如果考虑到 Kafka 发生消息堆积的可能性，一旦消息没有被及时处理，那么，这个放在消息头上的令牌可能会出现过期的情况。这种事情就和你使用缓存一样，如果不考虑缓存的击穿、穿透、雪崩三大灾难，那你对缓存的认知简直是肤浅。同样的道理，你要考虑令牌的过期、刷新、撤销，整个认知网络才算是真正建立起来，这些就交给我聪明的读者啦，或者以后有机会单独写一写这些话题。</p><h1 id=本文小结>本文小结</h1><p>2021年的最后一天，西安疫情可谓是涛声依旧，居家隔离、远程办公、买不到菜，注定要为这段时光写下注脚。也许，我们都习惯了饭来张口的外卖生活，可在这一刻，当一切线下互动被迫中止的时候，我们终于发现这些“典型”的生活场景变得不再“典型”；当人们开始在微信群里用接龙的方式来寻求生活物资的时候，微信这个社交工具的缺点就被不断地放大；当人们逐渐回归到一种“以物易物”的状态时，我不得不感慨这种从骨子里与生俱来的生存本能；当人们习以为常的“典型”被打破，其本身是否就是一种舒适圈？无论技术还是生活，你是否有做好随时面对“非典型”场景的准备？我想，在与新冠病毒长期对峙的后疫情时代，这是每一个人都应该去思考的问题，这篇博客断断续续地写了好几天，大概 2021 终究还是要这般潦草的过去罢。因为，我是一个长期悲观主义者，我确信这个世界依旧遵循熵增定律。如果你打算反驳，我会说：你说得对。</p></div><div class="copyright s-card"><div class=title><span class=post-name>浅议非典型 Web 应用场景下的身份认证</span>
+<a :href=http://example.org/posts/2478147871/ class=post-link target=_blank>http://example.org/posts/2478147871/</a></div><div class=post-meta><div class=meta-item><span class=tip>作者</span>
+<span class=name>飞鸿踏雪</span></div><div class=meta-item><span class=tip>发布于</span>
+<span class=name>2021-12-28</span></div><div class=meta-item><span class=tip>更新于</span>
+<span class=name>2021-12-28</span></div><div class="meta-item cc"><span class=tip>许可协议</span>
+<a class=name href=https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh-hans target=_blank>CC BY-NC-SA 4.0</a></div></div><span class=meta-tip>署名-非商业性使用-相同方式共享 4.0 国际</span></div><div class=other-meta><div class=all-tags><a href=/tags/grpc class=tag-item><i class="iconfont icon-hashtag"></i>
+<span class=name>gRPC</span>
+</a><a href=/tags/signalr class=tag-item><i class="iconfont icon-hashtag"></i>
+<span class=name>SignalR</span>
+</a><a href=/tags/kafka class=tag-item><i class="iconfont icon-hashtag"></i>
+<span class=name>Kafka</span></a></div><a href=https://eqnxweimkr5.feishu.cn/share/base/form/shrcnCXCPmxCKKJYI3RKUfefJre class=report target=_blank><i class="iconfont icon-report"></i>
+反馈与投诉</a></div><div class=reward><div class=reward-btn onclick='window.$Modal.show("reward-modal")'><i class="iconfont icon-reward"></i>
+<span class=text>赞赏博主</span></div></div><div class=modal id=reward-modal><div class=modal-mask></div><div class="modal-main s-card" style=max-width:430px><div class=title><div class=title-left><i class="iconfont icon-reward"></i>
+<span class=title-text>赞赏博主</span></div><i class="iconfont icon-close close" id=modal-close></i></div><div class=modal-content style=--height:80vh><div class=reward-card><div class=thank>🙏 请博主喝一杯咖啡</div><div class=qr><a class=qr-img href=/images/reward/alipay.jpg target=_blank><img src=/images/reward/alipay.jpg alt=支付宝赞赏码><div class=tip><i class="iconfont icon-alipay"></i>
+<span>支付宝</span></div></a><a class=qr-img href=/images/reward/wechat.jpg target=_blank><img src=/images/reward/wechat.jpg alt=微信赞赏码><div class=tip><i class="iconfont icon-wechat"></i>
+<span>微信</span></div></a></div><div class="all-list s-card hover"><div class=title>赞赏记录</div><div class=tip>赞赏金额将全部用于开源项目维护，以及服务器、域名及各类云服务的开销</div></div></div></div></div></div><div class=related-post><div class=title><span class=name><i class="iconfont icon-star"></i>
+相关推荐
+</span><span class=shuffle onclick='window.location.href="/posts/1386017461/"'>随便逛逛</span></div><div class=post-lists><article class="post-item s-card simple hover" style=animation-delay:.4s onclick='window.location.href="/posts/review-efcore-and-domain-events-from-ddd-perspective/"'><div class=post-content><span class=post-title>再议 DDD 视角下的 EFCore 与 领域事件</span>
+<span class=post-desc>在这篇文章中，作者分享了在工作中使用事件/消息驱动业务的经历和思考。作者回顾了过去在实现数据库审计、数据同步等问题时的经历，并逐步接触了领域驱动设计（DDD）中的领域事件概念。文章重点讨论了如何通过在实体类中添加领域事件属性，并在DbContext的SaveChanges方法中分发事件来实现延迟执行消息发布的方案。作者还探讨了使用EntityFramework的SaveChanges Events特性和拦截器来处理领域事件的方法。最后，作者分享了对软件开发和业务模式的反思，以及对DDD在当前业务中的适用性的疑问。文章涵盖了事件驱动业务模式、DDD理念、数据库审计、消息队列等内容，展现了作者在技术实践和思考中的成长与思考。</span></div></article><article class="post-item s-card simple hover" style=animation-delay:.4s onclick='window.location.href="/posts/use-grpc-to-realize-file-upload-and-download/"'><div class=post-content><span class=post-title>利用 gRPC 实现文件的上传与下载</span>
+<span class=post-desc>某人遇到问题，模型绑定出错导致无法实现导出/下载功能，选择传统Web API解决。文章介绍利用gRPC实现文件上传和下载，定义了Protobuf，展示了上传和下载的实现，指出基于gRPC的上传下载无法直接在浏览器环境下使用，提及Envoy和gRPC-Web的方向。最后提到用传统Web API包装作为替代方案。文章探讨技术实现背后的无解和接受命运的态度，展示了对技术和人生的思考。</span></div></article></div><style>.post-lists{width:100%}.post-lists .post-item{padding:0!important;display:flex;margin-bottom:1rem;animation:fade-up .6s backwards;cursor:pointer;overflow:hidden;height:200px}.post-lists .post-item .post-cover{flex:0 0 35%;overflow:hidden;transform:translateZ(0)}.post-lists .post-item .post-cover img{width:100%;height:100%;object-fit:cover;transform-origin:center center;transition:transform .5s ease-out,filter .5s ease-out;backface-visibility:hidden}.post-lists .post-item .post-content{flex:1;padding:1.6rem 2rem;display:flex;flex-direction:column;justify-content:space-between}.post-lists .post-item .post-category{display:flex;flex-wrap:wrap;width:100%;color:var(--main-font-second-color);font-size:14px}.post-lists .post-item .post-category .cat-name{display:flex;flex-direction:row;align-items:center}.post-lists .post-item .post-category .cat-name .iconfont{opacity:.8;margin-right:6px;color:var(--main-font-second-color)}.post-lists .post-item .post-category .top{margin-left:12px;color:var(--main-color)}.post-lists .post-item .post-category .top .iconfont{opacity:.8;color:var(--main-color)}.post-lists .post-item .post-title{font-size:20px;line-height:30px;font-weight:700;margin:.6rem 0;transition:color .3s;display:-webkit-box;overflow:hidden;word-break:break-all;-webkit-box-orient:vertical;-webkit-line-clamp:2}.post-lists .post-item .post-desc{margin-top:-.4rem;margin-bottom:.8rem;opacity:.8;line-height:30px;display:-webkit-box;overflow:hidden;word-break:break-all;-webkit-box-orient:vertical;-webkit-line-clamp:2}.post-lists .post-item .post-meta{display:flex;flex-direction:row;align-items:center;justify-content:space-between;color:var(--main-font-second-color)}.post-lists .post-item .post-tags{display:flex;flex-wrap:wrap;opacity:.8;margin-right:20px;overflow:hidden;mask:linear-gradient(90deg,#fff 0,#fff 90%,hsla(0,0%,100%,.6) 95%,hsla(0,0%,100%,0) 100%)}.post-lists .post-item .post-tags .tags-name{display:flex;flex-direction:row;align-items:center;margin-right:12px;white-space:nowrap;transition:color .3s}.post-lists .post-item .post-time{opacity:.6;font-size:13px;white-space:nowrap}.post-lists .post-item:hover .post-cover img{filter:brightness(.8);transform:scale(1.05)}.post-lists .post-item:hover .post-title{color:var(--main-color)}.post-lists .post-item:active{transform:scale(.98)}.post-lists .post-item.cover-left{flex-direction:row}.post-lists .post-item.cover-right{flex-direction:row-reverse}.post-lists .post-item.cover-both:nth-child(odd){flex-direction:row}.post-lists .post-item.cover-both:nth-child(even){flex-direction:row-reverse}.post-lists.layout-grid{display:grid;grid-template-columns:repeat(var(--grid-columns,2),1fr);gap:var(--grid-gap,1rem)}.post-lists.layout-grid .post-item{margin:0;flex-direction:column;height:auto}.post-lists.layout-grid .post-item .post-cover{flex:none;width:100%;height:225px}@media(max-width:768px){.post-lists .post-item{flex-direction:column;height:auto}.post-lists .post-item .post-cover{flex:none;width:100%;height:200px}.post-lists .post-item.cover-left,.post-lists .post-item.cover-right,.post-lists .post-item.cover-both{flex-direction:column!important}.post-lists.layout-grid{grid-template-columns:1fr}.post-lists .post-item .post-tags{flex-wrap:nowrap}}.post-lists .post-item .simple{animation:none;padding:.5rem 1.4rem!important;background-color:var(--main-card-second-background);height:auto;margin-bottom:.5rem}.post-lists .post-item .simple .post-content{padding:.5rem 0}.post-lists .post-item .simple .post-title{margin:0;font-size:16px}.post-lists .post-item .simple .post-desc{margin:.3rem 0 0;font-size:14px;opacity:.6}</style></div><style>.related-post{margin-top:1rem}.related-post .title{display:flex;flex-direction:row;align-items:center;justify-content:space-between;width:100%;margin:3rem 0 1rem;padding:0 6px}.related-post .title .name{display:flex;align-items:center;font-size:24px;font-weight:700}.related-post .title .name .iconfont{font-size:26px;font-weight:400;margin-right:8px}.related-post .title .shuffle{opacity:.6;font-size:14px;transition:color .3s,opacity .3s;cursor:pointer}.related-post .title .shuffle:hover{opacity:1;color:var(--main-color)}</style><div id=comments><div id=main-comment class=comment><div v-if=!fill class=title><span class=name><i class="iconfont icon-chat"></i>
+评论
+</span><span class=tool>隐私政策</span></div><link rel=stylesheet href=https://unpkg.com/@waline/client@v3/dist/waline.css><div id=waline class=waline-container></div><style>.waline-container{background-color:var(--card-background);border-radius:var(--card-border-radius);box-shadow:var(--shadow-l1);padding:var(--card-padding)}.waline-container .vcount{color:var(--card-text-color-main)}</style><script type=module>
+        import { init } from 'https://unpkg.com/@waline/client@v3/dist/waline.js';
+        init({
+            el: '#waline',
+            serverURL: 'https:\/\/waline.yuanpei.me\/',
+            lang: 'zh',
+            dark: 'auto',
+            path: window.location.href,
+            requiredMeta: ['nick','mail'],
+            emoji: [
+                '//unpkg.com/@waline/emojis@1.2.0/weibo'
+            ],
+            reaction: false,
+        });
+      </script></div></div><div class="next-post s-card" id=next-post data-is-next=true><a href=/posts/768684858/ class=next-post-link><span class=post-tip>下一篇阅读
+</span><span class=post-title>Envoy 集成 Jaeger 实现分布式链路追踪</span></a></div></article><aside class=main-aside><div class="hello s-card weidgets"><span class=tip>中午好，吃饱了精神好！</span><div class=content><div class=site-logo><div class=avatar><img src=/images/avatar.jpg></div></div><span class=site-desc></span></div><div class=info><div class=name><span class=author>飞鸿踏雪</span>
+<span class=desc>纵有疾风起，人生不言弃</span></div><div class=link><a href=https://github.com/qinyuanpei target=_blank class=social-link><i class="iconfont icon-github"></i>
+</a><a href=mailto:qinyuapei@163.com target=_blank class=social-link><i class="iconfont icon-email"></i></a></div></div></div><div class=sticky><div class="toc s-card weidgets" id=weidget-toc><div class=toc-title><i class="iconfont icon-toc"></i>
+<span class=name>目录</span></div><div id=toc-all class=toc-list></div></div><script>document.addEventListener("DOMContentLoaded",function(){const o=[];let e=null,t=null,n=0;const s=document.getElementById("toc-all"),i=()=>{try{if(e=document.getElementById("page-content"),!e)return!1;const t=Array.from(e.querySelectorAll("h1, h2, h3, h4")).filter(e=>e.parentElement.tagName.toLowerCase()==="div");return t}catch(e){console.error("获取所有目录数据出错：",e)}},r=()=>{const e=i();if(!e)return!1;s.innerHTML="",e.forEach((e,t)=>{const n={id:e.id,type:e.tagName,text:e.textContent?.replace(/\u200B/g,"").trim()},i=document.createElement("span");i.id="toc-"+n.id,i.className=`toc-item ${n.type} ${t===0?"active":""}`,i.textContent=n.text,i.addEventListener("click",()=>d(n.id)),s.appendChild(i),o.push(n)}),e&&e.length>0&&(t=e[0].id)},c=(e,t)=>{let n;return function(){const s=arguments,o=this;n||(e.apply(o,s),n=!0,setTimeout(()=>n=!1,t))}},l=c(()=>{if(!o.length)return!1;const e=i();if(!e)return!1;const s=120;if(window.scrollY===0){n=0,t=e[0]?.id,a();return}for(let n of e){const o=n.getBoundingClientRect();o.top-s<=0&&o.bottom+s>=0&&t!==n.id&&(t=n.id,a())}},100),a=()=>{document.querySelectorAll(".toc-item.active").forEach(e=>{e.classList.remove("active")});const e=document.getElementById("toc-"+t);if(!e)return!1;e.classList.add("active"),n=e.offsetTop-2||0,s.style.setProperty("--height",n+"px"),s.scrollTo({top:n-80,behavior:"smooth"})},d=t=>{try{const n=document.getElementById(t);if(!n||!e)return!1;const s=n.offsetTop,o=s+e.offsetTop-80;window.scroll({top:o,behavior:"smooth"})}catch(e){console.error("目录滚动失败：",e)}};r(),window.addEventListener("scroll",l)})</script><style lang=scss scoped>.toc{position:relative;padding:0!important;overflow:hidden;.toc-title { display: flex; flex-direction: row; align-items: center; padding: 18px; height: 58px; .iconfont { margin-right: 8px; font-weight: bold; opacity: 0.6; } .name { font-weight: bold; } } .toc-list { position: relative; padding: 20px; padding-top: 0; padding-left: 24px; display: flex; flex-direction: column; max-height: calc(70vh - 58px); overflow: auto; .toc-item { margin: 4px 0; padding: 6px 12px; border-radius: 8px; opacity: 0.6; transition: color 0.3s, opacity 0.3s, font-size 0.3s, background-color 0.3s; cursor: pointer; &:first-child { margin-top: 0; } &:last-child { margin-bottom: 0; } &.H1 { font-weight: bold; } &.H2 { font-size: 14px; margin-left: 15px; font-weight: normal; } &.H3 { font-size: 12px; margin-left: 25px; } &.active { opacity: 1; color: var(--main-color); background-color: var(--main-color-bg); &.H2 { font-size: 14px; } &.H3 { font-size: 12px; } } &:hover { opacity: 1; color: var(--main-color); background-color: var(--main-color-bg); } } &::after { content: ""; position: absolute; left: 12px; top: var(--height); width: 4px; height: 20px; margin: 8px 0; background-color: var(--main-color); border-radius: 8px; transition: top 0.3s; } } &::before { content: ""; position: absolute; left: 12px; bottom: 20px; width: 4px; height: calc(100% - 78px); background-color: var(--main-card-border); border-radius: 8px; }}</style><div class="tags-cloud s-card weidgets"><div class=title><i class="iconfont icon-hashtag"></i>
+<span class=title-name>热门标签</span></div><div class=all-tags><a href=/tags/unity3d/ class=tags><span class=name>Unity3D</span>
+<sup class=num>27</sup>
+</a><a href=/tags/%E6%84%9F%E6%82%9F/ class=tags><span class=name>感悟</span>
+<sup class=num>23</sup>
+</a><a href=/tags/python/ class=tags><span class=name>Python</span>
+<sup class=num>22</sup>
+</a><a href=/tags/%E9%9A%8F%E7%AC%94/ class=tags><span class=name>随笔</span>
+<sup class=num>16</sup>
+</a><a href=/tags/.net-core/ class=tags><span class=name>.NET Core</span>
+<sup class=num>15</sup>
+</a><a href=/tags/%E5%BD%B1%E8%AF%84/ class=tags><span class=name>影评</span>
+<sup class=num>14</sup>
+</a><a href=/tags/%E6%B8%B8%E6%88%8F/ class=tags><span class=name>游戏</span>
+<sup class=num>13</sup>
+</a><a href=/tags/%E7%94%B5%E5%BD%B1/ class=tags><span class=name>电影</span>
+<sup class=num>12</sup>
+</a><a href=/tags/grpc/ class=tags><span class=name>GRPC</span>
+<sup class=num>10</sup>
+</a><a href=/tags/%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91/ class=tags><span class=name>游戏开发</span>
+<sup class=num>10</sup>
+</a><a href=/tags/%E7%94%9F%E6%B4%BB/ class=tags><span class=name>生活</span>
+<sup class=num>10</sup>
+</a><a href=/tags/.net/ class=tags><span class=name>.NET</span>
+<sup class=num>9</sup>
+</a><a href=/tags/http/ class=tags><span class=name>HTTP</span>
+<sup class=num>9</sup>
+</a><a href=/tags/redis/ class=tags><span class=name>Redis</span>
+<sup class=num>9</sup>
+</a><a href=/tags/%E5%89%8D%E7%AB%AF/ class=tags><span class=name>前端</span>
+<sup class=num>9</sup>
+</a><a href=/tags/envoy/ class=tags><span class=name>Envoy</span>
+<sup class=num>8</sup>
+</a><a href=/tags/hexo/ class=tags><span class=name>Hexo</span>
+<sup class=num>8</sup>
+</a><a href=/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1/ class=tags><span class=name>微服务</span>
+<sup class=num>8</sup>
+</a><a href=/tags/%E6%8A%80%E5%B7%A7/ class=tags><span class=name>技巧</span>
+<sup class=num>8</sup>
+</a><a href=/tags/%E6%95%99%E7%A8%8B/ class=tags><span class=name>教程</span>
+<sup class=num>8</sup>
+</a><a href=/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/ class=tags><span class=name>数据库</span>
+<sup class=num>8</sup>
+</a><a href=/tags/%E7%AC%94%E8%AE%B0/ class=tags><span class=name>笔记</span>
+<sup class=num>8</sup>
+</a><a href=/tags/aop/ class=tags><span class=name>AOP</span>
+<sup class=num>7</sup>
+</a><a href=/tags/c%23/ class=tags><span class=name>C#</span>
+<sup class=num>7</sup>
+</a><a href=/tags/docker/ class=tags><span class=name>Docker</span>
+<sup class=num>6</sup>
+</a><a href=/tags/linux/ class=tags><span class=name>Linux</span>
+<sup class=num>6</sup>
+</a><a href=/tags/vue/ class=tags><span class=name>Vue</span>
+<sup class=num>6</sup>
+</a><a href=/tags/%E6%9C%8D%E5%8A%A1%E5%99%A8/ class=tags><span class=name>服务器</span>
+<sup class=num>6</sup>
+</a><a href=/tags/%E7%BC%96%E7%A8%8B/ class=tags><span class=name>编程</span>
+<sup class=num>6</sup>
+</a><a href=/tags/%E8%AF%BB%E4%B9%A6/ class=tags><span class=name>读书</span>
+<sup class=num>6</sup>
+</a><a href=/tags/ef/ class=tags><span class=name>EF</span>
+<sup class=num>5</sup>
+</a><a href=/tags/opencv/ class=tags><span class=name>OpenCV</span>
+<sup class=num>5</sup>
+</a><a href=/tags/ugui/ class=tags><span class=name>UGUI</span>
+<sup class=num>5</sup>
+</a><a href=/tags/%E5%AE%B9%E5%99%A8/ class=tags><span class=name>容器</span>
+<sup class=num>5</sup>
+</a><a href=/tags/%E6%80%9D%E8%80%83/ class=tags><span class=name>思考</span>
+<sup class=num>5</sup>
+</a><a href=/tags/%E6%95%B0%E5%AD%A6/ class=tags><span class=name>数学</span>
+<sup class=num>5</sup>
+</a><a href=/tags/%E6%97%A5%E5%BF%97/ class=tags><span class=name>日志</span>
+<sup class=num>5</sup>
+</a><a href=/tags/%E6%BA%90%E7%A0%81/ class=tags><span class=name>源码</span>
+<sup class=num>5</sup>
+</a><a href=/tags/%E7%BC%93%E5%AD%98/ class=tags><span class=name>缓存</span>
+<sup class=num>5</sup>
+</a><a href=/tags/git/ class=tags><span class=name>Git</span>
+<sup class=num>4</sup>
+</a><a href=/tags/mono/ class=tags><span class=name>Mono</span>
+<sup class=num>4</sup>
+</a><a href=/tags/restful/ class=tags><span class=name>RESTful</span>
+<sup class=num>4</sup>
+</a><a href=/tags/web/ class=tags><span class=name>Web</span>
+<sup class=num>4</sup>
+</a><a href=/tags/webapi/ class=tags><span class=name>WebApi</span>
+<sup class=num>4</sup>
+</a><a href=/tags/%E5%8E%86%E5%8F%B2/ class=tags><span class=name>历史</span>
+<sup class=num>4</sup>
+</a><a href=/tags/%E5%A2%9E%E5%BC%BA%E7%8E%B0%E5%AE%9E/ class=tags><span class=name>增强现实</span>
+<sup class=num>4</sup>
+</a><a href=/tags/%E6%89%A9%E5%B1%95/ class=tags><span class=name>扩展</span>
+<sup class=num>4</sup>
+</a><a href=/tags/%E7%A8%8B%E5%BA%8F%E5%91%98/ class=tags><span class=name>程序员</span>
+<sup class=num>4</sup>
+</a><a href=/tags/%E7%BC%96%E8%BE%91%E5%99%A8/ class=tags><span class=name>编辑器</span>
+<sup class=num>4</sup>
+</a><a href=/tags/ar/ class=tags><span class=name>AR</span>
+<sup class=num>3</sup>
+</a><a href=/tags/bash/ class=tags><span class=name>Bash</span>
+<sup class=num>3</sup>
+</a><a href=/tags/chatgpt/ class=tags><span class=name>ChatGPT</span>
+<sup class=num>3</sup>
+</a><a href=/tags/dapper/ class=tags><span class=name>Dapper</span>
+<sup class=num>3</sup>
+</a><a href=/tags/kindle/ class=tags><span class=name>Kindle</span>
+<sup class=num>3</sup>
+</a><a href=/tags/nginx/ class=tags><span class=name>Nginx</span>
+<sup class=num>3</sup>
+</a><a href=/tags/nlp/ class=tags><span class=name>NLP</span>
+<sup class=num>3</sup>
+</a><a href=/tags/rabbitmq/ class=tags><span class=name>RabbitMQ</span>
+<sup class=num>3</sup>
+</a><a href=/tags/travis/ class=tags><span class=name>Travis</span>
+<sup class=num>3</sup>
+</a><a href=/tags/websocket/ class=tags><span class=name>WebSocket</span>
+<sup class=num>3</sup>
+</a><a href=/tags/%E4%B8%AD%E9%97%B4%E4%BB%B6/ class=tags><span class=name>中间件</span>
+<sup class=num>3</sup>
+</a><a href=/tags/%E5%93%B2%E5%AD%A6/ class=tags><span class=name>哲学</span>
+<sup class=num>3</sup>
+</a><a href=/tags/%E5%9B%BE%E5%83%8F%E5%A4%84%E7%90%86/ class=tags><span class=name>图像处理</span>
+<sup class=num>3</sup>
+</a><a href=/tags/%E5%9B%BE%E5%BD%A2/ class=tags><span class=name>图形</span>
+<sup class=num>3</sup>
+</a><a href=/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/ class=tags><span class=name>多线程</span>
+<sup class=num>3</sup>
+</a><a href=/tags/%E5%B7%A5%E4%BD%9C/ class=tags><span class=name>工作</span>
+<sup class=num>3</sup>
+</a><a href=/tags/%E5%BC%82%E5%B8%B8/ class=tags><span class=name>异常</span>
+<sup class=num>3</sup>
+</a><a href=/tags/%E5%BE%AE%E5%8D%9A/ class=tags><span class=name>微博</span>
+<sup class=num>3</sup>
+</a><a href=/tags/%E6%88%90%E9%95%BF/ class=tags><span class=name>成长</span>
+<sup class=num>3</sup>
+</a><a href=/tags/%E6%8F%92%E4%BB%B6/ class=tags><span class=name>插件</span>
+<sup class=num>3</sup>
+</a><a href=/tags/%E6%97%B6%E9%97%B4/ class=tags><span class=name>时间</span>
+<sup class=num>3</sup>
+</a><a href=/tags/%E6%A2%A6%E6%83%B3/ class=tags><span class=name>梦想</span>
+<sup class=num>3</sup>
+</a><a href=/tags/%E6%B1%82%E8%81%8C/ class=tags><span class=name>求职</span>
+<sup class=num>3</sup>
+</a><a href=/tags/%E6%B8%A9%E6%95%85%E7%9F%A5%E6%96%B0/ class=tags><span class=name>温故知新</span>
+<sup class=num>3</sup>
+</a><a href=/tags/%E7%9B%91%E6%8E%A7/ class=tags><span class=name>监控</span>
+<sup class=num>3</sup>
+</a><a href=/tags/%E8%A5%BF%E5%AE%89/ class=tags><span class=name>西安</span>
+<sup class=num>3</sup>
+</a><a href=/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/ class=tags><span class=name>设计模式</span>
+<sup class=num>3</sup>
+</a><a href=/tags/%E8%B7%A8%E5%B9%B3%E5%8F%B0/ class=tags><span class=name>跨平台</span>
+<sup class=num>3</sup>
+</a><a href=/tags/%E9%9D%A2%E8%AF%95/ class=tags><span class=name>面试</span>
+<sup class=num>3</sup>
+</a><a href=/tags/abp/ class=tags><span class=name>ABP</span>
+<sup class=num>2</sup>
+</a><a href=/tags/agent/ class=tags><span class=name>Agent</span>
+<sup class=num>2</sup>
+</a><a href=/tags/aigc/ class=tags><span class=name>AIGC</span>
+<sup class=num>2</sup>
+</a><a href=/tags/api/ class=tags><span class=name>API</span>
+<sup class=num>2</sup>
+</a><a href=/tags/assetbundle/ class=tags><span class=name>AssetBundle</span>
+<sup class=num>2</sup>
+</a><a href=/tags/binlog/ class=tags><span class=name>Binlog</span>
+<sup class=num>2</sup>
+</a><a href=/tags/ci/ class=tags><span class=name>CI</span>
+<sup class=num>2</sup>
+</a><a href=/tags/cors/ class=tags><span class=name>CORS</span>
+<sup class=num>2</sup>
+</a><a href=/tags/csharp/ class=tags><span class=name>CSharp</span>
+<sup class=num>2</sup>
+</a><a href=/tags/di/ class=tags><span class=name>DI</span>
+<sup class=num>2</sup>
+</a><a href=/tags/dlib/ class=tags><span class=name>Dlib</span>
+<sup class=num>2</sup>
+</a><a href=/tags/easyar/ class=tags><span class=name>EasyAR</span>
+<sup class=num>2</sup>
+</a><a href=/tags/elk/ class=tags><span class=name>ELK</span>
+<sup class=num>2</sup>
+</a><a href=/tags/github/ class=tags><span class=name>Github</span>
+<sup class=num>2</sup>
+</a><a href=/tags/html5/ class=tags><span class=name>HTML5</span>
+<sup class=num>2</sup>
+</a><a href=/tags/httpclient/ class=tags><span class=name>HttpClient</span>
+<sup class=num>2</sup>
+</a><a href=/tags/javascript/ class=tags><span class=name>JavaScript</span>
+<sup class=num>2</sup>
+</a><a href=/tags/jeager/ class=tags><span class=name>Jeager</span>
+<sup class=num>2</sup>
+</a><a href=/tags/kafka/ class=tags><span class=name>Kafka</span>
+<sup class=num>2</sup>
+</a><a href=/tags/lambda/ class=tags><span class=name>Lambda</span>
+<sup class=num>2</sup>
+</a><a href=/tags/llama/ class=tags><span class=name>LLaMA</span>
+<sup class=num>2</sup>
+</a><a href=/tags/lua/ class=tags><span class=name>Lua</span>
+<sup class=num>2</sup>
+</a><a href=/tags/mock/ class=tags><span class=name>Mock</span>
+<sup class=num>2</sup>
+</a><a href=/tags/mysql/ class=tags><span class=name>MySQL</span>
+<sup class=num>2</sup>
+</a><a href=/tags/rag/ class=tags><span class=name>RAG</span>
+<sup class=num>2</sup>
+</a><a href=/tags/sdl/ class=tags><span class=name>SDL</span>
+<sup class=num>2</sup>
+</a><a href=/tags/selenium/ class=tags><span class=name>Selenium</span>
+<sup class=num>2</sup>
+</a><a href=/tags/signalr/ class=tags><span class=name>SignalR</span>
+<sup class=num>2</sup>
+</a><a href=/tags/socket/ class=tags><span class=name>Socket</span>
+<sup class=num>2</sup>
+</a><a href=/tags/sse/ class=tags><span class=name>SSE</span>
+<sup class=num>2</sup>
+</a><a href=/tags/streaming/ class=tags><span class=name>Streaming</span>
+<sup class=num>2</sup>
+</a><a href=/tags/swagger/ class=tags><span class=name>Swagger</span>
+<sup class=num>2</sup>
+</a><a href=/tags/tracing/ class=tags><span class=name>Tracing</span>
+<sup class=num>2</sup>
+</a><a href=/tags/vscode/ class=tags><span class=name>VSCode</span>
+<sup class=num>2</sup>
+</a><a href=/tags/wsl/ class=tags><span class=name>WSL</span>
+<sup class=num>2</sup>
+</a><a href=/tags/%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/ class=tags><span class=name>主从复制</span>
+<sup class=num>2</sup>
+</a><a href=/tags/%E4%BA%8B%E4%BB%B6%E8%AE%A2%E9%98%85/ class=tags><span class=name>事件订阅</span>
+<sup class=num>2</sup>
+</a><a href=/tags/%E4%BA%92%E8%81%94%E7%BD%91/ class=tags><span class=name>互联网</span>
+<sup class=num>2</sup>
+</a><a href=/tags/%E4%BA%BA%E6%96%87/ class=tags><span class=name>人文</span>
+<sup class=num>2</sup>
+</a><a href=/tags/%E4%BA%BA%E7%94%9F/ class=tags><span class=name>人生</span>
+<sup class=num>2</sup>
+</a><a href=/tags/%E4%BA%BA%E8%84%B8%E8%AF%86%E5%88%AB/ class=tags><span class=name>人脸识别</span>
+<sup class=num>2</sup>
+</a><a href=/tags/%E4%BE%9D%E8%B5%96%E6%B3%A8%E5%85%A5/ class=tags><span class=name>依赖注入</span>
+<sup class=num>2</sup>
+</a><a href=/tags/%E5%88%86%E5%B8%83%E5%BC%8F/ class=tags><span class=name>分布式</span>
+<sup class=num>2</sup>
+</a><a href=/tags/%E5%8A%A0%E5%AF%86/ class=tags><span class=name>加密</span>
+<sup class=num>2</sup>
+</a><a href=/tags/%E5%8A%A8%E6%80%81%E4%BB%A3%E7%90%86/ class=tags><span class=name>动态代理</span>
+<sup class=num>2</sup>
+</a><a href=/tags/%E5%8A%A8%E6%BC%AB/ class=tags><span class=name>动漫</span>
+<sup class=num>2</sup>
+</a><a href=/tags/%E5%8F%AF%E8%A7%86%E5%8C%96/ class=tags><span class=name>可视化</span>
+<sup class=num>2</sup>
+</a><a href=/tags/%E5%90%8E%E7%AB%AF/ class=tags><span class=name>后端</span>
+<sup class=num>2</sup>
+</a><a href=/tags/%E5%90%91%E9%87%8F/ class=tags><span class=name>向量</span>
+<sup class=num>2</sup>
+</a><a href=/tags/%E5%AE%9E%E4%BD%93/ class=tags><span class=name>实体</span>
+<sup class=num>2</sup>
+</a><a href=/tags/%E5%B7%A5%E5%85%B7/ class=tags><span class=name>工具</span>
+<sup class=num>2</sup>
+</a><a href=/tags/%E5%BC%82%E6%AD%A5/ class=tags><span class=name>异步</span>
+<sup class=num>2</sup>
+</a><a href=/tags/%E6%80%BB%E7%BB%93/ class=tags><span class=name>总结</span>
+<sup class=num>2</sup>
+</a><a href=/tags/%E6%83%85%E6%84%9F/ class=tags><span class=name>情感</span>
+<sup class=num>2</sup>
+</a><a href=/tags/%E6%83%B3%E6%B3%95/ class=tags><span class=name>想法</span>
+<sup class=num>2</sup>
+</a><a href=/tags/%E6%89%93%E5%8D%B0/ class=tags><span class=name>打印</span>
+<sup class=num>2</sup>
+</a><a href=/tags/%E6%8A%80%E6%9C%AF/ class=tags><span class=name>技术</span>
+<sup class=num>2</sup>
+</a><a href=/tags/%E6%9E%B6%E6%9E%84/ class=tags><span class=name>架构</span>
+<sup class=num>2</sup>
+</a><a href=/tags/%E6%A6%82%E7%8E%87/ class=tags><span class=name>概率</span>
+<sup class=num>2</sup>
+</a><a href=/tags/%E6%A8%A1%E6%9D%BF%E5%BC%95%E6%93%8E/ class=tags><span class=name>模板引擎</span>
+<sup class=num>2</sup>
+</a><a href=/tags/%E7%88%AC%E8%99%AB/ class=tags><span class=name>爬虫</span>
+<sup class=num>2</sup>
+</a><a href=/tags/%E7%88%B1%E6%83%85/ class=tags><span class=name>爱情</span>
+<sup class=num>2</sup>
+</a><a href=/tags/%E7%94%BB%E5%AE%B6/ class=tags><span class=name>画家</span>
+<sup class=num>2</sup>
+</a><a href=/tags/%E7%AE%97%E6%B3%95/ class=tags><span class=name>算法</span>
+<sup class=num>2</sup>
+</a><a href=/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9B%BE%E5%BD%A2/ class=tags><span class=name>计算机图形</span>
+<sup class=num>2</sup>
+</a><a href=/tags/%E8%AE%A4%E8%AF%81/ class=tags><span class=name>认证</span>
+<sup class=num>2</sup>
+</a><a href=/tags/%E8%AE%BE%E8%AE%A1/ class=tags><span class=name>设计</span>
+<sup class=num>2</sup>
+</a><a href=/tags/%E8%B4%9D%E5%A1%9E%E5%B0%94%E6%9B%B2%E7%BA%BF/ class=tags><span class=name>贝塞尔曲线</span>
+<sup class=num>2</sup>
+</a><a href=/tags/%E8%B7%A8%E5%9F%9F/ class=tags><span class=name>跨域</span>
+<sup class=num>2</sup>
+</a><a href=/tags/%E9%80%9A%E4%BF%A1/ class=tags><span class=name>通信</span>
+<sup class=num>2</sup>
+</a><a href=/tags/%E9%85%8D%E7%BD%AE/ class=tags><span class=name>配置</span>
+<sup class=num>2</sup>
+</a><a href=/tags/%E9%87%8D%E8%AF%95/ class=tags><span class=name>重试</span>
+<sup class=num>2</sup>
+</a><a href=/tags/%E9%98%85%E8%AF%BB/ class=tags><span class=name>阅读</span>
+<sup class=num>2</sup>
+</a><a href=/tags/%E9%BB%91%E5%AE%A2/ class=tags><span class=name>黑客</span>
+<sup class=num>2</sup>
+</a><a href=/tags/2014/ class=tags><span class=name>2014</span>
+<sup class=num>1</sup>
+</a><a href=/tags/2019/ class=tags><span class=name>2019</span>
+<sup class=num>1</sup>
+</a><a href=/tags/ado.net/ class=tags><span class=name>ADO.NET</span>
+<sup class=num>1</sup>
+</a><a href=/tags/ai/ class=tags><span class=name>AI</span>
+<sup class=num>1</sup>
+</a><a href=/tags/any/ class=tags><span class=name>Any</span>
+<sup class=num>1</sup>
+</a><a href=/tags/apache/ class=tags><span class=name>Apache</span>
+<sup class=num>1</sup>
+</a><a href=/tags/blazor/ class=tags><span class=name>Blazor</span>
+<sup class=num>1</sup>
+</a><a href=/tags/c++/ class=tags><span class=name>C++</span>
+<sup class=num>1</sup>
+</a><a href=/tags/castle/ class=tags><span class=name>Castle</span>
+<sup class=num>1</sup>
+</a><a href=/tags/cdn/ class=tags><span class=name>CDN</span>
+<sup class=num>1</sup>
+</a><a href=/tags/cg/ class=tags><span class=name>CG</span>
+<sup class=num>1</sup>
+</a><a href=/tags/channel/ class=tags><span class=name>Channel</span>
+<sup class=num>1</sup>
+</a><a href=/tags/consul/ class=tags><span class=name>Consul</span>
+<sup class=num>1</sup>
+</a><a href=/tags/cts/ class=tags><span class=name>CTS</span>
+<sup class=num>1</sup>
+</a><a href=/tags/dbeaver/ class=tags><span class=name>DBeaver</span>
+<sup class=num>1</sup>
+</a><a href=/tags/ddd/ class=tags><span class=name>DDD</span>
+<sup class=num>1</sup>
+</a><a href=/tags/delayqueue/ class=tags><span class=name>DelayQueue</span>
+<sup class=num>1</sup>
+</a><a href=/tags/diagnostics/ class=tags><span class=name>Diagnostics</span>
+<sup class=num>1</sup>
+</a><a href=/tags/disunity/ class=tags><span class=name>Disunity</span>
+<sup class=num>1</sup>
+</a><a href=/tags/dottrace/ class=tags><span class=name>DotTrace</span>
+<sup class=num>1</sup>
+</a><a href=/tags/dynamic/ class=tags><span class=name>Dynamic</span>
+<sup class=num>1</sup>
+</a><a href=/tags/dynamic-proxy/ class=tags><span class=name>Dynamic Proxy</span>
+<sup class=num>1</sup>
+</a><a href=/tags/echarts/ class=tags><span class=name>ECharts</span>
+<sup class=num>1</sup>
+</a><a href=/tags/efcore/ class=tags><span class=name>EFCore</span>
+<sup class=num>1</sup>
+</a><a href=/tags/es6/ class=tags><span class=name>ES6</span>
+<sup class=num>1</sup>
+</a><a href=/tags/eventbus/ class=tags><span class=name>EventBus</span>
+<sup class=num>1</sup>
+</a><a href=/tags/excel/ class=tags><span class=name>Excel</span>
+<sup class=num>1</sup>
+</a><a href=/tags/flv/ class=tags><span class=name>FLV</span>
+<sup class=num>1</sup>
+</a><a href=/tags/fody/ class=tags><span class=name>Fody</span>
+<sup class=num>1</sup>
+</a><a href=/tags/form/ class=tags><span class=name>Form</span>
+<sup class=num>1</sup>
+</a><a href=/tags/fp/ class=tags><span class=name>FP</span>
+<sup class=num>1</sup>
+</a><a href=/tags/function-calling/ class=tags><span class=name>Function Calling</span>
+<sup class=num>1</sup>
+</a><a href=/tags/gdi+/ class=tags><span class=name>GDI+</span>
+<sup class=num>1</sup>
+</a><a href=/tags/gephi/ class=tags><span class=name>Gephi</span>
+<sup class=num>1</sup>
+</a><a href=/tags/gpt/ class=tags><span class=name>GPT</span>
+<sup class=num>1</sup>
+</a><a href=/tags/gpts/ class=tags><span class=name>GPTs</span>
+<sup class=num>1</sup>
+</a><a href=/tags/grafana/ class=tags><span class=name>Grafana</span>
+<sup class=num>1</sup>
+</a><a href=/tags/hangfire/ class=tags><span class=name>Hangfire</span>
+<sup class=num>1</sup>
+</a><a href=/tags/hashset/ class=tags><span class=name>HashSet</span>
+<sup class=num>1</sup>
+</a><a href=/tags/hls/ class=tags><span class=name>HLS</span>
+<sup class=num>1</sup>
+</a><a href=/tags/https/ class=tags><span class=name>HTTPS</span>
+<sup class=num>1</sup>
+</a><a href=/tags/hyperlog/ class=tags><span class=name>Hyperlog</span>
+<sup class=num>1</sup>
+</a><a href=/tags/ide/ class=tags><span class=name>IDE</span>
+<sup class=num>1</sup>
+</a><a href=/tags/importlib/ class=tags><span class=name>Importlib</span>
+<sup class=num>1</sup>
+</a><a href=/tags/jaeger/ class=tags><span class=name>Jaeger</span>
+<sup class=num>1</sup>
+</a><a href=/tags/java/ class=tags><span class=name>Java</span>
+<sup class=num>1</sup>
+</a><a href=/tags/jetbrain/ class=tags><span class=name>JetBrain</span>
+<sup class=num>1</sup>
+</a><a href=/tags/jexus/ class=tags><span class=name>Jexus</span>
+<sup class=num>1</sup>
+</a><a href=/tags/js/ class=tags><span class=name>JS</span>
+<sup class=num>1</sup>
+</a><a href=/tags/jsdelivr/ class=tags><span class=name>JsDelivr</span>
+<sup class=num>1</sup>
+</a><a href=/tags/json/ class=tags><span class=name>JSON</span>
+<sup class=num>1</sup>
+</a><a href=/tags/jsonp/ class=tags><span class=name>JSONP</span>
+<sup class=num>1</sup>
+</a><a href=/tags/jupyter/ class=tags><span class=name>Jupyter</span>
+<sup class=num>1</sup>
+</a><a href=/tags/jwt/ class=tags><span class=name>JWT</span>
+<sup class=num>1</sup>
+</a><a href=/tags/k-means/ class=tags><span class=name>K-Means</span>
+<sup class=num>1</sup>
+</a><a href=/tags/keycloak/ class=tags><span class=name>Keycloak</span>
+<sup class=num>1</sup>
+</a><a href=/tags/langchain/ class=tags><span class=name>LangChain</span>
+<sup class=num>1</sup>
+</a><a href=/tags/lazyload/ class=tags><span class=name>LazyLoad</span>
+<sup class=num>1</sup>
+</a><a href=/tags/ldap/ class=tags><span class=name>LDAP</span>
+<sup class=num>1</sup>
+</a><a href=/tags/lfs/ class=tags><span class=name>LFS</span>
+<sup class=num>1</sup>
+</a><a href=/tags/libusbdotnet/ class=tags><span class=name>LibUsbDotNet</span>
+<sup class=num>1</sup>
+</a><a href=/tags/linq/ class=tags><span class=name>Linq</span>
+<sup class=num>1</sup>
+</a><a href=/tags/liquid/ class=tags><span class=name>Liquid</span>
+<sup class=num>1</sup>
+</a><a href=/tags/llama.cpp/ class=tags><span class=name>Llama.cpp</span>
+<sup class=num>1</sup>
+</a><a href=/tags/logger/ class=tags><span class=name>Logger</span>
+<sup class=num>1</sup>
+</a><a href=/tags/love2d/ class=tags><span class=name>Love2D</span>
+<sup class=num>1</sup>
+</a><a href=/tags/mapreduce/ class=tags><span class=name>MapReduce</span>
+<sup class=num>1</sup>
+</a><a href=/tags/markdown/ class=tags><span class=name>Markdown</span>
+<sup class=num>1</sup>
+</a><a href=/tags/matplotlib/ class=tags><span class=name>Matplotlib</span>
+<sup class=num>1</sup>
+</a><a href=/tags/mcp/ class=tags><span class=name>MCP</span>
+<sup class=num>1</sup>
+</a><a href=/tags/mecanim/ class=tags><span class=name>Mecanim</span>
+<sup class=num>1</sup>
+</a><a href=/tags/milvus/ class=tags><span class=name>Milvus</span>
+<sup class=num>1</sup>
+</a><a href=/tags/mmd/ class=tags><span class=name>MMD</span>
+<sup class=num>1</sup>
+</a><a href=/tags/moq/ class=tags><span class=name>Moq</span>
+<sup class=num>1</sup>
+</a><a href=/tags/msbuild/ class=tags><span class=name>MSBuild</span>
+<sup class=num>1</sup>
+</a><a href=/tags/mvc/ class=tags><span class=name>MVC</span>
+<sup class=num>1</sup>
+</a><a href=/tags/mvvm/ class=tags><span class=name>MVVM</span>
+<sup class=num>1</sup>
+</a><a href=/tags/nlog/ class=tags><span class=name>NLog</span>
+<sup class=num>1</sup>
+</a><a href=/tags/obj/ class=tags><span class=name>OBJ</span>
+<sup class=num>1</sup>
+</a><a href=/tags/openai/ class=tags><span class=name>OpenAI</span>
+<sup class=num>1</sup>
+</a><a href=/tags/opentelemetry/ class=tags><span class=name>OpenTelemetry</span>
+<sup class=num>1</sup>
+</a><a href=/tags/oracle/ class=tags><span class=name>Oracle</span>
+<sup class=num>1</sup>
+</a><a href=/tags/orm/ class=tags><span class=name>ORM</span>
+<sup class=num>1</sup>
+</a><a href=/tags/pg_jieba/ class=tags><span class=name>Pg_jieba</span>
+<sup class=num>1</sup>
+</a><a href=/tags/pgvector/ class=tags><span class=name>Pgvector</span>
+<sup class=num>1</sup>
+</a><a href=/tags/pl/sql/ class=tags><span class=name>PL/SQL</span>
+<sup class=num>1</sup>
+</a><a href=/tags/polly/ class=tags><span class=name>Polly</span>
+<sup class=num>1</sup>
+</a><a href=/tags/postgresql/ class=tags><span class=name>PostgreSQL</span>
+<sup class=num>1</sup>
+</a><a href=/tags/postsharp/ class=tags><span class=name>PostSharp</span>
+<sup class=num>1</sup>
+</a><a href=/tags/printdocument/ class=tags><span class=name>PrintDocument</span>
+<sup class=num>1</sup>
+</a><a href=/tags/prometheus/ class=tags><span class=name>Prometheus</span>
+<sup class=num>1</sup>
+</a><a href=/tags/protobuf/ class=tags><span class=name>Protobuf</span>
+<sup class=num>1</sup>
+</a><a href=/tags/pwa/ class=tags><span class=name>PWA</span>
+<sup class=num>1</sup>
+</a><a href=/tags/quartz/ class=tags><span class=name>Quartz</span>
+<sup class=num>1</sup>
+</a><a href=/tags/queue/ class=tags><span class=name>Queue</span>
+<sup class=num>1</sup>
+</a><a href=/tags/qwen-7b-chat/ class=tags><span class=name>Qwen-7B-Chat</span>
+<sup class=num>1</sup>
+</a><a href=/tags/rasa/ class=tags><span class=name>Rasa</span>
+<sup class=num>1</sup>
+</a><a href=/tags/react/ class=tags><span class=name>React</span>
+<sup class=num>1</sup>
+</a><a href=/tags/referrer/ class=tags><span class=name>Referrer</span>
+<sup class=num>1</sup>
+</a><a href=/tags/rerank/ class=tags><span class=name>Rerank</span>
+<sup class=num>1</sup>
+</a><a href=/tags/retrofit/ class=tags><span class=name>Retrofit</span>
+<sup class=num>1</sup>
+</a><a href=/tags/rewrite/ class=tags><span class=name>Rewrite</span>
+<sup class=num>1</sup>
+</a><a href=/tags/rfc/ class=tags><span class=name>RFC</span>
+<sup class=num>1</sup>
+</a><a href=/tags/rpg/ class=tags><span class=name>RPG</span>
+<sup class=num>1</sup>
+</a><a href=/tags/rsetful/ class=tags><span class=name>RSETful</span>
+<sup class=num>1</sup>
+</a><a href=/tags/rtmp/ class=tags><span class=name>RTMP</span>
+<sup class=num>1</sup>
+</a><a href=/tags/scikit-learn/ class=tags><span class=name>Scikit-Learn</span>
+<sup class=num>1</sup>
+</a><a href=/tags/script/ class=tags><span class=name>Script</span>
+<sup class=num>1</sup>
+</a><a href=/tags/semantic-kernel/ class=tags><span class=name>Semantic Kernel</span>
+<sup class=num>1</sup>
+</a><a href=/tags/server-%E9%85%B1/ class=tags><span class=name>Server 酱</span>
+<sup class=num>1</sup>
+</a><a href=/tags/shader/ class=tags><span class=name>Shader</span>
+<sup class=num>1</sup>
+</a><a href=/tags/sklearn/ class=tags><span class=name>Sklearn</span>
+<sup class=num>1</sup>
+</a><a href=/tags/sonar/ class=tags><span class=name>Sonar</span>
+<sup class=num>1</sup>
+</a><a href=/tags/sourcetree/ class=tags><span class=name>SourceTree</span>
+<sup class=num>1</sup>
+</a><a href=/tags/sqlite/ class=tags><span class=name>SQLite</span>
+<sup class=num>1</sup>
+</a><a href=/tags/ssh-key/ class=tags><span class=name>SSH-Key</span>
+<sup class=num>1</sup>
+</a><a href=/tags/sublime/ class=tags><span class=name>Sublime</span>
+<sup class=num>1</sup>
+</a><a href=/tags/svg/ class=tags><span class=name>SVG</span>
+<sup class=num>1</sup>
+</a><a href=/tags/svn/ class=tags><span class=name>SVN</span>
+<sup class=num>1</sup>
+</a><a href=/tags/testserver/ class=tags><span class=name>TestServer</span>
+<sup class=num>1</sup>
+</a><a href=/tags/text2sql/ class=tags><span class=name>Text2SQL</span>
+<sup class=num>1</sup>
+</a><a href=/tags/thoughtworks/ class=tags><span class=name>ThoughtWorks</span>
+<sup class=num>1</sup>
+</a><a href=/tags/trace/ class=tags><span class=name>Trace</span>
+<sup class=num>1</sup>
+</a><a href=/tags/unity/ class=tags><span class=name>Unity</span>
+<sup class=num>1</sup>
+</a><a href=/tags/usb/ class=tags><span class=name>USB</span>
+<sup class=num>1</sup>
+</a><a href=/tags/valine/ class=tags><span class=name>Valine</span>
+<sup class=num>1</sup>
+</a><a href=/tags/visual-studio/ class=tags><span class=name>Visual Studio</span>
+<sup class=num>1</sup>
+</a><a href=/tags/web-api/ class=tags><span class=name>Web API</span>
+<sup class=num>1</sup>
+</a><a href=/tags/webassembly/ class=tags><span class=name>WebAssembly</span>
+<sup class=num>1</sup>
+</a><a href=/tags/webview2/ class=tags><span class=name>WebView2</span>
+<sup class=num>1</sup>
+</a><a href=/tags/wechat/ class=tags><span class=name>Wechat</span>
+<sup class=num>1</sup>
+</a><a href=/tags/windows/ class=tags><span class=name>Windows</span>
+<sup class=num>1</sup>
+</a><a href=/tags/wmi/ class=tags><span class=name>WMI</span>
+<sup class=num>1</sup>
+</a><a href=/tags/ztree/ class=tags><span class=name>ZTree</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E4%B8%80%E5%87%BA%E5%A5%BD%E6%88%8F/ class=tags><span class=name>一出好戏</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E4%B8%83%E7%89%9B/ class=tags><span class=name>七牛</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E4%B8%89%E4%BD%93/ class=tags><span class=name>三体</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E4%B8%8A%E4%BC%A0/ class=tags><span class=name>上传</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E4%B8%8B%E8%BD%BD/ class=tags><span class=name>下载</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E4%BA%8B%E4%BB%B6/ class=tags><span class=name>事件</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E4%BA%8C%E7%BB%B4%E7%A0%81/ class=tags><span class=name>二维码</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E4%BA%91%E5%8E%9F%E7%94%9F/ class=tags><span class=name>云原生</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E4%BA%91%E9%9F%B3%E4%B9%90/ class=tags><span class=name>云音乐</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E4%BA%A4%E4%BA%92/ class=tags><span class=name>交互</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E4%BA%B2%E6%83%85/ class=tags><span class=name>亲情</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/ class=tags><span class=name>人工智能</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E4%BA%BA%E8%84%B8%E5%88%86%E7%B1%BB/ class=tags><span class=name>人脸分类</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E4%BA%BA%E8%84%B8%E6%A3%80%E6%B5%8B/ class=tags><span class=name>人脸检测</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E4%BB%99%E5%89%91%E5%A5%87%E4%BE%A0%E4%BC%A0/ class=tags><span class=name>仙剑奇侠传</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E4%BB%A3%E7%A0%81%E8%A7%A3%E9%87%8A%E5%99%A8/ class=tags><span class=name>代码解释器</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E4%BB%B7%E5%80%BC/ class=tags><span class=name>价值</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E4%BC%98%E5%8C%96/ class=tags><span class=name>优化</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E4%BD%8E%E4%BB%A3%E7%A0%81/ class=tags><span class=name>低代码</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E4%BD%90%E8%97%A4%E5%81%A5/ class=tags><span class=name>佐藤健</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%81%A5%E5%BA%B7%E6%A3%80%E6%9F%A5/ class=tags><span class=name>健康检查</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%81%A5%E5%BA%B7%E7%A0%81/ class=tags><span class=name>健康码</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%85%A8%E6%96%87%E6%A3%80%E7%B4%A2/ class=tags><span class=name>全文检索</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%85%A8%E6%99%BA%E8%B4%A4/ class=tags><span class=name>全智贤</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%85%AB%E5%8D%A6/ class=tags><span class=name>八卦</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%85%AC%E4%BC%97%E5%8F%B7/ class=tags><span class=name>公众号</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%85%B3%E5%8D%A1%E7%B3%BB%E7%BB%9F/ class=tags><span class=name>关卡系统</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%87%BD%E6%95%B0%E5%BC%8F%E7%BC%96%E7%A8%8B/ class=tags><span class=name>函数式编程</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%88%86%E9%A1%B5/ class=tags><span class=name>分页</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%88%AB%E7%A6%BB/ class=tags><span class=name>别离</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%88%BA%E5%AE%A2%E4%BF%A1%E6%9D%A1/ class=tags><span class=name>刺客信条</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%89%8D%E4%BB%BB/ class=tags><span class=name>前任</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%89%91%E6%8C%87offer/ class=tags><span class=name>剑指Offer</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%8A%A8%E6%80%81%E5%8A%A0%E8%BD%BD/ class=tags><span class=name>动态加载</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%8A%A8%E6%80%81%E5%AF%BC%E5%85%A5/ class=tags><span class=name>动态导入</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%8A%A8%E7%94%BB/ class=tags><span class=name>动画</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%8D%83%E5%AF%BB%E5%B0%8F%E5%A7%90/ class=tags><span class=name>千寻小姐</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%8D%8A%E6%B3%BD%E7%9B%B4%E6%A0%91/ class=tags><span class=name>半泽直树</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%8D%95%E4%BD%8D/ class=tags><span class=name>单位</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95/ class=tags><span class=name>单元测试</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%8D%95%E6%9C%BA%E6%B8%B8%E6%88%8F/ class=tags><span class=name>单机游戏</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%8D%B0%E5%BA%A6/ class=tags><span class=name>印度</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%8F%82%E5%B7%AE/ class=tags><span class=name>参差</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%8F%8C%E5%8D%81%E4%B8%80/ class=tags><span class=name>双十一</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%8F%8D%E5%90%91%E4%BB%A3%E7%90%86/ class=tags><span class=name>反向代理</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%8F%8D%E7%BC%96%E8%AF%91/ class=tags><span class=name>反编译</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%8F%96%E6%B6%88/ class=tags><span class=name>取消</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%90%8C%E6%AD%A5/ class=tags><span class=name>同步</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%91%BD%E4%BB%A4/ class=tags><span class=name>命令</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%92%8C%E5%B9%B3/ class=tags><span class=name>和平</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%93%8D%E5%BA%94%E5%BC%8F/ class=tags><span class=name>响应式</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%93%AA%E5%90%92/ class=tags><span class=name>哪吒</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%9B%9B%E6%9C%88/ class=tags><span class=name>四月</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%9B%9E%E5%AE%B6/ class=tags><span class=name>回家</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%9B%9E%E5%BF%86/ class=tags><span class=name>回忆</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%9B%9E%E9%A1%BE/ class=tags><span class=name>回顾</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%9B%9E%E9%A6%96/ class=tags><span class=name>回首</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%9B%BE%E5%BA%8A/ class=tags><span class=name>图床</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%9B%BE%E5%BD%A2%E5%AD%A6/ class=tags><span class=name>图形学</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%9C%B0%E5%9B%BE/ class=tags><span class=name>地图</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%A1%94%E9%98%B2/ class=tags><span class=name>塔防</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%A3%81%E7%BA%B8/ class=tags><span class=name>壁纸</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%A4%87%E5%BF%98/ class=tags><span class=name>备忘</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%A4%8F%E7%9B%AE%E6%BC%B1%E7%9F%B3/ class=tags><span class=name>夏目漱石</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%A4%95%E9%9B%BE%E8%8A%B1%E5%9B%AD/ class=tags><span class=name>夕雾花园</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%A4%9A%E7%A7%9F%E6%88%B7/ class=tags><span class=name>多租户</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%A4%A7%E6%8A%A4%E6%B3%95/ class=tags><span class=name>大护法</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%A4%A7%E6%95%B0%E6%8D%AE/ class=tags><span class=name>大数据</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%A4%A7%E6%A8%A1%E5%9E%8B/ class=tags><span class=name>大模型</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%A5%87%E6%8A%80%E6%B7%AB%E5%B7%A7/ class=tags><span class=name>奇技淫巧</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%A7%94%E6%89%98/ class=tags><span class=name>委托</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%AD%A4%E7%8B%AC/ class=tags><span class=name>孤独</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%AE%A1%E8%AE%A1/ class=tags><span class=name>审计</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%AE%AB%E5%B4%8E%E9%AA%8F/ class=tags><span class=name>宫崎骏</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%AF%B9%E8%B1%A1%E6%B1%A0/ class=tags><span class=name>对象池</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%B0%81%E7%A5%9E/ class=tags><span class=name>封神</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%B0%8F%E7%88%B1%E5%90%8C%E5%AD%A6/ class=tags><span class=name>小爱同学</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%B1%95%E6%9C%9B/ class=tags><span class=name>展望</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%B9%B3%E5%87%A1/ class=tags><span class=name>平凡</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%B9%B4%E5%8D%8E/ class=tags><span class=name>年华</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%B9%B4%E5%BA%A6/ class=tags><span class=name>年度</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%B9%B6%E5%8F%91/ class=tags><span class=name>并发</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%BB%BA%E7%AD%91/ class=tags><span class=name>建筑</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%BC%80%E6%BA%90/ class=tags><span class=name>开源</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%BC%95%E6%93%8E/ class=tags><span class=name>引擎</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%BE%AE%E4%BF%A1/ class=tags><span class=name>微信</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E5%BF%83%E6%83%85/ class=tags><span class=name>心情</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%80%9D%E7%BB%B4/ class=tags><span class=name>思维</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%80%A7%E8%83%BD/ class=tags><span class=name>性能</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%87%92%E5%8A%A0%E8%BD%BD/ class=tags><span class=name>懒加载</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%88%91%E6%98%AF%E7%8C%AB/ class=tags><span class=name>我是猫</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%89%A9%E5%B1%95%E6%96%B9%E6%B3%95/ class=tags><span class=name>扩展方法</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%8A%80%E6%9C%AF%E6%80%9D%E8%80%83/ class=tags><span class=name>技术思考</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%8B%96%E6%8B%BD/ class=tags><span class=name>拖拽</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%8E%A2%E7%B4%A2/ class=tags><span class=name>探索</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%8E%A8%E8%8D%90/ class=tags><span class=name>推荐</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%8F%90%E7%BA%B2/ class=tags><span class=name>提纲</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%8F%92%E4%BB%B6%E5%8C%96/ class=tags><span class=name>插件化</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%95%B0%E5%AD%97/ class=tags><span class=name>数字</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%95%B0%E6%8D%AE/ class=tags><span class=name>数据</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%95%B0%E6%8D%AE%E4%BA%A4%E6%8D%A2/ class=tags><span class=name>数据交换</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%96%87%E4%BB%B6/ class=tags><span class=name>文件</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%96%87%E6%9C%AC%E5%88%86%E7%B1%BB/ class=tags><span class=name>文本分类</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%96%87%E6%A1%A3/ class=tags><span class=name>文档</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%97%A0%E9%97%AE%E8%A5%BF%E4%B8%9C/ class=tags><span class=name>无问西东</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%97%A5%E5%89%A7/ class=tags><span class=name>日剧</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%97%A5%E5%B8%B8/ class=tags><span class=name>日常</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%97%A5%E6%9C%AC/ class=tags><span class=name>日本</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%97%A5%E6%9C%AC%E6%96%87%E5%AD%A6/ class=tags><span class=name>日本文学</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%97%B6%E5%8C%BA/ class=tags><span class=name>时区</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%99%BA%E8%83%BD%E5%AE%B6%E5%B1%85/ class=tags><span class=name>智能家居</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%9C%89%E6%9D%91%E6%9E%B6%E7%BA%AF/ class=tags><span class=name>有村架纯</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%9C%8D%E5%8A%A1/ class=tags><span class=name>服务</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%9C%8D%E5%8A%A1%E7%BC%96%E6%8E%92/ class=tags><span class=name>服务编排</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%9C%9D%E5%9C%A3/ class=tags><span class=name>朝圣</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%9C%B4%E7%B4%A0%E8%B4%9D%E5%8F%B6%E6%96%AF/ class=tags><span class=name>朴素贝叶斯</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/ class=tags><span class=name>机器学习</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%9F%A5%E8%AF%A2/ class=tags><span class=name>查询</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%A0%87%E6%B3%A8/ class=tags><span class=name>标注</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%A0%A1%E9%AA%8C/ class=tags><span class=name>校验</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%A0%BC%E5%BC%8F/ class=tags><span class=name>格式</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%A0%BC%E5%BC%8F%E5%8C%96/ class=tags><span class=name>格式化</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%A1%8C%E9%9D%A2/ class=tags><span class=name>桌面</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%A8%A1%E5%9E%8B/ class=tags><span class=name>模型</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%A8%A1%E6%9D%BF/ class=tags><span class=name>模板</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%AF%95%E4%B8%9A/ class=tags><span class=name>毕业</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%AF%95%E4%B8%9A%E5%AD%A3/ class=tags><span class=name>毕业季</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%B2%99%E7%AE%B1/ class=tags><span class=name>沙箱</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%B5%81%E5%AA%92%E4%BD%93/ class=tags><span class=name>流媒体</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%B5%81%E5%BC%8F%E4%BC%A0%E8%BE%93/ class=tags><span class=name>流式传输</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%B5%AA%E5%AE%A2%E5%89%91%E5%BF%83/ class=tags><span class=name>浪客剑心</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%B6%88%E6%81%AF/ class=tags><span class=name>消息</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%B8%B8%E6%88%8F%E5%BC%95%E6%93%8E/ class=tags><span class=name>游戏引擎</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E6%B8%B8%E8%AE%B0/ class=tags><span class=name>游记</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E7%83%AD%E6%90%9C/ class=tags><span class=name>热搜</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E7%86%B5%E5%A2%9E%E5%AE%9A%E5%BE%8B/ class=tags><span class=name>熵增定律</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E7%89%88%E6%9C%AC%E6%8E%A7%E5%88%B6/ class=tags><span class=name>版本控制</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E7%89%88%E6%9D%83/ class=tags><span class=name>版权</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E7%89%B9%E6%80%A7/ class=tags><span class=name>特性</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E7%8A%B6%E6%80%81/ class=tags><span class=name>状态</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E7%8E%B0%E5%AE%9E/ class=tags><span class=name>现实</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E7%94%9F%E6%AD%BB/ class=tags><span class=name>生死</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E7%9C%9F%E5%AE%9E/ class=tags><span class=name>真实</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E7%9F%A5%E8%AF%86%E5%85%B1%E4%BA%AB/ class=tags><span class=name>知识共享</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E7%9F%AB%E6%83%85/ class=tags><span class=name>矫情</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E7%A0%94%E5%8F%91/ class=tags><span class=name>研发</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E7%A1%AC%E4%BB%B6/ class=tags><span class=name>硬件</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E7%A7%91%E5%B9%BB%E5%B0%8F%E8%AF%B4/ class=tags><span class=name>科幻小说</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E7%A9%B9%E4%B9%8B%E6%89%89/ class=tags><span class=name>穹之扉</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E7%A9%BF%E6%90%AD/ class=tags><span class=name>穿搭</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E7%AB%A5%E8%AF%9D/ class=tags><span class=name>童话</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E7%AD%BE%E5%90%8D/ class=tags><span class=name>签名</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E7%AE%A1%E9%81%93/ class=tags><span class=name>管道</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E7%B1%B3%E8%8A%B1%E4%B9%8B%E5%91%B3/ class=tags><span class=name>米花之味</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E7%BC%96%E8%AF%91/ class=tags><span class=name>编译</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E7%BD%91%E5%85%B3/ class=tags><span class=name>网关</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E7%BD%91%E6%98%93/ class=tags><span class=name>网易</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E7%BE%8E%E6%9C%AF/ class=tags><span class=name>美术</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E8%81%9A%E7%B1%BB/ class=tags><span class=name>聚类</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E8%84%9A%E6%9C%AC/ class=tags><span class=name>脚本</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E8%84%9A%E6%9C%AC%E8%AF%AD%E8%A8%80/ class=tags><span class=name>脚本语言</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E8%87%AA%E5%8A%A8%E5%8C%96/ class=tags><span class=name>自动化</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E8%87%AA%E6%88%91%E5%92%8C%E8%A7%A3/ class=tags><span class=name>自我和解</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E8%8B%8F%E8%BD%BC/ class=tags><span class=name>苏轼</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E8%99%9A%E6%8B%9F%E6%91%87%E6%9D%86/ class=tags><span class=name>虚拟摇杆</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E8%9B%8B%E7%82%92%E9%A5%AD/ class=tags><span class=name>蛋炒饭</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E8%A1%8C%E4%B8%9A/ class=tags><span class=name>行业</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E8%A1%A8%E5%8D%95/ class=tags><span class=name>表单</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E8%A1%A8%E8%BE%BE%E5%BC%8F%E6%A0%91/ class=tags><span class=name>表达式树</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E8%A3%85%E9%A5%B0%E5%99%A8/ class=tags><span class=name>装饰器</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E8%A5%BF%E6%BC%82/ class=tags><span class=name>西漂</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E8%AE%AD%E7%BB%83/ class=tags><span class=name>训练</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E8%AE%B0%E5%BD%95/ class=tags><span class=name>记录</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E8%AE%BF%E9%97%AE%E9%87%8F/ class=tags><span class=name>访问量</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E8%AF%81%E4%B9%A6/ class=tags><span class=name>证书</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E8%AF%84%E8%AE%BA/ class=tags><span class=name>评论</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E8%AF%8D%E4%BA%91/ class=tags><span class=name>词云</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E8%AF%97%E4%BA%BA/ class=tags><span class=name>诗人</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E8%AF%AD%E6%B3%95/ class=tags><span class=name>语法</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E8%AF%AD%E8%A8%80/ class=tags><span class=name>语言</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E8%AF%B7%E8%AE%B0%E4%BD%8F%E6%88%91/ class=tags><span class=name>请记住我</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB/ class=tags><span class=name>读写分离</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E8%B0%83%E4%BC%98/ class=tags><span class=name>调优</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E8%B0%83%E8%AF%95/ class=tags><span class=name>调试</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1/ class=tags><span class=name>负载均衡</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E8%B4%AA%E5%90%83%E8%9B%87/ class=tags><span class=name>贪吃蛇</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E8%B4%BE%E7%BB%B4%E6%96%AF/ class=tags><span class=name>贾维斯</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E8%B5%84%E6%BA%90%E6%8F%90%E5%8F%96/ class=tags><span class=name>资源提取</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E8%B5%B0%E8%B5%B0%E5%81%9C%E5%81%9C/ class=tags><span class=name>走走停停</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E8%B7%AF%E7%94%B1/ class=tags><span class=name>路由</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E8%BD%AC%E7%9B%98/ class=tags><span class=name>转盘</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E8%BD%AF%E4%BB%B6/ class=tags><span class=name>软件</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E8%BF%81%E7%A7%BB/ class=tags><span class=name>迁移</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E9%82%AA%E4%B8%8D%E5%8E%8B%E6%AD%A3/ class=tags><span class=name>邪不压正</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E9%83%A8%E7%BD%B2/ class=tags><span class=name>部署</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E9%85%8D%E7%BD%AE%E4%B8%AD%E5%BF%83/ class=tags><span class=name>配置中心</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E9%85%8D%E8%BD%BD/ class=tags><span class=name>配载</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E9%95%BF%E5%AE%89/ class=tags><span class=name>长安</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E9%95%BF%E5%AE%89%E5%8D%81%E4%BA%8C%E6%97%B6%E8%BE%B0/ class=tags><span class=name>长安十二时辰</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E9%95%BF%E6%88%AA%E5%9B%BE/ class=tags><span class=name>长截图</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E9%98%B2%E7%96%AB/ class=tags><span class=name>防疫</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E9%98%BF%E9%87%8C/ class=tags><span class=name>阿里</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E9%99%90%E6%B5%81/ class=tags><span class=name>限流</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E9%9B%86%E6%88%90%E6%B5%8B%E8%AF%95/ class=tags><span class=name>集成测试</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E9%9B%86%E7%BE%A4/ class=tags><span class=name>集群</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E9%9C%8D%E9%87%91/ class=tags><span class=name>霍金</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E9%9D%92%E6%98%A5/ class=tags><span class=name>青春</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E9%9D%99%E6%80%81%E7%BC%96%E7%BB%87/ class=tags><span class=name>静态编织</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E9%9F%A9%E5%AF%92/ class=tags><span class=name>韩寒</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E9%A2%86%E5%9F%9F%E4%BA%8B%E4%BB%B6/ class=tags><span class=name>领域事件</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E9%A9%AC%E5%B0%94%E5%85%8B%E6%96%AF/ class=tags><span class=name>马尔克斯</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E9%AA%8C%E8%AF%81/ class=tags><span class=name>验证</span>
+<sup class=num>1</sup>
+</a><a href=/tags/%E9%AC%BC%E6%BB%85%E3%81%AE%E5%88%83/ class=tags><span class=name>鬼滅の刃</span>
+<sup class=num>1</sup></a></div><a href=/tags class=more-tags>查看全部</a></div><div class="site-data s-card weidgets"><div class=title><i class="iconfont icon-chart"></i>
+<span class=title-name>站点数据</span></div><div class=all-data><div class=data-item><span class=name><i class="iconfont icon-article"></i>
+文章总数
+</span><span class=num>277 篇</span></div><div class=data-item><span class=name><i class="iconfont icon-date"></i>
+建站天数
+</span><span class=num>3753 天</span></div><div class=data-item><span class=name><i class="iconfont icon-visibility"></i>
+总访问量
+</span><span class=num id=busuanzi_value_site_pv>0</span></div><div class=data-item><span class=name><i class="iconfont icon-account"></i>
+总访客数
+</span><span class=num id=busuanzi_value_site_uv>0</span></div></div></div></div></aside><style>.main-aside{padding-left:1rem;display:flex;flex-direction:column;animation:fade-up .6s .3s backwards;.weidgets { padding: 18px; margin-bottom: 1rem; :deep(.title) { margin-bottom: 12px; font-weight: bold; display: flex; align-items: center; opacity: 0.75; .iconfont { opacity: 0.6; margin-right: 6px; } .title-name { opacity: 0.8; } } } .sticky { position: sticky; top: calc(60px + 1rem); .weidgets { animation: fade-up 0.6s 0.4s backwards; &:last-child { margin-bottom: 0; } } }}</style></div></div></main><div class=footer-link><div class=footer-bar><span class=site-title>元视角</span>
+<span class=site-desc>纵有疾风起，人生不言弃</span>
+<a href=/ class=to-home>了解更多</a></div><div class=footer-social><a href=https://github.com/qinyuanpei target=_blank class=social-link><i class="iconfont icon-github"></i>
+</a><a href=mailto:qinyuanpei@163.com target=_blank class=social-link><i class="iconfont icon-email"></i>
+</a><a href=/index.xml target=_blank class=social-link><i class="iconfont icon-rss"></i></a><div class=logo title=返回顶部 onclick='window.scrollTo({top:0,behavior:"smooth"})'><img src=/images/icons8-stellar-128.png alt=author class=author></div><a href=https://weibo.com/1278609231 target=_blank class=social-link><i class="iconfont icon-weibo"></i>
+</a><a href=https://www.douban.com/people/60029335/ target=_blank class=social-link><i class="iconfont icon-douban"></i>
+</a><a href=https://www.zhihu.com/people/qinyuanpei target=_blank class=social-link><i class="iconfont icon-zhihu"></i></a></div><div class=footer-sitemap><div class=sitemap-item><span class=title>博客</span><div class=links><a href=/ class=link-text>近期文章
+</a><a href=/categories class=link-text>全部分类
+</a><a href=/tags class=link-text>全部标签
+</a><a href=/archives class=link-text>文章归档</a></div></div><div class=sitemap-item><span class=title>项目</span><div class=links><a href=https://example1.com target=_blank class=link-text>项目1
+</a><a href=https://example2.com target=_blank class=link-text>项目2
+</a><a href=https://example2.com target=_blank class=link-text>项目3
+</a><a href=https://example2.com target=_blank class=link-text>项目4</a></div></div><div class=sitemap-item><span class=title>专栏</span><div class=links><a href=https://blog.csdn.net/qinyuanpei/category_10852603.html target=_blank class=link-text>.NET 源代码探案系列
+</a><a href=https://blog.csdn.net/qinyuanpei/category_7444699.html target=_blank class=link-text>Python 数据挖掘系列
+</a><a href=https://blog.csdn.net/qinyuanpei/category_11484903.html target=_blank class=link-text>分布式丛林探险系列
+</a><a href=https://blog.csdn.net/qinyuanpei/category_1708629.html target=_blank class=link-text>Unity3D 游戏开发系列</a></div></div><div class=sitemap-item><span class=title>页面</span><div class=links><a href=/comments class=link-text>畅所欲言
+</a><a href=/books class=link-text>阅读记录
+</a><a href=/movies class=link-text>观影记录
+</a><a href=/musics class=link-text>听歌记录</a></div></div><div class=sitemap-item><span class=title>友情链接</span><div class=links><a href=https://blog.zhheo.com/ class=link-text>张洪
+</a><a href=https://blog.zhheo.com/ class=link-text>张洪
+</a><a href=https://blog.zhheo.com/ class=link-text>张洪
+</a><a href=https://blog.zhheo.com/ class=link-text>更多</a></div></div></div></div><footer id=main-footer class=main-footer><div class=footer-content><div class=footer-copyright><span class=time data-v-6001e979>@ 2014 - 2025 By </span><a href=https://www.imsyy.top class="author link" target=_blank>飞鸿踏雪</a></div><div class=meta><a class="power link" href=https://vitepress.dev/ target=_blank><span class=by>Powered by</span>
+<span class=name>Hugo</span>
+</a><a class="theme link" href=/pages/theme><span class=name>主题</span>
+</a><a class="rss link" href=https://blog.imsyy.top/rss.xml target=_blank><i class="iconfont icon-rss"></i>
+<span class=name data-v-6001e979>订阅</span>
+</a><a class="cc link" href=https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh-hans target=_blank><i class="iconfont icon-line"></i>
+<i class="iconfont icon-by-line"></i>
+<i class="iconfont icon-nc-line"></i><i class="iconfont icon-nd-line"></i></a></div></div></footer><script type=module src=/js/main.js></script></body></html>

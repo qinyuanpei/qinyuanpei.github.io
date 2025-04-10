@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>画家 on 元视角</title><link>http://example.org/tags/%E7%94%BB%E5%AE%B6/</link><description>Recent content in 画家 on 元视角</description><generator>Hugo</generator><language>zh-cn</language><lastBuildDate>Sun, 01 May 2022 13:32:47 +0000</lastBuildDate><atom:link href="http://example.org/tags/%E7%94%BB%E5%AE%B6/index.xml" rel="self" type="application/rss+xml"/><item><title>Python 图像风格化迁移助力画家梦想</title><link>http://example.org/posts/a-introduction-to-stylized-migration-of-python/</link><pubDate>Sun, 01 May 2022 13:32:47 +0000</pubDate><guid>http://example.org/posts/a-introduction-to-stylized-migration-of-python/</guid><description>很多年前，星爷在《食神》这部电影里大彻大悟，「只要用心，人人都是食神」。从那个时候起，这句话就隐隐约约带着返璞归真、回归本心的意思。如同电影里描绘的餐饮行业一样，在资本市场的裹挟下，造神这项运动显得轻而易举，这个食神可以是史蒂·周，可以是唐牛，可以是任何人。因此，当穷困潦倒的史蒂芬·周，因为一碗叉烧饭而落泪的时候，我想，这或许是一种直面自我的顿悟。毕竟，电影里的星爷原本就不会做饭。《舌尖上的中国》带火了一句话，“高端的食材，往往只需要最简单的烹饪”，在我看来，这同样是一种“人人都是食神”的自我暗示。多年以后，互联网行业炙手可热的彼时彼刻，一句“人人都是产品经理”让无数人发现，提需求的门槛居然如此的低。其实，早在 1967 年，德国艺术家约瑟夫·博伊斯就曾语出惊人，“人人都是艺术家”，联想到“鸡娃”教育下的各种艺术特长培训班，这句话大概是真的。你内心深处是否同样保留着某种艺术家的梦呢？那么，此时此刻，博主想和大家分享的话题是图像的风格化迁移。
+走近风格化迁移 提到风格化迁移这个概念的时候，大家可能会感到陌生，所以，我们不妨用相近的概念来进行类比。纵观人类的历史长河，初唐四杰、唐宋八大家的诗文各有千秋，李杜诗篇、苏辛长短句各领风骚，更不必说书法上的颜筋柳骨、苏黄米蔡。我曾经在碑林博物馆密密麻麻的石碑中，近距离看到人们如何将石碑上的文字拓下，我开始在脑海里徜徉，是否人类一切伟大的创造都是起源于模仿？这种思绪最终在艾伦·图灵的传记电影 《模仿游戏》 中找到了某种回应，就像人工智能领域里的神经网络，其实就是在模仿人类的大脑进行思考，甚至退一万步讲，当我们还是一个婴儿的时候，襁褓中的牙牙学语、蹒跚学步，这其实还是一种模仿。那么，如果要给风格化迁移下一个定义的话，其实就是让人工智能来对某种风格或者特点进行“模仿”，以图像的风格化迁移为例，它可以将梵高、莫奈或者毕加索的绘画风格“移植”到一张目标图片上，如下图所示：
+Neural-Style-Transformer 示意图它可以借由梵高《星空》这副作品中的色彩，来「绘制」一副不一样的向日葵，虽然，梵高一生中创作了无数幅向日葵，在他人生的不同阶段，或表达对生命的渴望，或刻画出死亡的压抑。由此可见，风格化迁移其实可以理解为，不同流派绘画风格的一种“模仿”。当然，这一切都是由计算机通过特定的算法来实现，你可以想象一下，当你通过描摹字帖的方式来练字时，本质上就是在模仿那些书法家们的笔划，而如果将一切的行为都转化为数学公式，这其实就是一种风格化迁移啦！
+卷积神经网络(CNN)在图像风格化迁移上的应用目前，图像的风格化迁移，主要的算法支撑来自下面这两篇文章：
+A Neural Algorithm of Artistic Style Instance Normalization: The Missing Ingredient for Fast Stylization 其中，前者提出“用神经网络来解决图像风格化迁移”的思路，而后者则是在此基础上引入了“可感知的损失”这一概念，如果大家有兴趣的话，不妨读一读下面这篇文章，它更像是一篇综述性质的文章，可以帮助你快速了解图像风格化迁移的前世今生，个人感觉，读这类文章会让你快速地认识到自己的无知，这或许是一件好事。
+Neural Style Transfer: A Review 坦白讲，博主是第一次接触神经网络。所以，要学习陶渊明，「好读书，不求甚解」。如果大家确实对这块内容感兴趣的话，还是建议亲自去读一下这些文章，我就不在这里班门弄斧啦！(逃
+体验风格化迁移 好了，当我们对图像风格化迁移有了一定的了解以后，下面我们来快速体验下图像风格化迁移。OpenCV 在 3.3 版本后，正式引入了 DNN ，这使得我们可以在 OpenCV 中使用 Caffe、TensorFlow、Torch/PyTorch 等主流框架中训练好的模型。这里，我们主要参考了 OpenCV 官方的 示例代码:
+def style_transfer(pathIn=&amp;#39;&amp;#39;, pathOut=&amp;#39;&amp;#39;, model=&amp;#39;&amp;#39;, width=None, jpg_quality=80): &amp;#39;&amp;#39;&amp;#39; pathIn: 原始图片的路径 pathOut: 风格化图片的路径 model: 预训练模型的路径 width: 设置风格化图片的宽度，默认为None, 即原始图片尺寸 jpg_quality: 0-100，设置输出图片的质量，默认80，越大图片质量越好 &amp;#39;&amp;#39;&amp;#39; ## 读入原始图片，同时调整图片至所需尺寸 img = cv2.</description></item><item><title>像诗人一样睿智，像天才一样疯狂</title><link>http://example.org/posts/3653716295/</link><pubDate>Sat, 01 Oct 2016 17:12:43 +0000</pubDate><guid>http://example.org/posts/3653716295/</guid><description>&lt;script type="text/javascript" src="http://example.org/js/douban.js">&lt;/script>
+&lt;script type="text/javascript">
+ var ele = document.currentScript
+ var douban = window.$DoubanCard(ele, '10463953', 'https:\/\/api.wmdb.tv\/movie\/api?id=10463953', 'movie', '{\u0022charts\u0022:[],\u0022comment\u0022:\u0022\u0022,\u0022create_time\u0022:\u00222018-10-25 23:48:47\u0022,\u0022id\u0022:1504037846,\u0022is_private\u0022:false,\u0022platforms\u0022:[],\u0022rating\u0022:{\u0022count\u0022:1,\u0022max\u0022:5,\u0022star_count\u0022:5,\u0022value\u0022:5},\u0022sharing_text\u0022:\u0022我的评分：★★★★★ https:\/\/www.douban.com\/doubanapp\/dispatch\/movie\/10463953 来自@豆瓣App\u0022,\u0022sharing_url\u0022:\u0022https:\/\/www.douban.com\/doubanapp\/dispatch?uri=\/subject\/10463953\/interest\/1504037846\u0022,\u0022status\u0022:\u0022done\u0022,\u0022subject\u0022:{\u0022actors\u0022:[{\u0022name\u0022:\u0022本尼迪克特·康伯巴奇\u0022},{\u0022name\u0022:\u0022凯拉·奈特莉\u0022},{\u0022name\u0022:\u0022马修·古迪\u0022},{\u0022name\u0022:\u0022罗里·金尼尔\u0022},{\u0022name\u0022:\u0022艾伦·里奇\u0022},{\u0022name\u0022:\u0022马修·比尔德\u0022},{\u0022name\u0022:\u0022查尔斯·丹斯\u0022},{\u0022name\u0022:\u0022马克·斯特朗\u0022},{\u0022name\u0022:\u0022詹姆斯·诺斯科特\u0022},{\u0022name\u0022:\u0022汤姆·古德曼-希尔\u0022},{\u0022name\u0022:\u0022史蒂芬·威丁顿\u0022},{\u0022name\u0022:\u0022伊兰·古德曼\u0022},{\u0022name\u0022:\u0022杰克·塔尔登\u0022},{\u0022name\u0022:\u0022埃里克斯·劳瑟\u0022},{\u0022name\u0022:\u0022杰克·巴农\u0022},{\u0022name\u0022:\u0022塔彭丝·米德尔顿\u0022},{\u0022name\u0022:\u0022安德鲁·哈维尔\u0022},{\u0022name\u0022:\u0022威尔·鲍登\u0022},{\u0022name\u0022:\u0022李·阿斯奎斯-柯\u0022},{\u0022name\u0022:\u0022海莉·乔安妮·培根\u0022},{\u0022name\u0022:\u0022安库塔·布雷班\u0022},{\u0022name\u0022:\u0022格雷斯·卡尔德\u0022},{\u0022name\u0022:\u0022理查德·坎贝尔\u0022},{\u0022name\u0022:\u0022温斯顿·丘吉尔\u0022},{\u0022name\u0022:\u0022克里斯·考林\u0022},{\u0022name\u0022:\u0022汉娜·弗林\u0022},{\u0022name\u0022:\u0022卢克·霍普\u0022},{\u0022name\u0022:\u0022斯图尔特·马修斯\u0022},{\u0022name\u0022:\u0022亚当·诺威尔\u0022},{\u0022name\u0022:\u0022哈里·S·杜鲁门\u0022}],\u0022album_no_interact\u0022:false,\u0022article_intros\u0022:[],\u0022card_subtitle\u0022:\u00222014 \/ 英国 美国 \/ 剧情 同性 传记 战争 \/ 莫滕·泰杜姆 \/ 本尼迪克特·康伯巴奇 凯拉·奈特莉\u0022,\u0022color_scheme\u0022:{\u0022_avg_color\u0022:[0.08333333333333333,0.16,0.39215686274509803],\u0022_base_color\u0022:[0.2499999999999997,0.037037037037037035,0.21176470588235294],\u0022is_dark\u0022:true,\u0022primary_color_dark\u0022:\u00224b4c49\u0022,\u0022primary_color_light\u0022:\u002270726e\u0022,\u0022secondary_color\u0022:\u0022f7f9f4\u0022},\u0022controversy_reason\u0022:\u0022\u0022,\u0022cover_url\u0022:\u0022https:\/\/dou.img.lithub.cc\/movie\/10463953.jpg\u0022,\u0022directors\u0022:[{\u0022name\u0022:\u0022莫滕·泰杜姆\u0022}],\u0022genres\u0022:[\u0022剧情\u0022,\u0022同性\u0022,\u0022传记\u0022],\u0022has_linewatch\u0022:true,\u0022honor_infos\u0022:[{\u0022kind\u0022:\u0022movie\u0022,\u0022rank\u0022:155,\u0022title\u0022:\u0022豆瓣电影Top250\u0022,\u0022uri\u0022:\u0022douban:\/\/douban.com\/subject_collection\/movie_top250\u0022}],\u0022id\u0022:\u002210463953\u0022,\u0022is_released\u0022:true,\u0022is_show\u0022:false,\u0022null_rating_reason\u0022:\u0022\u0022,\u0022pic\u0022:{\u0022large\u0022:\u0022https:\/\/img3.doubanio.com\/view\/photo\/m_ratio_poster\/public\/p2255040492.jpg\u0022,\u0022normal\u0022:\u0022https:\/\/img3.doubanio.com\/view\/photo\/s_ratio_poster\/public\/p2255040492.jpg\u0022},\u0022pubdate\u0022:[\u00222015-07-21(中国大陆)\u0022],\u0022rating\u0022:{\u0022count\u0022:700837,\u0022max\u0022:10,\u0022star_count\u0022:4.5,\u0022value\u0022:8.8},\u0022release_date\u0022:null,\u0022sharing_url\u0022:\u0022https:\/\/www.douban.com\/doubanapp\/dispatch\/movie\/10463953\u0022,\u0022subtype\u0022:\u0022movie\u0022,\u0022title\u0022:\u0022模仿游戏\u0022,\u0022type\u0022:\u0022movie\u0022,\u0022uri\u0022:\u0022douban:\/\/douban.com\/movie\/10463953\u0022,\u0022url\u0022:\u0022https:\/\/movie.douban.com\/subject\/10463953\/\u0022,\u0022vendor_desc\u0022:\u0022\u0022,\u0022vendor_icons\u0022:[\u0022https:\/\/img9.doubanio.com\/f\/frodo\/fbc90f355fc45d5d2056e0d88c697f9414b56b44\/pics\/vendors\/tencent.png\u0022,\u0022https:\/\/img9.doubanio.com\/f\/frodo\/88a62f5e0cf9981c910e60f4421c3e66aac2c9bc\/pics\/vendors\/bilibili.png\u0022],\u0022year\u0022:\u00222014\u0022},\u0022tags\u0022:[\u0022传记\u0022,\u0022英国\u0022,\u0022图灵\u0022,\u0022历史\u0022,\u0022二战\u0022,\u0022战争\u0022,\u0022同性\u0022,\u0022美国\u0022,\u0022人生\u0022,\u0022军事\u0022,\u0022经典\u0022,\u0022剧情\u0022],\u0022vote_count\u0022:0}');
+&lt;/script>
+&lt;style>
+ .douban-card {
+ width: 100%;
+ max-width: 100%;
+ background: white;
+ border-radius: 16px;
+ box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+ overflow: hidden;
+ display: flex;
+ text-decoration: none;
+ color: #333;
+ transition: transform 0.2s, box-shadow 0.2s;
+ position: relative;
+ margin-top: 1.5rem;
+ }
+
+ .douban-card:hover {
+ box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+ border: 1px solid var(--main-card-border);
+ }
+
+ .card-content {
+ flex: 8;
+ padding: 16px;
+ display: flex;
+ flex-direction: column;
+ }
+
+ .card-cover {
+ flex: 2;
+ position: relative;
+ overflow: hidden;
+ min-height: 200px;
+ }
+
+ .card-cover img {
+ position: absolute;
+ height: 100%;
+ width: 100%;
+ object-fit: cover;
+ object-position: center;
+ }
+
+ .card-title {
+ font-size: 18px;
+ font-weight: bold;
+ margin-bottom: 8px;
+ color: #333;
+ line-height: 1.4;
+ }
+
+ .card-meta {
+ display: flex;
+ align-items: center;
+ margin-bottom: 12px;
+ font-size: 14px;
+ color: #666;
+ }
+
+ .card-rating {
+ margin-right: 8px;
+ font-weight: bold;
+ color: #e09015;
+ }
+
+ .card-stars {
+ margin: 2.5px 0 2.5px;
+ font-size: 12px;
+ line-height: 1;
+ display: flex;
+ align-items: center
+ }
+
+ .card-stars .card-stars-dark {
+ position: relative;
+ color: #f99b01;
+ height: 16px;
+ width: 80px;
+ background-size: auto 100%;
+ margin-right: 8px;
+ background-repeat: repeat;
+ background-image: url(data:image/svg+xml;base64,PHN2ZyBjbGFzcz0iaWNvbiIgdmlld0JveD0iMCAwIDEwMjQgMTAyNCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB3aWR0aD0iMzIiIGhlaWdodD0iMzIiPjxwYXRoIGQ9Ik05MDguMSAzNTMuMWwtMjUzLjktMzYuOUw1NDAuNyA4Ni4xYy0zLjEtNi4zLTguMi0xMS40LTE0LjUtMTQuNS0xNS44LTcuOC0zNS0xLjMtNDIuOSAxNC41TDM2OS44IDMxNi4ybC0yNTMuOSAzNi45Yy03IDEtMTMuNCA0LjMtMTguMyA5LjMtMTIuMyAxMi43LTEyLjEgMzIuOS42IDQ1LjNsMTgzLjcgMTc5LjEtNDMuNCAyNTIuOWMtMS4yIDYuOS0uMSAxNC4xIDMuMiAyMC4zIDguMiAxNS42IDI3LjYgMjEuNyA0My4yIDEzLjRMNTEyIDc1NGwyMjcuMSAxMTkuNGM2LjIgMy4zIDEzLjQgNC40IDIwLjMgMy4yIDE3LjQtMyAyOS4xLTE5LjUgMjYuMS0zNi45bC00My40LTI1Mi45IDE4My43LTE3OS4xYzUtNC45IDguMy0xMS4zIDkuMy0xOC4zIDIuNy0xNy41LTkuNS0zMy43LTI3LTM2LjN6TTY2NC44IDU2MS42bDM2LjEgMjEwLjNMNTEyIDY3Mi43IDMyMy4xIDc3MmwzNi4xLTIxMC4zLTE1Mi44LTE0OUw0MTcuNiAzODIgNTEyIDE5MC43IDYwNi40IDM4MmwyMTEuMiAzMC43LTE1Mi44IDE0OC45eiIgZmlsbD0iI2Y5OWIwMSIvPjwvc3ZnPg==)
+ }
+
+ .card-stars .card-stars-light {
+ position: absolute;
+ left: 0;
+ color: #f99b01;
+ height: 16px;
+ overflow: hidden;
+ background-size: auto 100%;
+ background-repeat: repeat;
+ background-image: url(data:image/svg+xml;base64,PHN2ZyBjbGFzcz0iaWNvbiIgdmlld0JveD0iMCAwIDEwMjQgMTAyNCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB3aWR0aD0iMzIiIGhlaWdodD0iMzIiPjxwYXRoIGQ9Ik05MDguMSAzNTMuMWwtMjUzLjktMzYuOUw1NDAuNyA4Ni4xYy0zLjEtNi4zLTguMi0xMS40LTE0LjUtMTQuNS0xNS44LTcuOC0zNS0xLjMtNDIuOSAxNC41TDM2OS44IDMxNi4ybC0yNTMuOSAzNi45Yy03IDEtMTMuNCA0LjMtMTguMyA5LjMtMTIuMyAxMi43LTEyLjEgMzIuOS42IDQ1LjNsMTgzLjcgMTc5LjEtNDMuNCAyNTIuOWMtMS4yIDYuOS0uMSAxNC4xIDMuMiAyMC4zIDguMiAxNS42IDI3LjYgMjEuNyA0My4yIDEzLjRMNTEyIDc1NGwyMjcuMSAxMTkuNGM2LjIgMy4zIDEzLjQgNC40IDIwLjMgMy4yIDE3LjQtMyAyOS4xLTE5LjUgMjYuMS0zNi45bC00My40LTI1Mi45IDE4My43LTE3OS4xYzUtNC45IDguMy0xMS4zIDkuMy0xOC4zIDIuNy0xNy41LTkuNS0zMy43LTI3LTM2LjN6IiBmaWxsPSIjZjk5YjAxIi8+PC9zdmc+);
+
+ }
+
+ .card-description {
+ font-size: 12px;
+ line-height: 1.6;
+ color: #666;
+ overflow: hidden;
+ display: -webkit-box;
+ -webkit-line-clamp: 3;
+ -webkit-box-orient: vertical;
+ margin-bottom: 12px;
+ }
+
+ .card-info {
+ font-size: 12px;
+ color: #999;
+ line-height: 1.6;
+ }
+
+ .card-tags {
+ margin-top: 12px;
+ display: flex;
+ flex-wrap: wrap;
+ }
+
+ .card-tag {
+ font-size: 12px;
+ color: var(--main-color);
+ background: #f5f5f5;
+ padding: 2px 8px;
+ border-radius: 3px;
+ margin-right: 6px;
+ margin-bottom: 6px;
+ }
+
+
+
+
+ .link-overlay {
+ position: absolute;
+ top: 0;
+ left: 0;
+ width: 100%;
+ height: 100%;
+ z-index: 1;
+ }
+
+ @media (max-width: 520px) {
+ .douban-card {
+ flex-direction: column;
+ }
+
+ .card-content {
+ flex: none;
+ width: 100%;
+ padding: 12px;
+ }
+
+ .card-cover {
+ flex: none;
+ width: 100%;
+ height: 180px;
+ order: -1;
+ }
+
+ .card-title {
+ font-size: 16px;
+ margin-bottom: 6px;
+ }
+
+ .card-meta {
+ margin-bottom: 8px;
+ font-size: 12px;
+ }
+
+ .card-description {
+ font-size: 13px;
+ -webkit-line-clamp: 2;
+ margin-bottom: 8px;
+ }
+
+ .card-info {
+ font-size: 11px;
+ }
+
+ .card-tags {
+ margin-top: 8px;
+ }
+
+ .card-tag {
+ font-size: 11px;
+ padding: 1px 6px;
+ margin-right: 4px;
+ margin-bottom: 4px;
+ }
+ }
+&lt;/style>
+&lt;p>我不知道大家如何定义程序员这个工作，在我看来，在某种意义上，程序员和艺术家们具有相同之处，我们都是创作者，和诗人、画家、作家等等这些职业相近，我们都在试图创作出优秀的作品，我们借助编程语言来重构我们对这个世界的认识、借助抽象的概念来创造这个世界上不存在的东西，所以我们对自由和创造的渴望，来源自我们在这个世界上写下的第一行代码，或许这像是一个充满理想主义的臆想，可这并不重要，重要的是你如何看待这个世界、如何看待你自己，我更喜欢将程序员视为造梦者，就像每一个孩子在搭积木的时候，都有一个建筑师的梦一样，你可以选择让代码简洁、优雅，你同样选择让代码肮脏、丑陋，你相信什么，你执着什么，它就会是什么，所以为什么不给我们自己更多创造的机会。&lt;/p></description></item></channel></rss>
