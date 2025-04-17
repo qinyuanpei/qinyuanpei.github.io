@@ -5,6 +5,10 @@
     url('/fonts/patch/iconfont.ttf?t=1743557141597') format('truetype');
 }
 
+.icon-words:before {
+  content: "\e648";
+}
+
 .icon-arrow-right-circle:before {
   content: "\e626";
 }
@@ -92,6 +96,4 @@
 .icon-sun:before {
   content: "\e886";
 }
-
-
 
